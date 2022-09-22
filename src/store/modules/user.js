@@ -1,13 +1,18 @@
 import { login, logout, getInfo, refreshToken } from '@/api/login'
-import { getToken, setToken, setExpiresIn, removeToken } from '@/utils/auth'
+import { getToken, setToken, setExpiresIn, removeToken, getUserKey,setUserKey,removeUserKey,} from '@/utils/auth'
+// this丢失，消息弹窗直接使用
+import { Message,MessageBox,Alert} from 'element-ui' 
+import router from './../../router'
 
 const user = {
   state: {
     token: getToken(),
     name: '',
+    user:getUserKey(),
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    updatePassFlag:false,
   },
 
   mutations: {
@@ -20,6 +25,9 @@ const user = {
     SET_NAME: (state, name) => {
       state.name = name
     },
+    SET_USER: (state, user) => {
+      state.user = user
+    },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
     },
@@ -28,6 +36,9 @@ const user = {
     },
     SET_PERMISSIONS: (state, permissions) => {
       state.permissions = permissions
+    },
+    update_PassFlag:(state,updatePassFlag)=>{
+      state.updatePassFlag = updatePassFlag
     }
   },
 
@@ -40,6 +51,7 @@ const user = {
       const uuid = userInfo.uuid
       return new Promise((resolve, reject) => {
         login(username, password, code, uuid).then(res => {
+        // login(username, password).then(res => {
           let data = res.data
           setToken(data.access_token)
           commit('SET_TOKEN', data.access_token)
@@ -54,8 +66,22 @@ const user = {
 
     // 获取用户信息
     GetInfo({ commit, state }) {
+      // const _router = window.Vue.$router
       return new Promise((resolve, reject) => {
         getInfo().then(res => {
+          // 存值 是否修改密码
+          if(res && res.updatePassFlag){
+            commit('update_PassFlag', res.updatePassFlag)
+            if(res.updatePassFlag && (router.history._startLocation.search('/user/profile') === -1)){
+              MessageBox.alert('您当前登录密码使用已超过' + res.passwordRule + '天，为保证您的账号安全，请立即修改。', '安全提示', {
+                confirmButtonText: '去修改', center: true, showClose: false
+              }).then(() => {              
+                router.push({ path: "/user/profile",query:{type:'resetPwd'}});
+              }).catch(err => {
+                console.log("加载alert异常", err)
+              });
+            }
+          }
           const user = res.user
           const avatar = (user.avatar == "" || user.avatar == null) ? require("@/assets/images/profile.jpg") : user.avatar;
           if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
@@ -65,7 +91,9 @@ const user = {
             commit('SET_ROLES', ['ROLE_DEFAULT'])
           }
           commit('SET_NAME', user.userName)
+          commit('SET_USER', user)
           commit('SET_AVATAR', avatar)
+          setUserKey(user)
           resolve(res)
         }).catch(error => {
           reject(error)
@@ -93,7 +121,9 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           commit('SET_PERMISSIONS', [])
+          commit('SET_USER', null)
           removeToken()
+          removeUserKey()
           resolve()
         }).catch(error => {
           reject(error)
@@ -106,6 +136,8 @@ const user = {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
         removeToken()
+        commit('SET_USER', null)
+        removeUserKey()
         resolve()
       })
     }

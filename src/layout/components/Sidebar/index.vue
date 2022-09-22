@@ -1,6 +1,6 @@
 <template>
     <div :class="{'has-logo':showLogo}" :style="{ backgroundColor: settings.sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground }">
-        <logo v-if="showLogo" :collapse="isCollapse" />
+        <div class="project-name" v-show="!isCollapse">运输调度平台</div>
         <el-scrollbar :class="settings.sideTheme" wrap-class="scrollbar-wrapper">
             <el-menu
                 :default-active="activeMenu"
@@ -11,6 +11,7 @@
                 :active-text-color="settings.theme"
                 :collapse-transition="false"
                 mode="vertical"
+                class="el-menu-vertical-demo"
             >
                 <sidebar-item
                     v-for="(route, index) in sidebarRouters"
@@ -25,12 +26,11 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import Logo from "./Logo";
 import SidebarItem from "./SidebarItem";
 import variables from "@/assets/styles/variables.scss";
 
 export default {
-    components: { SidebarItem, Logo },
+    components: { SidebarItem },
     computed: {
         ...mapState(["settings"]),
         ...mapGetters(["sidebarRouters", "sidebar"]),
@@ -55,3 +55,13 @@ export default {
     }
 };
 </script>
+<style scoped>
+.project-name{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 20px;
+    color: #666666;
+}
+</style>

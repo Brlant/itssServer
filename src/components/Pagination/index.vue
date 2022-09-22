@@ -3,11 +3,10 @@
     <el-pagination
       :background="background"
       :current-page.sync="currentPage"
-      :page-size.sync="pageSize"
       :layout="layout"
-      :page-sizes="pageSizes"
       :pager-count="pagerCount"
       :total="total"
+      :page-size="limit"
       v-bind="$attrs"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -33,12 +32,12 @@ export default {
       type: Number,
       default: 20
     },
-    pageSizes: {
-      type: Array,
-      default() {
-        return [10, 20, 30, 50]
-      }
-    },
+    // pageSizes: {
+    //   type: Array,
+    //   default() {
+    //     return [10, 20, 30, 50]
+    //   }
+    // },
     // 移动端页码按钮的数量端默认值5
     pagerCount: {
       type: Number,
@@ -46,7 +45,7 @@ export default {
     },
     layout: {
       type: String,
-      default: 'total, sizes, prev, pager, next, jumper'
+      default: 'total, prev, pager, next, jumper'
     },
     background: {
       type: Boolean,
@@ -82,6 +81,9 @@ export default {
         this.$emit('update:limit', val)
       }
     }
+  },
+  mounted(){
+    document.getElementsByClassName("el-pagination__jump")[0].childNodes[0].nodeValue = "跳至"
   },
   methods: {
     handleSizeChange(val) {

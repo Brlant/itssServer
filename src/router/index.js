@@ -41,9 +41,14 @@ export const constantRoutes = [
       }
     ]
   },
+  // {
+  //   path: '/login',
+  //   component: () => import('@/views/login'),
+  //   hidden: true
+  // },
   {
     path: '/login',
-    component: () => import('@/views/login'),
+    component: () => import('@/views/login/index'),
     hidden: true
   },
   {
@@ -96,7 +101,7 @@ export const dynamicRoutes = [
     path: '/system/user-auth',
     component: Layout,
     hidden: true,
-    permissions: ['system:user:edit'],
+    permissions: ['system:user:list'],
     children: [
       {
         path: 'role/:userId(\\d+)',
@@ -107,17 +112,65 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/system/unit-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:unit:list'],
+    children: [
+      {
+        path: 'unitAdd',
+        component: () => import('@/views/system/unit/unitAdd'),
+        name: 'unitAdd',
+        meta: { title: '新增单位', activeMenu: '/system/unit' }
+      },
+      {
+        path: 'unitDetail',
+        component: () => import('@/views/system/unit/unitDetail'),
+        name: 'unitDetail',
+        meta: { title: '单位详情', activeMenu: '/system/unit' }
+      },
+    ]
+  },
+  {
     path: '/system/role-auth',
     component: Layout,
     hidden: true,
-    permissions: ['system:role:edit'],
+    permissions: ['system:role:list'],
     children: [
       {
         path: 'user/:roleId(\\d+)',
         component: () => import('@/views/system/role/authUser'),
         name: 'AuthUser',
         meta: { title: '分配用户', activeMenu: '/system/role' }
-      }
+      },
+      {
+        path: 'roleAdd',
+        component: () => import('@/views/system/role/roleAdd'),
+        name: 'roleAdd',
+        meta: { title: '新增角色', activeMenu: '/system/role' }
+      },
+      {
+        path: 'roleDetail',
+        component: () => import('@/views/system/role/roleDetail'),
+        name: 'roleDetail',
+        meta: { title: '查看角色', activeMenu: '/system/role' }
+      },
+      {
+        path: 'roleEdit',
+        component: () => import('@/views/system/role/roleEdit'),
+        name: 'roleEdit',
+        // beforeEnter: (to, from, next) => {
+        //   if (to.query.isAdd == 'edit') {
+        //     to.meta.title = '编辑角色'
+        //   } else if (to.query.isAdd == 'add') {
+        //     to.meta.title = '新增角色'
+        //   } else {
+        //     to.meta.title = '查看角色'
+        //   }
+        //   next()
+        // },
+        meta: { title: '编辑角色', activeMenu: '/system/role' }
+      },
     ]
   },
   {
@@ -134,20 +187,62 @@ export const dynamicRoutes = [
       }
     ]
   },
-  // {
-  //   path: '/monitor/job-log',
-  //   component: Layout,
-  //   hidden: true,
-  //   permissions: ['monitor:job:list'],
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/monitor/job/log'),
-  //       name: 'JobLog',
-  //       meta: { title: '调度日志', activeMenu: '/monitor/job' }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/system/carrier-data',
+    component: Layout,
+    hidden: true,
+    permissions: ['carrier:carrier:list'],
+    children: [
+      {
+        path: 'index/:dictId(\\d+)',
+        component: () => import('@/views/system/dict/data'),
+        name: 'carrier',
+        meta: { title: '第三方承运商', activeMenu: '/system/carrier' }
+      }
+    ]
+  },
+  {
+    path: '/schedule/dispatch-data',
+    component: Layout,
+    hidden: true,
+    permissions: ['control:rule:list'],
+    children: [
+      {
+        path: 'index/:dictId(\\d+)',
+        component: () => import('@/views/system/dict/data'),
+        name: 'dispatch',
+        meta: { title: '调度规则', activeMenu: '/schedule/dispatch' }
+      }
+    ]
+  },
+  {
+    path: '/document/order-data',
+    component: Layout,
+    hidden: true,
+    permissions: ['tdp:order:list','system:unit:list'],
+    children: [
+      // {
+      //   path: 'index/:dictId(\\d+)',
+      //   component: () => import('@/views/system/dict/data'),
+      //   name: 'Data',
+      //   meta: { title: '订单管理', activeMenu: '/document/order' }
+      // }
+    ]
+  },
+  {
+    path: '/monitor/job-log',
+    component: Layout,
+    hidden: true,
+    permissions: ['monitor:job:list'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/monitor/job/log'),
+        name: 'JobLog',
+        meta: { title: '调度日志', activeMenu: '/monitor/job' }
+      }
+    ]
+  },
   {
     path: '/tool/gen-edit',
     component: Layout,
@@ -170,8 +265,9 @@ Router.prototype.push = function push(location) {
   return routerPush.call(this, location).catch(err => err)
 }
 
+
 export default new Router({
-  mode: 'hash', // 去掉url中的#
+  mode: 'hash', //
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

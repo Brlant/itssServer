@@ -56,6 +56,7 @@ export default {
         if (valid) {
           updateUserPwd(this.user.oldPassword, this.user.newPassword).then(response => {
             this.$modal.msgSuccess("修改成功");
+            this.$store.dispatch('GetInfo') // 修改密码成功后，更新个人信息
           });
         }
       });

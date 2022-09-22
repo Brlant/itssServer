@@ -160,7 +160,6 @@ export function handleTree(data, id, parentId, children) {
     parentId: parentId || 'parentId',
     childrenList: children || 'children'
   };
-
   var childrenListMap = {};
   var nodeIds = {};
   var tree = [];
@@ -198,6 +197,61 @@ export function handleTree(data, id, parentId, children) {
   return tree;
 }
 
+/**
+ * 构造穿梭框树型结构数据
+ * @param {*} data 数据源
+ * @param {*} id id字段 默认 'id'
+ * @param {*} label label字段 默认 name
+ * @param {*} parentId 父节点字段 默认 'parentId'
+ * @param {*} children 孩子节点字段 默认 'children'
+ */
+ export function handleTree2(data, id, parentId, children) {
+  let config = {
+    id: data.menuId || 'id',
+    label:data.menuName|| 'label',
+    pid: data.parentId || 'parentId',
+    children: children || 'children'
+  };
+
+  var childrenListMap = {};
+  var nodeIds = {};
+  var tree = [];
+  for(let i in data){
+    data[i].id = data[i].menuId
+  }
+  
+  for (let d of data) {
+    let parentId = d[config.pid];
+    if (childrenListMap[parentId] == null) {
+      childrenListMap[parentId] = [];
+    }
+    nodeIds[d[config.id]] = d;
+    childrenListMap[parentId].push(d);
+  }
+
+  for (let d of data) {
+    let parentId = d[config.pid];
+    if (nodeIds[parentId] == null) {
+      tree.push(d);
+    }
+  }
+
+  for (let t of tree) {
+    adaptToChildrenList(t);
+  }
+
+  function adaptToChildrenList(o) {
+    if (childrenListMap[o[config.id]] !== null) {
+      o[config.children] = childrenListMap[o[config.id]];
+    }
+    if (o[config.children]) {
+      for (let c of o[config.children]) {
+        adaptToChildrenList(c);
+      }
+    }
+  }
+  return tree;
+}
 /**
 * 参数处理
 * @param {*} params  参数

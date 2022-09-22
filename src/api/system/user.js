@@ -13,7 +13,7 @@ export function listUser(query) {
 // 查询用户详细
 export function getUser(userId) {
   return request({
-    url: '/system/user/' + parseStrEmpty(userId),
+    url: `/system/user/${userId}`,
     method: 'get'
   })
 }
@@ -58,15 +58,10 @@ export function resetUserPwd(userId, password) {
 }
 
 // 用户状态修改
-export function changeUserStatus(userId, status) {
-  const data = {
-    userId,
-    status
-  }
+export function changeUserStatus(data) {
   return request({
-    url: '/system/user/changeStatus',
-    method: 'put',
-    data: data
+    url: `/system/user/batchUpdateStatus?userIds=${data.userIds}&userStatus=${data.userStatus}`,
+    method: 'put'
   })
 }
 
@@ -123,5 +118,13 @@ export function updateAuthRole(data) {
     url: '/system/user/authRole',
     method: 'put',
     params: data
+  })
+}
+
+// 查询部门下拉树结构
+export function deptTreeSelect() {
+  return request({
+    url: '/system/user/deptTree',
+    method: 'get'
   })
 }

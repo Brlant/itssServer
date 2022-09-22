@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: '新ITSS平台',
+      title: '若依管理系统',
       logo: logoImg
     }
   }

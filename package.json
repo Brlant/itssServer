@@ -1,14 +1,15 @@
 {
   "name": "tdp",
-  "version": "1.0.0",
-  "description": "新ITSS平台",
-  "author": "gksw",
+  "version": "0.0.1",
+  "description": "运输调度平台",
+  "author": "",
   "license": "MIT",
   "scripts": {
-    "dev": "vue-cli-service serve",
     "serve": "vue-cli-service serve",
+    "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",
+    "build:dev": "vue-cli-service build --mode development",
     "preview": "node build/index.js --preview",
     "lint": "eslint --ext .js,.vue src"
   },
@@ -34,7 +35,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/y_project/RuoYi-Cloud.git"
+    "url": "http://gitlab.sinopharm-bio.com/platform-product/tdp/tdp-web.git"
   },
   "dependencies": {
     "@riophae/vue-treeselect": "0.4.0",
@@ -42,7 +43,8 @@
     "clipboard": "2.0.8",
     "core-js": "3.19.1",
     "echarts": "4.9.0",
-    "element-ui": "2.15.9",
+    "el-tree-transfer": "^2.4.7",
+    "element-ui": "2.15.8",
     "file-saver": "2.0.5",
     "fuse.js": "6.4.3",
     "highlight.js": "9.18.5",

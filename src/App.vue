@@ -17,3 +17,12 @@ export default  {
     }
 }
 </script>
+<style scoped>
+#app{
+  background: #EFF1F5;
+  width: 100%;
+  height: 100%;
+  /* margin-top: 10px; */
+  padding: 0;
+}
+</style>

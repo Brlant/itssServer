@@ -11,6 +11,11 @@ NProgress.configure({ showSpinner: false })
 const whiteList = ['/login', '/auth-redirect', '/bind', '/register']
 
 router.beforeEach((to, from, next) => {
+  // 是否需要修改密码
+  if(store.state.user.updatePassFlag && to.path != '/user/profile'){
+    Message.warning('请先修密码')
+    return
+  }
   NProgress.start()
   if (getToken()) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
@@ -32,7 +37,7 @@ router.beforeEach((to, from, next) => {
         }).catch(err => {
             store.dispatch('LogOut').then(() => {
               Message.error(err)
-              next({ path: '/' })
+              next({ path: '/login' })
             })
           })
       } else {

@@ -1,8 +1,10 @@
 import Cookies from 'js-cookie'
+import user from '../store/modules/user'
 
 const TokenKey = 'Admin-Token'
 
 const ExpiresInKey = 'Admin-Expires-In'
+
 
 export function getToken() {
   return Cookies.get(TokenKey)
@@ -14,6 +16,18 @@ export function setToken(token) {
 
 export function removeToken() {
   return Cookies.remove(TokenKey)
+}
+
+export function getUserKey() {
+  return Cookies.get('User')
+}
+
+export function setUserKey(user) {
+  return Cookies.set('User', JSON.stringify(user))
+}
+
+export function removeUserKey() {
+  return Cookies.remove('User')
 }
 
 export function getExpiresIn() {

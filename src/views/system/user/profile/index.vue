@@ -49,7 +49,7 @@
               <userInfo :user="user" />
             </el-tab-pane>
             <el-tab-pane label="修改密码" name="resetPwd">
-              <resetPwd :user="user" />
+              <resetPwd />
             </el-tab-pane>
           </el-tabs>
         </el-card>
@@ -77,6 +77,11 @@ export default {
   },
   created() {
     this.getUser();
+  },
+  mounted(){
+    if(this.$route.query.type && this.$route.query.type == 'resetPwd'){
+       this.activeTab = 'resetPwd'
+    }
   },
   methods: {
     getUser() {

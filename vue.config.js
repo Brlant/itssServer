@@ -9,7 +9,14 @@ const CompressionPlugin = require('compression-webpack-plugin')
 
 const name = process.env.VUE_APP_TITLE || '新ITSS平台' // 网页标题
 
-const port = process.env.port || process.env.npm_config_port || 8089 // 端口
+const port = process.env.port || process.env.npm_config_port || 80 // 端口
+
+const targets = {
+  dev:'http://192.168.1.113/tdp',
+  yj:'http://192.168.5.111:8080',
+  lxr:'http://192.168.5.10:8080',
+  xwc:'http://192.168.5.213:8080'
+}
 
 // vue.config.js 配置说明
 //官方vue.config.js 参考文档 https://cli.vuejs.org/zh/config/#css-loaderoptions
@@ -40,50 +47,17 @@ module.exports = {
     open: true,
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
-      // [process.env.VUE_APP_BASE_API]: {
-      '/itss':{
+      [process.env.VUE_APP_BASE_API]: {
+        // target: 'http://192.168.1.113/tdp', // 本地测试
         target: `http://192.168.1.112:8080/`,
         changeOrigin: true,
+        logLevel:"debug",
         pathRewrite: {
           '^/api': '/'
+          // ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       }
     },
-    // proxy: {
-    //   '/sys': {
-    //     target: 'http://192.168.1.112:8089/',
-    //     changeOrigin: true,
-    //     logLevel:"debug",
-    //     pathRewrite: {
-    //       '^/api': '/'
-    //     }
-    //   },
-    //   '/time': {
-    //     target: 'http://192.168.1.112:8089/',
-    //     changeOrigin: true,
-    //     logLevel:"debug",
-    //     pathRewrite: {
-    //       '^/api': '/'
-    //     }
-    //   },
-    //   '/asset': {
-    //     target: 'http://192.168.1.112:8089/',
-    //     changeOrigin: true,
-    //     logLevel:"debug",
-    //     pathRewrite: {
-    //       '^/api': '/'
-    //     }
-    //   },
-    //   '/flow': {
-    //     target: 'http://192.168.1.112:8089/',
-    //     changeOrigin: true,
-    //     logLevel:"debug",
-    //     pathRewrite: {
-    //       '^/api': '/'
-    //     }
-    //   }
-    // },
-
     disableHostCheck: true
   },
   css: {

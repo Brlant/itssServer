@@ -1,42 +1,23 @@
 <template>
   <div class="navbar">
+    <!-- 展开菜单 -->
     <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav"/>
-    <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav"/>
-
+    <!-- <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav"/> -->
+    <!-- <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav"/> -->
     <div class="right-menu">
-      <template v-if="device!=='mobile'">
-        <search id="header-search" class="right-menu-item" />
-        
-        <el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-        <el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
-
-        <el-tooltip content="布局大小" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-      </template>
-
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar" class="user-avatar">
+          <div class="user-name">{{userName}}</div>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/user/profile">
-            <el-dropdown-item>个人中心</el-dropdown-item>
-          </router-link>
-          <el-dropdown-item @click.native="setting = true">
+          <!-- <router-link to="/user/profile"> -->
+            <el-dropdown-item @click.native="personal"><span>个人中心</span></el-dropdown-item>
+          <!-- </router-link> -->
+          <!-- <el-dropdown-item @click.native="setting = true">
             <span>布局设置</span>
-          </el-dropdown-item>
+          </el-dropdown-item> -->
           <el-dropdown-item divided @click.native="logout">
             <span>退出登录</span>
           </el-dropdown-item>
@@ -47,6 +28,7 @@
 </template>
 
 <script>
+import Cookies from "js-cookie";
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import TopNav from '@/components/TopNav'
@@ -89,6 +71,9 @@ export default {
       get() {
         return this.$store.state.settings.topNav
       }
+    },
+    userName(){
+      return Cookies.get("username");
     }
   },
   methods: {
@@ -102,9 +87,12 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
-          location.href = '/index';
+          this.$router.push('/login');
         })
       }).catch(() => {});
+    },
+    personal(){
+      this.$router.push({path:'/user/profile'})
     }
   }
 }
@@ -113,10 +101,15 @@ export default {
 <style lang="scss" scoped>
 .navbar {
   height: 50px;
-  overflow: hidden;
-  position: relative;
+  //overflow: hidden;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  // position: fixed;
+  // top: 0;
+  // left: 0;
+  // z-index: 999;
+  // width: 100vw;
+
 
   .hamburger-container {
     line-height: 46px;
@@ -156,7 +149,7 @@ export default {
 
     .right-menu-item {
       display: inline-block;
-      padding: 0 8px;
+      padding: 0 18px;
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
@@ -173,25 +166,30 @@ export default {
     }
 
     .avatar-container {
-      margin-right: 30px;
-
+      // margin-right: 30px;
+      font-size: 12px;
       .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
-
+        // margin-top: 5px;
+        // position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
         }
+        .user-name{
+          display: inline-block;
+          font-size: 14px;
+          margin: 0 5px;
+          // width: 60px;
 
+        }
         .el-icon-caret-bottom {
+          display: block;
           cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
         }
       }
     }

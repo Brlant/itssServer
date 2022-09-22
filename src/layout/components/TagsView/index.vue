@@ -1,5 +1,6 @@
 <template>
   <div id="tags-view-container" class="tags-view-container">
+    
     <scroll-pane ref="scrollPane" class="tags-view-wrapper" @scroll="handleScroll">
       <router-link
         v-for="tag in visitedViews"
@@ -52,6 +53,9 @@ export default {
     },
     theme() {
       return this.$store.state.settings.theme;
+    },
+    updatePassFlag(){
+      return this.$store.state.user.updatePassFlag;
     }
   },
   watch: {
@@ -133,6 +137,9 @@ export default {
       const { name } = this.$route
       if (name) {
         this.$store.dispatch('tagsView/addView', this.$route)
+        if (this.$route.meta.link) {
+          this.$store.dispatch('tagsView/addIframeView', this.$route)
+        }
       }
       return false
     },
@@ -153,8 +160,16 @@ export default {
     },
     refreshSelectedTag(view) {
       this.$tab.refreshPage(view);
+      if (this.$route.meta.link) {
+        this.$store.dispatch('tagsView/delIframeView', this.$route)
+      }
     },
     closeSelectedTag(view) {
+      // 需要修改密码，未修改密码时无法关闭修改密码页面
+      if(this.updatePassFlag && view.path == '/user/profile'){
+        this.$message.warning('请先修改密码')
+        return
+      }
       this.$tab.closePage(view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
           this.toLastView(visitedViews, view)
@@ -209,7 +224,7 @@ export default {
       const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
       const offsetWidth = this.$el.offsetWidth // container width
       const maxLeft = offsetWidth - menuMinWidth // left boundary
-      const left = e.clientX - offsetLeft + 15 // 15: margin right
+      const left = e.clientX - offsetLeft + 10 // 15: margin right
 
       if (left > maxLeft) {
         this.left = maxLeft
@@ -217,7 +232,7 @@ export default {
         this.left = left
       }
 
-      this.top = e.clientY
+      this.top = e.clientY - 20
       this.visible = true
       this.selectedTag = tag
     },
@@ -233,11 +248,14 @@ export default {
 
 <style lang="scss" scoped>
 .tags-view-container {
+  // margin-top: 50px;
+  margin: 5px 0;
   height: 34px;
+  line-height: 34px;
   width: 100%;
-  background: #fff;
-  border-bottom: 1px solid #d8dce5;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
+  background: #EFF1F5;
+  //border-bottom: 1px solid #d8dce5;
+  //box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
   .tags-view-wrapper {
     .tags-view-item {
       display: inline-block;
@@ -246,6 +264,7 @@ export default {
       height: 26px;
       line-height: 26px;
       border: 1px solid #d8dce5;
+      border-radius: 4px;
       color: #495060;
       background: #fff;
       padding: 0 8px;
