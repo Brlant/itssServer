@@ -7,14 +7,20 @@ function resolve(dir) {
 
 const CompressionPlugin = require('compression-webpack-plugin')
 
-const name = process.env.VUE_APP_TITLE || '运输调度平台' // 网页标题
+const name = process.env.VUE_APP_TITLE || '新ITSS平台' // 网页标题
 
-const port = process.env.port || process.env.npm_config_port || 80 // 端口
+const port = process.env.port || process.env.npm_config_port || 8089 // 端口
 
 // vue.config.js 配置说明
 //官方vue.config.js 参考文档 https://cli.vuejs.org/zh/config/#css-loaderoptions
 // 这里只列一部分，具体配置参考文档
 module.exports = {
+  configureWebpack: (config)=>{
+    if(process.env.NODE_ENV === 'production'){
+      // 打包之后，清除console.log日志
+      config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
+    }
+  },
   // 部署生产环境和开发环境下的URL。
   // 默认情况下，Vue CLI 会假设你的应用是被部署在一个域名的根路径上
   // 例如 https://www.ruoyi.vip/。如果应用被部署在一个子路径上，你就需要用这个选项指定这个子路径。例如，如果你的应用被部署在 https://www.ruoyi.vip/admin/，则设置 baseUrl 为 /admin/。
@@ -34,14 +40,50 @@ module.exports = {
     open: true,
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
-      [process.env.VUE_APP_BASE_API]: {
-        target: `http://localhost:8080`,
+      // [process.env.VUE_APP_BASE_API]: {
+      '/sys':{
+        target: `http://192.168.1.112:8089/`,
         changeOrigin: true,
         pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
+          '^/api': '/'
         }
       }
     },
+    // proxy: {
+    //   '/sys': {
+    //     target: 'http://192.168.1.112:8089/',
+    //     changeOrigin: true,
+    //     logLevel:"debug",
+    //     pathRewrite: {
+    //       '^/api': '/'
+    //     }
+    //   },
+    //   '/time': {
+    //     target: 'http://192.168.1.112:8089/',
+    //     changeOrigin: true,
+    //     logLevel:"debug",
+    //     pathRewrite: {
+    //       '^/api': '/'
+    //     }
+    //   },
+    //   '/asset': {
+    //     target: 'http://192.168.1.112:8089/',
+    //     changeOrigin: true,
+    //     logLevel:"debug",
+    //     pathRewrite: {
+    //       '^/api': '/'
+    //     }
+    //   },
+    //   '/flow': {
+    //     target: 'http://192.168.1.112:8089/',
+    //     changeOrigin: true,
+    //     logLevel:"debug",
+    //     pathRewrite: {
+    //       '^/api': '/'
+    //     }
+    //   }
+    // },
+
     disableHostCheck: true
   },
   css: {

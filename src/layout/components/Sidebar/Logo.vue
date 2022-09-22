@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: '运输调度平台',
+      title: '新ITSS平台',
       logo: logoImg
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container home center">
-    <h1 style="font-size: 36px">欢迎使用<strong>运输调度平台</strong></h1>
+    <h1 style="font-size: 36px">欢迎使用<strong>新ITSS平台</strong></h1>
   </div>
 </template>
 

@@ -42,7 +42,7 @@ service.interceptors.request.use(config => {
       data: typeof config.data === 'object' ? JSON.stringify(config.data) : config.data,
       time: new Date().getTime()
     }
-    const sessionObj = cache.session.getJSON('sessionObj')
+    const sessionObj = cache.session.getJSON('sessionObj') //|| {"url":"/auth/login","data":"{\"username\":\"admin\",\"password\":\"admin123\"}","time":1663751275870}
     if (sessionObj === undefined || sessionObj === null || sessionObj === '') {
       cache.session.setJSON('sessionObj', requestObj)
     } else {
