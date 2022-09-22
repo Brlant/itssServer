@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-       <div class="title ml190">运输调度平台</div>
+       <div class="title ml190">新ITSS平台</div>
        <div class="limited ml190">
             <el-form class="login-form" label-position="top" ref="loginForm" label-width="80px" :model="user" :rules="rules"
                         onsubmit="return false">

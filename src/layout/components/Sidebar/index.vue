@@ -1,6 +1,6 @@
 <template>
     <div :class="{'has-logo':showLogo}" :style="{ backgroundColor: settings.sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground }">
-        <div class="project-name" v-show="!isCollapse">运输调度平台</div>
+        <div class="project-name" v-show="!isCollapse">新ITSS平台</div>
         <el-scrollbar :class="settings.sideTheme" wrap-class="scrollbar-wrapper">
             <el-menu
                 :default-active="activeMenu"

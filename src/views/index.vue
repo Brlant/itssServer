@@ -1,5 +1,5 @@
 <template>
-  <div class="tip-show">运输调度平台</div>
+  <div class="tip-show">新ITSS平台</div>
   <!-- <div class="app-container home">
     <el-row :gutter="20">
       <el-col :sm="24" :lg="24">
