@@ -90,7 +90,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="postList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column label="职位编号" align="center" prop="postId" />
       <el-table-column label="区域" align="center" prop="regionName" />
       <el-table-column label="职位名称" align="center" prop="postName" />
