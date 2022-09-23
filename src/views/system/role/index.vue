@@ -148,7 +148,7 @@
             @click="handleToView(scope.row)"
             v-hasPermi="['system:role:query']"
           >查看</span>
-           <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:role:edit']">
+           <!-- <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:role:edit']">
             <span class="el-dropdown-link">
               <i class="el-icon-d-arrow-right el-icon--right"></i>更多
             </span>
@@ -158,7 +158,7 @@
               <el-dropdown-item command="handleAuthUser" icon="el-icon-user"
                 v-hasPermi="['system:role:edit']">分配用户</el-dropdown-item>
             </el-dropdown-menu>
-          </el-dropdown>  
+          </el-dropdown>  -->
         </template>
       </el-table-column>
       <template slot="empty">

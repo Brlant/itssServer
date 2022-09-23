@@ -216,8 +216,14 @@ export default {
         postName: [
           { required: true, message: "职位名称不能为空", trigger: "blur" }
         ],
-        area: [
+        postLevel:[
+          { required: true, message: "职位等级不能为空", trigger: "blur" }
+        ],
+        regionId: [
           { required: true, message: "区域不能为空", trigger: "blur" }
+        ],
+        area:[
+          { required: true, message: "职位名称不能为空", trigger: "blur" }
         ],
         // postSort: [
         //   { required: true, message: "岗位顺序不能为空", trigger: "blur" }
@@ -297,7 +303,13 @@ export default {
       this.reset();
       const postId = row.postId || this.ids
       getPost(postId).then(response => {
+        // // 因为憨批后台返回了一个字符串，
+        // // 导致展示的结果是数字，
+        // // 而字典的类型是int 
+        // // 估有此行代码
+        // response.data.postType = parseInt(response.data.postType)
         this.form = response.data;
+
         this.open = true;
         this.title = "修改职位";
       });

@@ -270,14 +270,17 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="岗位">
-              <el-select v-model="form.postIds"   placeholder="请选择岗位">
+              <el-select v-model="form.postIds" filterable   placeholder="请选择岗位">
                 <el-option
                   v-for="item in postOptions"
                   :key="item.postId"
                   :label="item.postName"
                   :value="item.postId"
                   :disabled="item.status == 1"
-                ></el-option>
+                >
+                  <span style="float: left">{{ item.regionName+'-'+item.postName+'-'+item.postLevel }}</span>
+                 <!-- <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span> -->
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -290,7 +293,8 @@
                   :label="item.roleName"
                   :value="item.roleId"
                   :disabled="item.status == 1"
-                ></el-option>
+                >
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
