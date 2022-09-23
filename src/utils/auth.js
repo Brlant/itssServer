@@ -7,6 +7,7 @@ const ExpiresInKey = 'Admin-Expires-In'
 
 
 export function getToken() {
+  console.log(Cookies.get(TokenKey));
   return Cookies.get(TokenKey)
 }
 

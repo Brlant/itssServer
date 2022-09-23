@@ -9,7 +9,7 @@ const CompressionPlugin = require('compression-webpack-plugin')
 
 const name = process.env.VUE_APP_TITLE || '新ITSS平台' // 网页标题
 
-const port = process.env.port || process.env.npm_config_port || 80 // 端口
+const port = process.env.port || process.env.npm_config_port || 8090 // 端口
 
 const targets = {
   dev:'http://192.168.1.113/tdp',
@@ -47,13 +47,14 @@ module.exports = {
     open: true,
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
-      [process.env.VUE_APP_BASE_API]: {
+     '/itss': {
         // target: 'http://192.168.1.113/tdp', // 本地测试
         target: `http://192.168.1.112:8080/`,
+        // target: `http://192.168.5.144:8080/`,
         changeOrigin: true,
         logLevel:"debug",
         pathRewrite: {
-          '^/api': '/'
+          '^/itss': ''
           // ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       }
