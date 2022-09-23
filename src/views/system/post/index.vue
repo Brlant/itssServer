@@ -1,32 +1,42 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="岗位编码" prop="postCode">
+      <!-- <el-form-item label="职位编码" prop="postCode">
         <el-input
           v-model="queryParams.postCode"
-          placeholder="请输入岗位编码"
+          placeholder="请输入职位编码"
           clearable
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="岗位名称" prop="postName">
+      </el-form-item> -->
+      <el-form-item label="职位名称" prop="postName">
         <el-input
           v-model="queryParams.postName"
-          placeholder="请输入岗位名称"
+          placeholder="请输入职位名称"
           clearable
-          @keyup.enter.native="handleQuery"
+        
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="岗位状态" clearable>
+      <el-form-item label="区域" prop="regionId" v-if='areas.length != 0'>
+          <el-select v-model="queryParams.regionId" placeholder="区域" clearable>
           <el-option
-            v-for="dict in dict.type.sys_normal_disable"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            v-for="dict in areas"
+            :key="dict.dictCode"
+            :label="dict.dictLabel"
+            :value="dict.dictCode"
           />
         </el-select>
-      </el-form-item>
+        </el-form-item>
+         <el-form-item label="职位类型" prop="postType" v-if='typeList.length != 0'>
+         <el-select v-model="queryParams.postType" placeholder="职位类型" clearable>
+          <el-option
+            v-for="dict in typeList"
+            :key="dict.dictCode"
+            :label="dict.dictLabel"
+            :value="dict.dictCode"
+          />
+        </el-select>
+        </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -44,7 +54,7 @@
           v-hasPermi="['system:post:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="success"
           plain
@@ -65,8 +75,8 @@
           @click="handleDelete"
           v-hasPermi="['system:post:remove']"
         >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
+      </el-col> -->
+      <!-- <el-col :span="1.5">
         <el-button
           type="warning"
           plain
@@ -76,25 +86,18 @@
           v-hasPermi="['system:post:export']"
         >导出</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar> -->
     </el-row>
 
     <el-table v-loading="loading" :data="postList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="岗位编号" align="center" prop="postId" />
-      <el-table-column label="岗位编码" align="center" prop="postCode" />
-      <el-table-column label="岗位名称" align="center" prop="postName" />
-      <el-table-column label="岗位排序" align="center" prop="postSort" />
-      <el-table-column label="状态" align="center" prop="status">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="职位编号" align="center" prop="postId" />
+      <el-table-column label="区域" align="center" prop="regionName" />
+      <el-table-column label="职位名称" align="center" prop="postName" />
+      <el-table-column label="等级" align="center" prop="postLevel" />
+      <el-table-column label="成本内部预设（元/天）" align="center" prop="costIn" />
+      <el-table-column label="成本外部预设（元/天）" align="center" prop="costOut" />
+     
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -126,27 +129,41 @@
     <!-- 添加或修改岗位对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="岗位名称" prop="postName">
-          <el-input v-model="form.postName" placeholder="请输入岗位名称" />
+         <el-form-item label="区域" prop="regionId">
+          <el-select v-model="form.regionId" placeholder="区域" clearable>
+          <el-option
+            v-for="dict in areas"
+            :key="dict.dictCode"
+            :label="dict.dictLabel"
+            :value="dict.dictCode"
+          />
+        </el-select>
         </el-form-item>
-        <el-form-item label="岗位编码" prop="postCode">
-          <el-input v-model="form.postCode" placeholder="请输入编码名称" />
+         <el-form-item label="职位类型" prop="postType">
+         <el-select v-model="form.postType" placeholder="职位类型" clearable>
+          <el-option
+            v-for="dict in typeList"
+            :key="dict.dictCode"
+            :label="dict.dictLabel"
+            :value="dict.dictCode"
+          />
+        </el-select>
         </el-form-item>
-        <el-form-item label="岗位顺序" prop="postSort">
-          <el-input-number v-model="form.postSort" controls-position="right" :min="0" />
+        <el-form-item label="职位名称" prop="postName">
+          <el-input v-model="form.postName" placeholder="请输入职位名称" />
         </el-form-item>
-        <el-form-item label="岗位状态" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio
-              v-for="dict in dict.type.sys_normal_disable"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
+        <el-form-item label="等级" prop="postLevel">
+          <el-input v-model="form.postLevel" placeholder="请输入等级" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
+        <el-form-item label="成本预设（内）" prop="costIn">
+         <el-input v-model="form.costIn" placeholder="请输入等级" />
+        </el-form-item>
+        <el-form-item label="成本预设（外）" prop="costOut">
+          <el-input v-model="form.costOut" placeholder="请输入等级" />
+        </el-form-item>
+        <!-- <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -157,7 +174,7 @@
 </template>
 
 <script>
-import { listPost, getPost, delPost, addPost, updatePost } from "@/api/system/post";
+import { listPost, getPost, delPost, addPost, updatePost,areatypePost } from "@/api/system/post";
 
 export default {
   name: "Post",
@@ -190,26 +207,40 @@ export default {
         postName: undefined,
         status: undefined
       },
+      typeList:[{}],
+      areas:[{}],
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         postName: [
-          { required: true, message: "岗位名称不能为空", trigger: "blur" }
+          { required: true, message: "职位名称不能为空", trigger: "blur" }
         ],
-        postCode: [
-          { required: true, message: "岗位编码不能为空", trigger: "blur" }
+        area: [
+          { required: true, message: "区域不能为空", trigger: "blur" }
         ],
-        postSort: [
-          { required: true, message: "岗位顺序不能为空", trigger: "blur" }
-        ]
+        // postSort: [
+        //   { required: true, message: "岗位顺序不能为空", trigger: "blur" }
+        // ]
       }
     };
   },
   created() {
     this.getList();
+    this.positinType('region')
+    this.positinType('post_type')
   },
   methods: {
+    positinType(val){
+      areatypePost(val).then(res=>{
+        if(val=='region'){
+          this.areas=res.data
+        }else if(val=='post_type'){
+          this.typeList=res.data
+        }
+
+      })
+    },
     /** 查询岗位列表 */
     getList() {
       this.loading = true;
@@ -227,13 +258,16 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        postId: undefined,
-        postCode: undefined,
-        postName: undefined,
-        postSort: 0,
-        status: "0",
-        remark: undefined
+        costIn: "",
+        costOut: "",
+        postLevel: "",
+        postName: "",
+        postType: undefined,
+        regionId: undefined,
       };
+      this.form={
+
+      }
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -256,7 +290,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加岗位";
+      this.title = "添加职位";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -265,11 +299,13 @@ export default {
       getPost(postId).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改岗位";
+        this.title = "修改职位";
       });
     },
     /** 提交按钮 */
     submitForm: function() {
+      console.log(this.form)
+      // return 
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.postId != undefined) {

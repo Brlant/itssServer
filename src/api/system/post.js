@@ -42,3 +42,11 @@ export function delPost(postId) {
     method: 'delete'
   })
 }
+//查找区域，职位类型
+export function areatypePost(query) {
+  return request({
+    url: '/system/dict/data/type/'+query,
+    method: 'get',
+    // params: query
+  })
+}
