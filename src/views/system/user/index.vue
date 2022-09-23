@@ -270,7 +270,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="岗位">
-              <el-select v-model="form.postIds" multiple placeholder="请选择岗位">
+              <el-select v-model="form.postIds"   placeholder="请选择岗位">
                 <el-option
                   v-for="item in postOptions"
                   :key="item.postId"
@@ -471,6 +471,7 @@ export default {
     /** 查询用户列表 */
     getList() {
       this.loading = true;
+      console.log(this.addDateRange(this.queryParams, this.dateRange));
       listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
           this.userList = response.rows;
           this.total = response.total;
@@ -580,6 +581,7 @@ export default {
         this.postOptions = response.posts;
         this.roleOptions = response.roles;
         this.form.postIds = response.postIds;
+        this.form.postid = response.postIds;
         this.form.roleIds = response.roleIds;
         this.open = true;
         this.title = "修改用户";
@@ -609,6 +611,7 @@ export default {
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.form.postid = this.form.postIds
           if (this.form.userId != undefined) {
             updateUser(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
