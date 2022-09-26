@@ -41,6 +41,8 @@ import DictData from '@/components/DictData'
 // 文件导入组件 
 import BaseUpload from '@/components/BaseUpload'
 
+import '@/assets/css/component.css'
+
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
@@ -68,6 +70,14 @@ Vue.use(directive)
 Vue.use(plugins)
 Vue.use(VueMeta)
 DictData.install()
+
+import  filters from './utils/filters.js'
+Object.keys(filters).forEach(key => {
+    Vue.filter(key, filters[key])
+	// Object.keys(filters)得到的就是filters.js里面的函数名组成的数组 ['currency'] 因为这里filters.js里面就一个函数所以数组里就只有一个值
+	//filterName 就是通过遍历['currency'] 得到的就是filters.js中的每一个函数名(过滤器名字)
+	//filters[filterName])出发./filter/filters中的某个函数
+})
 
 /**
  * If you don't want to use mock-server
