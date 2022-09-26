@@ -278,7 +278,7 @@
                   :value="item.postId"
                   :disabled="item.status == 1"
                 >
-                  <span style="float: left">{{ item.regionName+'-'+item.postName+'-'+item.postLevel }}</span>
+                  <!-- <span style="float: left">{{ item.regionName+'-'+item.postName+'-'+item.postLevel }}</span> -->
                  <!-- <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span> -->
                 </el-option>
               </el-select>
@@ -568,6 +568,9 @@ export default {
       this.reset();
       this.getTreeselect();
       getUser().then(response => {
+        response.posts.map((item,i)=>{
+          item.postName =  item.regionName+'-'+item.postName+'-'+item.postLevel 
+        })
         this.postOptions = response.posts;
         this.roleOptions = response.roles;
         this.open = true;
@@ -582,10 +585,13 @@ export default {
       const userId = row.userId || this.ids;
       getUser(userId).then(response => {
         this.form = response.data;
+         response.posts.map((item,i)=>{
+          item.postName =  item.regionName+'-'+item.postName+'-'+item.postLevel 
+        })
         this.postOptions = response.posts;
         this.roleOptions = response.roles;
         // this.form.postIds = response.postIds;
-        this.form.postId = response.postId;
+        this.form.postId = response.data.postId;
         this.form.roleIds = response.roleIds;
         this.open = true;
         this.title = "修改用户";
