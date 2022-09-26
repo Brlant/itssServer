@@ -51,3 +51,11 @@ export function areatypePost(query) {
     // params: query
   })
 }
+//下拉菜单的职位遍历
+export function optionSelect() {
+  return request({
+    url: '/system/post/optionselect',
+    method: 'get',
+    // params: query
+  })
+}
