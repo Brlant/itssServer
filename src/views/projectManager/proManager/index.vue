@@ -4,7 +4,9 @@
       <div class="leftTitle">
         项目管理
         <div class="rightBtns">
-          <el-button size="mini" type="primary">新建项目</el-button>
+          <el-button size="mini" type="primary">
+            <router-link :replace='true' :to="'/ProjectManager/AddProject'">新建项目</router-link>
+          </el-button>
 
           <el-button size="mini" type="success">导出Excel</el-button>
         </div>
@@ -54,6 +56,7 @@
         </el-form>
       </div>
     </div>
+    <div class="hr"></div>
     <div class="pageTitle cls">
       <el-table :data="tableData4" show-summary :summary-method="totalOutYear" border style="width: 100%" max-height="650">
         <el-table-column fixed prop="projectName" sortable label="项目" width="150"> </el-table-column>

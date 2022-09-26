@@ -19,7 +19,7 @@ export default  {
 </script>
 <style scoped>
 #app{
-  background: #EFF1F5;
+  background: #E8E8F4;
   width: 100%;
   height: 100%;
   /* margin-top: 10px; */

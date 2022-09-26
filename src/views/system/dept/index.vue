@@ -121,7 +121,21 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="负责人" prop="leader">
-              <el-input v-model="form.leader" placeholder="请输入负责人" maxlength="20" />
+              <!-- <el-input v-model="form.leader" placeholder="请输入负责人" maxlength="20" /> -->
+                 <el-select
+                  v-model="form.leader"
+                  placeholder="请选择负责人"
+                  filterable 
+                  clearable
+                >
+              <el-option
+                v-for="user in userlist"
+                :key="user.userId"
+                :label="user.userName"
+                :value="user.userId"
+              />
+            </el-select>
+              <!-- <el-input v-model="form.leader" placeholder="请输入负责人" maxlength="20" /> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -159,6 +173,8 @@
 
 <script>
 import { listDept, getDept, delDept, addDept, updateDept, listDeptExcludeChild } from "@/api/system/dept";
+import { queryUserlist } from "@/api/system/user";
+
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
@@ -168,6 +184,8 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      // 负责人列表
+      userlist:[],
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -221,8 +239,17 @@ export default {
   },
   created() {
     this.getList();
+    // 查询用户列表
+    this.getUserList()
   },
   methods: {
+    /* 查询用户列表 */
+    getUserList(){
+      queryUserlist().then(res=>{
+        console.log(res.data);
+        this.userlist = res.data
+      })
+    },
     /** 查询部门列表 */
     getList() {
       this.loading = true;
