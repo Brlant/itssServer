@@ -42,6 +42,11 @@ import DictData from '@/components/DictData'
 import BaseUpload from '@/components/BaseUpload'
 
 import '@/assets/css/component.css'
+import Moment from 'moment'
+
+
+
+
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
@@ -54,6 +59,7 @@ Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
 Vue.prototype.handleTree2 = handleTree2
+Vue.prototype.monent = Moment
 
 // 全局组件挂载
 Vue.component('DictTag', DictTag)
