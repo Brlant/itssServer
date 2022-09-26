@@ -1,15 +1,24 @@
+{{#if template}}
 <template>
-  <div class="app-container">
-    
+ <div class="app-container">
+    {{ properCase name }}
   </div>
 </template>
+{{/if}}
+
+{{#if script}}
 <script>
 export default {
-  data() {
-    return {
-       
-    }
+  name: '{{ properCase name }}',
+  components: {
   },
+  props: {
+  },
+  data: () => ({
+  }),
+  computed: {},
+  watch: {},
+  created() {},
   mounted() {
     
   }, 
@@ -24,11 +33,16 @@ export default {
   beforeDestroy() {
     document.querySelector("body,html").removeAttribute("style")
   },
-}
+};
 </script>
-<style scoped>
+{{/if}}
+
+{{#if style}}
+<style lang="less" scoped>
 .app-container{
   padding: 0;
 }
  
 </style>
+{{/if}}
+ 

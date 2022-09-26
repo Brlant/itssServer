@@ -10,9 +10,7 @@ export default {
        
     }
   },
-  mounted() {
-    
-  }, 
+   
   methods: {
     
   },
