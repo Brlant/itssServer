@@ -270,7 +270,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="岗位">
-              <el-select v-model="form.postIds" filterable   placeholder="请选择岗位">
+              <el-select v-model="form.postId" filterable   placeholder="请选择岗位">
                 <el-option
                   v-for="item in postOptions"
                   :key="item.postId"
@@ -528,7 +528,7 @@ export default {
         sex: undefined,
         status: "0",
         remark: undefined,
-        postIds: [],
+        postId: [],
         roleIds: []
       };
       this.resetForm("form");
@@ -584,8 +584,8 @@ export default {
         this.form = response.data;
         this.postOptions = response.posts;
         this.roleOptions = response.roles;
-        this.form.postIds = response.postIds;
-        this.form.postid = response.postIds;
+        // this.form.postIds = response.postIds;
+        this.form.postId = response.postId;
         this.form.roleIds = response.roleIds;
         this.open = true;
         this.title = "修改用户";
@@ -615,7 +615,8 @@ export default {
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          this.form.postid = this.form.postIds
+          // this.form.postid = this.form.postIds
+          // delete this.form.postIds
           if (this.form.userId != undefined) {
             updateUser(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
