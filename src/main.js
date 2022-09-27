@@ -19,6 +19,7 @@ import './permission' // permission control
 import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
 import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, handleTree,handleTree2 } from "@/utils/ruoyi";
+import { deepClone } from "@/utils/index";
 // 分页组件
 import Pagination from "@/components/Pagination";
 // 自定义表格工具组件
@@ -48,7 +49,9 @@ import Moment from 'moment'
 
 
 
+
 // 全局方法挂载
+Vue.prototype.deepClone = deepClone
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
 Vue.prototype.parseTime = parseTime
