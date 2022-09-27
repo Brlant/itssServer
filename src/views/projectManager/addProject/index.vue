@@ -487,7 +487,7 @@ export default {
           this.formData.projectUserList[index].stratTime = dates[0]
           this.formData.projectUserList[index].endTime =dates[1]
           this.formData.projectUserList[index].expectedCost = "未知"
-          this.formData.projectUserList[index].planLoad = "未知"
+          this.formData.projectUserList[index].planLoad = (8*res.data.day)/(res.data.day*8)
           res.data.list.map(item=>{
             item.startTime = item.startDate
             item.endTime = item.endDate
