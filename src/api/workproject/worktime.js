@@ -2,7 +2,7 @@ import request from '@/utils/request'
 //查询工时
 export function queryTime(query) {
     return request({
-      url: '/project/time-track/list',
+      url: '/timetrack/time-track/list',
       method: 'get',
       params: query
     })
@@ -24,7 +24,7 @@ export function queryTime(query) {
   //添加工时
   export function addworkingHour(data) {
     return request({
-      url: '/project/time-track',
+      url: '/timetrack/time-track',
       method: 'post',
       data: data
     })
@@ -32,7 +32,7 @@ export function queryTime(query) {
   //编辑工时
 export function editworkingHour(data) {
     return request({
-        url: '/project/time-track',
+        url: '/timetrack/time-track',
         method: 'put',
         data: data
     })
@@ -40,14 +40,14 @@ export function editworkingHour(data) {
 //删除工时
 export function delHour(trackid) {
     return request({
-      url: '/project/time-track/' + trackid,
+      url: '/timetrack/time-track/' + trackid,
       method: 'delete'
     })
   }
   //获取已填报工时的日期
   export function queryDate(query) {
     return request({
-      url: '/project/time-track/listFilledDateFromCheckedMonth',
+      url: '/timetrack/time-track/listFilledDateFromCheckedMonth',
       method: 'get',
       params: query
     })

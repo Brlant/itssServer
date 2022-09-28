@@ -1,9 +1,6 @@
 <template>
   <div class="">
     <div style="padding: 10px">
-      <!-- <span style="color: #8492a6;">选择日期: </span> -->
-      <!-- <i class="el-icon-date"></i> -->
-      <!-- <span @click="watch">查看日历</span> -->
       <el-date-picker
         v-model="selectTime"
         type="date"
@@ -37,10 +34,13 @@
         </div>
       </div>
       <div class="plan-title">
-        <span>当日排期计划：<span v-for='(item,index) in plan' :key='index'>
-          {{item.projectName}}{{`(${item.currentDayScheduleTime}h)`}},总体<span style="color:#00A99D" v-if='item.currentProjectTotalWorkTime*1-item.currentDayScheduleTime>=0'>-{{item.currentProjectTotalWorkTime}}小时</span>
-          <span  v-if='item.currentProjectTotalWorkTime*1-item.currentDayScheduleTime<0' style="color:#FF435A">+{{item.currentProjectTotalWorkTime}}小时</span><span v-show="index < plan.length - 1">;</span>
+        <span>当日排期计划：
+          <span v-if="plan.length != 0"><span v-for='(item,index) in plan' :key='index'>
+          {{item.projectName}}{{`(${item.currentDayScheduleTime}h)`}},总体<span v-if='item.currentProjectTotalWorkTime*1-item.currentProjectScheduleTime<0'><span style="color:#00A99D">-{{item.currentProjectTotalWorkTime}}</span><span>小时</span></span>
+          <span  v-if='item.currentProjectTotalWorkTime*1-item.currentProjectScheduleTime>=0'><span style="color:#FF435A">+{{item.currentProjectTotalWorkTime}}</span><span>小时</span></span><span v-show="index < plan.length - 1">;</span>
           </span></span>
+          <span v-if="plan.length == 0">无</span>
+          </span>
       </div>
     </div>
     <div class="submitted-time">
@@ -85,12 +85,8 @@
             </el-row>
           </div>
           <div style="width: 10%; text-align: center">
-            <!-- <div style="margin-bottom:20px;color:#557CB5"  @click="edit(item)" class='editB'>编辑</div> -->
             <div> <el-button class="editBtn" type="text"  @click="edit(item)" :disabled='item.status==1'>编辑</el-button></div>
             <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>
-           
-           
-            <!-- <div style="color:#FF435A">删除</div> -->
           </div>
         </div>
       </div>
@@ -141,7 +137,7 @@
      <div @click='more' v-if="show" class='more'><span>展开显示更多<i class='el-icon-arrow-down'></i></span></div>
     <div v-if='list.length==0' class="not-submitted">尚未提交</div>
      <div style="margin:10px 0">
-      新增工时
+      {{editId==-1 ? '新增' : '编辑'}}工时
     </div>
      <div style="width: 100%">
       
@@ -222,19 +218,13 @@ export default {
     // this.queryProject(defaultTime)
     let defaultDate=moment().format('YYYY-MM')
     this.getMarkDate(defaultDate)
-  
- 
     this.getProject()
-    this.workTypes()
-   
-
-    
+    this.workTypes()  
   },
 
   methods: {
     //工作类型
     workTypes(){
-  
       workType('work_type').then(res=>{
         this.workName=res.data
       })
@@ -257,25 +247,20 @@ export default {
     },
     //获取工时
     queryProject(time){
-      let data={
-        workDate:time
-      }
+      let data={workDate:time}
       queryTime(data).then(res=>{
-        this.data=res.data
+          this.data=res.data
           this.list=res.data.currentDayTimeTrackList
           this.plan=res.data.projectScheduleTimeList
           if(this.list.length>2){
             this.show=true
             this.listOne=this.list.filter((item,index)=>{
                 return index<2
-            })
-     
-          }else{
-          
+            })     
+          }else{          
           this.show=false
-          this.listOne= this.list
-         
-        }
+          this.listOne= this.list        
+        }        
       })
     },
    async addEvent() {
@@ -379,11 +364,8 @@ export default {
     },
     onTabClick(tab, event) {
       if (this.n === tab) return;
-      this.n = tab;
-   
+      this.n = tab;  
       let time = this.weekList[tab].date;
-    
-     
       this.workDate=moment(time, 'YYYY/M/D').format('YYYY-MM-DD')
        this.queryProject(this.workDate)
       this.pickerChange(new Date(time));
@@ -417,7 +399,6 @@ export default {
         d.setDate(d.getDate() + 1);
       }
     },
-
     weekPre() {
       this.lastWeekStart = moment(this.weekStart, "YYYY/M/D").subtract(7, "days").format("YYYY/M/D");
       this.weekStart = this.lastWeekStart;
@@ -449,8 +430,7 @@ export default {
  
     this.editId=item.trackId
     this.datalist.length=0
-    this.datalist.push(item)
-   
+    this.datalist.push(item) 
   },
   //删除
   del(item){
@@ -504,9 +484,7 @@ export default {
           this.$message.error(res.msg)
         }
       })
-    }
-  
-   
+    } 
   }
   },
  
@@ -583,15 +561,6 @@ span{
   color:#FF435A;
 }
 .custom_date_class {
-  // span {
-  //   background: #ea6151;
-  //   color: red;
-  //   border-radius: 50%;
-  //   color: #fff !important;
-  //   &:hover {
-  //     background-color: #409eff;
-  //   }
-  // }
   &::after {
     content: "";
     width:4px;
