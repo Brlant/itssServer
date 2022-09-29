@@ -395,6 +395,7 @@ export function isNumberStr(str) {
       })
       return obj
     }
+    // 拿到当前月的 1号和最后一天
 export function getMonthStartEnd(type){
   let date=new Date();
   let currentMonth=date.getMonth();
@@ -410,4 +411,13 @@ export function getMonthStartEnd(type){
   }else{
       return endTime
   }
+}
+// 判断 此人是否有此权限  返回 true false
+export function isJurisdiction(...roleStrs) {
+  const rols = JSON.parse(window.localStorage.getItem("roles"))?JSON.parse(window.localStorage.getItem("roles")):[]
+  let result = false
+  roleStrs.forEach((rol) => {
+    if (rols.includes(rol)) result = true
+  })
+  return result
 }

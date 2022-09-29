@@ -55,9 +55,9 @@
                   >
                     <el-option
                       v-for="(dict, index) in projectStageOptions"
-                      :key="dict.dictValue"
+                      :key="dict.dictCode"
                       :label="dict.dictLabel"
-                      :value="dict.dictValue"
+                      :value="dict.dictCode"
                       :disabled="dict.disabled"
                     ></el-option>
                   </el-select>
@@ -74,9 +74,9 @@
                   >
                     <el-option
                       v-for="(dict, index) in projectTypeOptions"
-                      :key="dict.dictValue"
+                      :key="dict.dictCode"
                       :label="dict.dictLabel"
-                      :value="dict.dictValue"
+                      :value="dict.dictCode"
                       :disabled="dict.disabled"
                     ></el-option>
                   </el-select>
@@ -132,9 +132,9 @@
                   >
                     <el-option
                       v-for="(dict, index) in projectServiceOptions"
-                      :key="dict.dictValue"
+                      :key="dict.dictCode"
                       :label="dict.dictLabel"
-                      :value="dict.dictValue"
+                      :value="dict.dictCode"
                       :disabled="dict.disabled"
                     ></el-option>
                   </el-select>
@@ -308,7 +308,7 @@ import { queryUserlist } from "@/api/system/user";
 import {
   getTimeProcess,
   queryDict,
-  addProjectList,
+  addProjectList,searchProjectList
 } from "@/api/proManager/proManager";
 
 export default {
@@ -494,8 +494,7 @@ export default {
       },
       projectStageOptions: [],
       projectTypeOptions: [],
-      priorityOptions: [
-        {
+      priorityOptions: [   {
           label: "最高",
           value: 1,
         },
@@ -510,8 +509,7 @@ export default {
         {
           label: "较低",
           value: 4,
-        },
-      ],
+        },],
       projectUserIdOptions: [],
       projectServiceOptions: [],
       projectChanceOptions: [{
@@ -530,6 +528,9 @@ export default {
     this.getDictList("project_phase"); // 项目阶段 project_phase
     this.getDictList("project_type"); // 项目类型 project_type
     this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
+    // this.getDictList("project_priority"); // 项目优先级
+
+    
     // 页面默认点击一下  添加成员
     // this.addUserListHandel()
     
@@ -558,6 +559,7 @@ export default {
             totalDay += parseFloat(item.day * item.workTime);
           }
           totalTime += parseFloat(item.workTime) * parseFloat(item.day);
+          item.weekDay = item.day
         }
       );
 
@@ -582,11 +584,11 @@ export default {
     },
     /*根据起始和结束 生成下面表格*/
     getTimeArea(dates, index) {
-      let parems = {
+      let params = {
         startDate: dates[0],
         endDate: dates[1],
       };
-      getTimeProcess(parems).then((res) => {
+      getTimeProcess(params).then((res) => {
         console.log(res.data);
         this.formData.projectUserList[index].workDay = res.data.day;
         this.formData.projectUserList[index].workDayTemp = res.data.day;
@@ -608,17 +610,20 @@ export default {
       });
     },
     /*查询字典的接口*/
-    getDictList(dictValue) {
-      queryDict(dictValue).then((res) => {
-        if (dictValue == "project_phase") {
+    getDictList(dictCode) {
+      queryDict(dictCode).then((res) => {
+        if (dictCode == "project_phase") {
           this.projectStageOptions = res.data;
         }
-        if (dictValue == "project_type") {
+        if (dictCode == "project_type") {
           this.projectTypeOptions = res.data;
         }
-        if (dictValue == "serivce_obj_type") {
+        if (dictCode == "serivce_obj_type") {
           this.projectServiceOptions = res.data;
         }
+        // if(dictCode=="project_priority"){
+        //   this.priorityOptions= res.data
+        // }
       });
     },
     /* 查询用户列表 */

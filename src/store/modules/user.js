@@ -69,6 +69,11 @@ const user = {
       // const _router = window.Vue.$router
       return new Promise((resolve, reject) => {
         getInfo().then(res => {
+          window.localStorage.setItem("user",JSON.stringify(res.user))
+          // JSON.parse(window.getItem('queryParam'));
+          // JSON.parse(window.localStorage.getItem("user"))
+          window.localStorage.setItem("permissions",JSON.stringify(res.permissions))
+          window.localStorage.setItem("roles",JSON.stringify(res.roles))
           // 存值 是否修改密码
           if(res && res.updatePassFlag){
             commit('update_PassFlag', res.updatePassFlag)

@@ -23,8 +23,11 @@
                   v-model="searchForm.projectStartEndTime"
                   type="daterange"
                   range-separator="-"
+                  format="yyyy-MM-dd"
+                  value-format="yyyy-MM-dd"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
+                  @change="init()"
                 >
                 </el-date-picker>
               </el-form-item>
@@ -34,6 +37,7 @@
                 <el-select
                   v-model="searchForm.countScope"
                   placeholder="请选择统计范围"
+                  @change="init()"
                 >
                   <el-option
                     v-for="item in countScopeOptions"
@@ -49,6 +53,7 @@
               <el-form-item label="搜索">
                 <el-input
                   v-model="searchForm.projectName"
+                  @change="init()"
                   placeholder="请输入项目名称"
                   clearable
                 ></el-input>
@@ -56,7 +61,11 @@
             </el-col>
             <el-col :span="3">
               <el-form-item label="状态">
-                <el-select v-model="searchForm.projectStatus" placeholder="请选择">
+                <el-select
+                  v-model="searchForm.projectStatus"
+                  @change="init()"
+                  placeholder="请选择"
+                >
                   <el-option
                     v-for="item in projectStatusOptions"
                     :key="item.value"
@@ -72,7 +81,11 @@
             </el-col>
             <el-col :span="3">
               <el-form-item label="优先级">
-                <el-select v-model="searchForm.priority" placeholder="请选择">
+                <el-select
+                  v-model="searchForm.priority"
+                  placeholder="请选择"
+                  @change="init()"
+                >
                   <el-option
                     v-for="item in priorityOptions"
                     :key="item.value"
@@ -127,7 +140,7 @@
           width="120"
         >
           <template slot-scope="scope">
-            {{ scope.row.projectStartTime | formatDate }}
+            {{ scope.row.projectStartTime  }}
           </template>
         </el-table-column>
         <el-table-column
@@ -138,13 +151,11 @@
           width="120"
         >
           <template slot-scope="scope">
-            {{ scope.row.projectEndTime | formatDate }}
+            {{ scope.row.projectEndTime  }}
           </template>
         </el-table-column>
         <el-table-column prop="ysConfig" label="预算配置" width="120">
-          <template slot-scope="scope">
-            {{ scope.row.ysConfig }}人日
-          </template>
+          <template slot-scope="scope"> {{ scope.row.ysConfig }}人日 </template>
         </el-table-column>
         <el-table-column prop="ysCost" label="成本预算" width="120">
           <template slot-scope="scope">
@@ -152,70 +163,38 @@
           </template>
         </el-table-column>
 
-        <el-table-column
-          prop="jhConfig"
-          label="计划配置已用"
-          width="130"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.jhConfig }}人日
-          </template>
+        <el-table-column prop="jhConfig" label="计划配置已用" width="130">
+          <template slot-scope="scope"> {{ scope.row.jhConfig }}人日 </template>
         </el-table-column>
-        <el-table-column
-          prop="jhCost"
-          label="计划预算已用"
-          width="130"
-        >
+        <el-table-column prop="jhCost" label="计划预算已用" width="130">
           <template slot-scope="scope">
             {{ scope.row.jhCost }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="jhSchedule"
-          label="计划当前进度"
-          width="130"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.jhSchedule }}%
-          </template>
+        <el-table-column prop="jhSchedule" label="计划当前进度" width="130">
+          <template slot-scope="scope"> {{ scope.row.jhSchedule }}% </template>
         </el-table-column>
 
-        <el-table-column
-          prop="sjConfig"
-          label="实际配置已用"
-          width="130"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.sjConfig }}人日
-          </template>
+        <el-table-column prop="sjConfig" label="实际配置已用" width="130">
+          <template slot-scope="scope"> {{ scope.row.sjConfig }}人日 </template>
         </el-table-column>
-        <el-table-column
-          prop="sjCost"
-          label="实际预算已用"
-          width="130"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.sjCost }}人日
-          </template>
+        <el-table-column prop="sjCost" label="实际预算已用" width="130">
+          <template slot-scope="scope"> {{ scope.row.sjCost }}人日 </template>
         </el-table-column>
 
-        <el-table-column
-          prop="realWork"
-          label="实际完成工作"
-          width="130"
-        >
+        <el-table-column prop="realWork" label="实际完成工作" width="130">
           <template slot-scope="scope">
             {{ scope.row.realWork }}人日
+            <el-button
+              @click.native.prevent="updateRealWork(scope.$index, scope.row)"
+              type="text"
+              size="mini"
+              >更改</el-button
+            >
           </template>
         </el-table-column>
-        <el-table-column
-          prop="sjSchedule"
-          label="实际当前进度"
-          width="130"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.sjSchedule }}%
-          </template>
+        <el-table-column prop="sjSchedule" label="实际当前进度" width="130">
+          <template slot-scope="scope"> {{ scope.row.sjSchedule }}% </template>
         </el-table-column>
 
         <el-table-column prop="ysDeviation" label="预算偏差" width="130">
@@ -230,141 +209,125 @@
           </template>
         </el-table-column>
         <el-table-column prop="jdSchedule" label="进度偏差" width="130">
-          <template slot-scope="scope">
-            {{ scope.row.jdSchedule }}%
-          </template>
+          <template slot-scope="scope"> {{ scope.row.jdSchedule }}% </template>
         </el-table-column>
 
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
             <el-button
-              @click.native.prevent="deleteRow(scope.$index, tableData4)"
+              @click.native.prevent="detailProject(scope.$index, scope.row)"
               type="text"
               size="small"
             >
               详情
             </el-button>
             <el-button
-              @click.native.prevent="deleteRow(scope.$index, tableData4)"
+              @click.native.prevent="toggleActive(scope.$index, scope.row)"
               type="text"
               size="small"
             >
-              开启
+              <div
+                :class="[scope.row.projectStatus == 4 ? 'color2' : 'color4']"
+              >
+                {{ scope.row.projectStatus == "4" ? "开启" : "终止" }}
+              </div>
             </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!---------弹出层-------------------------------------->
+    <el-dialog :visible.sync="realWorkActive" title="手动记录资源配置"   width="30%">
+      <el-form
+        ref="realForm"
+        :model="realFormData"
+        :rules="realrules"
+        size="medium"
+        label-width="100px"
+      >
+        <el-form-item label="实际使用" prop="realWork">
+          <el-input
+            v-model="realFormData.realWork"
+            placeholder="请输入实际使用"
+            clearable
+            :style="{ width: '100%' }"
+          >
+            <template slot="append">人日</template>
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="realWorkActive = false">取消</el-button>
+        <el-button type="primary" @click="handleConfirm">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import {
-  getTimeProcess,
   queryDict,
-  addProjectList,
   searchProjectList,
+  updateProjectById,
+  updateProjectStatus,
 } from "@/api/proManager/proManager";
 import { getMonthStartEnd } from "@/utils/index";
 export default {
   data() {
-    let startDate = getMonthStartEnd('start')
-    let endDate = getMonthStartEnd('endD')
+    let startDate = getMonthStartEnd("start");
+    let endDate = getMonthStartEnd("endD");
     return {
-      tableData4: [
+      realWorkActive: false,
+      realFormData: {
+        realWork: "",
+      },
+      realrules: {
+        realWork: [
+          {
+            required: true,
+            message: "请输入实际使用",
+            trigger: "blur",
+          },
+        ],
+      },
+      // 弹出层 以上
+      tableData: [],
+      countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
+      projectStatusOptions: [
         {
-          projectName: "调度大屏(内)",
-          projectStatus: "1",
-          endData: "1664177454000",
-          startData: "1664123454000",
-
-          ysConfig: "200",
-          ysCost: "3000.00",
-
-          jhConfig: "50", //计划配置已用
-          jhCost: "50", //计划预算已用
-          jhSchedule: "25.00", //计划当前进度
-
-          sjConfig: "50", //实际配置已用
-          sjCost: "1200.00", //实际预算已用
-
-          realWork: "50", //实际完成工作
-          sjSchedule: "25", // 实际当前进度
-          pianchaActive: 2, // 0 正常 1 盈利 2 亏损
-          ysDeviation: "2000.00",
-          jdSchedule: "24",
+          label: "进行中",
+          value: 1,
         },
         {
-          projectName: "调度大屏(内)",
-          projectStatus: "2",
-          endData: "1664091054000",
-          startData: "1664037054000",
-
-          ysConfig: "200",
-          ysCost: "3000.00",
-
-          jhConfig: "50", //计划配置已用
-          jhCost: "50", //计划预算已用
-          jhSchedule: "25.00", //计划当前进度
-
-          sjConfig: "50", //实际配置已用
-          sjCost: "1200.00", //实际预算已用
-
-          realWork: "50", //实际完成工作
-          sjSchedule: "25", // 实际当前进度
-
-          pianchaActive: 1, // 0 正常 1 盈利 2 亏损
-          ysDeviation: "2000.00",
-          jdSchedule: "24",
+          label: "已结束",
+          value: 2,
         },
         {
-          projectName: "调度大屏(内)",
-          projectStatus: "3",
-          endData: "1664004654000",
-          startData: "1663950654000",
-
-          ysConfig: "200",
-          ysCost: "3000.00",
-
-          jhConfig: "50", //计划配置已用
-          jhCost: "50", //计划预算已用
-          jhSchedule: "25.00", //计划当前进度
-
-          sjConfig: "50", //实际配置已用
-          sjCost: "1200.00", //实际预算已用
-
-          realWork: "50", //实际完成工作
-          sjSchedule: "25", // 实际当前进度
-          pianchaActive: 0, // 0 正常 1 盈利 2 亏损
-          ysDeviation: "2000.00",
-          jdSchedule: "24",
+          label: "未开始",
+          value: 3,
         },
         {
-          projectName: "调度大屏(内)",
-          projectStatus: "4",
-          endData: "1663918254000",
-          startData: "1663864254000",
-
-          ysConfig: "200",
-          ysCost: "3000.00",
-
-          jhConfig: "50", //计划配置已用
-          jhCost: "50", //计划预算已用
-          jhSchedule: "25.00", //计划当前进度
-
-          sjConfig: "50", //实际配置已用
-          sjCost: "1200.00", //实际预算已用
-
-          realWork: "50", //实际完成工作
-          sjSchedule: "25", // 实际当前进度
-          pianchaActive: 0, // 0 正常 1 盈利 2 亏损
-          ysDeviation: "2000.00",
-          jdSchedule: "24",
+          label: "已终止",
+          value: 4,
+        },
+      ], //项目状态（1.进行中，2.已结束，3.未开始，4.已终止）
+      priorityOptions: [
+        {
+          label: "最高",
+          value: 1,
+        },
+        {
+          label: "高",
+          value: 2,
+        },
+        {
+          label: "普通",
+          value: 3,
+        },
+        {
+          label: "较低",
+          value: 4,
         },
       ],
-      tableData: [],
-      countScopeOptions:[],
-      projectStatusOptions:[],
-      priorityOptions:[],
       searchForm: {
         // 项目名称
         projectName: "",
@@ -373,7 +336,7 @@ export default {
         // 优先级（1.最高，2.高，3.普通，4.较低）
         priority: "",
         // 开始和结束时间
-        projectStartEndTime: [startDate,endDate],
+        projectStartEndTime: [startDate, endDate],
         // 项目开始时间
         projectStartTime: startDate,
         // 项目结束时间
@@ -385,14 +348,109 @@ export default {
   },
   mounted() {
     this.init();
+    // 额外的判断 页面初始化 判断用户的角色  isJurisdiction 判断当前的值是否存在 返回true or false
+    // 部门主管 deptdirector  3
+    // 项目主管 projectdirector 2
+    // 项目监管 管理员 projectsupervision || admin ==>  1
+    let deptdirector = this.isJurisdiction("deptdirector"); // 部门主管
+    let projectdirector = this.isJurisdiction("projectdirector"); // 项目主管
+    let projectsupervision = this.isJurisdiction("projectsupervision"); // 项目监管
+    let admin = this.isJurisdiction("admin"); // 管理员
+    let countScopeOptionsTemp = [];
+    if (deptdirector) {
+      // 部门主管
+      // this.countScope = 3
+      countScopeOptionsTemp.push({
+        label: "仅部门成员",
+        value: 3,
+      });
+    }
+    if (projectdirector) {
+      // 项目主管
+      // this.countScope = 2
+      countScopeOptionsTemp.push({
+        label: "仅我负责",
+        value: 2,
+      });
+    }
+
+    if (projectsupervision || admin) {
+      // 项目监管
+      // this.countScope = 1
+      countScopeOptionsTemp.push({
+        label: "全部",
+        value: 1,
+      });
+    }
+    this.countScopeOptions = countScopeOptionsTemp;
   },
   methods: {
+    handleConfirm() {
+      this.$refs["realForm"].validate((valid) => {
+        if (!valid) return;
+        let params = {
+          projectId: this.realFormData.projectId, // 项目id
+          realWork: this.realFormData.realWork, // 人日
+        };
+        updateProjectById(params).then((res) => {
+          console.log(res);
+          let { msg } = res;
+          this.$message.success(msg);
+          this.init();
+        });
+        this.realWorkActive = false;
+      });
+    },
+    /* 实际完成工作的修改 此人的工时 */
+    // 手动记录资源配置
+
+    updateRealWork(index, row) {
+      this.realWorkActive = true;
+
+      this.realFormData = { ...this.realFormData, ...row };
+    },
+    /* 开启或者终止  项目详情 */
+    toggleActive(index, row) {
+      console.log(index, row);
+      let params = {
+        projectId: row.projectId,
+      };
+      updateProjectStatus(params).then((res) => {
+        console.log(res);
+        let { msg } = res;
+        this.$message.success(msg);
+        this.init();
+      });
+    },
+    /* 查看项目详情 */
+    detailProject(index, row) {
+      console.log(index, row);
+    },
+    /*查询字典的接口   暂时没用上*/
+    getDictList(dictCode) {
+      queryDict(dictCode).then((res) => {
+        if (dictCode == "project_phase") {
+          this.projectStageOptions = res.data;
+        }
+        if (dictCode == "project_type") {
+          this.projectTypeOptions = res.data;
+        }
+        if (dictCode == "serivce_obj_type") {
+          this.projectServiceOptions = res.data;
+        }
+        // if(dictCode=="project_priority"){
+        //   this.priorityOptions= res.data
+        // }
+      });
+    },
     init() {
-      // let parems = this.clearNullParam({ ...this.searchParame });
+      // let params = this.clearNullParam({ ...this.searchParame });
+      this.searchForm.projectStartTime = this.searchForm.projectStartEndTime[0];
+      this.searchForm.projectEndTime = this.searchForm.projectStartEndTime[1];
       searchProjectList(this.searchForm).then((res) => {
         let { msg } = res;
         this.tableData = res.data;
-        this.$message.success(msg);
+        // this.$message.success(msg);
       });
     },
     totalOutYear(param) {
@@ -404,7 +462,9 @@ export default {
           sums[index] = "总计";
           return;
         }
-
+        if (index ===2||index ===3) { 
+            sums[index] = "--";
+          } 
         const values = data.map((item) => Number(item[column.property]));
         // 总计核心代码块
         if (!values.every((value) => isNaN(value))) {
@@ -420,18 +480,20 @@ export default {
             column.property == "ysConfig" ||
             column.property == "jhConfig" ||
             column.property == "sjConfig" ||
-            column.property == "jhCost" ||
             column.property == "realWork"
           ) {
             sums[index] += "人日";
-          } else if (
+          } 
+          else if (
             column.property == "ysCost" ||
-            column.property == "shijiyiyong" ||
+            column.property == "jhCost" ||
+            // column.property == "shijiyiyong" ||
             column.property == "sjCost" ||
             column.property == "ysDeviation"
           ) {
             sums[index] += "";
-          } else {
+          } 
+          else {
             sums[index] = "--";
           }
           // 总计核心代码块

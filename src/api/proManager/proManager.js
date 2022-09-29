@@ -26,10 +26,25 @@ export function addProjectList(data){
   })
 }
 // 列表页面 项目管理查询接口
-export function searchProjectList(data){
-  console.log(data);
+export function searchProjectList(data){  
   return request({
     url: '/project/project/list',
+    method: 'post',
+    data: data
+  })
+}
+// 对于项目的开启和终止
+export function updateProjectStatus(query) {
+  return request({
+    url: '/project/project/updateProjectStatus',
+    method: 'get',
+    params: query
+  })
+}
+// 列表页面 实际完成工作修改
+export function updateProjectById(data){  
+  return request({
+    url: '/project/project/updateProjectById',
     method: 'post',
     data: data
   })
