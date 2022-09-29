@@ -14,235 +14,313 @@
     </div>
     <div class="titleBar">项目基础信息</div>
 
-    <div class="whiteBox">
-      <el-form
+    <el-form
         ref="elForm"
         :model="formData"
         :rules="rules"
         size="medium"
         label-width="100px"
       >
-        <el-row>
-          <el-col :span="10" :offset="1">
-            <el-form-item label="项目编号：" prop="projectCode">
-              <el-input
-                v-model="formData.projectCode"
-                placeholder="请输入项目编号："
-                show-word-limit
-                clearable
-                :style="{ width: '100%' }"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10" :offset="1">
-            <el-form-item label="项目名称：" prop="projectName">
-              <el-input
-                v-model="formData.projectName"
-                placeholder="请输入项目名称："
-                clearable
-                :style="{ width: '100%' }"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10" :offset="1">
-            <el-form-item label="项目阶段：" prop="projectStage">
-              <el-input
-                v-model="formData.projectStage"
-                placeholder="请输入项目阶段："
-                clearable
-                :style="{ width: '100%' }"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10" :offset="1">
-            <el-form-item label="项目类型：" prop="projectType">
-              <el-select
-                v-model="formData.projectType"
-                placeholder="请选择项目类型："
-                filterable
-                clearable
-                :style="{ width: '100%' }"
-              >
-                <el-option
-                  v-for="(item, index) in projectTypeOptions"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                  :disabled="item.disabled"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10" :offset="1">
-            <el-form-item label="优先级：" prop="priority">
-              <el-radio-group v-model="formData.priority" size="medium">
-                <el-radio
-                  v-for="(item, index) in priorityOptions"
-                  :key="index"
-                  :label="item.value"
-                  :disabled="item.disabled"
-                  >{{ item.label }}</el-radio
+        <div class="whiteBox">
+            <el-row>
+              <el-col :span="10" :offset="1">
+                <el-form-item label="项目编号：" prop="projectCode">
+                  <el-input
+                    v-model="formData.projectCode"
+                    placeholder="请输入项目编号"
+                    show-word-limit
+                    clearable
+                    :style="{ width: '100%' }"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="10" :offset="1">
+                <el-form-item label="项目名称：" prop="projectName">
+                  <el-input
+                    v-model="formData.projectName"
+                    placeholder="请输入项目名称"
+                    clearable
+                    :style="{ width: '100%' }"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="10" :offset="1">
+                <el-form-item label="项目阶段：" prop="projectStage">
+                  <el-select
+                    v-model="formData.projectStage"
+                    placeholder="请选择项目阶段"
+                    filterable
+                    clearable
+                    :style="{ width: '100%' }"
+                  >
+                    <el-option
+                      v-for="(dict, index) in projectStageOptions"
+                      :key="dict.dictValue"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                      :disabled="dict.disabled"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="10" :offset="1">
+                <el-form-item label="项目类型：" prop="projectType">
+                  <el-select
+                    v-model="formData.projectType"
+                    placeholder="请选择项目类型"
+                    filterable
+                    clearable
+                    :style="{ width: '100%' }"
+                  >
+                    <el-option
+                      v-for="(dict, index) in projectTypeOptions"
+                      :key="dict.dictValue"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                      :disabled="dict.disabled"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="10" :offset="1">
+                <el-form-item label="优先级：" prop="priority">
+                  <el-radio-group v-model="formData.priority" size="medium">
+                    <el-radio
+                      v-for="(item, index) in priorityOptions"
+                      :key="index"
+                      :label="item.value"
+                      :disabled="item.disabled"
+                      >{{ item.label }}</el-radio
+                    >
+                  </el-radio-group>
+                </el-form-item>
+              </el-col>
+              <el-col :span="10" :offset="1">
+                <el-form-item
+                  label="项目负责人"
+                  prop="projectUserId"
+                  style="position: relative"
                 >
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10" :offset="1">
-            <el-form-item
-              label="项目负责人"
-              prop="projectUserId"
-              style="position: relative"
+                  <el-select
+                    v-model="formData.projectUserId"
+                    placeholder="请选择项目负责人"
+                    clearable
+                    :style="{ width: '100%' }"
+                  >
+                    <el-option
+                      v-for="(user, index) in projectUserIdOptions"
+                      :key="user.userId"
+                      :label="user.userName"
+                      :value="user.userId"
+                      :disabled="user.disabled"
+                    ></el-option>
+                  </el-select>
+                  <span class="myTag"
+                    >(负责关联此项目的工时的最终审批；可对关联此项目的工单进行编辑和人员指派)</span
+                  >
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="10" :offset="1">
+                <el-form-item label="服务对象" prop="projectService">
+                  <el-select
+                    v-model="formData.projectService"
+                    placeholder="请选择服务对象"
+                    clearable
+                    :style="{ width: '100%' }"
+                  >
+                    <el-option
+                      v-for="(dict, index) in projectServiceOptions"
+                      :key="dict.dictValue"
+                      :label="dict.dictLabel"
+                      :value="dict.dictValue"
+                      :disabled="dict.disabled"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="10" :offset="1">
+                <el-form-item label="项目有效期" prop="projectTimeArea">
+                  <el-date-picker
+                    type="daterange"
+                    v-model="formData.projectTimeArea"
+                    format="yyyy-MM-dd"
+                    value-format="yyyy-MM-dd"
+                    :style="{ width: '100%' }"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    range-separator="至"
+                    clearable
+                    @change="getProjectTimeArea"
+                  ></el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="10" :offset="1">
+                <el-form-item label="关联机会" prop="projectChance">
+                  <el-select
+                    v-model="formData.projectChance"
+                    placeholder="请选择关联机会"
+                    clearable
+                    :style="{ width: '100%' }"
+                  >
+                    <el-option
+                      v-for="(item, index) in projectChanceOptions"
+                      :key="index"
+                      :label="item.label"
+                      :value="item.value"
+                      :disabled="item.disabled"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          
+        </div>
+        <div class="titleBar">
+          项目成员安排
+          <div class="rightBox">
+            <el-button size="mini" @click="addUserListHandel" type="primary"
+              >添加成员</el-button
             >
-              <el-select
-                v-model="formData.projectUserId"
-                placeholder="请选择项目负责人"
-                clearable
-                :style="{ width: '100%' }"
-              >
-                <el-option
-                  v-for="(item, index) in projectUserIdOptions"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                  :disabled="item.disabled"
-                ></el-option>
-              </el-select>
-              <span class="myTag"
-                >(负责关联此项目的工时的最终审批；可对关联此项目的工单进行编辑和人员指派)</span
-              >
-            </el-form-item>
-          </el-col>
-          <el-col :span="14" :offset="1">
-            <el-form-item label="服务对象" prop="projectService">
-              <el-select
-                v-model="formData.projectService"
-                placeholder="请选择服务对象"
-                clearable
-                :style="{ width: '100%' }"
-              >
-                <el-option
-                  v-for="(item, index) in projectServiceOptions"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                  :disabled="item.disabled"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10" :offset="1">
-            <el-form-item label="项目有效期" prop="projectTimeArea">
-              <el-date-picker
-                type="daterange"
-                v-model="formData.projectTimeArea"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                :style="{ width: '100%' }"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                range-separator="至"
-                clearable
-              ></el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10" :offset="1">
-            <el-form-item label="关联机会" prop="projectChance">
-              <el-select
-                v-model="formData.projectChance"
-                placeholder="请选择关联机会"
-                clearable
-                :style="{ width: '100%' }"
-              >
-                <el-option
-                  v-for="(item, index) in projectChanceOptions"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                  :disabled="item.disabled"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </div>
-    <div class="titleBar">
-      项目成员安排
-      <div class="rightBox">
-        <el-button size="mini" @click="addUserListHandel" type="primary"
-          >添加成员</el-button
-        >
-      </div>
-    </div>
-    <div  class="whiteBox UserListBox">
-      <el-form ref="elForm2" :model="formData" :rules="rules2" size="medium" label-width="10px">
-      <div class="UserLine"  v-for="(addUserList,addUserListindex) in formData.projectUserList">
-          <el-row   :gutter="24">
-            <el-col :offset="1" :span="3">
-              <el-form-item  prop="field101">
-                <el-select
-                  v-model="addUserList.userId"
-                  placeholder="请选择下拉选择"
-                  clearable
-                  :style="{ width: '100%' }"
+          </div>
+        </div>
+        <div class="whiteBox UserListBox">
+        
+            <div
+              class="UserLine"
+              v-for="(addUserList, addUserListindex) in formData.projectUserList"
+            >
+              <el-row >
+                <el-col :offset="1" :span="3">
+                  <el-form-item :prop="`projectUserList.${addUserListindex}.userId`" :rules="rules.projectUserListAllUserId">
+                    <el-select
+                      v-model="addUserList.userId"
+                      placeholder="请选择下拉选择"
+                      clearable
+                      :style="{ width: '100%' }"
+                    >
+                      <el-option
+                        v-for="user in userOptions"
+                        :key="user.userId"
+                        :label="user.userNameAndPost"
+                        :value="user.userId"
+                      ></el-option>
+                    </el-select> </el-form-item
+                ></el-col>
+                <el-col :span="4">
+                  <el-form-item label="" :prop="`projectUserList.${addUserListindex}.startEndTime`" :rules="rules.projectUserListAllStartEndTime">
+                    <el-date-picker
+                      type="daterange"
+                      v-model="addUserList.startEndTime"
+                      format="yyyy-MM-dd"
+                      value-format="yyyy-MM-dd"
+                      :style="{ width: '100%' }"
+                      start-placeholder="开始日期"
+                      end-placeholder="结束日期"
+                      range-separator="至"
+                      @change="(dates) => getTimeArea(dates, addUserListindex)"
+                      clearable
+                    ></el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <div class="colText">
+                    共 <span>{{ addUserList.workTime }}</span> 小时（
+                    <span>{{ addUserList.workDay }}</span> 天）
+                  </div></el-col
                 >
-                  <el-option
-                    v-for="user in userOptions"
-                    :key="user.userId"
-                    :label="user.userName"
-                    :value="user.userId"
-                  ></el-option>
-                </el-select> </el-form-item
-            ></el-col>
-            <el-col   :span="4">
-              <el-form-item label="" prop="startEndTime">
-                <el-date-picker type="daterange" v-model="addUserList.startEndTime" format="yyyy-MM-dd"
-                  value-format="yyyy-MM-dd HH:mm:ss" :style="{width: '100%'}" start-placeholder="开始日期"
-                  end-placeholder="结束日期" range-separator="至" @change="(dates)=>getTimeArea(dates,addUserListindex)" clearable></el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <div class="colText">共 {{addUserList.workTime}}</span>  小时（ <span>{{addUserList.workDay}}</span> 天）</div></el-col>
-            <el-col :span="5"><div class="colText">计划负荷：<span>{{addUserList.planLoad}}</span> %</div></el-col>
-            <el-col :span="4"><div class="colText">预计成本：<span>{{addUserList.expectedCost}}</span> 元</div></el-col>
-            <el-col :span="3"><div class="colText2">
-              <el-button size="mini" @click="DelUserList(addUserListindex)" type="error">删除</el-button>
-              </div>
-            </el-col>
-          </el-row>
-            <!----------------------内部-start------------------------------>
-                <el-row  :gutter="24" v-for="UserScheduleList in addUserList.projectUserScheduleList">
-                        <el-col :offset="4" :span="4"> 
-                          <div class="colText">{{UserScheduleList.startTime+'-'+UserScheduleList.endTime}}</div></el-col>
-                        <el-col :span="4">
-                          <div class="colText">每日 <el-input v-model="UserScheduleList.workTime" placeholder="请输入每日工时"  :style="{width: '40px'}"></el-input> 小时
-                          </div>
-                        </el-col>
-                        <el-col :span="5"><div class="colText">期间计划负荷：<span>{{UserScheduleList.planLoad}}</span> %</div></el-col>
-                        <el-col :span="3"><div class="colText2">
-                          
-                          </div>
-                        </el-col>
-                </el-row>
-          <!----------------------内部-end------------------------------>
-      </div>
-      </el-form>
-    </div>
+                <el-col :span="5"
+                  ><div class="colText">
+                    计划负荷：<span>{{ addUserList.planLoad }}</span> %
+                  </div></el-col
+                >
+                <el-col :span="4"
+                  ><div class="colText">
+                    预计成本：<span>{{ addUserList.expectedCost }}</span> 元
+                  </div></el-col
+                >
+                <el-col :span="3"
+                  ><div class="colText2">
+                    <el-button
+                      size="mini"
+                      @click="DelUserList(addUserListindex)"
+                      type="error"
+                      >删除</el-button
+                    >
+                  </div>
+                </el-col>
+              </el-row>
+              <!----------------------内部-start------------------------------>
+              <el-row
+              
+                v-for="(
+                  UserScheduleList, UserScheduleListIndex
+                ) in addUserList.projectUserScheduleList"
+              >
+                <el-col :offset="4" :span="4">
+                  <div class="colText">
+                    {{
+                      UserScheduleList.startTime + "-" + UserScheduleList.endTime
+                    }}
+                  </div></el-col
+                >
+                <el-col :span="4">
+                  <div class="colText">
+                    每日
+                    <el-input-number
+                      size="mini"
+                      :style="{ width: '100px' }"
+                      v-model="UserScheduleList.workTime"
+                      :min="0"
+                      :max="24"
+                      @change="
+                        (number) => {
+                          changeDayTime(
+                            number,
+                            UserScheduleList.day,
+                            addUserListindex,
+                            UserScheduleListIndex
+                          );
+                        }
+                      "
+                    ></el-input-number>
+                    小时
+                  </div>
+                </el-col>
+                <el-col :span="5"
+                  ><div class="colText">
+                    期间计划负荷：<span>{{ UserScheduleList.planLoad }}</span> %
+                  </div></el-col
+                >
+                <el-col :span="3"><div class="colText2"></div> </el-col>
+              </el-row>
+              <!----------------------内部-end------------------------------>
+            </div>
+        </div>
+    </el-form>
   </div>
 </template>
 <script>
 import { queryUserlist } from "@/api/system/user";
-import { getTimeProcess } from "@/api/proManager/proManager";
+import {
+  getTimeProcess,
+  queryDict,
+  addProjectList,
+} from "@/api/proManager/proManager";
 
 export default {
   data() {
     return {
-       // 人员 列表
-      userOptions:[],
+      // 人员 列表
+      userOptions: [],
       formData: {
         /**
          * 优先级（1.最高，2.高，3.普通，4.较低）
          */
-        priority: "",
+        priority: 3,
         /**
          * 关联机会
          */
@@ -282,9 +360,24 @@ export default {
         /**
          * 项目成员列表
          */
-       projectUserList:[]
+        projectUserList: [],
       },
       rules: {
+         "projectUserListAllUserId": [
+          {
+            required: true,
+            message: "请选择项目成员",
+            trigger: "change",
+          },
+        ],
+        "projectUserListAllStartEndTime": [
+          {
+            required: true,
+            message: "请选择参与时间",
+            trigger: "change",
+          },
+        ],
+          
         projectCode: [
           {
             required: true,
@@ -303,7 +396,7 @@ export default {
           {
             required: true,
             message: "请输入项目阶段：",
-            trigger: "blur",
+            trigger: "change",
           },
         ],
         projectType: [
@@ -349,71 +442,58 @@ export default {
           },
         ],
       },
-      rules2:{
-
-      },
       // 单独的 用户列表
-      projectUserList:
-          {
-            /**
-             * 结束时间
-             */
-            endTime: "",
-            /**
-             * 预计成本
-             */
-            expectedCost: "",
-            /**
-             * 计划负荷
-             */
-            planLoad: "",
-            /**
-             * 开始时间
-             */
-            stratTime: "",
-            /**
-             * 用户id
-             */
-            userId:"" ,
-            /**
-             * 总天数
-             */
-            workDay: "",
-            /**
-             * 总工时
-             */
-            workTime: "",
-            /**
-             * 项目成员排期
-             */
-            projectUserScheduleList: [],
-          },
-        projectUserScheduleList:  
-              {
-                /**
-                 * 周期
-                 */
-                startTime: "",
-                endTime: "",
-                /**
-                 * 计划负荷
-                 */
-                planLoad: "",
-                /**
-                 * 工时
-                 */
-                workTime: "",
-              },
-      projectTypeOptions: [
-        {
-          label: "选项一",
-          value: 1,
-        },
-        {
-          label: "选项二",
-          value: 2,
-        },
-      ],
+      projectUserList: {
+        /**
+         * 结束时间
+         */
+        endTime: "",
+        /**
+         * 预计成本
+         */
+        expectedCost: "",
+        /**
+         * 计划负荷
+         */
+        planLoad: "",
+        /**
+         * 开始时间
+         */
+        startTime: "",
+        /**
+         * 用户id
+         */
+        userId: "",
+        /**
+         * 总天数
+         */
+        workDay: "",
+        /**
+         * 总工时
+         */
+        workTime: "",
+        /**
+         * 项目成员排期
+         */
+        projectUserScheduleList: [],
+      },
+      projectUserScheduleList: {
+        /**
+         * 周期
+         */
+        startTime: "",
+        endTime: "",
+        /**
+         * 计划负荷
+         */
+        planLoad: "",
+        /**
+         * 工时
+         */
+        workTime: "",
+      },
+      projectStageOptions: [],
+      projectTypeOptions: [],
       priorityOptions: [
         {
           label: "最高",
@@ -432,28 +512,9 @@ export default {
           value: 4,
         },
       ],
-      projectUserIdOptions: [
-        {
-          label: "选项一",
-          value: 1,
-        },
-        {
-          label: "选项二",
-          value: 2,
-        },
-      ],
-      projectServiceOptions: [
-        {
-          label: "选项一",
-          value: 1,
-        },
-        {
-          label: "选项二",
-          value: 2,
-        },
-      ],
-      projectChanceOptions: [
-        {
+      projectUserIdOptions: [],
+      projectServiceOptions: [],
+      projectChanceOptions: [{
           label: "选项一",
           value: 1,
         },
@@ -465,65 +526,149 @@ export default {
     };
   },
   mounted() {
-    this.getUserList()
+    this.getUserList();
+    this.getDictList("project_phase"); // 项目阶段 project_phase
+    this.getDictList("project_type"); // 项目类型 project_type
+    this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
+    // 页面默认点击一下  添加成员
+    // this.addUserListHandel()
+    
   },
   methods: {
-    /*拿到用户ID*/
-    // getCheckUser(dates,index){
-    //       this.formData.projectUserList[index].endTime =dates[1]
+    /*修改每日工时*/
+    changeDayTime(number, day, fatherIndex, myIndex) {
+      console.log(number, day, fatherIndex, myIndex);
+      // 期间计划负荷 = 当前行的总天数day*number  /  当前行的总天数day * 8
+      this.formData.projectUserList[fatherIndex].projectUserScheduleList[
+        myIndex
+      ].planLoad = ((day * number) / (day * 8)) * 100;
+      // 循环 取出每周的工作时长
+      let totalTime = 0,
+        totalDay = 0;
+      this.formData.projectUserList[fatherIndex].projectUserScheduleList.map(
+        (item, i) => {
+          if (myIndex == i) {
+            // 当前周的工时 转换为天数  计算一下
+            // 当前周的天数* 实际工作时长 除以8
+            // 等于 实际工作天数
 
-    // },
+            totalDay += parseFloat(item.day * number);
+          } else {
+            // 其他的没有修改的 直接 拿天数累加
+            totalDay += parseFloat(item.day * item.workTime);
+          }
+          totalTime += parseFloat(item.workTime) * parseFloat(item.day);
+        }
+      );
+
+      // 暂存一下 实际的天数
+      const tempWorkDay =
+        this.formData.projectUserList[fatherIndex].workDayTemp;
+      console.log(tempWorkDay);
+      // 顶部的 共计多少小时  多少天
+      this.formData.projectUserList[fatherIndex].workDay = totalDay / 8;
+      this.formData.projectUserList[fatherIndex].workTime = totalTime;
+      // 顶部的 计划负荷 预计成本
+      this.formData.projectUserList[fatherIndex].planLoad = (
+        (totalDay / (tempWorkDay * 8)) *
+        100
+      ).toFixed(2);
+      this.formData.projectUserList[fatherIndex].expectedCost = "111";
+    },
+    /*选择项目有效期*/
+    getProjectTimeArea(dates) {
+      this.formData.projectStartTime = dates[0];
+      this.formData.projectEndTime = dates[1];
+    },
     /*根据起始和结束 生成下面表格*/
-    getTimeArea(dates,index){
-      console.log(dates,index);
-      let parems ={
-        startDate:dates[0],
-        endDate:dates[1],
-      }
-         getTimeProcess(parems).then(res=>{
-          console.log(res.data);
-          this.formData.projectUserList[index].workDay = res.data.day
-          this.formData.projectUserList[index].workTime = res.data.day*8
-          this.formData.projectUserList[index].stratTime = dates[0]
-          this.formData.projectUserList[index].endTime =dates[1]
-          this.formData.projectUserList[index].expectedCost = "未知"
-          this.formData.projectUserList[index].planLoad = (8*res.data.day)/(res.data.day*8)
-          res.data.list.map(item=>{
-            item.startTime = item.startDate
-            item.endTime = item.endDate
-            item.workTime = "8"
-            item.planLoad = "未知"
-          })
-          this.formData.projectUserList[index].projectUserScheduleList=res.data.list
-          
-        
-
-      })
-    },
-     /* 查询用户列表 */
-    getUserList(){
-      queryUserlist().then(res=>{
+    getTimeArea(dates, index) {
+      let parems = {
+        startDate: dates[0],
+        endDate: dates[1],
+      };
+      getTimeProcess(parems).then((res) => {
         console.log(res.data);
-        res.data.map(item=>{
-          item.userName = item.userName+"（"+item.postName+"）"
-        })
-        this.userOptions = res.data
-      })
+        this.formData.projectUserList[index].workDay = res.data.day;
+        this.formData.projectUserList[index].workDayTemp = res.data.day;
+        this.formData.projectUserList[index].workTime = res.data.day * 8;
+        this.formData.projectUserList[index].startTime = dates[0];
+        this.formData.projectUserList[index].endTime = dates[1];
+        this.formData.projectUserList[index].expectedCost = "未知";
+        res.data.list.map((item) => {
+          item.startTime = item.startDate;
+          item.endTime = item.endDate;
+          item.workTime = "8";
+          item.planLoad = ((item.day * 8) / (item.day * 8)) * 100 || 100;
+        });
+        this.formData.projectUserList[index].projectUserScheduleList =
+          res.data.list; // 此人的 每周安排
+
+        this.formData.projectUserList[index].planLoad =
+          ((8 * res.data.day) / (res.data.day * 8)) * 100; // 计划负荷
+      });
     },
-    addUserListHandel(){
-      let oneUser =this.deepClone(this.projectUserList)
-      console.log(oneUser);
-      this.formData.projectUserList.push(oneUser)
+    /*查询字典的接口*/
+    getDictList(dictValue) {
+      queryDict(dictValue).then((res) => {
+        if (dictValue == "project_phase") {
+          this.projectStageOptions = res.data;
+        }
+        if (dictValue == "project_type") {
+          this.projectTypeOptions = res.data;
+        }
+        if (dictValue == "serivce_obj_type") {
+          this.projectServiceOptions = res.data;
+        }
+      });
     },
-    DelUserList(index){
-      this.formData.projectUserList.splice(index,1)
+    /* 查询用户列表 */
+    getUserList() {
+      queryUserlist().then((res) => {
+        res.data.map((item) => {
+          item.userNameAndPost = item.userName + "（" + item.postName + "）";
+        });
+        this.projectUserIdOptions = res.data;
+        this.userOptions = res.data;
+      });
     },
+    // 点击 新增用户的
+    addUserListHandel() {
+      let oneUser = this.deepClone(this.projectUserList);
+      this.formData.projectUserList.push(oneUser);
+    },
+    // 删除单行用户的
+    DelUserList(index) {
+      this.formData.projectUserList.splice(index, 1);
+    },
+    // 保存 addProjectList 新增用户信息的
     submitForm() {
+      console.log(JSON.stringify(this.formData));
+
       this.$refs["elForm"].validate((valid) => {
         if (!valid) return;
         // TODO 提交表单
+        if (valid) {
+          //     ref="elForm2"
+          // :model="formData"
+          // :rules="rules2"
+      
+            let parame = {
+              ...this.formData,
+              // carrierId:this.temData.carrierId,
+              // status:0
+            };
+            addProjectList(parame).then((res) => {
+              let { code,msg } = res;
+              this.$message.success(msg);
+              if(+code==200){
+                this.$router.push("/projectManager/proManager")
+              }
+            });
+           
+        }
       });
     },
+    // 取消重置表单的
     resetForm() {
       this.$refs["elForm"].resetFields();
     },
@@ -544,7 +689,11 @@ export default {
 .app-container {
   padding: 0;
 }
-
+.UserLine{
+      border-bottom: 1px #efefef solid;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
 .routerBar {
   a {
     color: #557db3;
@@ -558,15 +707,15 @@ export default {
   color: rgb(204, 204, 204);
   font-size: 12px;
   position: absolute;
-  top: 38px;
+  top: 40px;
   /* border: 1px solid red; */
   width: initial;
   display: inline-block;
-  left: 0px;
+  right: 8px;
   height: 14px;
   line-height: 14px;
 }
-.colText{
+.colText {
   height: inherit;
   line-height: 150%;
   // background-color: beige;
@@ -575,13 +724,13 @@ export default {
   font-size: 12px;
   color: #999;
   text-align: center;
-  span{
+  span {
     color: #557db3;
   }
 }
 </style>
 <style>
-  .UserLine /deep/.el-form-item{
+.UserLine /deep/.el-form-item {
   margin-bottom: 2px;
 }
 </style>

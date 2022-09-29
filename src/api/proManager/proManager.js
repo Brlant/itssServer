@@ -9,6 +9,37 @@ export function getTimeProcess(data) {
     data: data
   })
 }
+// 字典查询 传入字典名称
+export function queryDict(dictCode) {
+  return request({
+    url: '/system/dict/data/type/'+dictCode,
+    method: 'get',
+    // params: query
+  })
+}
+// 新增项目列表
+export function addProjectList(data){
+  return request({
+    url: '/project/project/addProject',
+    method: 'post',
+    data: data
+  })
+}
+// 列表页面 项目管理查询接口
+export function searchProjectList(data){
+  console.log(data);
+  return request({
+    url: '/project/project/list',
+    method: 'post',
+    data: data
+  })
+}
+
+
+
+
+
+
 //----------------demo------------------------------------
 // 查询用户列表
 export function listUser(query) {

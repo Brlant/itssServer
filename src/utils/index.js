@@ -388,3 +388,26 @@ export function isNumberStr(str) {
   return /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g.test(str)
 }
  
+    // 清空没有数据的空参数
+    export function   clearNullParam(obj) {
+      Object.keys(obj).forEach((item) => {
+        if (obj[item] === "" || obj[item] === undefined || obj[item] === null || obj[item] === "null") delete obj[item]
+      })
+      return obj
+    }
+export function getMonthStartEnd(type){
+  let date=new Date();
+  let currentMonth=date.getMonth();
+  let nextMonth=++currentMonth;
+  let nextMonthFirstDay=new Date(date.getFullYear(),nextMonth,1);
+  let oneDay=1000*60*60*24;
+  let lastDate = new Date(nextMonthFirstDay-oneDay);
+  
+  let startTime = date.getFullYear()+"-"+((date.getMonth()+1)<10?"0":"")+(date.getMonth()+1)+"-"+"01";
+  let endTime = lastDate.getFullYear()+"-"+((lastDate.getMonth()+1)<10?"0":"")+(lastDate.getMonth()+1)+"-"+(lastDate.getDate()<10?"0":"")+lastDate.getDate();
+  if(type=='start'){
+      return startTime
+  }else{
+      return endTime
+  }
+}
