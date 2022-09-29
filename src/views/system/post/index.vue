@@ -127,7 +127,7 @@
     />
 
     <!-- 添加或修改岗位对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
          <el-form-item label="区域" prop="regionId">
           <el-select v-model="form.regionId" placeholder="区域" clearable>
@@ -155,10 +155,10 @@
         <el-form-item label="等级" prop="postLevel">
           <el-input v-model="form.postLevel" placeholder="请输入等级" />
         </el-form-item>
-        <el-form-item label="成本预设（内）" prop="costIn">
+        <el-form-item label="对内成本预设（元/天）" prop="costIn">
          <el-input v-model="form.costIn" placeholder="请输入等级" />
         </el-form-item>
-        <el-form-item label="成本预设（外）" prop="costOut">
+        <el-form-item label="对外成本预设（元/天）" prop="costOut">
           <el-input v-model="form.costOut" placeholder="请输入等级" />
         </el-form-item>
         <!-- <el-form-item label="备注" prop="remark">
