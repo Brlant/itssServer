@@ -1,10 +1,12 @@
 <template>
   <div class="">
     <div style="padding: 10px">
+      <div @click="showMorTime" style='width:105px;'><i class='el-icon-date'></i><span style="color:#557CB5;margin-left:10px;font-size:14px;">日历查看<i class='el-icon-arrow-down'></i></span></div>
       <el-date-picker
+      class='timePickCss'
         v-model="selectTime"
         type="date"
-        ref='elPicker'
+        ref="timePick"
         @change="pickerChange"
         :clearable="false"
         :editable="false"
@@ -249,6 +251,9 @@ export default {
       }
 
     },
+    showMorTime(){
+        this.$refs.timePick.$refs.reference.$refs.input.focus();
+    },
     //获取工时
     queryProject(time){
       let data={workDate:time}
@@ -313,6 +318,7 @@ export default {
       this.$refs.datePickerRef.$el.click();
     },
     pickerChange(value, item) {
+      console.log(111)
       this.listTwo=[]
       let time=moment(value).format('YYYY-MM-DD')
       this.workDate=moment(time, 'YYYY/M/D').format('YYYY-MM-DD')
@@ -595,5 +601,11 @@ span{
 .el-date-table td {
     padding: 10px 0;
   }
+}
+.timePickCss{
+    position: absolute;
+    top:0px;
+    // right: 100px;
+    z-index: -1;
 }
 </style>
