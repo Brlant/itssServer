@@ -34,7 +34,7 @@
             <el-col :span="22">
             <el-form-item label="工作内容" prop='workContent'>
                 <el-input v-model="formList.workContent" type="textarea" placeholder="请输入"></el-input>
-                </el-form-item></el-col
+            </el-form-item></el-col
             >
         </el-row>
     </el-form>

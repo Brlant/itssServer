@@ -35,12 +35,20 @@
       </div>
       <div class="plan-title">
         <span>当日排期计划：
-          <span v-if="plan.length != 0"><span v-for='(item,index) in plan' :key='index'>
-          {{item.projectName}}{{`(${item.currentDayScheduleTime}h)`}},总体<span v-if='item.currentProjectTotalWorkTime*1-item.currentProjectScheduleTime<0'><span style="color:#00A99D">-{{item.currentProjectTotalWorkTime}}</span><span>小时</span></span>
-          <span  v-if='item.currentProjectTotalWorkTime*1-item.currentProjectScheduleTime>=0'><span style="color:#FF435A">+{{item.currentProjectTotalWorkTime}}</span><span>小时</span></span><span v-show="index < plan.length - 1">;</span>
-          </span></span>
-          <span v-if="plan.length == 0">无</span>
+          <span v-if="plan.length != 0">
+            <span v-for='(item,index) in plan' :key='index'>
+              {{item.projectName}}{{`(${item.currentDayScheduleTime}h)`}},总体
+              <span v-if='item.currentProjectTotalWorkTime-item.currentProjectScheduleTime<0'>
+                  <span style="color:#00A99D">-{{item.currentProjectTotalWorkTime}}</span>
+                  <span>小时</span>
+              </span>
+             <span  v-if='item.currentProjectTotalWorkTime-item.currentProjectScheduleTime>=0'>
+                <span style="color:#FF435A">+{{item.currentProjectTotalWorkTime}}</span>
+                <span>小时</span></span><span v-show="index < plan.length - 1">;</span>
+            </span>
           </span>
+          <span v-if="plan.length == 0">无</span>
+        </span>
       </div>
     </div>
     <div class="submitted-time">
@@ -125,12 +133,9 @@
             </div>
             <div style="width: 10%; text-align: center">
              <div> <el-button class="editBtn" type="text"  @click="edit(item)" :disabled='item.status==1'>编辑</el-button></div>
-            <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>
-           
+            <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>           
             </div>
-          </div>
-       
-        
+          </div>  
       </div>
       </div>
     </div>
@@ -148,16 +153,13 @@
           <div class="parent" v-if='editId == -1' style=" border-left: 1px solid #ddd">
             <div @click="add" class="child">添加</div>
           </div>
-        </div>
-       
-        
+        </div>  
       </div>
       <div style="text-align:center">
          <el-button type="primary" @click='submit'>提交审核</el-button>
       </div>
   </div>
 </template>
-
 <script>
 import moment from "moment";
 import "moment/locale/zh-cn";
