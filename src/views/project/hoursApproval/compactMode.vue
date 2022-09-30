@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="compact">
         <div class="header">
             <div></div>
             <div class="select-date">
@@ -72,10 +72,10 @@
        
         <el-dialog
             :visible.sync="dialogVisible"
-            width="30%">
+            width="30%" title='请输入拒绝理由'>
             <el-form :model="form">
-                <el-form-item label="拒绝理由：">
-                    <el-input v-model="form.reason" type="textarea" placeholder="请输入"></el-input>
+                <el-form-item>
+                    <el-input v-model="form.reason" type="input" placeholder="请输入"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -234,7 +234,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.header{
+.compact{
+    .header{
     background:#ffffff;
     padding:20px;
     width:100%;
@@ -301,5 +302,7 @@ export default {
     height: 15px;
    
 }
+}
+
 </style>
 

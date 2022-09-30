@@ -61,8 +61,8 @@
     </div>
     <div style="width: 100%" v-if="list.length>0">
       <div  v-for="(item, index) in listOne" :key="index"  class="time-style">
-        <div  style="padding: 20px; display: flex" v-if='item.trackId!=editId'>
-          <div style="width: 90%; border-right: 1px solid #ddd">
+        <div   v-if='item.trackId!=editId' style="min-height:120px;">
+          <div style="width: 90%; border-right: 1px solid #ddd;display:inline-block;padding-left:20px;">
             <el-row type="flex" class="row-bg" justify="center" style="margin-bottom:20px;">
               <el-col :span="4">
                 <span class="star">*</span><span>项目名称：</span
@@ -82,7 +82,7 @@
               >
               <el-col :span="4">
                 <span class="star">*</span><span>状态：</span
-                ><span>{{filterStatus(item.status)}}</span></el-col
+                ><span :class="[{ status: item.status == 2 }]">{{filterStatus(item.status)}}</span></el-col
               >
             </el-row>
             <el-row type="flex" class="row-bg" justify="center">
@@ -92,16 +92,17 @@
               >
             </el-row>
           </div>
-          <div style="width: 10%; text-align: center">
+          <div style="width: 10%; text-align: center; display:inline-block">
             <div> <el-button class="editBtn" type="text"  @click="edit(item)" :disabled='item.status==1'>编辑</el-button></div>
             <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>
           </div>
+          <div style='background:#f7d3d3;color:red;padding:5px 20px' v-if='item.status == 2 && item.reason'>{{item.reason}}</div>
         </div>
       </div>
       <div>
          <div v-for="(item, index) in listTwo" :key="index" class="time-style">
-          <div  style="padding: 20px; display: flex"  v-if='item.trackId!=editId'>
-            <div style="width: 90%; border-right: 1px solid #ddd">
+          <div  v-if='item.trackId!=editId'   style="min-height:120px;">
+            <div style="width: 90%; border-right: 1px solid #ddd;display:inline-block;padding-left:20px;">
               <el-row type="flex" class="row-bg" justify="center" style="margin-bottom:20px;">
                 <el-col :span="4">
                   <span class="star">*</span><span>项目名称：</span
@@ -121,7 +122,7 @@
                 >
                 <el-col :span="4">
                   <span class="star">*</span><span>状态：</span
-                  ><span>{{filterStatus(item.status)}}</span></el-col
+                  ><span  :class="[{ status: item.status == 2 }]">{{filterStatus(item.status)}}</span></el-col
                 >
               </el-row>
               <el-row type="flex" class="row-bg" justify="center">
@@ -131,10 +132,11 @@
                 >
               </el-row>
             </div>
-            <div style="width: 10%; text-align: center">
+            <div style="width: 10%; text-align: center;display:inline-block">
              <div> <el-button class="editBtn" type="text"  @click="edit(item)" :disabled='item.status==1'>编辑</el-button></div>
             <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>           
             </div>
+            <div style='background:#f7d3d3;color:red;padding:5px 20px' v-if='item.status == 2 && item.reason'>{{item.reason}}</div>
           </div>  
       </div>
       </div>
@@ -311,7 +313,9 @@ export default {
       this.$refs.datePickerRef.$el.click();
     },
     pickerChange(value, item) {
+      this.listTwo=[]
       let time=moment(value).format('YYYY-MM-DD')
+      this.workDate=moment(time, 'YYYY/M/D').format('YYYY-MM-DD')
       this.queryProject(time)
       if (value.getDay() === 0) {
         this.n = 6;
@@ -371,6 +375,7 @@ export default {
       this.workDate=moment(time, 'YYYY/M/D').format('YYYY-MM-DD')
        this.queryProject(this.workDate)
       this.pickerChange(new Date(time));
+      this.listTwo=[]
     },
     // 0-6转换成中文名称
     getDayName(date) {
@@ -518,6 +523,9 @@ export default {
 }
 .current {
   background: rgba(255, 255, 255, 0.3);
+}
+.status{
+   color: red;
 }
 .star {
   color: red;
