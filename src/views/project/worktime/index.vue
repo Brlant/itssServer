@@ -1,10 +1,12 @@
 <template>
   <div class="">
     <div style="padding: 10px">
+      <div @click="showMorTime" style='width:105px;'><i class='el-icon-date'></i><span style="color:#557CB5;margin-left:10px;font-size:14px;">日历查看<i class='el-icon-arrow-down'></i></span></div>
       <el-date-picker
+      class='timePickCss'
         v-model="selectTime"
         type="date"
-        ref='elPicker'
+        ref="timePick"
         @change="pickerChange"
         :clearable="false"
         :editable="false"
@@ -35,12 +37,20 @@
       </div>
       <div class="plan-title">
         <span>当日排期计划：
-          <span v-if="plan.length != 0"><span v-for='(item,index) in plan' :key='index'>
-          {{item.projectName}}{{`(${item.currentDayScheduleTime}h)`}},总体<span v-if='item.currentProjectTotalWorkTime*1-item.currentProjectScheduleTime<0'><span style="color:#00A99D">-{{item.currentProjectTotalWorkTime}}</span><span>小时</span></span>
-          <span  v-if='item.currentProjectTotalWorkTime*1-item.currentProjectScheduleTime>=0'><span style="color:#FF435A">+{{item.currentProjectTotalWorkTime}}</span><span>小时</span></span><span v-show="index < plan.length - 1">;</span>
-          </span></span>
-          <span v-if="plan.length == 0">无</span>
+          <span v-if="plan.length != 0">
+            <span v-for='(item,index) in plan' :key='index'>
+              {{item.projectName}}{{`(${item.currentDayScheduleTime}h)`}},总体
+              <span v-if='item.currentProjectTotalWorkTime-item.currentProjectScheduleTime<0'>
+                  <span style="color:#00A99D">-{{item.currentProjectTotalWorkTime}}</span>
+                  <span>小时</span>
+              </span>
+             <span  v-if='item.currentProjectTotalWorkTime-item.currentProjectScheduleTime>=0'>
+                <span style="color:#FF435A">+{{item.currentProjectTotalWorkTime}}</span>
+                <span>小时</span></span><span v-show="index < plan.length - 1">;</span>
+            </span>
           </span>
+          <span v-if="plan.length == 0">无</span>
+        </span>
       </div>
     </div>
     <div class="submitted-time">
@@ -53,8 +63,8 @@
     </div>
     <div style="width: 100%" v-if="list.length>0">
       <div  v-for="(item, index) in listOne" :key="index"  class="time-style">
-        <div  style="padding: 20px; display: flex" v-if='item.trackId!=editId'>
-          <div style="width: 90%; border-right: 1px solid #ddd">
+        <div   v-if='item.trackId!=editId' style="min-height:120px;">
+          <div style="width: 90%; border-right: 1px solid #ddd;display:inline-block;padding-left:20px;">
             <el-row type="flex" class="row-bg" justify="center" style="margin-bottom:20px;">
               <el-col :span="4">
                 <span class="star">*</span><span>项目名称：</span
@@ -74,7 +84,7 @@
               >
               <el-col :span="4">
                 <span class="star">*</span><span>状态：</span
-                ><span>{{filterStatus(item.status)}}</span></el-col
+                ><span :class="[{ status: item.status == 2 }]">{{filterStatus(item.status)}}</span></el-col
               >
             </el-row>
             <el-row type="flex" class="row-bg" justify="center">
@@ -84,16 +94,17 @@
               >
             </el-row>
           </div>
-          <div style="width: 10%; text-align: center">
+          <div style="width: 10%; text-align: center; display:inline-block">
             <div> <el-button class="editBtn" type="text"  @click="edit(item)" :disabled='item.status==1'>编辑</el-button></div>
             <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>
           </div>
+          <div style='background:#f7d3d3;color:red;padding:5px 20px' v-if='item.status == 2 && item.reason'>{{item.reason}}</div>
         </div>
       </div>
       <div>
          <div v-for="(item, index) in listTwo" :key="index" class="time-style">
-          <div  style="padding: 20px; display: flex"  v-if='item.trackId!=editId'>
-            <div style="width: 90%; border-right: 1px solid #ddd">
+          <div  v-if='item.trackId!=editId'   style="min-height:120px;">
+            <div style="width: 90%; border-right: 1px solid #ddd;display:inline-block;padding-left:20px;">
               <el-row type="flex" class="row-bg" justify="center" style="margin-bottom:20px;">
                 <el-col :span="4">
                   <span class="star">*</span><span>项目名称：</span
@@ -113,7 +124,7 @@
                 >
                 <el-col :span="4">
                   <span class="star">*</span><span>状态：</span
-                  ><span>{{filterStatus(item.status)}}</span></el-col
+                  ><span  :class="[{ status: item.status == 2 }]">{{filterStatus(item.status)}}</span></el-col
                 >
               </el-row>
               <el-row type="flex" class="row-bg" justify="center">
@@ -123,14 +134,12 @@
                 >
               </el-row>
             </div>
-            <div style="width: 10%; text-align: center">
+            <div style="width: 10%; text-align: center;display:inline-block">
              <div> <el-button class="editBtn" type="text"  @click="edit(item)" :disabled='item.status==1'>编辑</el-button></div>
-            <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>
-           
+            <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>           
             </div>
-          </div>
-       
-        
+            <div style='background:#f7d3d3;color:red;padding:5px 20px' v-if='item.status == 2 && item.reason'>{{item.reason}}</div>
+          </div>  
       </div>
       </div>
     </div>
@@ -148,16 +157,13 @@
           <div class="parent" v-if='editId == -1' style=" border-left: 1px solid #ddd">
             <div @click="add" class="child">添加</div>
           </div>
-        </div>
-       
-        
+        </div>  
       </div>
       <div style="text-align:center">
          <el-button type="primary" @click='submit'>提交审核</el-button>
       </div>
   </div>
 </template>
-
 <script>
 import moment from "moment";
 import "moment/locale/zh-cn";
@@ -245,6 +251,9 @@ export default {
       }
 
     },
+    showMorTime(){
+        this.$refs.timePick.$refs.reference.$refs.input.focus();
+    },
     //获取工时
     queryProject(time){
       let data={workDate:time}
@@ -309,7 +318,10 @@ export default {
       this.$refs.datePickerRef.$el.click();
     },
     pickerChange(value, item) {
+      console.log(111)
+      this.listTwo=[]
       let time=moment(value).format('YYYY-MM-DD')
+      this.workDate=moment(time, 'YYYY/M/D').format('YYYY-MM-DD')
       this.queryProject(time)
       if (value.getDay() === 0) {
         this.n = 6;
@@ -369,6 +381,7 @@ export default {
       this.workDate=moment(time, 'YYYY/M/D').format('YYYY-MM-DD')
        this.queryProject(this.workDate)
       this.pickerChange(new Date(time));
+      this.listTwo=[]
     },
     // 0-6转换成中文名称
     getDayName(date) {
@@ -517,6 +530,9 @@ export default {
 .current {
   background: rgba(255, 255, 255, 0.3);
 }
+.status{
+   color: red;
+}
 .star {
   color: red;
 }
@@ -585,5 +601,11 @@ span{
 .el-date-table td {
     padding: 10px 0;
   }
+}
+.timePickCss{
+    position: absolute;
+    top:0px;
+    // right: 100px;
+    z-index: -1;
 }
 </style>
