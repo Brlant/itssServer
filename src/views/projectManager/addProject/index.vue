@@ -140,6 +140,18 @@
                   </el-select>
                 </el-form-item>
               </el-col>
+               <el-col :span="10" :offset="1">
+                  
+                <el-form-item label="GitHub地址" prop="projectGitUrl">
+                      <el-input
+                    v-model="formData.projectGitUrl"
+                    placeholder="请输入GitHub地址"
+                    show-word-limit
+                    clearable
+                    :style="{ width: '100%' }"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
             </el-row>
             <el-row>
               <el-col :span="10" :offset="1">
@@ -194,7 +206,7 @@
               v-for="(addUserList, addUserListindex) in formData.projectUserList"
             >
               <el-row >
-                <el-col :offset="1" :span="3">
+                <el-col   :span="4">
                   <el-form-item :prop="`projectUserList.${addUserListindex}.userId`" :rules="rules.projectUserListAllUserId">
                     <el-select
                       v-model="addUserList.userId"
@@ -210,7 +222,7 @@
                       ></el-option>
                     </el-select> </el-form-item
                 ></el-col>
-                <el-col :span="4">
+                <el-col :span="5">
                   <el-form-item label="" :prop="`projectUserList.${addUserListindex}.startEndTime`" :rules="rules.projectUserListAllStartEndTime">
                     <el-date-picker
                       type="daterange"
@@ -226,7 +238,7 @@
                     ></el-date-picker>
                   </el-form-item>
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="3">
                   <div class="colText">
                     共 <span>{{ addUserList.workTime }}</span> 小时（
                     <span>{{ addUserList.workDay }}</span> 天）
@@ -260,14 +272,14 @@
                   UserScheduleList, UserScheduleListIndex
                 ) in addUserList.projectUserScheduleList"
               >
-                <el-col :offset="4" :span="4">
-                  <div class="colText">
+                <el-col :offset="5" :span="4">
+                  <div class="colText" style="text-indent:30px">
                     {{
                       UserScheduleList.startTime + "-" + UserScheduleList.endTime
                     }}
                   </div></el-col
                 >
-                <el-col :span="4">
+                <el-col :span="3">
                   <div class="colText">
                     每日
                     <el-input-number
@@ -361,6 +373,7 @@ export default {
          * 项目成员列表
          */
         projectUserList: [],
+        projectGitUrl:"",// 项目git 地址
       },
       rules: {
          "projectUserListAllUserId": [
@@ -368,6 +381,13 @@ export default {
             required: true,
             message: "请选择项目成员",
             trigger: "change",
+          },
+        ],
+           "projectGitUrl": [
+          {
+            required: true,
+            message: "请输入GitHub地址",
+            trigger: "blur",
           },
         ],
         "projectUserListAllStartEndTime": [
@@ -434,13 +454,13 @@ export default {
             trigger: "change",
           },
         ],
-        projectChance: [
-          {
-            required: true,
-            message: "请选择关联机会",
-            trigger: "change",
-          },
-        ],
+        // projectChance: [
+        //   {
+        //     required: true,
+        //     message: "请选择关联机会",
+        //     trigger: "change",
+        //   },
+        // ],
       },
       // 单独的 用户列表
       projectUserList: {
@@ -539,10 +559,13 @@ export default {
     /*修改每日工时*/
     changeDayTime(number, day, fatherIndex, myIndex) {
       console.log(number, day, fatherIndex, myIndex);
+      console.log(typeof number)
+      console.log(typeof day)
+       
       // 期间计划负荷 = 当前行的总天数day*number  /  当前行的总天数day * 8
       this.formData.projectUserList[fatherIndex].projectUserScheduleList[
         myIndex
-      ].planLoad = ((day * number) / (day * 8)) * 100;
+      ].planLoad = ((day * number) / (day * 8)) * 100 || 0;
       // 循环 取出每周的工作时长
       let totalTime = 0,
         totalDay = 0;
@@ -560,6 +583,7 @@ export default {
           }
           totalTime += parseFloat(item.workTime) * parseFloat(item.day);
           item.weekDay = item.day
+          item.week = item.weekOfYear
         }
       );
 
@@ -571,6 +595,8 @@ export default {
       this.formData.projectUserList[fatherIndex].workDay = totalDay / 8;
       this.formData.projectUserList[fatherIndex].workTime = totalTime;
       // 顶部的 计划负荷 预计成本
+      console.log( totalDay);
+      console.log( tempWorkDay)
       this.formData.projectUserList[fatherIndex].planLoad = (
         (totalDay / (tempWorkDay * 8)) *
         100
@@ -604,8 +630,7 @@ export default {
         });
         this.formData.projectUserList[index].projectUserScheduleList =
           res.data.list; // 此人的 每周安排
-
-        this.formData.projectUserList[index].planLoad =
+        this.formData.projectUserList[index].planLoad = 
           ((8 * res.data.day) / (res.data.day * 8)) * 100; // 计划负荷
       });
     },

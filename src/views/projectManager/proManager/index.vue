@@ -120,6 +120,12 @@
           label="项目"
           width="150"
         >
+          <template slot-scope="scope">
+            <span :class="[scope.row.isNew==1?'isNew':'']"></span>
+            <span :class="['yuan','yuan'+scope.row.priority]"></span>
+            {{ scope.row.projectName }}
+           
+          </template>
         </el-table-column>
         <el-table-column
           fixed
@@ -129,7 +135,7 @@
           width="100"
         >
           <template slot-scope="scope">
-            {{ scope.row.projectStatus | filterProjectStatus }}
+            <span :class="[scope.row.projectStatus== 4 ? 'color4' : '']">{{ scope.row.projectStatus | filterProjectStatus }}</span>        
           </template>
         </el-table-column>
         <el-table-column
@@ -292,6 +298,7 @@ export default {
       // 弹出层 以上
       tableData: [],
       countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
+      countScopeInit:'',
       projectStatusOptions: [
         {
           label: "进行中",
@@ -347,7 +354,6 @@ export default {
     };
   },
   mounted() {
-    this.init();
     // 额外的判断 页面初始化 判断用户的角色  isJurisdiction 判断当前的值是否存在 返回true or false
     // 部门主管 deptdirector  3
     // 项目主管 projectdirector 2
@@ -357,32 +363,37 @@ export default {
     let projectsupervision = this.isJurisdiction("projectsupervision"); // 项目监管
     let admin = this.isJurisdiction("admin"); // 管理员
     let countScopeOptionsTemp = [];
-    if (deptdirector) {
-      // 部门主管
-      // this.countScope = 3
-      countScopeOptionsTemp.push({
-        label: "仅部门成员",
-        value: 3,
-      });
-    }
-    if (projectdirector) {
+       if (projectdirector) {
       // 项目主管
-      // this.countScope = 2
+      this.countScopeInit = 2
       countScopeOptionsTemp.push({
         label: "仅我负责",
         value: 2,
       });
     }
+    if (deptdirector) {
+      // 部门主管
+      this.countScopeInit = 3
+      countScopeOptionsTemp.push({
+        label: "仅部门成员",
+        value: 3,
+      });
+    }
 
     if (projectsupervision || admin) {
       // 项目监管
-      // this.countScope = 1
+      this.countScopeInit = 1
       countScopeOptionsTemp.push({
         label: "全部",
         value: 1,
       });
     }
     this.countScopeOptions = countScopeOptionsTemp;
+
+    this.searchForm.countScope = this.countScopeInit
+    /*------------------额外的初始化查询的判断------------------------------*/
+    this.init();
+
   },
   methods: {
     handleConfirm() {
@@ -424,7 +435,13 @@ export default {
     },
     /* 查看项目详情 */
     detailProject(index, row) {
-      console.log(index, row);
+      // console.log(index, row);
+      // projectId://项目id
+      // startTime://统计开始时间
+      // endTime://统计结束时间
+      // countScope://统计范围 1.全部，2.仅我负责，3.仅部门成员
+      this.$router.push({ path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,startTime:row.projectStartTime,endTime:row.projectEndTime}})
+
     },
     /*查询字典的接口   暂时没用上*/
     getDictList(dictCode) {
@@ -538,5 +555,37 @@ export default {
 }
 .piancha2 {
   color: #f56c6c;
+}
+.yuan{
+  width: 8px;
+  height: 8px;
+  border-radius: 10px;
+  border: none;
+  display: inline-block;
+  margin-left: 8px;
+}
+.yuan1 {
+  background-color: #909399;
+}
+.yuan2 {
+  background-color: #409eff;
+}
+.yuan3 {
+  background-color: #e6a23c;
+}
+.yuan4 {
+  background-color: #f56c6c;
+}
+.isNew{
+  background-image: url('../../../assets/images/newIco.png');
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    width: 20px;
+    height: 20px;
+    left: 2px;
+    top: 2px;
+    display: inline-block;
+    position: absolute;
 }
 </style>

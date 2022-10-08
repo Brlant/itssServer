@@ -49,8 +49,33 @@ export function updateProjectById(data){
     data: data
   })
 }
+// 项目管理的详情页
+export function queryInfoById(data){  
+  // console.log(data);
+  return request({
+    url: '/project/project/queryInfoById',
+    method: 'post',
+    data: data
+  })
+}
+// 查询正在审核的 项目修改的日志记录
+export function queryProjectAudit(data){  
+  // console.log(data);
+  return request({
+    url: '/project/projectAudit/list',
+    method: 'post',
+    data: data
+  })
+}
+// 对已经提交的修改 项目基本信息 进行审核
 
-
+export function updateAuditProById(query) {
+  return request({
+    url: '/project/projectAudit/updateById',
+    method: 'get',
+    params: query
+  })
+}
 
 
 

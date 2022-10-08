@@ -26,6 +26,14 @@
   display: flex;
   justify-content: flex-end;
 }
+.rightBar {
+  top: 0px;
+  right: 20px;
+  width: auto;
+  position: relative;
+  float: right;
+  text-indent: 0;
+}
 .searchBox {
   left: 0px;
   width: 100%;

@@ -21,7 +21,39 @@ const formatDate = function (dateString) {
   var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
   return YY + "/" + MM + "/" + DD;
 }
+const toObject = function(stringArr,type){
+  let arrTemp =  stringArr//JSON.parse(stringArr)
+ if(stringArr){
+    if(type=='plan'){
+      return arrTemp.planLoad
+    }
+    if(type=='real'){
+      return arrTemp.realLoad
+    }
+ }
+  
+}
+// 修改范围（1.基础信息,2.成员安排)
+const toUpdateScope=((val)=>{
+  const sourceMap={
+    1:'基础信息',
+    2:'成员安排'
+  }
+  return sourceMap[val]
+})
+// 状态（1.待审核,2.已通过,3.已拒绝)
+const toStatus=((val)=>{
+  const sourceMap={
+    1:'待审核',
+    2:'已通过',
+    2:'已拒绝',
+  }
+  return sourceMap[val]
+})
 export default {
   filterProjectStatus,
-  formatDate
+  formatDate,
+  toObject,
+  toUpdateScope,
+  toStatus
 }
