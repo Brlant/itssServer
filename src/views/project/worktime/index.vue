@@ -63,7 +63,7 @@
     </div>
     <div style="width: 100%" v-if="list.length>0">
       <div  v-for="(item, index) in listOne" :key="index"  class="time-style">
-        <div   v-if='item.trackId!=editId' style="min-height:120px;">
+        <div   v-if='item.id!=editId' style="min-height:120px;">
           <div style="width: 90%; border-right: 1px solid #ddd;display:inline-block;padding-left:20px;">
             <el-row type="flex" class="row-bg" justify="center" style="margin-bottom:20px;">
               <el-col :span="4">
@@ -98,12 +98,12 @@
             <div> <el-button class="editBtn" type="text"  @click="edit(item)" :disabled='item.status==1'>编辑</el-button></div>
             <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>
           </div>
-          <div style='background:#f7d3d3;color:red;padding:5px 20px' v-if='item.status == 2 && item.reason'>{{item.reason}}</div>
+          <div style='background:#f7d3d3;color:red;padding:5px 20px' v-if='item.status == 2 && item.rejectReason'>{{item.rejectReason}}</div>
         </div>
       </div>
       <div>
          <div v-for="(item, index) in listTwo" :key="index" class="time-style">
-          <div  v-if='item.trackId!=editId'   style="min-height:120px;">
+          <div  v-if='item.id!=editId'   style="min-height:120px;">
             <div style="width: 90%; border-right: 1px solid #ddd;display:inline-block;padding-left:20px;">
               <el-row type="flex" class="row-bg" justify="center" style="margin-bottom:20px;">
                 <el-col :span="4">
@@ -138,7 +138,7 @@
              <div> <el-button class="editBtn" type="text"  @click="edit(item)" :disabled='item.status==1'>编辑</el-button></div>
             <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>           
             </div>
-            <div style='background:#f7d3d3;color:red;padding:5px 20px' v-if='item.status == 2 && item.reason'>{{item.reason}}</div>
+            <div style='background:#f7d3d3;color:red;padding:5px 20px' v-if='item.status == 2 && item.rejectReason'>{{item.rejectReason}}</div>
           </div>  
       </div>
       </div>
@@ -441,13 +441,14 @@ export default {
     //编辑
   edit(item){
  
-    this.editId=item.trackId
+    this.editId=item.id
     this.datalist.length=0
     this.datalist.push(item) 
   },
   //删除
   del(item){
-    delHour(item.trackId).then(res=>{
+    console.log(item.id,'aaaa')
+    delHour(item.id).then(res=>{
       if(res.code==200){
         this.$message.success(res.msg)
         this.queryProject(item.workDate)
@@ -484,7 +485,7 @@ export default {
     }else{
        this.datalist.forEach(v=>{
           v.workDate=this.workDate
-          v.trackId=this.editId
+          v.id=this.editId
         })
        editworkingHour(this.datalist[0]).then(res=>{
         if(res.code==200){

@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+//精简模式
 export function approvalItems(query) {
     return request({
       url: '/timetrack/time-track/listProjectTimeTrackByWeek',
@@ -6,7 +7,7 @@ export function approvalItems(query) {
       params: query
     })
 }
-//审批
+//精简模式审批
 export function approval(data) {
     return request({
       url: '/timetrack/time-track/approval',
@@ -14,3 +15,19 @@ export function approval(data) {
       data: data
     })
   }
+  //详情模式
+  export function approvalMonth(query) {
+    return request({
+      url: '/timetrack/time-track/listTimeTrack',
+      method: 'get',
+      params: query
+    })
+} 
+//详情模式审批
+export function datailApproval(data) {
+  return request({
+    url: '/timetrack/time-track/approvalById',
+    method: 'post',
+    data: data
+  })
+}
