@@ -528,7 +528,7 @@ export default {
         sex: undefined,
         status: "0",
         remark: undefined,
-        postId: [],
+        postId: '',
         roleIds: []
       };
       this.resetForm("form");
