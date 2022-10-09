@@ -18,7 +18,7 @@
                 <span>搜索</span> 
                 <el-input
                     placeholder="请输入项目名称"
-                    v-model="inputProject">
+                    v-model="inputProject" @blur='search'>
                     <i slot="prefix" class="el-input__icon el-icon-search" @click="search"></i>
                 </el-input>
             </div>
@@ -27,7 +27,7 @@
         <div v-if='childData.list'>
             <div class="project-list" v-for='(item,index) in childData.list' :key='index'>
                 <div class="project">
-                    <div @click='show(index)'><span>{{item.projectName}}</span><i class="el-icon-arrow-down" v-if='thisIndex.indexOf (index)!=-1'></i><i class="el-icon-arrow-up" v-else></i></div>
+                    <div @click='show(index)'><span>{{item.projectName}}</span><i class="el-icon-arrow-down" v-if='thisIndex.indexOf (index)!=-1' style='font-size: 14px;'></i><i class="el-icon-arrow-up" style='font-size: 14px;' v-else></i></div>
                     <div>
                         <span class='span1'>计划
                             <span class='span2'>{{item.scheduleWorkTimeTotal}}</span>小时</span>
@@ -55,12 +55,14 @@
                                         <span v-if='matchData(scope.row, index).approvalPendingWorkTime || !matchData(scope.row, index).approvalPendingWorkTime && matchData(scope.row, index).approvedWorkTime'  style='margin:0 10px;'>|</span>
                                         <span  style="color:red">{{matchData(scope.row, index).approvalRejectionWorkTime}}</span></span>
                                 </div>
-                                <div class="icon" v-if="matchData(scope.row, index).show" style='margin-top:10px;'>
-                                    <div class="pass" @click='agree(matchData(scope.row, index).workDate,scope.row,item.projectId)'>
-                                        <i class="el-icon-check"></i>
-                                    </div>
-                                    <div class="reject" @click='reject(matchData(scope.row, index).workDate,scope.row,item.projectId)'>
-                                        <i class="el-icon-close"></i>
+                                <div v-if='projectdirector'>
+                                    <div class="icon" v-if="matchData(scope.row, index).show" style='margin-top:10px;'>
+                                        <div class="pass" @click='agree(matchData(scope.row, index).workDate,scope.row,item.projectId)'>
+                                            <i class="el-icon-check"></i>
+                                        </div>
+                                        <div class="reject" @click='reject(matchData(scope.row, index).workDate,scope.row,item.projectId)'>
+                                            <i class="el-icon-close"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -105,13 +107,16 @@ export default {
             form:{reason:''},
             val:{},
             row:{},
-            id:-1
+            id:-1,
+            projectdirectior:false
 
         }
     },
     created(){
             // this.tableTitle()
             this.today=moment().format('YYYY-MM-DD') 
+            this.projectdirector=this.isJurisdiction('projectdirector')
+            console.log(this.projectdirector)
     },
     watch: {
         childData: {

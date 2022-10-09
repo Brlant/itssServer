@@ -9,7 +9,7 @@ export function queryTime(query) {
   }
   export function projectList() {
     return request({
-      url: '/project/project-user/list-working-project',
+      url: '/projectManage/project-user/list-working-project',
       method: 'get',
     
     })
