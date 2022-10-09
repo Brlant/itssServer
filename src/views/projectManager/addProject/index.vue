@@ -565,14 +565,19 @@ export default {
           userId:userId
         }
       queryUserlist(data).then((res) => {
+         res.data.map((item) => {
+          item.userNameAndPost = item.userName + "（" + item.postName + "）";
+        });
         // formData.projectUserList[index].costNum  
         // costNum 是我自己设置第一个值 用于存储 成本的单位
         //  对外
-        if(this.formData.projectService==122){ //对外
-          this.formData.projectUserList[index].costNum = res.costOut
+       
+          if(this.formData.projectService==122){ //对外
+          this.formData.projectUserList[index].costNum = res.data[0].costOut
         }else{  // 对内
-          this.formData.projectUserList[index].costNum = res.costIn
-        }
+          this.formData.projectUserList[index].costNum = res.data[0].costIn
+          }
+        
 
         this.projectUserIdOptions = res.data;
         this.userOptions = res.data;
@@ -580,14 +585,10 @@ export default {
     },
     /*修改每日工时*/
     changeDayTime(number, day, fatherIndex, myIndex) {
-      console.log(number, day, fatherIndex, myIndex);
-      console.log(typeof number)
-      console.log(typeof day)
-       
       // 期间计划负荷 = 当前行的总天数day*number  /  当前行的总天数day * 8
       this.formData.projectUserList[fatherIndex].projectUserScheduleList[
         myIndex
-      ].planLoad = ((day * number) / (day * 8)) * 100 || 0;
+      ].planLoad = (((day * number) / (day * 8)) * 100 || 0).toFixed(2);
       // 循环 取出每周的工作时长
       let totalTime = 0,
         totalDay = 0;
@@ -623,7 +624,7 @@ export default {
         (totalDay / (tempWorkDay * 8)) *
         100
       ).toFixed(2);
-      this.formData.projectUserList[fatherIndex].expectedCost = "111";
+      this.formData.projectUserList[fatherIndex].expectedCost = this.formData.projectUserList[fatherIndex].workDay*this.formData.projectUserList[fatherIndex].costNum ;
     },
     /*选择项目有效期*/
     getProjectTimeArea(dates) {
@@ -648,12 +649,12 @@ export default {
           item.startTime = item.startDate;
           item.endTime = item.endDate;
           item.workTime = "8";
-          item.planLoad = ((item.day * 8) / (item.day * 8)) * 100 || 100;
+          item.planLoad = (((item.day * 8) / (item.day * 8)) * 100 || 0).toFixed(2);
         });
         this.formData.projectUserList[index].projectUserScheduleList =
           res.data.list; // 此人的 每周安排
         this.formData.projectUserList[index].planLoad = 
-          ((8 * res.data.day) / (res.data.day * 8)) * 100; // 计划负荷
+          (((8 * res.data.day) / (res.data.day * 8)) * 100).toFixed(2); // 计划负荷
       });
     },
     /*查询字典的接口*/
@@ -686,8 +687,13 @@ export default {
     },
     // 点击 新增用户的
     addUserListHandel() {
+       if(this.formData.projectService==""){
+              this.$message.error("请您先选择项目基础信息内-服务对象！");
+
+        }else{
       let oneUser = this.deepClone(this.projectUserList);
       this.formData.projectUserList.push(oneUser);
+        }
     },
     // 删除单行用户的
     DelUserList(index) {
