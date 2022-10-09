@@ -49,16 +49,16 @@
                      <div>
                         <div style="width: 95%; display:inline-block;padding:20px;">
                             <el-row type="flex" class="row-bg" justify="center" style="margin-bottom:20px;">
-                            <el-col :span="4">
+                            <!-- <el-col :span="4">
                                 <span>项目名称：{{item2.projectName}}</span>
-                            </el-col>
-                            <el-col :span="7">
+                            </el-col> -->
+                            <el-col :span="8">
                                 <span>标题：{{item3.workTitle}}</span></el-col
                             >
-                            <el-col :span="5">
+                            <el-col :span="6">
                                 <span>工作类型：{{item3.workTypeName}}</span></el-col
                             >
-                            <el-col :span="4">
+                            <el-col :span="5">
                                 <span>工作时长：{{item3.workTime}}</span></el-col
                             >
                             <el-col :span="4">
@@ -70,11 +70,12 @@
                                 <span>工作内容：{{item3.workContent}}</span></el-col
                             >
                             </el-row>
-                        </div>
-                        <div style="width: 5%; text-align: center; border-left: 1px solid #ddd;display:inline-block;padding:20px;" v-if='item3.status==0'>
+                        </div>                      
+                            <div style="width: 5%; text-align: center; border-left: 1px solid #ddd;display:inline-block;padding:20px;" v-if='item3.status==0 && projectdirector'>
                             <div> <el-button class="editBtn" type="text" @click='pass(item3)'>通过</el-button></div>
                             <div > <el-button type="text" class="rejectBtn" @click='noPass(item3)'>拒绝</el-button></div>
                         </div>
+                        
                         <div style='background:#f7d3d3;color:red;padding:5px 20px' v-if="item3.status==2 && item3.rejectReason">{{item3.rejectReason}}</div>
                     </div>
                 </div>
@@ -112,10 +113,13 @@ export default{
             dialogVisible:false,
             trackId:'',
             form:{reason:''},
+            projectdirector:''
            
         }
     },
-   
+   created(){
+     this.projectdirector=this.isJurisdiction('projectdirector')
+   },
     methods:{
             filterStatus(item){
                 if(item==0){
