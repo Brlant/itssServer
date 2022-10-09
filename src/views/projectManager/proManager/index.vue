@@ -276,7 +276,7 @@ import {
   updateProjectById,
   updateProjectStatus,
 } from "@/api/proManager/proManager";
-import { getMonthStartEnd } from "@/utils/index";
+import { getMonthStartEnd ,getToday} from "@/utils/index";
 export default {
   data() {
     let startDate = getMonthStartEnd("start");
@@ -393,7 +393,7 @@ export default {
     this.searchForm.countScope = this.countScopeInit
     /*------------------额外的初始化查询的判断------------------------------*/
     this.init();
-
+    console.log(getToday()+"--------");
   },
   methods: {
     handleConfirm() {
@@ -440,7 +440,8 @@ export default {
       // startTime://统计开始时间
       // endTime://统计结束时间
       // countScope://统计范围 1.全部，2.仅我负责，3.仅部门成员
-      this.$router.push({ path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,startTime:row.projectStartTime,endTime:row.projectEndTime}})
+      this.$router.push({ path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
+      startTime:row.projectStartTime,endTime:getToday()}})
 
     },
     /*查询字典的接口   暂时没用上*/

@@ -301,6 +301,11 @@
         </el-row>
         <el-row>
           <el-col :span="24">
+            <el-form-item label="git账号" prop="gitAccount">
+              <el-input v-model="form.gitAccount" placeholder="请输入git账号名称" maxlength="30" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
             <el-form-item label="备注">
               <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
             </el-form-item>
@@ -431,8 +436,11 @@ export default {
       // 表单校验
       rules: {
         userName: [
-          { required: true, message: "用户名称不能为空", trigger: "blur" },
+          { required: true, message: "用户名称不能为空", trigger: "blur" },          
           { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
+        ],
+        gitAccount: [
+          { required: true, message: "git账户不能为空", trigger: "blur" },        
         ],
         nickName: [
           { required: true, message: "用户昵称不能为空", trigger: "blur" }

@@ -142,10 +142,10 @@
               </el-col>
                <el-col :span="10" :offset="1">
                   
-                <el-form-item label="GitHub地址" prop="projectGitUrl">
+                <el-form-item label="GitLab地址" prop="projectGitUrl">
                       <el-input
                     v-model="formData.projectGitUrl"
-                    placeholder="请输入GitHub地址"
+                    placeholder="请输入GitLab地址"
                     show-word-limit
                     clearable
                     :style="{ width: '100%' }"
@@ -171,7 +171,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="10" :offset="1">
-                <el-form-item label="关联机会" prop="projectChance">
+                <!-- <el-form-item label="关联机会" prop="projectChance">
                   <el-select
                     v-model="formData.projectChance"
                     placeholder="请选择关联机会"
@@ -186,7 +186,7 @@
                       :disabled="item.disabled"
                     ></el-option>
                   </el-select>
-                </el-form-item>
+                </el-form-item> -->
               </el-col>
             </el-row>
           
@@ -211,7 +211,7 @@
                     <el-select
                       v-model="addUserList.userId"
                       placeholder="请选择下拉选择"
-                      clearable
+                      clearable @change="(userId)=>{getUserCost(userId,addUserListindex)}"
                       :style="{ width: '100%' }"
                     >
                       <el-option
@@ -316,9 +316,10 @@
   </div>
 </template>
 <script>
-import { queryUserlist } from "@/api/system/user";
+// import { queryUserlist } from "@/api/system/user";
 import {
   getTimeProcess,
+  queryUserlist,
   queryDict,
   addProjectList,searchProjectList
 } from "@/api/proManager/proManager";
@@ -386,7 +387,7 @@ export default {
            "projectGitUrl": [
           {
             required: true,
-            message: "请输入GitHub地址",
+            message: "请输入GitLab地址",
             trigger: "blur",
           },
         ],
@@ -556,6 +557,27 @@ export default {
     
   },
   methods: {
+    // 添加人员之后  根据 对内 还是对外  设置 选择人员的成本 
+    // 存储到 单行的 新建字段 costNum 内 用于下一步存储  计算
+    getUserCost(userId,index){
+      //  此处 故意调用一次 用户的请求，用于规避 回显用户列表的bug
+        let data = {
+          userId:userId
+        }
+      queryUserlist(data).then((res) => {
+        // formData.projectUserList[index].costNum  
+        // costNum 是我自己设置第一个值 用于存储 成本的单位
+        //  对外
+        if(this.formData.projectService==122){ //对外
+          this.formData.projectUserList[index].costNum = res.costOut
+        }else{  // 对内
+          this.formData.projectUserList[index].costNum = res.costIn
+        }
+
+        this.projectUserIdOptions = res.data;
+        this.userOptions = res.data;
+      });
+    },
     /*修改每日工时*/
     changeDayTime(number, day, fatherIndex, myIndex) {
       console.log(number, day, fatherIndex, myIndex);
@@ -621,7 +643,7 @@ export default {
         this.formData.projectUserList[index].workTime = res.data.day * 8;
         this.formData.projectUserList[index].startTime = dates[0];
         this.formData.projectUserList[index].endTime = dates[1];
-        this.formData.projectUserList[index].expectedCost = "未知";
+        this.formData.projectUserList[index].expectedCost = res.data.day*this.formData.projectUserList[index].costNum;
         res.data.list.map((item) => {
           item.startTime = item.startDate;
           item.endTime = item.endDate;
@@ -653,7 +675,8 @@ export default {
     },
     /* 查询用户列表 */
     getUserList() {
-      queryUserlist().then((res) => {
+      let data = {}
+      queryUserlist(data).then((res) => {
         res.data.map((item) => {
           item.userNameAndPost = item.userName + "（" + item.postName + "）";
         });

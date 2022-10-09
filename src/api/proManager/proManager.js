@@ -4,7 +4,7 @@ import { parseStrEmpty } from "@/utils/ruoyi";
 // 查询用户列表
 export function getTimeProcess(data) {
   return request({
-    url: '/project/project/timeProcess',
+    url: '/projectManage/project/timeProcess',
     method: 'post',
     data: data
   })
@@ -20,7 +20,7 @@ export function queryDict(dictCode) {
 // 新增项目列表
 export function addProjectList(data){
   return request({
-    url: '/project/project/addProject',
+    url: '/projectCreate/project-create/addProject',
     method: 'post',
     data: data
   })
@@ -28,7 +28,7 @@ export function addProjectList(data){
 // 列表页面 项目管理查询接口
 export function searchProjectList(data){  
   return request({
-    url: '/project/project/list',
+    url: '/projectManage/project/list',
     method: 'post',
     data: data
   })
@@ -36,7 +36,7 @@ export function searchProjectList(data){
 // 对于项目的开启和终止
 export function updateProjectStatus(query) {
   return request({
-    url: '/project/project/updateProjectStatus',
+    url: '/projectManage/project/updateProjectStatus',
     method: 'get',
     params: query
   })
@@ -44,7 +44,7 @@ export function updateProjectStatus(query) {
 // 列表页面 实际完成工作修改
 export function updateProjectById(data){  
   return request({
-    url: '/project/project/updateProjectById',
+    url: '/projectManage/project/updateProjectById',
     method: 'post',
     data: data
   })
@@ -53,7 +53,7 @@ export function updateProjectById(data){
 export function queryInfoById(data){  
   // console.log(data);
   return request({
-    url: '/project/project/queryInfoById',
+    url: '/projectManage/project/queryInfoById',
     method: 'post',
     data: data
   })
@@ -62,7 +62,7 @@ export function queryInfoById(data){
 export function queryProjectAudit(data){  
   // console.log(data);
   return request({
-    url: '/project/projectAudit/list',
+    url: '/projectManage/projectAudit/list',
     method: 'post',
     data: data
   })
@@ -71,12 +71,19 @@ export function queryProjectAudit(data){
 
 export function updateAuditProById(query) {
   return request({
-    url: '/project/projectAudit/updateById',
+    url: '/projectManage/projectAudit/updateById',
     method: 'get',
     params: query
   })
 }
-
+// 查询用户 下拉 不带分页
+export function queryUserlist(data) {
+  return request({
+    url: '/system/user/queryUserlist',
+    method: 'post',
+    data: data
+  })
+}
 
 
 
@@ -89,14 +96,7 @@ export function listUser(query) {
     params: query
   })
 }
-// 查询用户 下拉 不带分页
-export function queryUserlist() {
-  return request({
-    url: '/system/user/queryUserlist',
-    method: 'get',
-    // params: query
-  })
-}
+
 // 查询用户详细
 export function getUser(userId) {
   return request({
