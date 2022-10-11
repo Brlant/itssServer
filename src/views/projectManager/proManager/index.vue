@@ -393,7 +393,7 @@ export default {
     this.searchForm.countScope = this.countScopeInit
     /*------------------额外的初始化查询的判断------------------------------*/
     this.init();
-    console.log(getToday()+"--------");
+    // console.log(getToday()+"--------");
   },
   methods: {
     handleConfirm() {
@@ -500,6 +500,7 @@ export default {
             column.property == "sjConfig" ||
             column.property == "realWork"
           ) {
+            sums[index] =sums[index].toFixed(2)
             sums[index] += "人日";
           } 
           else if (
@@ -509,6 +510,7 @@ export default {
             column.property == "sjCost" ||
             column.property == "ysDeviation"
           ) {
+            sums[index] =sums[index].toFixed(2)
             sums[index] += "";
           } 
           else {

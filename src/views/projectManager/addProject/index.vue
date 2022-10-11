@@ -90,7 +90,12 @@
                       :key="index"
                       :label="item.value"
                       :disabled="item.disabled"
-                      >{{ item.label }}</el-radio
+                      >                     
+                        <b :class="['priority'+item.value]">
+                          {{ item.label }}
+                        </b>
+                    
+                      </el-radio
                     >
                   </el-radio-group>
                 </el-form-item>
@@ -108,7 +113,7 @@
                     :style="{ width: '100%' }"
                   >
                     <el-option
-                      v-for="(user, index) in projectUserIdOptions"
+                      v-for="(user, index) in userOptions"
                       :key="user.userId"
                       :label="user.userName"
                       :value="user.userId"
@@ -210,7 +215,7 @@
                   <el-form-item :prop="`projectUserList.${addUserListindex}.userId`" :rules="rules.projectUserListAllUserId">
                     <el-select
                       v-model="addUserList.userId"
-                      placeholder="请选择下拉选择"
+                      placeholder="请选择项目成员"
                       clearable @change="(userId)=>{getUserCost(userId,addUserListindex)}"
                       :style="{ width: '100%' }"
                     >
@@ -580,7 +585,7 @@ export default {
         
 
         this.projectUserIdOptions = res.data;
-        this.userOptions = res.data;
+        // this.userOptions = res.data;
       });
     },
     /*修改每日工时*/
@@ -689,7 +694,6 @@ export default {
     addUserListHandel() {
        if(this.formData.projectService==""){
               this.$message.error("请您先选择项目基础信息内-服务对象！");
-
         }else{
       let oneUser = this.deepClone(this.projectUserList);
       this.formData.projectUserList.push(oneUser);
@@ -701,16 +705,10 @@ export default {
     },
     // 保存 addProjectList 新增用户信息的
     submitForm() {
-      console.log(JSON.stringify(this.formData));
-
       this.$refs["elForm"].validate((valid) => {
         if (!valid) return;
         // TODO 提交表单
         if (valid) {
-          //     ref="elForm2"
-          // :model="formData"
-          // :rules="rules2"
-      
             let parame = {
               ...this.formData,
               // carrierId:this.temData.carrierId,
@@ -787,6 +785,18 @@ export default {
     color: #557db3;
   }
 }
+  .priority4 {
+      color: #909399;
+    }
+    .priority3 {
+      color: #409eff;
+    }
+    .priority2 {
+      color: #e6a23c;
+    }
+    .priority1 {
+      color: #f56c6c;
+    }
 </style>
 <style>
 .UserLine /deep/.el-form-item {

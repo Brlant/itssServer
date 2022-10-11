@@ -49,6 +49,14 @@ export function updateProjectById(data){
     data: data
   })
 }
+// 详情页面的  新增 和修改 项目成员
+export function updateProjectUserAddEdit(data){  
+  return request({
+    url: '/projectManage/project/updateProject',
+    method: 'post',
+    data: data
+  })
+}
 // 项目管理的详情页
 export function queryInfoById(data){  
   // console.log(data);

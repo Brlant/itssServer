@@ -50,10 +50,30 @@ const toStatus=((val)=>{
   }
   return sourceMap[val]
 })
+// 服务对象
+const toProjectService=((val)=>{
+  const sourceMap={
+    121:'对内',
+    122:'对外'
+  }
+  return sourceMap[val]
+})
+// 优先级
+const toPriority=((val)=>{
+  // 低（灰色）、普通（蓝色）、紧急（橙色）、非常紧急（红色）显示；
+  const sourceMap={
+    1:"最高",
+    2:"高",
+    3:"普通",
+    4:"较低"
+  }
+  return sourceMap[val]
+})
+
 export default {
   filterProjectStatus,
   formatDate,
   toObject,
   toUpdateScope,
-  toStatus
+  toStatus,toProjectService,toPriority
 }
