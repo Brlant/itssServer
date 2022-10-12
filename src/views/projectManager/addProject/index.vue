@@ -709,6 +709,13 @@ export default {
         if (!valid) return;
         // TODO 提交表单
         if (valid) {
+          this.formData.projectUserList.map((item,i)=>{
+            // 存储的字段被架构师修改掉 导致 提交的时候 需要修改一下
+            item.projectUserScheduleList.map((jtem)=>{
+                jtem.week = jtem.weekOfYear
+                jtem.weekDay = jtem.day
+            })
+          })
             let parame = {
               ...this.formData,
               // carrierId:this.temData.carrierId,

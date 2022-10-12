@@ -41,12 +41,13 @@ const toUpdateScope=((val)=>{
   }
   return sourceMap[val]
 })
-// 状态（1.待审核,2.已通过,3.已拒绝)
+// 状态（1.待审核，2.已通过，3.已拒绝，4.取消）
 const toStatus=((val)=>{
   const sourceMap={
     1:'待审核',
     2:'已通过',
-    2:'已拒绝',
+    3:'已拒绝',
+    4:'已取消',
   }
   return sourceMap[val]
 })

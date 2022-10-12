@@ -57,6 +57,15 @@ export function updateProjectUserAddEdit(data){
     data: data
   })
 }
+// 详情页 点击成员 去查询具体的list 
+export function updateQueryUserById(data){  
+  return request({
+    url: '/projectManage/project-user/queryUserById',
+    method: 'post',
+    data: data
+  })
+}
+
 // 项目管理的详情页
 export function queryInfoById(data){  
   // console.log(data);
