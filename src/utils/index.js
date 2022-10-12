@@ -421,7 +421,6 @@ export function getToday(){
     var h = (date.getHours() < 10 ? '0'+date.getHours():date.getHours())+ ':';
     var m = (date.getMinutes() < 10 ? '0'+date.getMinutes():date.getMinutes()) + ':';
     var s = date.getSeconds() < 10 ? '0'+date.getSeconds():date.getSeconds();
-    console.log(D);
     return Y+M+D;
   }
 // 判断 此人是否有此权限  返回 true false
