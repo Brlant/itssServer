@@ -245,7 +245,8 @@ export default {
   methods: {
     /* 查询用户列表 */
     getUserList(){
-      queryUserlist().then(res=>{
+      let data ={}
+      queryUserlist(data).then(res=>{
         console.log(res.data);
         this.userlist = res.data
       })

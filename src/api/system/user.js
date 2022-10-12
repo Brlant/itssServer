@@ -9,12 +9,11 @@ export function listUser(query) {
     params: query
   })
 }
-// 查询用户 下拉 不带分页
-export function queryUserlist() {
+export function queryUserlist(data) {
   return request({
     url: '/system/user/queryUserlist',
-    method: 'get',
-    // params: query
+    method: 'post',
+    data: data
   })
 }
 // 查询用户详细
