@@ -35,7 +35,6 @@ export default {
     },
     created(){
        this.query={time:moment().format('YYYY-MM-DD'),name:''}
-        // this.queryDetail={startDate:moment().format('YYYY-MM-DD'),endDate:moment().format('YYYY-MM-DD'),status:0}    
         this.queryDetail={startDate:moment().format('YYYY-MM-DD'),endDate:moment().format('YYYY-MM-DD'),status:0}    
        this.searchTest(this.query)
       
@@ -60,7 +59,10 @@ export default {
           workDate:time
         }
          approvalItems(data).then(res=>{
-          this.parentData=res.data
+          if(res.data){
+              this.parentData=res.data
+          }
+          
 
         })
       },
@@ -73,7 +75,10 @@ export default {
     detailMode(data){
       approvalMonth(data).then(res=>{
         if(res.code==200){
-          this.detailData=res.data
+          if(res.data){
+            this.detailData=res.data
+          }
+          
         }
       })
     }
