@@ -1,9 +1,9 @@
 <template>
     <div class='approval'>
         <div class='header'>
-            <span @click="check(0)" :class='{curren:n==0}'>精简模式</span>
+            <span @click="check(0)" :class='{curren:n==0}' style='cursor:pointer;'>精简模式</span>
             <span>|</span>
-            <span @click='check(1)' :class='{curren:n==1}'>详情模式</span>           
+            <span @click='check(1)' :class='{curren:n==1}'  style='cursor:pointer;'>详情模式</span>           
         </div>
         <div>
           <!-- 精简模式 -->

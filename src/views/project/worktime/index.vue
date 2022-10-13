@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div style="padding: 10px">
-      <div @click="showMorTime" style='width:105px;'><i class='el-icon-date'></i><span style="color:#557CB5;margin-left:10px;font-size:14px;">日历查看<i class='el-icon-arrow-down'></i></span></div>
+      <div @click="showMorTime" style='width:105px;'><i class='el-icon-date'></i><span style="color:#557CB5;margin-left:10px;font-size:14px;cursor:pointer;">日历查看<i class='el-icon-arrow-down'></i></span></div>
       <el-date-picker
       class='timePickCss'
         v-model="selectTime"
@@ -27,7 +27,7 @@
           :key="index"
           @click="onTabClick(index, item)"
           :class="['date-item', { current: index === n }]"
-          style="color: #ffffff"
+          style="color: #ffffff;cursor:pointer;"
         >
           {{ item.date + item.name }}
         </div>
@@ -554,6 +554,7 @@ display: table-cell;
 vertical-align: middle;
 text-align: center;
 color:#557CB5;
+cursor:pointer;
 }}
 .more{
   text-align: center;
