@@ -11,7 +11,7 @@
       <div class="backBar">
         <router-link :to="'/projectManager/proManager'"> < 返回</router-link>
         <div class="rightLink">
-          <router-link :to="'/ProjectManager/AddProject'">编辑</router-link>|
+          <router-link :to="'/projectManager/proEdit?projectId='+projectId">编辑</router-link>|
           <span
             @click="stopProject"
             :class="[projectTable.projectStatus == 4 ? 'color5' : 'color4']"
@@ -151,10 +151,14 @@
       </div>
     </div>
     <!---项目成员安排--------------------------------------------->
-    <div class="whiteBox" style="padding: 1%">
+    <div class="whiteBox" style="padding: 1%" >
       <b>| 项目成员安排</b>
       <p></p>
+      <p  v-show="projectTable.projectUserList.length==0">
+          <center> <span class="color1">暂无项目成员</span> </center>
+      </p>
       <el-table
+        v-show="projectTable.projectUserList.length>0"
         :data="projectTable.projectUserList"
         show-summary 
         :cell-style="columnStyle"
@@ -575,6 +579,7 @@ export default {
       countScope: undefined, //统计范围 1.全部，2.仅我负责，3.仅部门成员
     },
     projectName: "",
+    projectId:"",
     countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
     countScopeInit: "",
     projectTable: [
@@ -604,6 +609,7 @@ export default {
   watch: {},
   created() {
     this.projectName = this.$route.query.projectName;
+    this.projectId = this.$route.query.projectId;
     this.init('init');
   },
   mounted() {
@@ -973,7 +979,10 @@ export default {
         this.projectTable.projectUserList = res.data.projectUserList;
         // 在有项目成员之后  再 过滤已经有的人
         // 获取并过滤用户的下拉
+        // if(res.data.projectUserList.length>0){
+          // 如果 某个操作触发了 初始化，
           this.getUserList(); 
+        // }
 
         res.data.projectUserList.map((item, i) => {
           item.projectUserScheduleList.map((jtem, j) => {

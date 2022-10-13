@@ -92,7 +92,7 @@
                     :label="item.label"
                     :value="item.value"
                   >
-                    <span :class="['color' + item.value]">{{
+                    <span :class="['priority' + item.value]">{{
                       item.label
                     }}</span>
                   </el-option>
@@ -538,6 +538,26 @@ export default {
 .app-container {
   padding: 0;
 }
+  /* {
+          label: "最高",
+          value: 1,
+        },
+        {
+          label: "高",
+          value: 2,
+        },
+        {
+          label: "普通",
+          value: 3,
+        },
+        {
+          label: "较低",
+          value: 4,
+        }, */
+.priority1{color: #f56c6c;}
+.priority2{color: #e6a23c;}
+.priority3{color: #409eff;}
+.priority4{color: #909399;}
 .color1 {
   color: #909399;
 }

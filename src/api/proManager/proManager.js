@@ -9,6 +9,14 @@ export function getTimeProcess(data) {
     data: data
   })
 }
+// 详情页面，点击编辑进入编辑页面
+export function proDetailBFEdit(projectId) {
+  return request({
+    url: `/projectManage/project/getById/${projectId}`,
+    method: 'get',
+    // params: query
+  })
+}
 // 字典查询 传入字典名称
 export function queryDict(dictCode) {
   return request({
@@ -85,7 +93,6 @@ export function queryProjectAudit(data){
   })
 }
 // 对已经提交的修改 项目基本信息 进行审核
-
 export function updateAuditProById(query) {
   return request({
     url: '/projectManage/projectAudit/updateById',

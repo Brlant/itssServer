@@ -128,7 +128,7 @@
 
     <!-- 添加或修改岗位对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="160px">
          <el-form-item label="区域" prop="regionId">
           <el-select v-model="form.regionId" placeholder="区域" clearable>
           <el-option

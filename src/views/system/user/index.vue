@@ -205,11 +205,13 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
+         
+            <el-col :span="12">
+          <!-- v-if="form.userId == undefined" -->
+            <el-form-item  label="用户名称" prop="userName">
+              <el-input v-model="form.userName" placeholder="请输入用户(手机号)" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -219,68 +221,20 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+        <!-- <el-col :span="12">
             <el-form-item label="手机号码" prop="phonenumber">
               <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户性别">
-              <el-select v-model="form.sex" placeholder="请选择性别">
+          </el-col> -->
+              <el-col :span="12">
+            <el-form-item label="用户性别" prop="sex">
+              <el-select v-model="form.sex"  placeholder="请选择性别">
                 <el-option
                   v-for="dict in dict.type.sys_user_sex"
                   :key="dict.value"
                   :label="dict.label"
                   :value="dict.value"
                 ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="状态">
-              <el-radio-group v-model="form.status">
-                <el-radio
-                  v-for="dict in dict.type.sys_normal_disable"
-                  :key="dict.value"
-                  :label="dict.value"
-                >{{dict.label}}</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="岗位">
-              <el-select v-model="form.postId" filterable   placeholder="请选择岗位">
-                <el-option
-                  v-for="item in postOptions"
-                  :key="item.postId"
-                  :label="item.postName"
-                  :value="item.postId"
-                  :disabled="item.status == 1"
-                >
-                  <!-- <span style="float: left">{{ item.regionName+'-'+item.postName+'-'+item.postLevel }}</span> -->
-                 <!-- <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span> -->
-                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -299,9 +253,47 @@
             </el-form-item>
           </el-col>
         </el-row>
+        
+        <el-row>
+           <el-col :span="12">
+            <el-form-item label="邮箱" prop="email">
+              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态">
+              <el-radio-group v-model="form.status">
+                <el-radio
+                  v-for="dict in dict.type.sys_normal_disable"
+                  :key="dict.value"
+                  :label="dict.value"
+                >{{dict.label}}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="git账号" prop="gitAccount">
+            <el-form-item label="区域-职位-级别">
+              <el-select v-model="form.postId" filterable   placeholder="请选择区域-职位-级别">
+                <el-option
+                  v-for="item in postOptions"
+                  :key="item.postId"
+                  :label="item.postName"
+                  :value="item.postId"
+                  :disabled="item.status == 1"
+                >
+                  <!-- <span style="float: left">{{ item.regionName+'-'+item.postName+'-'+item.postLevel }}</span> -->
+                 <!-- <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span> -->
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="git账号">
               <el-input v-model="form.gitAccount" placeholder="请输入git账号名称" maxlength="30" />
             </el-form-item>
           </el-col>
@@ -437,13 +429,15 @@ export default {
       rules: {
         userName: [
           { required: true, message: "用户名称不能为空", trigger: "blur" },          
-          { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
+          // { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
+           {
+            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+            message: "请输入正确的手机号码",
+            trigger: "blur"
+          }
         ],
-        gitAccount: [
-          { required: true, message: "git账户不能为空", trigger: "blur" },        
-        ],
-        nickName: [
-          { required: true, message: "用户昵称不能为空", trigger: "blur" }
+        sex: [
+          { required: true, message: "性别不能为空", trigger: "blur" },        
         ],
         password: [
           { required: true, message: "用户密码不能为空", trigger: "blur" },
@@ -456,13 +450,14 @@ export default {
             trigger: ["blur", "change"]
           }
         ],
-        phonenumber: [
-          {
-            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-            message: "请输入正确的手机号码",
-            trigger: "blur"
-          }
-        ]
+        // phonenumber: [
+        //   { required: true, message: "手机号码不能为空", trigger: "blur" },
+        //   {
+        //     pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+        //     message: "请输入正确的手机号码",
+        //     trigger: "blur"
+        //   }
+        // ]
       }
     };
   },
