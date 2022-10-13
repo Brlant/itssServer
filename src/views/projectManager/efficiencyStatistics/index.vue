@@ -197,7 +197,7 @@ export default {
         this.getDeptTree()   
         this.drillDowm=this.isJurisdiction('common') ? false : true      
         this.selfJurisdiction=this.isJurisdiction('common')
-        this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage')
+        this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')
         //   this.mangerJurisdiction=this.isJurisdiction('admin') || this.isJurisdiction('operatemanage')
         this.defaultDate()
     },
