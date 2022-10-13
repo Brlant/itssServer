@@ -398,16 +398,16 @@ export default {
   display: inline-block;
   margin-left: 8px;
 }
-.yuan1 {
+.yuan4 {
   background-color: #909399;
 }
-.yuan2 {
+.yuan3 {
   background-color: #409eff;
 }
-.yuan3 {
+.yuan2 {
   background-color: #e6a23c;
 }
-.yuan4 {
+.yuan1 {
   background-color: #f56c6c;
 }
 .colorname{

@@ -237,7 +237,8 @@ export default {
     },
     //获取项目
     getProject(){
-        projectList().then(res=>{
+      let workDate =  this.workDate
+        projectList(workDate).then(res=>{
           this.projectName=res.data
         })
     },
@@ -380,6 +381,7 @@ export default {
       let time = this.weekList[tab].date;
       this.workDate=moment(time, 'YYYY/M/D').format('YYYY-MM-DD')
        this.queryProject(this.workDate)
+       this.getProject()
       this.pickerChange(new Date(time));
       this.listTwo=[]
     },
