@@ -216,6 +216,9 @@ export default {
         postName: [
           { required: true, message: "职位名称不能为空", trigger: "blur" }
         ],
+        postType:[{
+          required: true, message: "职位类型不能为空", trigger: "blur" 
+        }],
         postLevel:[
           { required: true, message: "职位等级不能为空", trigger: "blur" }
         ],
