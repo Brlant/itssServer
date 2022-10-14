@@ -44,7 +44,7 @@
                   <span style="color:#00A99D">-{{item.currentProjectTotalWorkTime}}</span>
                   <span>小时</span>
               </span>
-             <span  v-if='item.currentProjectTotalWorkTime-item.currentProjectScheduleTime>=0'>
+             <span  v-if='item.currentProjectTotalWorkTime-item.currentProjectScheduleTime>0'>
                 <span style="color:#FF435A">+{{item.currentProjectTotalWorkTime}}</span>
                 <span>小时</span></span><span v-show="index < plan.length - 1">;</span>
             </span>
