@@ -137,10 +137,9 @@
                   >
                     <el-option
                       v-for="(dict, index) in projectServiceOptions"
-                      :key="dict.dictCode"
-                      :label="dict.dictLabel"
-                      :value="dict.dictCode"
-                      :disabled="dict.disabled"
+                      :key="index"
+                      :label="dict.label"
+                      :value="dict.value"
                     ></el-option>
                   </el-select>
                 </el-form-item>
@@ -356,6 +355,22 @@ export default {
         projectUserId: "",/**项目负责人*/        
         projectUserList: [],/**项目成员列表*/
         projectGitUrl:"",// 项目git 地址
+        // "priority": 3,  快速调试
+        // "projectChance": "",
+        // "projectCode": "123",
+        // "projectEndTime": "2022-11-30",
+        // "projectName": "123",
+        // "projectService": 1,
+        // "projectStage": 128,
+        // "projectStartTime": "2022-10-01",
+        // "projectType": 123,
+        // "projectUserId": 107,
+        // "projectUserList": [],
+        // "projectGitUrl": "123",
+        // "projectTimeArea": [
+        // "2022-10-01",
+        // "2022-11-30"
+        // ]
       },
       rules: {
          "projectUserListAllUserId": [
@@ -489,7 +504,16 @@ export default {
           value: 4,
         },],
       projectUserIdOptions: [],
-      projectServiceOptions: [],
+      projectServiceOptions: [
+           {
+          label: "对内",
+          value: 1,
+        },
+        {
+          label: "对外",
+          value: 2,
+        }
+      ],
       projectChanceOptions: [{
           label: "选项一",
           value: 1,
@@ -505,7 +529,7 @@ export default {
     this.getUserList();
     this.getDictList("project_phase"); // 项目阶段 project_phase
     this.getDictList("project_type"); // 项目类型 project_type
-    this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
+    // this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
     // this.getDictList("project_priority"); // 项目优先级
 
     
@@ -528,8 +552,9 @@ export default {
         // formData.projectUserList[index].costNum  
         // costNum 是我自己设置第一个值 用于存储 成本的单位
         //  对外
-       
-        if(this.formData.projectService==122){ //对外
+        // this.userOptions = res.data;
+        // 服务对象(1.对内，2.对外)
+        if(this.formData.projectService==2){ //对外
           this.formData.projectUserList[index].costNum = res.data[0].costOut
         }else{  // 对内
           this.formData.projectUserList[index].costNum = res.data[0].costIn
@@ -551,8 +576,8 @@ export default {
            })
 
         }
-        // this.userOptions = res.data;
       });
+      
     },
     /*修改每日工时*/
     changeDayTime(number, day, fatherIndex, myIndex) {
@@ -610,7 +635,6 @@ export default {
             endDate: dates[1],
           };
           getTimeProcess(params).then((res) => {
-            console.log(res.data);
             this.formData.projectUserList[index].workDay = res.data.day;
             this.formData.projectUserList[index].workDayTemp = res.data.day;
             this.formData.projectUserList[index].workTime = res.data.day * 8;
@@ -638,9 +662,9 @@ export default {
         if (dictCode == "project_type") {
           this.projectTypeOptions = res.data;
         }
-        if (dictCode == "serivce_obj_type") {
-          this.projectServiceOptions = res.data;
-        }
+        // if (dictCode == "serivce_obj_type") {
+        //   this.projectServiceOptions = res.data;
+        // }
         // if(dictCode=="project_priority"){
         //   this.priorityOptions= res.data
         // }
@@ -656,6 +680,7 @@ export default {
         this.projectUserIdOptions = res.data;// 初始化填充给 项目负责人的 永远是所有用户
         this.userOptions = res.data; // 需要根据已经选择的人 来过滤
       });
+      
     },
     // 点击 新增用户的
     addUserListHandel() {
@@ -663,17 +688,49 @@ export default {
       //         this.$message.error("请您先完整填写项目基础信息！");
       //   }
          this.$refs["elForm"].validate((valid) => {
-        if (!valid) return;
+           if (!valid) return;
         // TODO 上面基础信息填写好 再填写下面，因为需要用到上面的 服务对象和项目有效期
         if (valid) {
+             
             let oneUser = this.deepClone(this.projectUserList);
             this.formData.projectUserList.push(oneUser);
+             let data = {}
+            queryUserlist(data).then((res) => {
+              res.data.map((item) => {
+                item.userNameAndPost = item.userName + "（" + item.postName + "）";
+              });
+                this.formData.projectUserList.map((item,i)=>{
+                  res.data.map((user,u)=>{
+                    if(item.userId!=""&&item.userId==user.userId){
+                     res.data.splice(u,1)
+                    }
+
+                  })
+                })
+                this.userOptions = res.data; // 需要根据已经选择的人 来过滤
+            });
         }
       });
 
     },
     // 删除单行用户的
     DelUserList(index) {
+      // 点击删除之后，重新获取userOptions 做一次剔除
+        let data = {}
+      queryUserlist(data).then((res) => {
+        res.data.map((item) => {
+          item.userNameAndPost = item.userName + "（" + item.postName + "）";
+        });
+        this.userOptions = res.data; // 需要根据已经选择的人 来过滤
+      });
+      this.formData.projectUserList.map((item,i)=>{
+        this.userOptions.map((user,u)=>{
+          if(item.userId==user.userId){
+            this.userOptions.splice(u,1)
+          }
+
+        })
+      })
       this.formData.projectUserList.splice(index, 1);
     },
     // 保存 addProjectList 新增用户信息的
@@ -707,7 +764,17 @@ export default {
     },
     // 取消重置表单的
     resetForm() {
-      this.$refs["elForm"].resetFields();
+        this.$confirm(`此操作会重置本页面所有填写的内容!`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+
+          this.$refs["elForm"].resetFields();
+        }).catch(()=>{
+
+        })
     },
   },
 

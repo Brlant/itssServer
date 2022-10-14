@@ -135,10 +135,9 @@
               >
                 <el-option
                   v-for="(dict, index) in projectServiceOptions"
-                  :key="dict.dictCode"
-                  :label="dict.dictLabel"
-                  :value="dict.dictCode"
-                  :disabled="dict.disabled"
+                      :key="index"
+                      :label="dict.label"
+                      :value="dict.value"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -211,25 +210,34 @@
                 :prop="`projectUserList.${addUserListindex}.userId`"
                 :rules="rules.projectUserListAllUserId"
               >
-                <el-select
-                  v-model="addUserList.userId"
-                  placeholder="请选择项目成员"
-                  clearable
-                  @change="
-                    (userId) => {
-                      getUserCost(userId, addUserListindex);
-                    }
-                  "
-                  :style="{ width: '100%' }"
-                >
-                  <el-option
-                    v-for="user in userOptions"
-                    :key="user.userId"
-                    :label="user.userNameAndPost"
-                    :value="user.userId"
-                  ></el-option>
-                </el-select> </el-form-item
-            ></el-col>
+                <template v-if="addUserList.updateType == 3">
+                  <!-- 我是修改的 -->
+                  {{ addUserList.userNam }}
+                </template>
+
+                <template v-if="addUserList.updateType == 1">
+                  <!-- 我是新增的 -->
+                  <el-select
+                    v-model="addUserList.userId"
+                    placeholder="请选择项目成员"
+                    clearable
+                    @change="
+                      (userId) => {
+                        getUserCost(userId, addUserListindex);
+                      }
+                    "
+                    :style="{ width: '100%' }"
+                  >
+                    <el-option
+                      v-for="user in userOptions"
+                      :key="user.userId"
+                      :label="user.userNameAndPost"
+                      :value="user.userId"
+                    ></el-option>
+                  </el-select>
+                </template>
+              </el-form-item>
+            </el-col>
             <el-col :span="5">
               <el-form-item
                 label=""
@@ -271,7 +279,7 @@
               ><div class="colText2">
                 <el-button
                   size="mini"
-                  @click="DelUserList(addUserListindex)"
+                  @click="DelUserList(addUserListindex, addUserList)"
                   type="error"
                   >删除</el-button
                 >
@@ -498,7 +506,16 @@ export default {
         },
       ],
       projectUserIdOptions: [],
-      projectServiceOptions: [],
+      projectServiceOptions: [ //服务对象(1.对内，2.对外)
+          {
+          label: "对内",
+          value: 1,
+        },
+        {
+          label: "对外",
+          value: 2,
+        }
+      ],
       projectChanceOptions: [
         {
           label: "选项一",
@@ -515,7 +532,7 @@ export default {
     // this.getUserList();
     this.getDictList("project_phase"); // 项目阶段 project_phase
     this.getDictList("project_type"); // 项目类型 project_type
-    this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
+    // this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
     // this.getDictList("project_priority"); // 项目优先级
     this.init();
     // 页面默认点击一下  添加成员
@@ -549,7 +566,7 @@ export default {
           res.data.projectStartTime,
           res.data.projectEndTime,
         ];
-    
+
         // 之前的做法 动态生成 表格列
         // if (res.data.projectUserList[0].projectUserScheduleList.length != 0) {
         //   this.labelArr = this.createLabel(
@@ -571,9 +588,8 @@ export default {
         });
         // formData.projectUserList[index].costNum
         // costNum 是我自己设置第一个值 用于存储 成本的单位
-        //  对外
-
-        if (this.formData.projectService == 122) {
+        //  对外 服务对象(1.对内，2.对外)
+        if (this.formData.projectService == 2) {
           //对外
           this.formData.projectUserList[index].costNum = res.data[0].costOut;
         } else {
@@ -693,9 +709,9 @@ export default {
         if (dictCode == "project_type") {
           this.projectTypeOptions = res.data;
         }
-        if (dictCode == "serivce_obj_type") {
-          this.projectServiceOptions = res.data;
-        }
+        // if (dictCode == "serivce_obj_type") {
+        //   this.projectServiceOptions = res.data;
+        // }
         // if(dictCode=="project_priority"){
         //   this.priorityOptions= res.data
         // }
@@ -710,7 +726,7 @@ export default {
         });
         this.projectUserIdOptions = res.data; // 初始化填充给 项目负责人的 永远是所有用户
         //---------------------------------------------------------
-          //  初始化用户列表之后， 需要剔除已经存在的userID
+        //  初始化用户列表之后， 需要剔除已经存在的userID
         let userIdsTemp = [];
         this.formData.projectUserList.map((item) => {
           // 拿到已经存在的用户id
@@ -744,10 +760,36 @@ export default {
       });
     },
     // 删除单行用户的
-    DelUserList(index) {
+    DelUserList(index, row) {
       // 修改类型（1.新增,2.删除,3.修改原数据）
       // oneUser.updateType = 1
-      this.formData.projectUserList.splice(index, 1);
+
+      this.$confirm(`您确定要删除${row.userName}吗?`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          if (row.updateType == 3) { // 修改 就提交接口
+            let params = this.deepClone(this.formData);
+            params.projectUserList = [];
+            params.projectUserList.push(row);
+            // 修改类型（1.新增,2.删除,3.修改原数据）
+            params.projectUserList[0].updateType = 2;
+
+            updateProjectUserAddEdit(params).then((res) => {
+              let { code, msg } = res;
+              this.$message.success(msg);
+              if (+code == 200) {
+                // 提交删除成功 无需操作什么 因为 需要审核
+              }
+            });
+          }
+          if (row.updateType == 1) { // 新增的就前端删除
+            this.formData.projectUserList.splice(index, 1);
+          }
+        })
+        .catch(() => {});
     },
     // 保存 updateProjectUserAddEdit 新增用户信息的
     submitForm() {

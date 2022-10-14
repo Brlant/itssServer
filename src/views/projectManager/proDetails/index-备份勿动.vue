@@ -692,9 +692,9 @@ export default {
               // console.log(res);
               res.data.workDayTemp = res.data.workDay 
               // 点击修改，拿到此项目的 项目类型 对内对外
-                //  121:'对内', costIn
-                //  122:'对外' costOut
-              res.data.costNum = this.formData.projectService==121? res.data.costIn:res.data.costOut
+                //  1:'对内', costIn
+                //  2:'对外' costOut
+              res.data.costNum = this.formData.projectService==1? res.data.costIn:res.data.costOut
               res.data.projectUserScheduleList.map(item=>{
                 item.day = item.weekDay
               })
@@ -851,8 +851,7 @@ export default {
         // addEditFormData.projectUserList[index].costNum
         // costNum 是我自己设置第一个值 用于存储 成本的单位
         //  对外
-
-        if (this.addEditFormData.projectService == 122) {
+        if (this.addEditFormData.projectService == 2) {
           //对外
           this.addEditFormData.projectUserList[index].costNum =
             res.data[0].costOut;
