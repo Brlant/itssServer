@@ -55,21 +55,21 @@
                     <el-table-column :label="item" align="center" v-for="(item,index) in months" :key='index'>
                         <el-table-column label="计划负荷" align="center"   min-width='150'>
                             <template  slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[index].scheduleLoad}}</span>%(<span>{{scope.row.monthEfficiencyList[index].scheduleDay}}</span>人日)
+                                <span>{{scope.row.monthEfficiencyList[index].scheduleLoad+'%'}}</span><span>{{'('+scope.row.monthEfficiencyList[index].scheduleDay+'人日)'}}</span>
                             
                             </template>
                         </el-table-column>
                         <el-table-column label="实际负荷" align="center"   min-width='150'>
-                            <template slot-scope="scope">
-                                <span  v-if='scope.row.monthEfficiencyList[index].workLoad > scope.row.monthEfficiencyList[index].scheduleLoad' class='piancha2'>
-                                    <span>{{scope.row.monthEfficiencyList[index].workLoad}}</span>%(<span>{{scope.row.monthEfficiencyList[index].workDay}}</span>人日)
+                          <template slot-scope="{row}">
+                                <span :class="[workLoadStyle(row.monthEfficiencyList[index])]">
+                                    <span>{{row.monthEfficiencyList[index].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].workDay+'人日)'}}</span>
                                 </span>
-                                <span  v-else-if='scope.row.monthEfficiencyList[index].workLoad < scope.row.monthEfficiencyList[index].scheduleLoad' class='piancha1'>
-                                    <span>{{scope.row.monthEfficiencyList[index].workLoad}}</span>%(<span>{{scope.row.monthEfficiencyList[index].workDay}}</span>人日)
+                                <!-- <span  v-if='workLoadStyle(row.monthEfficiencyList[index])' class='piancha1'>
+                                    <span>{{row.monthEfficiencyList[index].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].workDay+'人日)'}}</span>
                                 </span>
                                  <span  v-else>
-                                    <span>{{scope.row.monthEfficiencyList[index].workLoad}}</span>%(<span>{{scope.row.monthEfficiencyList[index].workDay}}</span>人日)
-                                </span>                                
+                                    <span>{{row.monthEfficiencyList[index].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].workDay+'人日)'}}</span>
+                                </span>                                 -->
                             </template>
                         </el-table-column>
                         <el-table-column label="问题数量" align="center">
@@ -113,22 +113,16 @@
 
                     <el-table-column :label="item" align="center" v-for="(item,index) in months" :key='index'>
 
-                        <el-table-column label="计划负荷" align="center"  min-width='150'>
-                            <template  slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[index].scheduleLoad}}</span>%(<span></span>人日)
+                         <el-table-column label="计划负荷" align="center"   min-width='150'>
+                            <template  slot-scope="{row}">
+                                <span>{{row.monthEfficiencyList[index].scheduleLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].scheduleDay+'人日)'}}</span>
                             
                             </template>
                         </el-table-column>
-                        <el-table-column label="实际负荷" align="center" min-width='150'>
-                            <template slot-scope="scope">
-                                <span  v-if='scope.row.monthEfficiencyList[index].workLoad > scope.row.monthEfficiencyList[index].scheduleLoad' class='piancha2'>
-                                    <span>{{scope.row.monthEfficiencyList[index].workLoad}}</span>%(<span>{{scope.row.monthEfficiencyList[index].workDay}}</span>人日)
-                                </span>
-                                <span  v-else-if='scope.row.monthEfficiencyList[index].workLoad < scope.row.monthEfficiencyList[index].scheduleLoad' class='piancha1'>
-                                    <span>{{scope.row.monthEfficiencyList[index].workLoad}}</span>%(<span>{{scope.row.monthEfficiencyList[index].workDay}}</span>人日)
-                                </span>
-                                 <span  v-else>
-                                    <span>{{scope.row.monthEfficiencyList[index].workLoad}}</span>%(<span>{{scope.row.monthEfficiencyList[index].workDay}}</span>人日)
+                        <el-table-column label="实际负荷" align="center"   min-width='150'>
+                            <template slot-scope="{row}">
+                                <span :class="[workLoadStyle(row.monthEfficiencyList[index])]">
+                                    <span>{{row.monthEfficiencyList[index].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].workDay+'人日)'}}</span>
                                 </span>
                             </template>
                         </el-table-column>
@@ -202,6 +196,15 @@ export default {
         this.defaultDate()
     },
     methods:{   
+        workLoadStyle(data){
+            if(data.workLoad>data.scheduleLoad){
+                return 'piancha2'
+            }else if(data.workLoad<data.scheduleLoad){
+                return 'piancha1'
+            }else {
+                return ''
+            }
+        },
          /** 查询部门下拉树结构 */
         getDeptTree() {
             treeselect().then(response => {
