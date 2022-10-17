@@ -432,3 +432,11 @@ export function isJurisdiction(...roleStrs) {
   })
   return result
 }
+// 判断当前登录人 是不是 项目负责人 返回true false
+export function isProjectByUser(projectInfo){
+  // console.log(projectInfo);
+  let result = false
+  const userInfo = JSON.parse(window.localStorage.getItem("user"))?JSON.parse(window.localStorage.getItem("user")):[]
+  if(userInfo.userId == projectInfo.projectUserId){ result = true}
+  return result
+}

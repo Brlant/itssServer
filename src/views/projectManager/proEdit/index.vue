@@ -1,13 +1,18 @@
 <template>
   <div class="app-container">
     <div class="routerBar">
-      <router-link :to="'/projectManager/proManager'"> < 编辑项目</router-link>
+      <!-- <router-link :to="'/projectManager/proManager'"> < 编辑项目</router-link> -->
+       <span
+            @click="goManagerPage" style="cursor: pointer;color: #409eff;">
+              < 编辑项目
+        </span>
+
       <span> （仅项目负责人可对此项目下列对内进行编辑）</span>
       <div class="rightBox">
         <el-button size="mini" @click="submitForm" type="primary"
           >保存</el-button
         >
-        <el-button size="mini" @click="resetForm" type="default"
+        <el-button size="mini" @click="backDetail" type="default"
           >取消</el-button
         >
       </div>
@@ -212,7 +217,7 @@
               >
                 <template v-if="addUserList.updateType == 3">
                   <!-- 我是修改的 -->
-                  {{ addUserList.userNam }}
+                  {{ addUserList.userName }}
                 </template>
 
                 <template v-if="addUserList.updateType == 1">
@@ -344,6 +349,7 @@ import {
   searchProjectList,
   proDetailBFEdit,
 } from "@/api/proManager/proManager";
+import { getToday} from "@/utils/index";
 
 export default {
   data() {
@@ -552,6 +558,11 @@ export default {
           // oneUser.updateType = 1
           item.startEndTime = [item.startTime, item.endTime];
           item.updateType = 3;
+          item.workDayTemp = item.workDay;
+          item.costNum =
+            res.data.projectService == 1
+              ? res.data.costIn
+              : res.data.costOut;
           item.projectUserScheduleList.map((jtem, j) => {
             item["planLoadCh" + i + j] = jtem.planLoadCh;
             item["planLoadWorkDayCh" + i + j] = jtem.planLoadWorkDayCh;
@@ -559,6 +570,8 @@ export default {
             item["realLoadWorkDayCh" + i + j] = jtem.realLoadWorkDayCh;
             jtem.weekTimeArea =
               jtem.startTime.substring(5) + "-" + jtem.endTime.substring(5);
+            jtem.day = jtem.weekDay  
+
           });
         });
         this.formData = res.data; // 填充详情的 projectTimeArea
@@ -618,7 +631,7 @@ export default {
     },
     /*修改每日工时*/
     changeDayTime(number, day, fatherIndex, myIndex) {
-      console.log(number, day, fatherIndex, myIndex);
+      // console.log(number, day, fatherIndex, myIndex);
       // 期间计划负荷 = 当前行的总天数day*number  /  当前行的总天数day * 8
       this.formData.projectUserList[fatherIndex].projectUserScheduleList[
         myIndex
@@ -647,17 +660,19 @@ export default {
       // 暂存一下 实际的天数
       const tempWorkDay =
         this.formData.projectUserList[fatherIndex].workDayTemp;
-      console.log(tempWorkDay);
+      // console.log(tempWorkDay);
       // 顶部的 共计多少小时  多少天
       this.formData.projectUserList[fatherIndex].workDay = totalDay / 8;
       this.formData.projectUserList[fatherIndex].workTime = totalTime;
       // 顶部的 计划负荷 预计成本
-      console.log(totalDay);
-      console.log(tempWorkDay);
+      // console.log(totalDay);
+      // console.log(tempWorkDay);
       this.formData.projectUserList[fatherIndex].planLoad = (
         (totalDay / (tempWorkDay * 8)) *
         100
       ).toFixed(2);
+      console.log(this.formData.projectUserList[fatherIndex].workDay ,
+        this.formData.projectUserList[fatherIndex].costNum);
       this.formData.projectUserList[fatherIndex].expectedCost = (
         this.formData.projectUserList[fatherIndex].workDay *
         this.formData.projectUserList[fatherIndex].costNum
@@ -824,8 +839,25 @@ export default {
     resetForm() {
       this.$refs["elForm"].resetFields();
     },
+    backDetail(){
+       this.$confirm(`您确定要返回详情页吗?刚刚修改的数据将不会被保存！`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {        
+           const obj = { path:'/projectManager/proDetails/', query:{ projectId:this.formData.projectId,projectName:this.formData.projectName,countScope:this.$route.query.countScope,
+            startTime:this.formData.projectStartTime,endTime:getToday()}};
+           this.$tab.closeOpenPage(obj);
+            
+        })
+        .catch(() => {});
+    },
+   goManagerPage(){
+         const obj = { path:'/projectManager/proManager'};
+        this.$tab.closeOpenPage(obj);
+    },
   },
-
   beforeCreate() {
     document
       .querySelector("body,html")

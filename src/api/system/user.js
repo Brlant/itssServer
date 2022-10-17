@@ -72,7 +72,6 @@ export function changeUserStatus(data) {
 }
 // 用户状态修改
 export function changeStatus(data) {
-  console.log(data);
   return request({
     url: `/system/user/changeStatus`,
     method: 'put',

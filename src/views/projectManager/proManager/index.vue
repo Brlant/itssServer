@@ -4,6 +4,7 @@
       <div class="leftTitle">
         项目管理
         <div class="rightBtns">
+          <!-- 必须是项目主管的角色 -->
           <el-button size="mini" type="primary" v-if="isJurisdiction('projectdirector')">
             <router-link :replace="true"  :to="'/ProjectManager/AddProject'"
               >新建项目</router-link
@@ -192,6 +193,7 @@
           <template slot-scope="scope">
             {{ scope.row.realWork }}人日
             <el-button
+            v-show="isProjectByUser(scope.row)"
               @click.native.prevent="updateRealWork(scope.$index, scope.row)"
               type="text"
               size="mini"
@@ -221,6 +223,7 @@
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
             <el-button
+              v-show="isProjectByUser(scope.row)"
               @click.native.prevent="detailProject(scope.$index, scope.row)"
               type="text"
               size="small"
@@ -228,6 +231,7 @@
               详情
             </el-button>
             <el-button
+              v-show="isProjectByUser(scope.row)"
               @click.native.prevent="toggleActive(scope.$index, scope.row)"
               type="text"
               size="small"
@@ -301,6 +305,10 @@ export default {
       countScopeInit:'',
       projectStatusOptions: [
         {
+          label: "全部",
+          value: '',
+        },
+        {
           label: "进行中",
           value: 1,
         },
@@ -357,6 +365,7 @@ export default {
     // 额外的判断 页面初始化 判断用户的角色  isJurisdiction 判断当前的值是否存在 返回true or false
     // 部门主管 deptdirector  3
     // 项目主管 projectdirector 2
+    // 运营管理 operatemanage
     // 项目监管 管理员 projectsupervision || admin ==>  1
     let deptdirector = this.isJurisdiction("deptdirector"); // 部门主管
     let projectdirector = this.isJurisdiction("projectdirector"); // 项目主管
@@ -440,8 +449,11 @@ export default {
       // startTime://统计开始时间
       // endTime://统计结束时间
       // countScope://统计范围 1.全部，2.仅我负责，3.仅部门成员
-      this.$router.push({ path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
-      startTime:row.projectStartTime,endTime:getToday()}})
+      // this.$router.push({ path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
+      // startTime:row.projectStartTime,endTime:getToday()}})
+       const obj = { path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
+            startTime:row.projectStartTime,endTime:getToday()}};
+      this.$tab.closeOpenPage(obj);
 
     },
     /*查询字典的接口   暂时没用上*/
@@ -588,16 +600,16 @@ export default {
   margin-left: 8px;
 }
 .yuan1 {
-  background-color: #909399;
-}
+  background-color: #f56c6c;
+  }
 .yuan2 {
+  background-color: #e6a23c;
+  }
+.yuan3 {
   background-color: #409eff;
 }
-.yuan3 {
-  background-color: #e6a23c;
-}
 .yuan4 {
-  background-color: #f56c6c;
+  background-color: #909399;
 }
 .isNew{
   background-image: url('../../../assets/images/newIco.png');
