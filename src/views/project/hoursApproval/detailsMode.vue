@@ -38,8 +38,8 @@
                         >
                         <el-col :span="6">
                             <span>当前对比：
-                                <span v-if='item2.approvedWorkTime>item2.scheduleWorkTime' style="color:#FF435A">+{{item2.approvedWorkTime-item2.scheduleWorkTime}}</span>
-                                <span v-else-if='item2.approvedWorkTime<item2.scheduleWorkTime' style="color:#00A99D">-{{item2.scheduleWorkTime-item2.approvedWorkTime}}</span>
+                                <span v-if='item2.approvedWorkTime>item2.scheduleWorkTime' style="color:#FF435A">+{{item2.approvedWorkTime-item2.scheduleWorkTime + '小时'}}</span>
+                                <span v-else-if='item2.approvedWorkTime<item2.scheduleWorkTime' style="color:#75f1e8">-{{item2.scheduleWorkTime-item2.approvedWorkTime +'小时'}}</span>
                                 <span v-else>--</span>
                             </span>
                         </el-col>

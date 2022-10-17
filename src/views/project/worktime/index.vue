@@ -39,13 +39,13 @@
         <span>当日排期计划：
           <span v-if="plan.length != 0">
             <span v-for='(item,index) in plan' :key='index'>
-              {{item.projectName}}{{`(${item.currentDayScheduleTime}h)`}},总体
-              <span v-if='item.currentProjectTotalWorkTime-item.currentProjectScheduleTime<0'>
-                  <span style="color:#00A99D">-{{item.currentProjectTotalWorkTime}}</span>
+              {{item.projectName}}{{`(${item.currentDayScheduleTime}h)`}}
+              <span v-if='item.currentProjectTotalWorkTime<item.currentProjectScheduleTime'>
+                  <span style="color:#00A99D">{{',总体-'+item.currentProjectTotalWorkTime}}</span>
                   <span>小时</span>
               </span>
-             <span  v-if='item.currentProjectTotalWorkTime-item.currentProjectScheduleTime>0'>
-                <span style="color:#FF435A">+{{item.currentProjectTotalWorkTime}}</span>
+             <span  v-if='item.currentProjectTotalWorkTime>item.currentProjectScheduleTime'>
+                <span style="color:#FF435A">+{{',总体+'+item.currentProjectTotalWorkTime}}</span>
                 <span>小时</span></span><span v-show="index < plan.length - 1">;</span>
             </span>
           </span>

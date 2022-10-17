@@ -4,7 +4,7 @@
             <el-col :span='15'>
                  <div class='header' >
                     <div>
-                        <i class='el-icon-arrow-left' v-if='drillDowm' @click='goBack'></i>
+                        <i class='el-icon-arrow-left' v-if='selfJurisdiction && drillDowm' @click='goBack'></i>
                         <div style="font-size:16px;color:#666666;display:inline-block"><i  @click="showMorTime" class='el-icon-date'></i><span v-if='dateRange' style="margin-left:15px;">{{dateRange}}</span></div>
                         <el-date-picker
                             class='timePickCss'
@@ -52,17 +52,17 @@
                         </template>
 
                     </el-table-column>
-                    <el-table-column :label="item" align="center" v-for="(item,index) in months" :key='index'>
+                    <el-table-column :label="item" align="center" v-for="(item,indexs) in months" :key='indexs'>
                         <el-table-column label="计划负荷" align="center"   min-width='150'>
                             <template  slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[index].scheduleLoad+'%'}}</span><span>{{'('+scope.row.monthEfficiencyList[index].scheduleDay+'人日)'}}</span>
+                                <span>{{scope.row.monthEfficiencyList[indexs].scheduleLoad+'%'}}</span><span>{{'('+scope.row.monthEfficiencyList[indexs].scheduleDay+'人日)'}}</span>
                             
                             </template>
                         </el-table-column>
                         <el-table-column label="实际负荷" align="center"   min-width='150'>
                           <template slot-scope="{row}">
-                                <span :class="[workLoadStyle(row.monthEfficiencyList[index])]">
-                                    <span>{{row.monthEfficiencyList[index].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].workDay+'人日)'}}</span>
+                                <span :class="[workLoadStyle(row.monthEfficiencyList[indexs])]">
+                                    <span>{{row.monthEfficiencyList[indexs].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[indexs].workDay+'人日)'}}</span>
                                 </span>
                                 <!-- <span  v-if='workLoadStyle(row.monthEfficiencyList[index])' class='piancha1'>
                                     <span>{{row.monthEfficiencyList[index].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].workDay+'人日)'}}</span>
@@ -74,17 +74,17 @@
                         </el-table-column>
                         <el-table-column label="问题数量" align="center">
                             <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[index].mistakeNum}}</span>
+                                <span>{{scope.row.monthEfficiencyList[indexs].mistakeNum}}</span>
                             </template>
                         </el-table-column>
                         <el-table-column label="出产量" align="center">
                             <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[index].yieldNum}}</span>
+                                <span>{{scope.row.monthEfficiencyList[indexs].yieldNum}}</span>
                             </template>
                         </el-table-column>
                         <el-table-column label="出产问题率" align="center">
                             <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[index].errorRate}}</span>
+                                <span>{{scope.row.monthEfficiencyList[indexs].errorRate}}</span>
                             </template>
                         </el-table-column>
                     </el-table-column>
@@ -111,34 +111,34 @@
 
                     </el-table-column>
 
-                    <el-table-column :label="item" align="center" v-for="(item,index) in months" :key='index'>
+                    <el-table-column :label="item" align="center" v-for="(item,indexs) in months" :key='indexs'>
 
                          <el-table-column label="计划负荷" align="center"   min-width='150'>
                             <template  slot-scope="{row}">
-                                <span>{{row.monthEfficiencyList[index].scheduleLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].scheduleDay+'人日)'}}</span>
+                                <span>{{row.monthEfficiencyList[indexs].scheduleLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[indexs].scheduleDay+'人日)'}}</span>
                             
                             </template>
                         </el-table-column>
                         <el-table-column label="实际负荷" align="center"   min-width='150'>
                             <template slot-scope="{row}">
-                                <span :class="[workLoadStyle(row.monthEfficiencyList[index])]">
-                                    <span>{{row.monthEfficiencyList[index].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].workDay+'人日)'}}</span>
+                                <span :class="[workLoadStyle(row.monthEfficiencyList[indexs])]">
+                                    <span>{{row.monthEfficiencyList[indexs].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[indexs].workDay+'人日)'}}</span>
                                 </span>
                             </template>
                         </el-table-column>
                         <el-table-column label="问题数量" align="center">
                              <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[index].mistakeNum}}</span>
+                                <span>{{scope.row.monthEfficiencyList[indexs].mistakeNum}}</span>
                             </template>
                         </el-table-column>
                          <el-table-column label="出产量" align="center">
                             <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[index].yieldNum}}</span>
+                                <span>{{scope.row.monthEfficiencyList[indexs].yieldNum}}</span>
                             </template>
                         </el-table-column>
                         <el-table-column label="出产问题率" align="center">
                             <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[index].errorRate}}</span>
+                                <span>{{scope.row.monthEfficiencyList[indexs].errorRate}}</span>
                             </template>
                         </el-table-column>
                     </el-table-column>
@@ -295,6 +295,7 @@ export default {
                             monthDate.forEach((v,i)=>{   
                                 this.months.push(v.month)   
                             })
+                            console.log(this.months)
                         }
                        
                     }
@@ -322,6 +323,7 @@ export default {
                         }
                        
                     }
+                    
                 }
               
             })
