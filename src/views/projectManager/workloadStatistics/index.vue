@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-row  v-if='mangerJurisdiction || selfJurisdiction'>
-            <el-col :span='15'>
+            <el-col :span='17'>
                  <div class='header' >
                     <div>
                         <i class='el-icon-arrow-left' v-if='selfJurisdiction && drillDowm' @click='goBack'></i>
@@ -20,83 +20,79 @@
                     </div>
                      </div>
             </el-col>
-            <el-col :span='8'>
+            <el-col :span='7'>
                 <div style="font-size:16px;color:#666666;">
-                    <el-form ref="form" :model="form" label-width="80px">
+                    <el-form ref="form" :model="form" label-width="80px"   v-if="mangerJurisdiction">
                         <el-row>
-                            <el-col :span="12"  v-if='mangerJurisdiction || drillDowm'>
+                            <el-col :span="12">
                                 <el-form-item label="人员" prop="userId" >
                                     <el-select v-model="form.userId" placeholder="请选择人员" filterable clearable  @change='searchUser'>
                                         <el-option v-for='(item) in users' :key='item.userId' :value='item.userId' :label='item.userName'></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="12"  v-if="mangerJurisdiction">
+                            <el-col :span="12">
                                 <el-form-item label="部门" prop="deptId">
-                                    <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择部门" @input='searchDept'  @change='searchDept'/>
+                                    <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择部门" @input='searchDept' @change='searchDept'/>
                                 </el-form-item>
                             </el-col>
                         </el-row>
                     </el-form>
+                    <span v-else>
+                        <span style='margin-right:20px;'>
+                            <span>计划负荷</span><span>{{userData.planLoad+'%('+userData.planLoadWorkDay+'人日)'}}</span>
+                        </span>
+                        <span>
+                            <span>实际负荷</span><span>{{userData.realLoad+'%('+userData.realLoadWorkDay+'人日)'}}</span>
+                        </span>
+                    </span>
                 </div>
             </el-col>
         </el-row>        
         <!-- 部门效率 -->
         <div v-if="mangerJurisdiction">
-            <div v-for="(item,index) in deptData" :key='index' class='table-style'>
-                <div class='name'>{{item.deptName}}</div>
-                <el-table v-if='item' :data="item.userList" border class="tableData" style="width:100%">
+            <div v-for="(i,index) in deptData" :key='index' class='table-style'>
+                <div class='name'>{{i.deptName}}</div>
+                <el-table :data="i.workLoadUserVoList" border class="tableData" style="width:100%">
                     <el-table-column label="执行人员" align="center" fixed  min-width='150'>
                         <template  slot-scope="scope">
-                            <span @click='nameClick(scope.row)' :class="[scope.row.username != '总计' ? 'colorname' : '']">{{scope.row.username}}</span>
+                            <span @click='nameClick(scope.row)' :class="[scope.row.userName != '总计' ? 'colorname' : '']">{{scope.row.userName}}</span>
                         </template>
 
                     </el-table-column>
-                    <el-table-column :label="item" align="center" v-for="(item,indexs) in months" :key='indexs'>
+                    <template v-if='i.workLoadUserVoList.length>0'>
+                         <el-table-column :label="item" align="center" v-for="(item,index) in months" :key='index'>
                         <el-table-column label="计划负荷" align="center"   min-width='150'>
-                            <template  slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[indexs].scheduleLoad+'%'}}</span><span>{{'('+scope.row.monthEfficiencyList[indexs].scheduleDay+'人日)'}}</span>
+                            <template  slot-scope="scope" v-if='scope.row.workLoadUserWeekVoList[index]'>
+                                <span>{{scope.row.workLoadUserWeekVoList[index].planLoadCh+'%'}}</span><span>{{'('+scope.row.workLoadUserWeekVoList[index].planLoadWorkDayCh+'人日)'}}</span>
                             
                             </template>
                         </el-table-column>
                         <el-table-column label="实际负荷" align="center"   min-width='150'>
                           <template slot-scope="{row}">
-                                <span :class="[workLoadStyle(row.monthEfficiencyList[indexs])]">
-                                    <span>{{row.monthEfficiencyList[indexs].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[indexs].workDay+'人日)'}}</span>
+                                <span :class="[workLoadStyle(row.workLoadUserWeekVoList[index])]">
+                                    <span>{{row.workLoadUserWeekVoList[index].realLoadCh+'%'}}</span><span>{{'('+row.workLoadUserWeekVoList[index].realLoadWorkDayCh+'人日)'}}</span>
                                 </span>
-                                <!-- <span  v-if='workLoadStyle(row.monthEfficiencyList[index])' class='piancha1'>
-                                    <span>{{row.monthEfficiencyList[index].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].workDay+'人日)'}}</span>
-                                </span>
-                                 <span  v-else>
-                                    <span>{{row.monthEfficiencyList[index].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].workDay+'人日)'}}</span>
-                                </span>                                 -->
                             </template>
                         </el-table-column>
-                        <el-table-column label="问题数量" align="center">
-                            <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[indexs].mistakeNum}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="出产量" align="center">
-                            <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[indexs].yieldNum}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="出产问题率" align="center">
-                            <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[indexs].errorRate}}</span>
+                        <el-table-column label="空闲负荷" align="center">
+                           <template  slot-scope="{row}">
+                                <span>{{row.workLoadUserWeekVoList[index].freeLoadCh+'%'}}</span><span>{{'('+row.workLoadUserWeekVoList[index].freeLoadWorkDayCh+'人日)'}}</span>
+                            
                             </template>
                         </el-table-column>
                     </el-table-column>
+                    </template>
+                   
                 </el-table>
             </div>
            
         </div>
         <!-- 个人效率 -->
         <div v-if='selfJurisdiction'>
-            <div v-for="(item,index) in userData" :key='index'  class='table-style'>
-                <div class='name'>{{item.username}}</div>
-                <el-table :data="item.projectEfficiencyList" border class="tableData" style="width:100%" :span-method="arraySpanMethod">
+            <div class='table-style'>
+                <div class='name'>{{userData.userName}}</div>
+                <el-table :data="userData.workUserProjectVoList" border class="tableData" style="width:100%" :span-method="arraySpanMethod">
                     <el-table-column label="项目" align="center" fixed  min-width='150' prop='projectName'>
                          <template slot-scope="scope">
                             <span :class="['yuan','yuan'+scope.row.priority]"></span>
@@ -110,38 +106,25 @@
                         </template>
 
                     </el-table-column>
+                    <template v-if='userData.workUserProjectVoList'>
+                           <el-table-column :label="item" align="center" v-for="(item,index) in months" :key='index'>
 
-                    <el-table-column :label="item" align="center" v-for="(item,indexs) in months" :key='indexs'>
-
-                         <el-table-column label="计划负荷" align="center"   min-width='150'>
+                         <el-table-column label="计划" align="center"   min-width='150'>
                             <template  slot-scope="{row}">
-                                <span>{{row.monthEfficiencyList[indexs].scheduleLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[indexs].scheduleDay+'人日)'}}</span>
+                                <span>{{row.workUserProjectWeekVoList[index].planLoadCh+'%'}}</span><span>{{'('+row.workUserProjectWeekVoList[index].planLoadWorkDayCh+'人日)'}}</span>
                             
                             </template>
                         </el-table-column>
-                        <el-table-column label="实际负荷" align="center"   min-width='150'>
+                        <el-table-column label="实际" align="center"   min-width='150'>
                             <template slot-scope="{row}">
-                                <span :class="[workLoadStyle(row.monthEfficiencyList[indexs])]">
-                                    <span>{{row.monthEfficiencyList[indexs].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[indexs].workDay+'人日)'}}</span>
+                                <span :class="[workLoadStyle(row.workUserProjectWeekVoList[index])]">
+                                    <span>{{row.workUserProjectWeekVoList[index].realLoadCh+'%'}}</span><span>{{'('+row.workUserProjectWeekVoList[index].realLoadWorkDayCh+'人日)'}}</span>
                                 </span>
                             </template>
                         </el-table-column>
-                        <el-table-column label="问题数量" align="center">
-                             <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[indexs].mistakeNum}}</span>
-                            </template>
-                        </el-table-column>
-                         <el-table-column label="出产量" align="center">
-                            <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[indexs].yieldNum}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column label="出产问题率" align="center">
-                            <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[indexs].errorRate}}</span>
-                            </template>
-                        </el-table-column>
                     </el-table-column>
+                    </template>
+                 
                 </el-table>
             </div>
         </div>
@@ -151,7 +134,8 @@
 <script>
 import moment from "moment";
 import "moment/locale/zh-cn";
-import { departmentQuery,queryUserlist,userQuery } from '@/api/proManager/efficiencyStatistics.js'
+import { departmentQuery,userQuery } from '@/api/proManager/workloadStatistics.js'
+import { queryUserlist} from '@/api/proManager/efficiencyStatistics.js'
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -197,9 +181,9 @@ export default {
     },
     methods:{   
         workLoadStyle(data){
-            if(data.workLoad>data.scheduleLoad){
+            if(data.planLoadCh<data.realLoadCh){
                 return 'piancha2'
-            }else if(data.workLoad<data.scheduleLoad){
+            }else if(data.planLoadCh>data.realLoadCh){
                 return 'piancha1'
             }else {
                 return ''
@@ -219,7 +203,7 @@ export default {
         },
         //初始时间
         defaultDate(){
-            let preOne=moment().subtract(1,'month').startOf('month').format('YYYY/MM/DD')
+            let preOne=moment().subtract(6, "months").format('YYYY/MM/DD')
             let today=moment().format('YYYY/MM/DD')
             this.dateRange=`${preOne}-${today}`
             this.beginDate=moment(preOne).format('YYYY-MM-DD')
@@ -289,25 +273,22 @@ export default {
             departmentQuery(data).then(res=>{
                 if(res.code==200){
                     if(res.data){
+                       
                         this.deptData=res.data
-                            let value1 = res.data.find(item => item.userList.length)
-                             if(value1){
-                                let value2 = value1.userList.find(item => item.monthEfficiencyList.length)
-                                if (value2.monthEfficiencyList) {
-                                    value2.monthEfficiencyList.forEach((v,i)=>{  
-                                    this.months.push(v.month)   
-                                    })
+                        if(res.data){
+                            let value1 = res.data.find(item => item.workLoadUserVoList.length)
+                            if(value1){
+                                let value2 = value1.workLoadUserVoList.find(item => item.workLoadUserWeekVoList.length)
+                                if (value2.workLoadUserWeekVoList) {
+                                    value2.workLoadUserWeekVoList.forEach((v,i)=>{  
+                                    let time=`${v.weekMonth}月-${v.week}周（${v.startTime}-${v.endTime}）`
+                                    this.months.push(time)   
+                                     })
                                 }
                             }
-                            // let monthDate=res.data[0].userList[0].monthEfficiencyList
-                            // monthDate.forEach((v,i)=>{   
-                            //     this.months.push(v.month)   
-                            // })
-                            // console.log(this.months)
-                        }
-                       
-                }
-              
+                        }                      
+                    }
+                }              
             })
         },
         //查询个人效率表格方法
@@ -321,25 +302,20 @@ export default {
             userQuery(data).then(res=>{
                 if(res.code==200){
                     if(res.data){
+                         console.log(res.data,'rrrrr')
                         this.userData=res.data
-                         let value1 = res.data.find(item => item.projectEfficiencyList.length)
-                             if(value1){
-                                let value2 = value1.projectEfficiencyList.find(item => item.monthEfficiencyList.length)
-                                if (value2.monthEfficiencyList) {
-                                    value2.monthEfficiencyList.forEach((v,i)=>{  
-                                    this.months.push(v.month)   
-                                    })
-                                }
+                        if(res.data){
+                            if(res.data.workUserProjectVoList.length>0){
+                                 let monthDate=res.data.workUserProjectVoList[0].workUserProjectWeekVoList
+                                monthDate.forEach((v,i)=>{  
+                                    let time=`${v.weekMonth}月-${v.week}周（${v.startTime}-${v.endTime}）` 
+                                    this.months.push(time)   
+                            })
                             }
-                        // if(res.data[0]){
-                        //     let monthDate=res.data[0].projectEfficiencyList[0].monthEfficiencyList
-                        //     monthDate.forEach((v,i)=>{   
-                        //         this.months.push(v.month)   
-                        //     })
-                        // }
+                           
+                        }
                        
                     }
-                    
                 }
               
             })
@@ -371,8 +347,8 @@ export default {
         //合计列合并
         arraySpanMethod({ row, column, rowIndex, columnIndex }){
             console.log(rowIndex)
-            console.log(this.userData[0].projectEfficiencyList)
-            if(rowIndex == this.userData[0].projectEfficiencyList.length-1){
+            // console.log(this.userData[0].workUserProjectVoList)
+            if(rowIndex == this.userData.workUserProjectVoList.length-1){
                 console.log('qqqqq')
                 if (columnIndex === 0) {
                     return [1, 2];
