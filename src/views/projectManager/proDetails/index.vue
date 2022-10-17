@@ -256,6 +256,7 @@
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <el-button
+            v-show="scope.$index!=projectTable.projectUserList.length-1"
               type="text"
               size="small"
               @click="updateProjectOne(scope.$index, scope.row)"
@@ -263,12 +264,14 @@
               修改
             </el-button>
             <el-button
+             v-show="scope.$index!=projectTable.projectUserList.length-1"
               type="text"
               size="small"
               @click="delProjectOne(scope.$index, scope.row)"
             >
               删除
             </el-button>
+            <!-- <span v-show="scope.$index==projectTable.projectUserList.length-1">--</span> -->
           </template>
         </el-table-column>
       </el-table>
@@ -473,7 +476,7 @@
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <el-button
               type="text"
-              size="small"
+              size="small"              
               @click="updateAuditPro(scope.row, '4')"
               ><span class="color1"> 取消 </span></el-button
             >
@@ -712,6 +715,8 @@ export default {
             item.day = item.weekDay;
           });
           let oneUser = this.deepClone(res.data);
+          // 修改类型（1.新增,2.删除,3.修改原数据）
+          oneUser.updateType = 3;
           oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
 
           this.addEditFormData.projectUserList.push(oneUser);
@@ -756,13 +761,11 @@ export default {
         if (!valid) return;
         // TODO 提交表单
         if (valid) {
-          // 修改类型（1.新增,2.删除,3.修改原数据）
-          this.addEditFormData.projectUserList[index].updateType = 1;
           this.addEditFormData.projectUserList[
             index
           ].projectUserScheduleList.map((item, i) => {
             item.weekDay = item.day;
-            item.week = item.weekOfYear;
+            // item.week = item.weekOfYear;
           });
           let parame = {
             ...this.addEditFormData,
@@ -783,17 +786,17 @@ export default {
     },
     // 删除单行用户的
     DelUserList(index) {
-      this.$confirm(`您确定要删除这条记录吗?`, "温馨提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
+      // this.$confirm(`您确定要删除这条记录吗?`, "温馨提示", {
+      //   confirmButtonText: "确定",
+      //   cancelButtonText: "取消",
+      //   type: "warning",
+      // })
+      //   .then(() => {
           this.addEditFormData.projectUserList.splice(index, 1);
           this.addEditFormData = {};
           this.addEditUserActive = false;
-        })
-        .catch(() => {});
+        // })
+        // .catch(() => {});
     },
     /*修改每日工时*/
     changeDayTime(number, day, fatherIndex, myIndex) {
@@ -819,7 +822,7 @@ export default {
         }
         totalTime += parseFloat(item.workTime) * parseFloat(item.day);
         item.weekDay = item.day;
-        item.week = item.weekOfYear;
+        // item.week = item.weekOfYear;
       });
 
       // 暂存一下 实际的天数
@@ -1022,6 +1025,7 @@ export default {
         this.getUserList();
         // }
         // 拼接列名
+        this.monthArrTemp =[]
         // 动态生成 合计天数周数 日期区间
         res.data.projectUserList[0].projectUserScheduleList.forEach((v,i)=>{   
             this.monthArrTemp.push((v.weekMonth +'月- ' +v.week +'周 (' +v.startTime + "-" + v.endTime +')').toString())

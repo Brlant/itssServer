@@ -70,7 +70,15 @@ export function changeUserStatus(data) {
     method: 'put'
   })
 }
-
+// 用户状态修改
+export function changeStatus(data) {
+  console.log(data);
+  return request({
+    url: `/system/user/changeStatus`,
+    method: 'put',
+    data:data
+  })
+}
 // 查询用户个人信息
 export function getUserProfile() {
   return request({

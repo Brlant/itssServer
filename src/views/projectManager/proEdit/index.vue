@@ -618,6 +618,7 @@ export default {
     },
     /*修改每日工时*/
     changeDayTime(number, day, fatherIndex, myIndex) {
+      console.log(number, day, fatherIndex, myIndex);
       // 期间计划负荷 = 当前行的总天数day*number  /  当前行的总天数day * 8
       this.formData.projectUserList[fatherIndex].projectUserScheduleList[
         myIndex

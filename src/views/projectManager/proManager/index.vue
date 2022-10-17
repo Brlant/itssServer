@@ -4,13 +4,13 @@
       <div class="leftTitle">
         项目管理
         <div class="rightBtns">
-          <el-button size="mini" type="primary">
-            <router-link :replace="true" :to="'/ProjectManager/AddProject'"
+          <el-button size="mini" type="primary" v-if="isJurisdiction('projectdirector')">
+            <router-link :replace="true"  :to="'/ProjectManager/AddProject'"
               >新建项目</router-link
             >
           </el-button>
 
-          <el-button size="mini" type="success">导出Excel</el-button>
+          <!-- <el-button size="mini" type="success">导出Excel</el-button> -->
         </div>
       </div>
 
