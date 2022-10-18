@@ -5,7 +5,7 @@
         项目管理
         <div class="rightBtns">
           <!-- 必须是项目主管的角色 -->
-          <el-button size="mini" type="primary" v-if="isJurisdiction('projectdirector')">
+          <el-button size="mini" type="primary" v-if="isJurisdiction('projectdirector','admin')">
             <router-link :replace="true"  :to="'/ProjectManager/AddProject'"
               >新建项目</router-link
             >
