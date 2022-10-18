@@ -1,8 +1,8 @@
 const filterProjectStatus = function (val) {
   const statusMap = {
     1: "进行中",
-    2: "未开始",
-    3: "已结束",
+    2: "已结束",
+    3: "未开始",
     4: "已终止"
   }
   return statusMap[val]

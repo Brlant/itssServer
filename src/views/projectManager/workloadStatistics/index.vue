@@ -4,7 +4,7 @@
             <el-col :span='17'>
                  <div class='header' >
                     <div>
-                        <i class='el-icon-arrow-left' v-if='selfJurisdiction && drillDowm' @click='goBack'></i>
+                        <i class='el-icon-arrow-left point color2' style="margin-right:10px" v-if='selfJurisdiction && drillDowm'  @click='goBack'></i> 
                         <div style="font-size:16px;color:#666666;display:inline-block"><i  @click="showMorTime" class='el-icon-date'></i><span v-if='dateRange' style="margin-left:15px;">{{dateRange}}</span></div>
                         <el-date-picker
                             class='timePickCss'
@@ -56,11 +56,34 @@
                 <el-table :data="i.workLoadUserVoList" border class="tableData" style="width:100%">
                     <el-table-column label="执行人员" align="center" fixed  min-width='150'>
                         <template  slot-scope="scope">
-                            <span @click='nameClick(scope.row)' :class="[scope.row.userName != '总计' ? 'colorname' : '']">{{scope.row.userName}}</span>
+                            <span  @click='nameClick(scope.row)' :class="['point', scope.row.userName != '总计' ? 'colorname' : '']">{{scope.row.userName}}</span>
                         </template>
 
                     </el-table-column>
-                    <template v-if='i.workLoadUserVoList.length>0'>
+                     <el-table-column label="计划负荷" align="center" fixed  min-width='150'>
+                        <template  slot-scope="scope">
+                            {{ scope.row.planLoad }}%
+                            <span class="color1">（{{ scope.row.planLoadWorkDay }}人日）</span>
+                        </template>
+
+                    </el-table-column>
+                     <el-table-column label="实际负荷" align="center" fixed  min-width='150'>
+                        <template  slot-scope="scope">
+                            <span :class="['loadType' + scope.row.loadType]">
+                        {{ scope.row.realLoad+"%（"+scope.row.realLoadWorkDay + "人日）" }}</span
+                      >
+                        </template>
+
+                    </el-table-column>
+                     <el-table-column label="空闲负荷" align="center" fixed  min-width='150'>
+                        <template  slot-scope="scope">
+                             <span :class="['loadType' + scope.row.loadType]">
+                        {{ scope.row.freeLoad+"%（"+scope.row.freeLoadWorkDay + "人日）" }}</span
+                      >
+                        </template>
+
+                    </el-table-column>
+                    <template v-if='i.workLoadUserVoList&&i.workLoadUserVoList.length>0'>
                          <el-table-column :label="item" align="center" v-for="(item,index) in months" :key='index'>
                         <el-table-column label="计划负荷" align="center"   min-width='150'>
                             <template  slot-scope="scope" v-if='scope.row.workLoadUserWeekVoList[index]'>
@@ -75,7 +98,7 @@
                                 </span>
                             </template>
                         </el-table-column>
-                        <el-table-column label="空闲负荷" align="center">
+                        <el-table-column label="空闲负荷" align="center"  min-width='150'>
                            <template  slot-scope="{row}">
                                 <span>{{row.workLoadUserWeekVoList[index].freeLoadCh+'%'}}</span><span>{{'('+row.workLoadUserWeekVoList[index].freeLoadWorkDayCh+'人日)'}}</span>
                             
@@ -302,7 +325,7 @@ export default {
             userQuery(data).then(res=>{
                 if(res.code==200){
                     if(res.data){
-                         console.log(res.data,'rrrrr')
+                        //  console.log(res.data,'rrrrr')
                         this.userData=res.data
                         if(res.data){
                             if(res.data.workUserProjectVoList.length>0){
@@ -415,4 +438,20 @@ color:#3D7DFF
     padding:0 5px 20px 5px;
     margin-bottom:30px;
 }
+//1 红  2 黑 3 绿
+.loadType1 {
+  color: #f56c6c;
+}
+.loadType2 {
+  color: #333;
+}
+.loadType3 {
+  color: #26b0a8;
+}
+  .color1 {
+    color: #909399;
+  }
+    .color2 {
+    color: #409eff;
+  }
 </style>
