@@ -193,7 +193,7 @@
           <template slot-scope="scope">
             {{ scope.row.realWork }}人日
             <el-button
-            v-show="isProjectByUser(scope.row)"
+            v-show="isProjectByUser(scope.row)||isJurisdiction('admin')"
               @click.native.prevent="updateRealWork(scope.$index, scope.row)"
               type="text"
               size="mini"
@@ -223,7 +223,7 @@
         <el-table-column fixed="right" label="操作" width="120">
           <template slot-scope="scope">
             <el-button
-              v-show="isProjectByUser(scope.row)"
+              v-show="isProjectByUser(scope.row)||isJurisdiction('admin')"
               @click.native.prevent="detailProject(scope.$index, scope.row)"
               type="text"
               size="small"
@@ -231,7 +231,7 @@
               详情
             </el-button>
             <el-button
-              v-show="isProjectByUser(scope.row)"
+              v-show="isProjectByUser(scope.row)||isJurisdiction('admin')"
               @click.native.prevent="toggleActive(scope.$index, scope.row)"
               type="text"
               size="small"
