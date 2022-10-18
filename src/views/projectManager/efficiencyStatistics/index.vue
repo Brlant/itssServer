@@ -110,8 +110,7 @@
                         </template>
 
                     </el-table-column>
-
-                    <el-table-column :label="item" align="center" v-for="(item,indexs) in months" :key='indexs'>
+                         <el-table-column :label="item" align="center" v-for="(item,indexs) in months" :key='indexs'>
 
                          <el-table-column label="计划负荷" align="center"   min-width='150'>
                             <template  slot-scope="{row}">
@@ -142,6 +141,7 @@
                             </template>
                         </el-table-column>
                     </el-table-column>
+                   
                 </el-table>
             </div>
         </div>
@@ -293,7 +293,7 @@ export default {
                             let value1 = res.data.find(item => item.userList.length)
                              if(value1){
                                 let value2 = value1.userList.find(item => item.monthEfficiencyList.length)
-                                if (value2.monthEfficiencyList) {
+                                if (value2) {
                                     value2.monthEfficiencyList.forEach((v,i)=>{  
                                     this.months.push(v.month)   
                                     })
@@ -325,7 +325,8 @@ export default {
                          let value1 = res.data.find(item => item.projectEfficiencyList.length)
                              if(value1){
                                 let value2 = value1.projectEfficiencyList.find(item => item.monthEfficiencyList.length)
-                                if (value2.monthEfficiencyList) {
+                                console.log(value2,11111)
+                                if (value2) {
                                     value2.monthEfficiencyList.forEach((v,i)=>{  
                                     this.months.push(v.month)   
                                     })
@@ -370,10 +371,7 @@ export default {
         },
         //合计列合并
         arraySpanMethod({ row, column, rowIndex, columnIndex }){
-            console.log(rowIndex)
-            console.log(this.userData[0].projectEfficiencyList)
             if(rowIndex == this.userData[0].projectEfficiencyList.length-1){
-                console.log('qqqqq')
                 if (columnIndex === 0) {
                     return [1, 2];
                 } else if (columnIndex === 1) {
