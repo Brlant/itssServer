@@ -26,14 +26,14 @@
                         <el-row>
                             <el-col :span="12">
                                 <el-form-item label="人员" prop="userId" >
-                                    <el-select v-model="form.userId" placeholder="请选择人员" filterable clearable  @change='searchUser'>
+                                    <el-select v-model="form.userId" placeholder="请选择人员"  size="medium" filterable clearable  @change='searchUser'>
                                         <el-option v-for='(item) in users' :key='item.userId' :value='item.userId' :label='item.userName'></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="部门" prop="deptId">
-                                    <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择部门" @input='searchDept' @change='searchDept'/>
+                                    <treeselect v-model="form.deptId"   :options="deptOptions" :show-count="true" placeholder="请选择部门" @input='searchDept' @change='searchDept'/>
                                 </el-form-item>
                             </el-col>
                         </el-row>
