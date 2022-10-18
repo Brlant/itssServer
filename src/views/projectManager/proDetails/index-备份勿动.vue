@@ -9,13 +9,23 @@
     </div>
     <div class="routerBar">
       <div class="backBar">
-        <router-link :to="'/projectManager/proManager'"> < 返回</router-link>
+        <!-- <router-link :to=""> < 返回</router-link> -->
+        <span
+            @click="goManagerPage" style="cursor: pointer;color: #409eff;">
+             < 返回
+        </span>
         <div class="rightLink">
-          <router-link :to="'/projectManager/proEdit?projectId=' + projectId"
+          <!-- <router-link :to="'/projectManager/proEdit?projectId=' + projectId+'&countScope='+countScope"  
             >编辑</router-link
-          >|
+          > -->
+            <span
+            @click="goEditPage" style="cursor: pointer;" class="color2">
+            编辑
+            </span>
+          |
+
           <span
-            @click="stopProject"
+            @click="stopProject" style="cursor: pointer;"
             :class="[projectTable.projectStatus == 4 ? 'color5' : 'color4']"
           >
             {{ projectTable.projectStatus == 4 ? "开启" : "终止" }}
@@ -301,7 +311,7 @@
               >
                 <template v-if="addUserList.updateType == 3">
                   <!-- 我是修改的 -->
-                  {{ addUserList.userNam }}
+                  {{ addUserList.userName }}
                 </template>
 
                 <template v-if="addUserList.updateType == 1">
@@ -474,22 +484,23 @@
         <el-table-column label="操作" width="120">
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
+            <!-- 他必须是项目主管和项目负责人 才可以点击取消 -->
             <el-button
               type="text"
-              size="small"              
+              size="small" v-show="isProjectByUser(formData)"             
               @click="updateAuditPro(scope.row, '4')"
               ><span class="color1"> 取消 </span></el-button
             >
             <el-button
               type="text"
               size="small"
-              @click="updateAuditPro(scope.row, '2')"
+              @click="updateAuditPro(scope.row, '2')" v-show="isJurisdiction('projectsupervision')"
               ><span class="color2"> 通过 </span></el-button
             >
             <el-button
               type="text"
               size="small"
-              @click="updateAuditPro(scope.row, '3')"
+              @click="updateAuditPro(scope.row, '3')"  v-show="isJurisdiction('projectsupervision')"
               ><span class="color3"> 拒绝 </span></el-button
             >
           </template>
@@ -590,6 +601,7 @@ export default {
     },
     projectName: "",
     projectId: "",
+    countScope:"",
     countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
     countScopeInit: "",
     projectTable: [
@@ -620,6 +632,7 @@ export default {
   created() {
     this.projectName = this.$route.query.projectName;
     this.projectId = this.$route.query.projectId;
+    this.countScope = this.$route.query.countScope;
     this.init("init");
   },
   mounted() {
@@ -931,7 +944,15 @@ export default {
         return "background:	#f4f4ff;";
       }
     },
-
+    goManagerPage(){
+         const obj = { path:'/projectManager/proManager'};
+        this.$tab.closeOpenPage(obj);
+    },
+    goEditPage(){
+      // :to="'?projectId=' + projectId+'&countScope='+countScope"  
+      const obj = { path:'/projectManager/proEdit', query:{ projectId:this.projectId,countScope:this.countScope}};
+        this.$tab.closeOpenPage(obj);
+    },
     stopProject() {
       // 终止项目
       this.$confirm(
