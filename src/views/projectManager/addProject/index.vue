@@ -697,7 +697,6 @@ export default {
           item.userNameAndPost = item.nickName + "（" + item.postName + "）";
           item.disabled = false
         });
-        this.projectUserIdOptions = res.data;// 初始化填充给 项目负责人的 永远是所有用户
         this.userOptions = res.data; // 需要根据已经选择的人 来过滤
       });
       
