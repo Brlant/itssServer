@@ -223,6 +223,7 @@
                         :key="user.userId"
                         :label="user.userNameAndPost"
                         :value="user.userId"
+                        :disabled="user.disabled"
                       ></el-option>
                     </el-select> </el-form-item
                 ></el-col>
@@ -355,7 +356,7 @@ export default {
         projectUserId: "",/**项目负责人*/        
         projectUserList: [],/**项目成员列表*/
         projectGitUrl:"",// 项目git 地址
-        // "priority": 3,  快速调试
+        // "priority": 3,  //快速调试
         // "projectChance": "",
         // "projectCode": "123",
         // "projectEndTime": "2022-11-30",
@@ -549,31 +550,36 @@ export default {
       queryUserlist(data).then((res) => {
          res.data.map((item) => {
           item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+          item.disabled = false
         });
         // formData.projectUserList[index].costNum  
         // costNum 是我自己设置第一个值 用于存储 成本的单位
-        //  对外
-        // this.userOptions = res.data;
+        //  对外        
         // 服务对象(1.对内，2.对外)
         if(this.formData.projectService==2){ //对外
           this.formData.projectUserList[index].costNum = res.data[0].costOut
         }else{  // 对内
           this.formData.projectUserList[index].costNum = res.data[0].costIn
           }
+        //  this.formData.projectUserList[index].startEndTime=[]
+          if(this.formData.projectUserList[index].startEndTime?.length>0){
+          let dates = this.formData.projectUserList[index].startEndTime
+          this.constAll(dates,index)
+        }
         if(this.formData.projectUserList[index].userId!=""){// 添加成员之后，未选择用户的情况下 不筛选
            let userIdsTemp = []
            this.formData.projectUserList.map(item=>{
             // 拿到已经存在的用户id
             userIdsTemp.push(item.userId)
            })
-           this.userOptions.map((user,u)=>{
-            userIdsTemp.map((userId,i)=>{
-              if(user.userId==userId){
-                // 双层循环 去掉已经选择的用户
-                this.userOptions.splice(u,1)
-              }
-            })
-           })
+          //  this.userOptions.map((user,u)=>{
+          //   userIdsTemp.map((userId,i)=>{
+          //     if(user.userId==userId){
+          //       // 双层循环 去掉已经选择的用户
+          //       this.userOptions.splice(u,1)
+          //     }
+          //   })
+          //  })
 
         }
       });
@@ -627,10 +633,23 @@ export default {
       this.formData.projectStartTime = dates[0];
       this.formData.projectEndTime = dates[1];      
     },
-   
+     /* 时间区间选择之前 请判断 是否选择了前面的用户 成员*/
+    // userIsNull(dates, index) {
+    //   if(this.formData.projectUserList[index].userId==""){
+    //     this.$message.error("请先选择项目成员！");
+    //     return false
+    //   }
+    // },
     /*根据起始和结束 生成下面表格*/
     getTimeArea(dates, index) {
-          let params = {
+      //  if(this.formData.projectUserList[index].userId==""){
+      //   this.$message.error("请先选择项目成员！");
+      //   return false
+      // } 
+    this.constAll(dates, index)
+    },
+    constAll(dates, index){
+       let params = {
             startDate: dates[0],
             endDate: dates[1],
           };
@@ -676,6 +695,7 @@ export default {
       queryUserlist(data).then((res) => {
         res.data.map((item) => {
           item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+          item.disabled = false
         });
         this.projectUserIdOptions = res.data;// 初始化填充给 项目负责人的 永远是所有用户
         this.userOptions = res.data; // 需要根据已经选择的人 来过滤
@@ -709,6 +729,7 @@ export default {
             queryUserlist(data).then((res) => {
               res.data.map((item) => {
                 item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+                item.disabled = false
               });
                 this.formData.projectUserList.map((item,i)=>{
                   res.data.map((user,u)=>{
@@ -731,6 +752,7 @@ export default {
       queryUserlist(data).then((res) => {
         res.data.map((item) => {
           item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+          item.disabled = false
         });
         this.userOptions = res.data; // 需要根据已经选择的人 来过滤
       });

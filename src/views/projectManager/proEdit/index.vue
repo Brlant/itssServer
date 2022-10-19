@@ -238,6 +238,7 @@
                       :key="user.userId"
                       :label="user.userNameAndPost"
                       :value="user.userId"
+                      :disabled="user.disabled"
                     ></el-option>
                   </el-select>
                 </template>
@@ -262,6 +263,8 @@
                   @change="(dates) => getTimeArea(dates, addUserListindex)"
                   clearable
                 ></el-date-picker>
+                  <!-- @focus="(dates) => userIsNull(dates, addUserListindex)" -->
+
               </el-form-item>
             </el-col>
             <el-col :span="3">
@@ -600,6 +603,7 @@ export default {
       queryUserlist(data).then((res) => {
         res.data.map((item) => {
           item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+           item.disabled = false
         });
         // formData.projectUserList[index].costNum
         // costNum 是我自己设置第一个值 用于存储 成本的单位
@@ -610,23 +614,33 @@ export default {
         } else {
           // 对内
           this.formData.projectUserList[index].costNum = res.data[0].costIn;
-        }                
-        if (this.formData.projectUserList[index].userId != "") {
-          // 添加成员之后，未选择用户的情况下 不筛选
-          let userIdsTemp = [];
-          this.formData.projectUserList.map((item) => {
-            // 拿到已经存在的用户id
-            userIdsTemp.push(item.userId);
-          });
-          this.userOptions.map((user, u) => {
-            userIdsTemp.map((userId, i) => {
-              if (user.userId == userId) {
-                // 双层循环 去掉已经选择的用户
-                this.userOptions.splice(u, 1);
-              }
-            });
-          });
+        }    
+        //   let oneUser = this.deepClone(this.projectUserList);
+        //   // 修改类型（1.新增,2.删除,3.修改原数据）
+        //   oneUser.updateType = 1;
+        //  this.formData.projectUserList[index] = oneUser
+        if(this.formData.projectUserList[index].startEndTime?.length>0){
+          let dates = this.formData.projectUserList[index].startEndTime
+          this.constAll(dates,index)
         }
+      
+        // if (this.formData.projectUserList[index].userId != "") {
+        //   // 添加成员之后，未选择用户的情况下 不筛选
+        //   let userIdsTemp = [];
+        //   this.formData.projectUserList.map((item) => {
+        //     // 拿到已经存在的用户id
+        //     userIdsTemp.push(item.userId);
+        //   });
+        //   this.userOptions.map((user, u) => {
+        //     userIdsTemp.map((userId, i) => {
+        //       if (user.userId == userId) {
+        //         // 双层循环 去掉已经选择的用户
+        //         // this.userOptions.splice(u, 1);
+        //         this.userOptions[i].disabled=true
+        //       }
+        //     });
+        //   });
+        // }
         // this.userOptions = res.data;
       });
     },
@@ -684,10 +698,23 @@ export default {
       this.formData.projectStartTime = dates[0];
       this.formData.projectEndTime = dates[1];
     },
-
+     /* 时间区间选择之前 请判断 是否选择了前面的用户 成员*/
+    userIsNull(dates, index) {
+      if(this.formData.projectUserList[index].userId==""){
+        this.$message.error("请先选择项目成员！");
+        return false
+      }
+    },
     /*根据起始和结束 生成下面表格*/
-    getTimeArea(dates, index) {
-      let params = {
+    getTimeArea(dates, index) {      
+      // if(this.formData.projectUserList[index].userId==""){
+      //   this.$message.error("请先选择项目成员！");
+      //   return false
+      // }
+      this.constAll(dates, index)
+    },
+    constAll(dates, index){
+       let params = {
         startDate: dates[0],
         endDate: dates[1],
       };
@@ -740,6 +767,7 @@ export default {
       queryUserlist(data).then((res) => {
         res.data.map((item) => {
           item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+           item.disabled = false
         });
         //---------------------------------------------------------
         //  初始化用户列表之后， 需要剔除已经存在的userID
@@ -752,7 +780,9 @@ export default {
           userIdsTemp.map((userId, i) => {
             if (user.userId == userId) {
               // 双层循环 去掉已经选择的用户
-              res.data.splice(u, 1);
+              // res.data.splice(u, 1);
+              res.data[i].disabled=true
+
             }
           });
         });
@@ -790,8 +820,7 @@ export default {
     DelUserList(index, row) {
       // 修改类型（1.新增,2.删除,3.修改原数据）
       // oneUser.updateType = 1
-
-      this.$confirm(`您确定要删除${row.nickName}吗?`, "温馨提示", {
+      this.$confirm(`您确定要删除这条数据吗?`, "温馨提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

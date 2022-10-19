@@ -218,7 +218,7 @@
               align="center"
               style="height: 15px"
               :label="months" >  
-              <el-table-column label="计划负荷"   align="center">
+              <el-table-column label="计划负荷"   min-width="130"  align="center">
                   <template slot-scope="{row}">
                       <span>
                         {{ row.projectUserScheduleList[m]
@@ -226,7 +226,7 @@
                       </span>
                   </template>
               </el-table-column>
-              <el-table-column label="实际负荷"   align="center">
+              <el-table-column label="实际负荷"   min-width="130"  align="center">
                   <template slot-scope="{row}">
                     <span :class="['loadType' + row.projectUserScheduleList[m].loadType]">
                         {{ row.projectUserScheduleList[m].realLoadCh+"%（"+row.projectUserScheduleList[m].realLoadWorkDayCh + "人日）" }}</span
@@ -301,6 +301,9 @@
                         getUserCost(userId, addUserListindex);
                       }
                     "
+                    @clear="(addUserList) => {
+                        clearUser(addUserList, addUserListindex);
+                      }"
                     :style="{ width: '100%' }"
                   >
                     <el-option
@@ -308,6 +311,7 @@
                       :key="user.userId"
                       :label="user.userNameAndPost"
                       :value="user.userId"
+                       :disabled="user.disabled"
                     ></el-option>
                   </el-select>
                 </template>
@@ -767,7 +771,6 @@ export default {
     },
     // 项目成员的添加的 保存 提交方法
     addUserListHandel(index) {
-      // this.addEditFormData.projectUserList.splice(index, 1);
       this.$refs["addEditForm"].validate((valid) => {
         if (!valid) return;
         // TODO 提交表单
@@ -855,37 +858,54 @@ export default {
         this.addEditFormData.projectUserList[fatherIndex].costNum
       ).toFixed(2);
     },
-
+    /* 时间区间选择之前 请判断 是否选择了前面的用户 成员*/
+    userIsNull(dates, index) {
+      if(this.addEditFormData.projectUserList[index].userId==""){
+        this.$message.error("请先选择项目成员！");
+        return false
+      }
+    },
     /*根据起始和结束 生成下面表格*/
     getTimeArea(dates, index) {
-      let params = {
-        startDate: dates[0],
-        endDate: dates[1],
-      };
-      getTimeProcess(params).then((res) => {
-        this.addEditFormData.projectUserList[index].workDay = res.data.day;
-        this.addEditFormData.projectUserList[index].workDayTemp = res.data.day;
-        this.addEditFormData.projectUserList[index].workTime = res.data.day * 8;
-        this.addEditFormData.projectUserList[index].startTime = dates[0];
-        this.addEditFormData.projectUserList[index].endTime = dates[1];
-        this.addEditFormData.projectUserList[index].expectedCost = (
-          res.data.day * this.addEditFormData.projectUserList[index].costNum
-        ).toFixed(2);
-        res.data.list.map((item) => {
-          item.startTime = item.startDate;
-          item.endTime = item.endDate;
-          item.workTime = "8";
-          item.planLoad = (
-            ((item.day * 8) / (item.day * 8)) * 100 || 0
+      // if(this.addEditFormData.projectUserList[index].userId==""){
+      //   this.$message.error("请先选择项目成员！");
+      //   return false
+      // } 
+      this.constAll(dates, index)
+    },
+    constAll(dates,index){
+       let params = {
+          startDate: dates[0],
+          endDate: dates[1],
+        };
+        getTimeProcess(params).then((res) => {
+          this.addEditFormData.projectUserList[index].workDay = res.data.day;
+          this.addEditFormData.projectUserList[index].workDayTemp = res.data.day;
+          this.addEditFormData.projectUserList[index].workTime = res.data.day * 8;
+          this.addEditFormData.projectUserList[index].startTime = dates[0];
+          this.addEditFormData.projectUserList[index].endTime = dates[1];
+          this.addEditFormData.projectUserList[index].expectedCost = (
+            res.data.day * this.addEditFormData.projectUserList[index].costNum
           ).toFixed(2);
+          res.data.list.map((item) => {
+            item.startTime = item.startDate;
+            item.endTime = item.endDate;
+            item.workTime = "8";
+            item.planLoad = (
+              ((item.day * 8) / (item.day * 8)) * 100 || 0
+            ).toFixed(2);
+          });
+          this.addEditFormData.projectUserList[index].projectUserScheduleList =
+            res.data.list; // 此人的 每周安排
+          this.addEditFormData.projectUserList[index].planLoad = (
+            ((8 * res.data.day) / (res.data.day * 8)) *
+            100
+          ).toFixed(2); // 计划负荷
         });
-        this.addEditFormData.projectUserList[index].projectUserScheduleList =
-          res.data.list; // 此人的 每周安排
-        this.addEditFormData.projectUserList[index].planLoad = (
-          ((8 * res.data.day) / (res.data.day * 8)) *
-          100
-        ).toFixed(2); // 计划负荷
-      });
+    },
+    clearUser(userId, index){
+      // alert(userId)
+      // alert(index)
     },
     // 添加人员之后  根据 对内 还是对外  设置 选择人员的成本
     // 存储到 单行的 新建字段 costNum 内 用于下一步存储  计算
@@ -895,9 +915,10 @@ export default {
         userId: userId,
       };
       queryUserlist(data).then((res) => {
-        res.data.map((item) => {
-          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
-        });
+        // res.data.map((item) => {
+        //   item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+        //   item.disabled = false
+        // });
         // addEditFormData.projectUserList[index].costNum
         // costNum 是我自己设置第一个值 用于存储 成本的单位
         //  对外
@@ -911,8 +932,13 @@ export default {
           this.addEditFormData.projectUserList[index].costNum =
             res.data[0].costIn;
         }
-
-        this.projectUserIdOptions = res.data;
+        //  this.addEditFormData.projectUserList[index].startEndTime=[]
+        if(this.addEditFormData.projectUserList[index].startEndTime?.length>0){
+          let dates = this.addEditFormData.projectUserList[index].startEndTime
+          this.constAll(dates,index)
+        }
+        // this.projectUserIdOptions = res.data;
+        // this.userOptions = res.data;
       });
     },
     /* 查询用户列表 */
@@ -925,13 +951,32 @@ export default {
         }
       });
       let data = {
-        userIds: userIdsTemp,
+        userIds: []//userIdsTemp,
       };
       queryUserlist(data).then((res) => {
         res.data.map((item) => {
           item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+          item.disabled = false
         });
         this.projectUserIdOptions = res.data;
+        // 过滤已经有的
+        //---------------------------------------------------------
+        //  初始化用户列表之后， 需要剔除已经存在的userID
+        let userIdsTemp = [];
+        this.projectTable.projectUserList.map((item) => {
+          // 拿到已经存在的用户id
+          userIdsTemp.push(item.userId);
+        });
+          res.data.map((user, u) => {
+          userIdsTemp.map((userId, i) => {
+            if (user.userId == userId) {
+              // 双层循环 去掉已经选择的用户
+              // res.data.splice(u, 1);
+              res.data[i].disabled=true
+
+            }
+          });
+        });
         this.userOptions = res.data;
       });
     },
@@ -1048,8 +1093,11 @@ export default {
         // 动态生成 合计天数周数 日期区间
          if(res.data.projectUserList.length>0){
 
-           res.data.projectUserList[0].projectUserScheduleList.forEach((v,i)=>{   
-             this.monthArrTemp.push((v.weekMonth +'月- ' +v.week +'周 (' +v.startTime + "-" + v.endTime +')').toString())
+           res.data.projectUserList[0].projectUserScheduleList.forEach((v,i)=>{  
+                console.log(v); //2022年1月 24周  01/01-01/07
+             let pp = `${v.startTime.substring(0,4)}年${v.weekMonth}月 ${v.week}周       ${v.startTime.substring(5) + "-" + v.endTime.substring(5)}`
+             this.monthArrTemp.push(pp.toString())   
+            //  this.monthArrTemp.push((v.weekMonth +'月- ' +v.week +'周 (' +v.startTime + "-" + v.endTime +')').toString())
                         })
         res.data.projectUserList.map((item, i) => {
           item.projectUserScheduleList.map((jtem, j) => {
