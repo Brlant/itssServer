@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import { parseStrEmpty } from "@/utils/ruoyi";
 
-// 查询用户列表
+// 查询时间区间内的 工时具体
 export function getTimeProcess(data) {
   return request({
     url: '/projectManage/project/timeProcess',
@@ -108,7 +108,14 @@ export function queryUserlist(data) {
     data: data
   })
 }
-
+// 查询拥有项目主管权限的用户
+export function queryUserlistByRole(data) {
+  return request({
+    url: '/system/user/queryUserlistByRole',
+    method: 'post',
+    data: data
+  })
+}
 
 
 //----------------demo------------------------------------

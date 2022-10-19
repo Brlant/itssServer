@@ -191,7 +191,7 @@
         style="width: 100%"
         max-height="650"
       >
-        <el-table-column fixed prop="userName" label="执行人员" width="120">
+        <el-table-column fixed prop="nickName" label="执行人员" width="120">
         </el-table-column>
         <el-table-column fixed prop="planLoad" label="计划负荷" width="100">
           <template slot-scope="scope">
@@ -311,7 +311,7 @@
               >
                 <template v-if="addUserList.updateType == 3">
                   <!-- 我是修改的 -->
-                  {{ addUserList.userName }}
+                  {{ addUserList.nickName }}
                 </template>
 
                 <template v-if="addUserList.updateType == 1">
@@ -361,7 +361,7 @@
             <el-col :span="3">
               <div class="colText">
                 共 <span>{{ addUserList.workTime }}</span> 小时（
-                <span>{{ addUserList.workDay }}</span> 天）
+                <span>{{ addUserList.workDay }}</span> 人日）
               </div></el-col
             >
             <el-col :span="5"
@@ -742,7 +742,7 @@ export default {
     },
     // 删除一个 项目成员
     delProjectOne(index, row) {
-      this.$confirm(`您确定要删除${row.userName}吗?`, "温馨提示", {
+      this.$confirm(`您确定要删除${row.nickName}吗?`, "温馨提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -898,7 +898,7 @@ export default {
       };
       queryUserlist(data).then((res) => {
         res.data.map((item) => {
-          item.userNameAndPost = item.userName + "（" + item.postName + "）";
+          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
         });
         // addEditFormData.projectUserList[index].costNum
         // costNum 是我自己设置第一个值 用于存储 成本的单位
@@ -931,7 +931,7 @@ export default {
       };
       queryUserlist(data).then((res) => {
         res.data.map((item) => {
-          item.userNameAndPost = item.userName + "（" + item.postName + "）";
+          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
         });
         this.projectUserIdOptions = res.data;
         this.userOptions = res.data;

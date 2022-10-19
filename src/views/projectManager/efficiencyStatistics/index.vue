@@ -27,7 +27,7 @@
                             <el-col :span="12"  v-if='mangerJurisdiction || drillDowm'>
                                 <el-form-item label="人员" prop="userId" >
                                     <el-select v-model="form.userId"  size="medium"  placeholder="请选择人员" filterable clearable  @change='searchUser'>
-                                        <el-option v-for='(item) in users' :key='item.userId' :value='item.userId' :label='item.userName'></el-option>
+                                        <el-option v-for='(item) in users' :key='item.userId' :value='item.userId' :label='item.nickName'></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>

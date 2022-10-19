@@ -118,7 +118,7 @@
                 <el-option
                   v-for="(user, index) in projectUserIdOptions"
                   :key="user.userId"
-                  :label="user.userName"
+                  :label="user.nickName"
                   :value="user.userId"
                   :disabled="user.disabled"
                 ></el-option>
@@ -217,7 +217,7 @@
               >
                 <template v-if="addUserList.updateType == 3">
                   <!-- 我是修改的 -->
-                  {{ addUserList.userName }}
+                  {{ addUserList.nickName }}
                 </template>
 
                 <template v-if="addUserList.updateType == 1">
@@ -267,7 +267,7 @@
             <el-col :span="3">
               <div class="colText">
                 共 <span>{{ addUserList.workTime }}</span> 小时（
-                <span>{{ addUserList.workDay }}</span> 天）
+                <span>{{ addUserList.workDay }}</span> 人日）
               </div></el-col
             >
             <el-col :span="5"
@@ -348,6 +348,7 @@ import {
   updateProjectUserAddEdit,
   searchProjectList,
   proDetailBFEdit,
+  queryUserlistByRole
 } from "@/api/proManager/proManager";
 import { getToday} from "@/utils/index";
 
@@ -536,6 +537,7 @@ export default {
   },
   mounted() {
     // this.getUserList();
+    this.queryUserlistByRole(); // 查询是 项目主管的用户集合
     this.getDictList("project_phase"); // 项目阶段 project_phase
     this.getDictList("project_type"); // 项目类型 project_type
     // this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
@@ -597,7 +599,7 @@ export default {
       };
       queryUserlist(data).then((res) => {
         res.data.map((item) => {
-          item.userNameAndPost = item.userName + "（" + item.postName + "）";
+          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
         });
         // formData.projectUserList[index].costNum
         // costNum 是我自己设置第一个值 用于存储 成本的单位
@@ -608,8 +610,7 @@ export default {
         } else {
           // 对内
           this.formData.projectUserList[index].costNum = res.data[0].costIn;
-        }
-        // this.projectUserIdOptions = res.data;
+        }                
         if (this.formData.projectUserList[index].userId != "") {
           // 添加成员之后，未选择用户的情况下 不筛选
           let userIdsTemp = [];
@@ -738,9 +739,8 @@ export default {
       let data = {};
       queryUserlist(data).then((res) => {
         res.data.map((item) => {
-          item.userNameAndPost = item.userName + "（" + item.postName + "）";
+          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
         });
-        this.projectUserIdOptions = res.data; // 初始化填充给 项目负责人的 永远是所有用户
         //---------------------------------------------------------
         //  初始化用户列表之后， 需要剔除已经存在的userID
         let userIdsTemp = [];
@@ -758,6 +758,17 @@ export default {
         });
         this.userOptions = res.data; // 需要根据已经选择的人 来过滤
       });
+    },
+       /* 查询是项目主管的用户列表 */
+    queryUserlistByRole() {
+      let data = {}
+      queryUserlistByRole(data).then((res) => {
+        res.data.map((item) => {
+          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+        });
+        this.projectUserIdOptions = res.data;// 初始化填充给 项目负责人的 永远是所有用户
+      });
+      
     },
     // 点击 新增用户的
     addUserListHandel() {
@@ -780,7 +791,7 @@ export default {
       // 修改类型（1.新增,2.删除,3.修改原数据）
       // oneUser.updateType = 1
 
-      this.$confirm(`您确定要删除${row.userName}吗?`, "温馨提示", {
+      this.$confirm(`您确定要删除${row.nickName}吗?`, "温馨提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
