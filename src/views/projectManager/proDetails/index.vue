@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container containers">
     <div class="routerBar">
       <b>{{ projectName }}详情</b
       ><span>（仅项目负责人可对此项目下列对内进行编辑）</span>
@@ -1334,4 +1334,13 @@ export default {
   height: 20px !important;
   padding: 2px 0 !important;
 }
+</style>
+<style lang='scss'>
+.containers{
+  thead>:first-child  .is-leaf{
+    background:#E8E8F4!important;
+  }
+}
+
+
 </style>
