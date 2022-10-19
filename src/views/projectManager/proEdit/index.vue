@@ -210,14 +210,14 @@
           v-for="(addUserList, addUserListindex) in formData.projectUserList"
         >
           <el-row>
-            <el-col :span="4">
+            <el-col :span="3">
               <el-form-item
                 :prop="`projectUserList.${addUserListindex}.userId`"
                 :rules="rules.projectUserListAllUserId"
               >
                 <template v-if="addUserList.updateType == 3">
                   <!-- 我是修改的 -->
-                  {{ addUserList.nickName }}
+                  {{ addUserList.userName }}
                 </template>
 
                 <template v-if="addUserList.updateType == 1">
@@ -243,7 +243,7 @@
                 </template>
               </el-form-item>
             </el-col>
-            <el-col :span="5">
+            <el-col :span="6">
               <el-form-item
                 label=""
                 :prop="`projectUserList.${addUserListindex}.startEndTime`"

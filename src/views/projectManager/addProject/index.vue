@@ -210,7 +210,7 @@
               v-for="(addUserList, addUserListindex) in formData.projectUserList"
             >
               <el-row >
-                <el-col   :span="4">
+                <el-col   :span="3">
                   <el-form-item :prop="`projectUserList.${addUserListindex}.userId`" :rules="rules.projectUserListAllUserId">
                     <el-select
                       v-model="addUserList.userId"
@@ -226,7 +226,7 @@
                       ></el-option>
                     </el-select> </el-form-item
                 ></el-col>
-                <el-col :span="5">
+                <el-col :span="6">
                   <el-form-item label="" :prop="`projectUserList.${addUserListindex}.startEndTime`" :rules="rules.projectUserListAllStartEndTime">
                     <el-date-picker
                       type="daterange"

@@ -304,14 +304,14 @@
           ) in addEditFormData.projectUserList"
         >
           <el-row>
-            <el-col :span="4">
+            <el-col :span="3">
               <el-form-item
                 :prop="`projectUserList.${addUserListindex}.userId`"
                 :rules="rules.projectUserListAllUserId"
               >
                 <template v-if="addUserList.updateType == 3">
                   <!-- 我是修改的 -->
-                  {{ addUserList.nickName }}
+                  {{ addUserList.userName }}
                 </template>
 
                 <template v-if="addUserList.updateType == 1">
@@ -337,7 +337,7 @@
                 </template>
               </el-form-item>
             </el-col>
-            <el-col :span="5">
+            <el-col :span="6">
               <el-form-item
                 label=""
                 :prop="`projectUserList.${addUserListindex}.startEndTime`"
@@ -352,7 +352,7 @@
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                   range-separator="至"
-                  :picker-options="childDateArea"
+                  :picker-options="(dates)=>{childDateArea(dates)}"
                   @change="(dates) => getTimeArea(dates, addUserListindex)"
                   clearable
                 ></el-date-picker>
@@ -529,22 +529,7 @@ export default {
   components: {},
   props: {},
   data: () => ({
-    childDateArea: {
-      // 项目成员安排的 可选时间区间
-      disabledDate: (time) => {
-        if (
-          this.formData.projectEndTime != "" &&
-          this.formData.projectStartTime
-        ) {
-          // 设置可以选择的区间 时间为项目的 起始日期和结束日期
-          return (
-            time.getTime() > new Date(this.formData.projectEndTime).getTime() ||
-            time.getTime() <
-              new Date(this.formData.projectStartTime).getTime() - 8.64e7
-          );
-        }
-      },
-    },
+    
     monthArrTemp:[],
     userOptions: [],
     addEditUserActive: false, // 默认是详情页 不可以编辑
@@ -626,9 +611,29 @@ export default {
       { title: "已通过", name: "2" },
       { title: "已拒绝", name: "3" },
     ],
+    childDateArea: {
+      // 项目成员安排的 可选时间区间
+      disabledDate: (time) => {
+        console.log(proInfo);
+            if (
+          _this.addEditFormData.projectEndTime != "" &&
+          this.addEditFormData.projectStartTime != ""
+        ) {
+          // 设置可以选择的区间 时间为项目的 起始日期和结束日期
+          return (
+            time.getTime() > new Date(this.addEditFormData.projectEndTime).getTime() ||
+            time.getTime() <
+              new Date(this.addEditFormData.projectStartTime).getTime() - 8.64e7
+          );
+        }
+      },
+    },
   }),
-  computed: {},
+  computed: {
+    
+  },
   watch: {},
+    
   created() {
     this.projectName = this.$route.query.projectName;
     this.projectId = this.$route.query.projectId;
