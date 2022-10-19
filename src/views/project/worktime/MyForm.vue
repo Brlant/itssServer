@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class='formStyle'>
     <el-form :model="formList" label-width="80px" :rules='rules'  ref="ruleForm">
         <el-row type="flex" class="row-bg">
             <el-col :span="6">
@@ -47,13 +47,13 @@ export default {
     data(){
         return {
             rules: {
-                projectName: [
+                projectId: [
                     { required: true, message: '请输入项目名称', trigger: 'change' },
                 ],
                 workTitle: [
                     { required: true, message: '请输入标题', trigger: 'blur' }
                 ],
-                workTypeName: [
+                workTypeId: [
                     {  required: true, message: '请选择工作类型', trigger: 'change' }
                 ],
                 workTime: [
@@ -80,3 +80,11 @@ export default {
    
 }
 </script>
+<style lang="scss">
+.formStyle{
+    .el-form-item__label{
+    color: #a8b5c1 !important;
+}
+}
+
+</style>
