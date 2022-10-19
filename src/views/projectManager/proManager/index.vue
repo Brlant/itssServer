@@ -16,9 +16,9 @@
       </div>
 
       <div class="searchBox">
-        <el-form ref="form" :model="searchForm" label-width="80px">
-          <el-row>
-            <el-col :span="8">
+        <el-form ref="form" :model="searchForm" label-width="80px" inline>
+          <!-- <el-row>
+            <el-col :span="8"> -->
               <el-form-item label="统计时间">
                 <el-date-picker
                   v-model="searchForm.projectStartEndTime"
@@ -32,8 +32,8 @@
                 >
                 </el-date-picker>
               </el-form-item>
-            </el-col>
-            <el-col :span="4">
+            <!-- </el-col>
+            <el-col :span="4"> -->
               <el-form-item label="统计范围">
                 <el-select
                   v-model="searchForm.countScope"
@@ -49,8 +49,8 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-            </el-col>
-            <el-col :span="5">
+            <!-- </el-col>
+            <el-col :span="5"> -->
               <el-form-item label="搜索">
                 <el-input
                   v-model="searchForm.projectName"
@@ -59,8 +59,8 @@
                   clearable
                 ></el-input>
               </el-form-item>
-            </el-col>
-            <el-col :span="3">
+            <!-- </el-col>
+            <el-col :span="3"> -->
               <el-form-item label="状态">
                 <el-select
                   v-model="searchForm.projectStatus"
@@ -79,8 +79,8 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-            </el-col>
-            <el-col :span="3">
+            <!-- </el-col>
+            <el-col :span="3"> -->
               <el-form-item label="优先级">
                 <el-select
                   v-model="searchForm.priority"
@@ -99,8 +99,8 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-            </el-col>
-          </el-row>
+            <!-- </el-col>
+          </el-row> -->
         </el-form>
       </div>
     </div>
