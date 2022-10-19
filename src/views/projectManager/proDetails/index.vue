@@ -191,7 +191,7 @@
         style="width: 100%"
         max-height="650"
       >
-        <el-table-column fixed prop="nickName" label="执行人员" width="120">
+        <el-table-column fixed prop="userName" label="执行人员" width="120">
         </el-table-column>
         <el-table-column fixed prop="planLoad" label="计划负荷" width="100">
           <template slot-scope="scope">
@@ -352,7 +352,7 @@
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                   range-separator="至"
-                  :picker-options="(dates)=>{childDateArea(dates)}"
+                  :picker-options="childDateArea"
                   @change="(dates) => getTimeArea(dates, addUserListindex)"
                   clearable
                 ></el-date-picker>
@@ -611,23 +611,7 @@ export default {
       { title: "已通过", name: "2" },
       { title: "已拒绝", name: "3" },
     ],
-    childDateArea: {
-      // 项目成员安排的 可选时间区间
-      disabledDate: (time) => {
-        console.log(proInfo);
-            if (
-          _this.addEditFormData.projectEndTime != "" &&
-          this.addEditFormData.projectStartTime != ""
-        ) {
-          // 设置可以选择的区间 时间为项目的 起始日期和结束日期
-          return (
-            time.getTime() > new Date(this.addEditFormData.projectEndTime).getTime() ||
-            time.getTime() <
-              new Date(this.addEditFormData.projectStartTime).getTime() - 8.64e7
-          );
-        }
-      },
-    },
+    childDateArea:null
   }),
   computed: {
     
@@ -639,6 +623,22 @@ export default {
     this.projectId = this.$route.query.projectId;
     this.countScope = this.$route.query.countScope;
     this.init("init");
+    this.childDateArea= {
+      // 项目成员安排的 可选时间区间
+      disabledDate: (time) => {
+            if (
+          this.addEditFormData.projectEndTime != "" &&
+          this.addEditFormData.projectStartTime != ""
+        ) {
+          // 设置可以选择的区间 时间为项目的 起始日期和结束日期
+          return (
+            time.getTime() > new Date(this.addEditFormData.projectEndTime).getTime() ||
+            time.getTime() <
+              new Date(this.addEditFormData.projectStartTime).getTime() - 8.64e7
+          );
+        }
+      }
+    }
   },
   mounted() {
     // 额外的判断 页面初始化 判断用户的角色  isJurisdiction 判断当前的值是否存在 返回true or false
@@ -684,6 +684,23 @@ export default {
   },
 
   methods: {
+    // 生成 时间选择的区间
+    childDateAreaHandel(){
+      // 项目成员安排的 可选时间区间
+      disabledDate: (time) => {
+            if (
+          _this.addEditFormData.projectEndTime != "" &&
+          this.addEditFormData.projectStartTime != ""
+        ) {
+          // 设置可以选择的区间 时间为项目的 起始日期和结束日期
+          return (
+            time.getTime() > new Date(this.addEditFormData.projectEndTime).getTime() ||
+            time.getTime() <
+              new Date(this.addEditFormData.projectStartTime).getTime() - 8.64e7
+          );
+        }
+      }
+    },
     // 动态生成 表头样式
     headerClassName(row) {
       // console.log(row.column)
