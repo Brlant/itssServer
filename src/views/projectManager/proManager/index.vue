@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-containers app-container">
     <div class="pageTitle cls">
       <div class="leftTitle">
         项目管理
@@ -623,5 +623,15 @@ export default {
     top: 2px;
     display: inline-block;
     position: absolute;
+}
+</style>
+<style lang="scss">
+.app-containers{
+   thead>:first-child  .is-sortable{
+    background:#E8E8F4!important;
+  }
+  .el-table__fixed-right .el-table__fixed-header-wrapper tr:last-child  .is-leaf{
+    background:#E8E8F4!important;
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class='efficiency'>
         <el-row  v-if='mangerJurisdiction || selfJurisdiction'>
             <el-col :span='15'>
                  <div class='header' >
@@ -189,9 +189,16 @@ export default {
         console.log(this.$store.state.user.user.userId)    
         this.queryUser() 
         this.getDeptTree()   
-        this.drillDowm=this.isJurisdiction('common') ? false : true      
-        this.selfJurisdiction=this.isJurisdiction('common')
-        this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')
+        // this.drillDowm=this.isJurisdiction('common') ? false : true      
+        // this.selfJurisdiction=this.isJurisdiction('common')
+        // this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')
+         if(this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')){
+            this.mangerJurisdiction=true
+            this.drillDowm=true
+        }else{
+            this.drillDowm=false
+            this.selfJurisdiction=true
+        }
         //   this.mangerJurisdiction=this.isJurisdiction('admin') || this.isJurisdiction('operatemanage')
         this.defaultDate()
     },
@@ -436,5 +443,12 @@ color:#3D7DFF
     background:#ffffff;
     padding:0 5px 20px 5px;
     margin-bottom:30px;
+}
+</style>
+<style lang="scss">
+.efficiency{
+    thead>:first-child  .is-leaf{
+    background:#E8E8F4!important;
+  }
 }
 </style>
