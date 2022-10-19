@@ -19,7 +19,7 @@
             <el-row>
                 <el-col :span="24">
                     <el-form-item label="菜单" prop="menuIds">
-                        <menuTree  :fromData="fromData" :toData="toData" @getRightData="getRightData"></menuTree>
+                        <menuTree  :fromData="fromData" :toData="toData" :pid="parentId" @getRightData="getRightData"></menuTree>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -93,6 +93,7 @@ import { roleMenuTreeselect,treeselect } from "@/api/system/menu"
                 temData:[], // 临时数据(存放全部树数据)
                 checkedKeys:[], //已勾选的id数组（右侧树的id数组）
                 receiveData:[], //接受子组件的右侧树形数据
+                parentId: 'parentId',
                 nodeKey: 'id',
                 plateObj: {
                     label: 'label',
@@ -159,6 +160,9 @@ import { roleMenuTreeselect,treeselect } from "@/api/system/menu"
             getList() {
                 this.formloading = true
                 treeselect().then(response => {
+                    response.data.forEach(item => {  //el-tree-transfer组件的第一个pid必须为0
+                        item.parentId = 0
+                    })
                     this.menu = response.data
                     if(this.menu && this.menu.length){
                         /**
@@ -183,10 +187,16 @@ import { roleMenuTreeselect,treeselect } from "@/api/system/menu"
                     });
                     if(this.formmodel.roleId == 1){  // 超管(特别处理)
                         this.fromData = []
-                        this.toData = this.menu    
+                        this.menu.forEach(item => {  //el-tree-transfer组件的第一个pid必须为0
+                        item.parentId = 0
+                        this.toData = this.menu
+                    })    
                     } else {
                         let menuData = this.dealdata(this.temData,keymap)
                         this.fromData = menuData.excluded
+                        this.fromData.forEach(item => {  //el-tree-transfer组件的第一个pid必须为0
+                            item.parentId = 0
+                        })
                         this.toData = menuData.included 
                     }
                 });

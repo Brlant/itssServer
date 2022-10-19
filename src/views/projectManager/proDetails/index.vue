@@ -482,27 +482,27 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="120">
-          <template slot-scope="scope">
+          <template slot-scope="scope" >
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <!-- 他必须是项目主管和项目负责人 才可以点击取消 -->
+            <div v-show="auditStatus==1">
+
             <el-button
               type="text"
               size="small" v-show="isProjectByUser(formData)||isJurisdiction('admin')"             
               @click="updateAuditPro(scope.row, '4')"
-              ><span class="color1"> 取消 </span></el-button
-            >
+              ><span class="color1"> 取消 </span></el-button>
             <el-button
               type="text"
               size="small"
               @click="updateAuditPro(scope.row, '2')" v-show="isJurisdiction('projectsupervision','admin')"
-              ><span class="color2"> 通过 </span></el-button
-            >
+              ><span class="color2"> 通过 </span></el-button>
             <el-button
               type="text"
               size="small"
               @click="updateAuditPro(scope.row, '3')"  v-show="isJurisdiction('projectsupervision','admin')"
-              ><span class="color3"> 拒绝 </span></el-button
-            >
+              ><span class="color3"> 拒绝 </span></el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
