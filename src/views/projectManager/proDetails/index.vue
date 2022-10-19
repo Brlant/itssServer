@@ -191,23 +191,23 @@
         style="width: 100%"
         max-height="650"
       >
-        <el-table-column fixed prop="userName" label="执行人员" width="120">
+        <el-table-column prop="userName" label="执行人员" width="120">
         </el-table-column>
-        <el-table-column fixed prop="planLoad" label="计划负荷" width="120">
+        <el-table-column prop="planLoad" label="计划负荷" width="120">
           <template slot-scope="scope">
             {{ scope.row.planLoad + "%" }}
             <span class="color1">（{{ scope.row.planLoadWorkDay + "人日" }}）</span>
           </template>
         </el-table-column>
-        <el-table-column fixed prop="realLoad" label="实际负荷" width="100">
+        <el-table-column prop="realLoad" label="实际负荷" width="100">
           <template slot-scope="scope">
             <span :class="['loadType' + scope.row.loadType]">{{scope.row.realLoad + "%"}}</span>         
             <span :class="['loadType' + scope.row.loadType]">（{{scope.row.realLoadWorkDay + "人日"}}）</span>
           </template>
         </el-table-column>
-        <el-table-column fixed prop="planCost" label="计划投入" width="120">
+        <el-table-column prop="planCost" label="计划投入" width="120">
         </el-table-column>
-        <el-table-column fixed prop="realCost" label="实际投入" width="120">
+        <el-table-column prop="realCost" label="实际投入" width="120">
           <template slot-scope="scope">
             <span :class="['loadType' + scope.row.costType]">{{scope.row.realCost}}</span>
           </template>
@@ -238,7 +238,7 @@
         </el-table-column>
 
         <!-- 滑动的内容块 end  -->
-        <el-table-column fixed="right" label="操作" width="120">
+        <el-table-column label="操作" width="120">
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <el-button

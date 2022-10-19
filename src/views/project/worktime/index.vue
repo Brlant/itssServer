@@ -145,7 +145,7 @@
     </div>
      <div @click='more' v-if="show" class='more'><span>展开显示更多<i class='el-icon-arrow-down'></i></span></div>
     <div v-if='list.length==0' class="not-submitted">尚未提交</div>
-     <div style="margin:10px 0">
+     <div style="margin:10px 20px; color:#708399">
       {{editId==-1 ? '新增' : '编辑'}}工时
     </div>
      <div style="width: 100%">
@@ -564,6 +564,8 @@ cursor:pointer;
   color:#557CB5;
 }
 .submitted-time{
+ color:#708399;
+ padding:10px 20px;
 display: flex; 
 justify-content: space-between;
 div{

@@ -54,20 +54,20 @@
             <div v-for="(i,index) in deptData" :key='index' class='table-style'>
                 <div class='name'>{{i.deptName}}</div>
                 <el-table :data="i.workLoadUserVoList" border class="tableData" style="width:100%">
-                    <el-table-column label="执行人员" align="center" fixed  min-width='150'>
+                    <el-table-column label="执行人员" align="center"  min-width='150'>
                         <template  slot-scope="scope">
                             <span  @click='nameClick(scope.row)' :class="['point', scope.row.userName != '总计' ? 'colorname' : '']">{{scope.row.userName}}</span>
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="计划负荷" align="center" fixed  min-width='150'>
+                     <el-table-column label="计划负荷" align="center"  min-width='150'>
                         <template  slot-scope="scope">
                             {{ scope.row.planLoad }}%
                             <span class="color1">（{{ scope.row.planLoadWorkDay }}人日）</span>
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="实际负荷" align="center" fixed  min-width='150'>
+                     <el-table-column label="实际负荷" align="center"  min-width='150'>
                         <template  slot-scope="scope">
                             <span :class="['loadType' + scope.row.loadType]">
                         {{ scope.row.realLoad+"%（"+scope.row.realLoadWorkDay + "人日）" }}</span
@@ -75,7 +75,7 @@
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="空闲负荷" align="center" fixed  min-width='150'>
+                     <el-table-column label="空闲负荷" align="center"   min-width='150'>
                         <template  slot-scope="scope">
                              <span :class="['loadType' + scope.row.loadType]">
                         {{ scope.row.freeLoad+"%（"+scope.row.freeLoadWorkDay + "人日）" }}</span
@@ -116,14 +116,14 @@
             <div class='table-style'>
                 <div class='name'>{{userData.userName}}</div>
                 <el-table :data="userData.workUserProjectVoList" border class="tableData" style="width:100%" :span-method="arraySpanMethod">
-                    <el-table-column label="项目" align="center" fixed  min-width='150' prop='projectName'>
+                    <el-table-column label="项目" align="center"  min-width='150' prop='projectName'>
                          <template slot-scope="scope">
                             <span :class="['yuan','yuan'+scope.row.priority]"></span>
                             {{ scope.row.projectName }}
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="项目状态" align="center" fixed  min-width='150' prop='projectStatus'>
+                     <el-table-column label="项目状态" align="center"   min-width='150' prop='projectStatus'>
                          <template slot-scope="scope">
                             <span :class="[scope.row.projectStatus== 4 ? 'color4' : '']">{{ scope.row.projectStatus | filterProjectStatus }}</span>        
                         </template>
