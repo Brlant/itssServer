@@ -211,7 +211,7 @@
             >
               <el-row >
                 <el-col   :span="3">
-                  <el-form-item :prop="`projectUserList.${addUserListindex}.userId`" :rules="rules.projectUserListAllUserId">
+                  <el-form-item :prop="`projectUserList.${addUserListindex}.userId`" :rules="rules.projectUserListAllUserId"  label-width="30px" >
                     <el-select
                       v-model="addUserList.userId"
                       placeholder="请选择项目成员"
@@ -227,7 +227,7 @@
                     </el-select> </el-form-item
                 ></el-col>
                 <el-col :span="6">
-                  <el-form-item label="" :prop="`projectUserList.${addUserListindex}.startEndTime`" :rules="rules.projectUserListAllStartEndTime">
+                  <el-form-item label="" :prop="`projectUserList.${addUserListindex}.startEndTime`" :rules="rules.projectUserListAllStartEndTime" label-width="50px" >
                     <el-date-picker
                       type="daterange"
                       v-model="addUserList.startEndTime"

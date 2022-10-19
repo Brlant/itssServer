@@ -213,11 +213,11 @@
             <el-col :span="3">
               <el-form-item
                 :prop="`projectUserList.${addUserListindex}.userId`"
-                :rules="rules.projectUserListAllUserId"
+                :rules="rules.projectUserListAllUserId" label-width="30px" 
               >
                 <template v-if="addUserList.updateType == 3">
                   <!-- 我是修改的 -->
-                  {{ addUserList.userName }}
+                  <span style="margin-left:30px"> {{ addUserList.userName }}</span>
                 </template>
 
                 <template v-if="addUserList.updateType == 1">
@@ -247,7 +247,7 @@
               <el-form-item
                 label=""
                 :prop="`projectUserList.${addUserListindex}.startEndTime`"
-                :rules="rules.projectUserListAllStartEndTime"
+                :rules="rules.projectUserListAllStartEndTime"  label-width="30px" 
               >
                 <el-date-picker
                   type="daterange"

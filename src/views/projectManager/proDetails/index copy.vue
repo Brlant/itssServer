@@ -193,23 +193,47 @@
       >
         <el-table-column fixed prop="userName" label="执行人员" width="120">
         </el-table-column>
-        <el-table-column fixed prop="planLoad" label="计划负荷" width="120">
+        <el-table-column fixed prop="planLoad" label="计划负荷" width="100">
           <template slot-scope="scope">
             {{ scope.row.planLoad + "%" }}
-            <span class="color1">（{{ scope.row.planLoadWorkDay + "人日" }}）</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          fixed
+          prop="planLoadWorkDay"
+          label="计划负荷人日"
+          width="120"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.planLoadWorkDay + "人日" }}
           </template>
         </el-table-column>
         <el-table-column fixed prop="realLoad" label="实际负荷" width="100">
           <template slot-scope="scope">
-            <span :class="['loadType' + scope.row.loadType]">{{scope.row.realLoad + "%"}}</span>         
-            <span :class="['loadType' + scope.row.loadType]">（{{scope.row.realLoadWorkDay + "人日"}}）</span>
+            <span :class="['loadType' + scope.row.loadType]">{{
+              scope.row.realLoad + "%"
+            }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          fixed
+          prop="realLoadWorkDay"
+          label="实际负荷人日"
+          width="120"
+        >
+          <template slot-scope="scope">
+            <span :class="['loadType' + scope.row.loadType]">{{
+              scope.row.realLoadWorkDay + "人日"
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column fixed prop="planCost" label="计划投入" width="120">
         </el-table-column>
         <el-table-column fixed prop="realCost" label="实际投入" width="120">
           <template slot-scope="scope">
-            <span :class="['loadType' + scope.row.costType]">{{scope.row.realCost}}</span>
+            <span :class="['loadType' + scope.row.costType]">{{
+              scope.row.realCost + "%"
+            }}</span>
           </template>
         </el-table-column>
         <!-- 滑动的内容块 start  -->
@@ -271,7 +295,7 @@
         :model="addEditFormData"
         :rules="rules"
         size="medium"
-        label-width="30px"
+        label-width="100px"
       >
         <div
           class="UserLine"
@@ -287,7 +311,7 @@
               >
                 <template v-if="addUserList.updateType == 3">
                   <!-- 我是修改的 -->
-                   <span style="margin-left:30px">{{ addUserList.userName }}</span>
+                  {{ addUserList.userName }}
                 </template>
 
                 <template v-if="addUserList.updateType == 1">
