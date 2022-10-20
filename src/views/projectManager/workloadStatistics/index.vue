@@ -311,7 +311,9 @@ export default {
                                 let value2 = value1.workLoadUserVoList.find(item => item.workLoadUserWeekVoList.length)
                                 if (value2.workLoadUserWeekVoList) {
                                     value2.workLoadUserWeekVoList.forEach((v,i)=>{  
-                                    let time=`${v.weekMonth}月-${v.week}周（${v.startTime}-${v.endTime}）`
+                                    let startTime=moment(v.startTime,'YYYY-MM-DD').format('YYYY/MM/DD')
+                                    let endTime=moment(v.endTime,'YYYY-MM-DD').format('YYYY/MM/DD')
+                                    let time=`${v.weekMonth}月-${v.week}周（${startTime}-${endTime}）`
                                     this.months.push(time)   
                                      })
                                 }
@@ -338,7 +340,9 @@ export default {
                             if(res.data.workUserProjectVoList.length>0){
                                  let monthDate=res.data.workUserProjectVoList[0].workUserProjectWeekVoList
                                 monthDate.forEach((v,i)=>{  
-                                    let time=`${v.weekMonth}月-${v.week}周（${v.startTime}-${v.endTime}）` 
+                                      let startTime=moment(v.startTime,'YYYY-MM-DD').format('YYYY/MM/DD')
+                                    let endTime=moment(v.endTime,'YYYY-MM-DD').format('YYYY/MM/DD')
+                                    let time=`${v.weekMonth}月-${v.week}周（${startTime}-${endTime}）` 
                                     this.months.push(time)   
                             })
                             }
