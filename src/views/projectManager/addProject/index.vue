@@ -344,34 +344,34 @@ export default {
       // 人员 列表
       userOptions: [],
       formData: {        
-        priority: 3,/**优先级（1.最高，2.高，3.普通，4.较低）*/        
-        projectChance: "",/**关联机会*/        
-        projectCode: "",/**项目编号*/        
-        projectEndTime: "",/**项目结束时间*/        
-        projectName: "",/**项目名称*/        
-        projectService: "",/**服务对象*/        
-        projectStage: "",/**项目阶段*/        
-        projectStartTime: "",/**项目开始时间*/        
-        projectType: "",/**项目类型*/        
-        projectUserId: "",/**项目负责人*/        
-        projectUserList: [],/**项目成员列表*/
-        projectGitUrl:"",// 项目git 地址
-        // "priority": 3,  //快速调试
-        // "projectChance": "",
-        // "projectCode": "123",
-        // "projectEndTime": "2022-11-30",
-        // "projectName": "123",
-        // "projectService": 1,
-        // "projectStage": 128,
-        // "projectStartTime": "2022-10-01",
-        // "projectType": 123,
-        // "projectUserId": 107,
-        // "projectUserList": [],
-        // "projectGitUrl": "123",
-        // "projectTimeArea": [
-        // "2022-10-01",
-        // "2022-11-30"
-        // ]
+        // priority: 3,/**优先级（1.最高，2.高，3.普通，4.较低）*/        
+        // projectChance: "",/**关联机会*/        
+        // projectCode: "",/**项目编号*/        
+        // projectEndTime: "",/**项目结束时间*/        
+        // projectName: "",/**项目名称*/        
+        // projectService: "",/**服务对象*/        
+        // projectStage: "",/**项目阶段*/        
+        // projectStartTime: "",/**项目开始时间*/        
+        // projectType: "",/**项目类型*/        
+        // projectUserId: "",/**项目负责人*/        
+        // projectUserList: [],/**项目成员列表*/
+        // projectGitUrl:"",// 项目git 地址
+        "priority": 3,  //快速调试
+        "projectChance": "",
+        "projectCode": "123",
+        "projectEndTime": "2022-11-30",
+        "projectName": "123",
+        "projectService": 1,
+        "projectStage": 128,
+        "projectStartTime": "2022-10-01",
+        "projectType": 123,
+        "projectUserId": 107,
+        "projectUserList": [],
+        "projectGitUrl": "123",
+        "projectTimeArea": [
+        "2022-10-01",
+        "2022-11-30"
+        ]
       },
       rules: {
          "projectUserListAllUserId": [
