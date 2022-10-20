@@ -44,7 +44,11 @@
                   ></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="10" :offset="1">
+             
+           
+            </el-row>
+            <el-row>
+               <el-col :span="10" :offset="1">
                 <el-form-item label="项目阶段：" prop="projectStage">
                   <el-select
                     v-model="formData.projectStage"
@@ -82,7 +86,9 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="10" :offset="1">
+            </el-row>
+            <el-row>
+                 <el-col :span="10" :offset="1">
                 <el-form-item label="优先级：" prop="priority">
                   <el-radio-group v-model="formData.priority" size="medium">
                     <el-radio
