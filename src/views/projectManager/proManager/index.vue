@@ -117,6 +117,7 @@
         <el-table-column
           prop="projectName"
           sortable
+          fixed
           label="项目"
           width="150"
         >
@@ -129,7 +130,8 @@
         </el-table-column>
         <el-table-column
           prop="projectStatus"
-          sortable
+          fixed
+          sortable 
           label="项目状态"
           width="100"
         >
@@ -139,6 +141,7 @@
         </el-table-column>
         <el-table-column
           prop="projectStartTime"
+          fixed
           sortable
           label="开始日期"
           width="120"
@@ -149,6 +152,7 @@
         </el-table-column>
         <el-table-column
           prop="projectEndTime"
+          fixed
           sortable
           label="结束日期"
           width="120"
@@ -216,7 +220,7 @@
           <template slot-scope="scope"> {{ scope.row.jdSchedule }}% </template>
         </el-table-column>
 
-        <el-table-column label="操作" width="120">
+        <el-table-column label="操作" width="120" fixed="right">
           <template slot-scope="scope">
             <el-button
               v-show="isProjectByUser(scope.row)||isJurisdiction('admin','deptdirector','projectdirector','projectsupervision','operatemanage')"
@@ -631,4 +635,9 @@ export default {
     background:#E8E8F4!important;
   }
 }
+ .el-table__body-wrapper{
+        margin-top: 1px;
+        z-index:2
+
+    }
 </style>
