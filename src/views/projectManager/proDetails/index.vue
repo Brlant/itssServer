@@ -491,6 +491,8 @@
 </template>
 
 <script>
+import moment from "moment";
+import "moment/locale/zh-cn";
 import {
   queryInfoById,
   queryProjectAudit,
@@ -1096,7 +1098,13 @@ export default {
 
            res.data.projectUserList[0].projectUserScheduleList.forEach((v,i)=>{  
                 console.log(v); //2022年1月 24周  01/01-01/07
-             let pp = `${v.startTime.substring(0,4)}年${v.weekMonth}月 ${v.week}周       ${v.startTime.substring(5) + "-" + v.endTime.substring(5)}`
+               
+                  let startTime=moment(v.startTime,'YYYY-MM-DD').format('YYYY/MM/DD')
+                  let endTime=moment(v.endTime,'YYYY-MM-DD').format('YYYY/MM/DD')
+                
+                console.log(startTime,'dddddd')
+             let pp = `${v.startTime.substring(0,4)}年${v.weekMonth}月 ${v.week}周       ${startTime.substring(5) + "-" + endTime.substring(5)}`
+            //  console.log(pp,'ddd')
              this.monthArrTemp.push(pp.toString())   
             //  this.monthArrTemp.push((v.weekMonth +'月- ' +v.week +'周 (' +v.startTime + "-" + v.endTime +')').toString())
                         })
