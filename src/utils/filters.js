@@ -54,8 +54,8 @@ const toStatus=((val)=>{
 // 服务对象
 const toProjectService=((val)=>{
   const sourceMap={
-    121:'对内',
-    122:'对外'
+    1:'对内',
+    2:'对外'
   }
   return sourceMap[val]
 })

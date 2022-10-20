@@ -168,19 +168,19 @@
         <el-row>
           <el-col :span="10" :offset="1">
             <el-form-item label="项目有效期" prop="projectTimeArea">
-              <el-date-picker
-                type="daterange"
-                v-model="formData.projectTimeArea"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                :style="{ width: '100%' }"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                range-separator="至"
-                clearable
-                @change="getProjectTimeArea"
-              ></el-date-picker>
-            </el-form-item>
+                  <el-date-picker
+                    type="daterange"
+                    v-model="formData.projectTimeArea"
+                    format="yyyy-MM-dd"
+                    value-format="yyyy-MM-dd"
+                    :style="{ width: '100%' }"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    range-separator="至"                  
+                    clearable
+                    @change="getProjectTimeArea"
+                  ></el-date-picker>
+                </el-form-item>
           </el-col>
           <el-col :span="10" :offset="1">
             <!-- <el-form-item label="关联机会" prop="projectChance">
@@ -398,6 +398,7 @@ export default {
         projectUserId: "" /**项目负责人*/,
         projectUserList: [] /**项目成员列表*/,
         projectGitUrl: "", // 项目git 地址
+        projectTimeArea:[]
       },
       rules: {
         projectUserListAllUserId: [
@@ -588,10 +589,10 @@ export default {
           });
         });
         this.formData = res.data; // 填充详情的 projectTimeArea
-        this.formData.projectTimeArea = [
+        this.$set(this.formData,'projectTimeArea',[
           res.data.projectStartTime,
           res.data.projectEndTime,
-        ];
+        ])
 
         // 之前的做法 动态生成 表格列
         // if (res.data.projectUserList[0].projectUserScheduleList.length != 0) {
@@ -703,6 +704,8 @@ export default {
     },
     /*选择项目有效期*/
     getProjectTimeArea(dates) {
+      // this.formData.projectTimeArea=[]
+      console.log(dates,'sssssssss')
       this.formData.projectStartTime = dates[0];
       this.formData.projectEndTime = dates[1];
     },
@@ -877,7 +880,8 @@ export default {
             let { code, msg } = res;
             this.$message.success(msg);
             if (+code == 200) {
-              this.$router.push("/projectManager/proManager");
+              // this.$router.push("/projectManager/proManager");
+              this.$router.push({ path:'/projectManager/proDetails/',query:{ projectId:this.formData.projectId,projectName:this.formData.projectName,countScope:this.$route.query.countScope}})
             }
           });
         }
