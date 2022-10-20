@@ -449,7 +449,8 @@ export default {
       // this.$router.push({ path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
       // startTime:row.projectStartTime,endTime:getToday()}})
        const obj = { path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
-            startTime:row.projectStartTime,endTime:getToday()}};
+            startTime:row.projectStartTime,endTime:row.projectEndTime}};
+            // getToday()
       this.$tab.closeOpenPage(obj);
 
     },

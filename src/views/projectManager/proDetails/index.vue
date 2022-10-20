@@ -137,9 +137,9 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="统计范围" prop="totalArea">
+                  <el-form-item label="统计范围" prop="countScope">
                     <el-select
-                      v-model="checkFormData.totalArea"
+                      v-model="checkFormData.countScope"
                       placeholder="请选择统计范围"
                       clearable
                       size="mini"
@@ -148,7 +148,7 @@
                     >
                       <el-option
                         v-for="(item, index) in countScopeOptions"
-                        :key="index"
+                        :key="item.value"
                         :label="item.label"
                         :value="item.value"
                         :disabled="item.disabled"
@@ -599,28 +599,6 @@ export default {
   watch: {},
     
   created() {
-    this.projectName = this.$route.query.projectName;
-    this.projectId = this.$route.query.projectId;
-    this.countScope = this.$route.query.countScope;
-    this.init("init");
-    this.childDateArea= {
-      // 项目成员安排的 可选时间区间
-      disabledDate: (time) => {
-            if (
-          this.addEditFormData.projectEndTime != "" &&
-          this.addEditFormData.projectStartTime != ""
-        ) {
-          // 设置可以选择的区间 时间为项目的 起始日期和结束日期
-          return (
-            time.getTime() > new Date(this.addEditFormData.projectEndTime).getTime() ||
-            time.getTime() <
-              new Date(this.addEditFormData.projectStartTime).getTime() - 8.64e7
-          );
-        }
-      }
-    }
-  },
-  mounted() {
     // 额外的判断 页面初始化 判断用户的角色  isJurisdiction 判断当前的值是否存在 返回true or false
     // 部门主管 deptdirector  3
     // 项目主管 projectdirector 2
@@ -657,6 +635,29 @@ export default {
     }
     this.countScopeOptions = countScopeOptionsTemp;
     // 统计范围的-------------------------------------------
+    this.projectName = this.$route.query.projectName;
+    this.projectId = this.$route.query.projectId;
+    this.countScope = this.$route.query.countScope;
+    this.init("init");
+    this.childDateArea= {
+      // 项目成员安排的 可选时间区间
+      disabledDate: (time) => {
+            if (
+          this.addEditFormData.projectEndTime != "" &&
+          this.addEditFormData.projectStartTime != ""
+        ) {
+          // 设置可以选择的区间 时间为项目的 起始日期和结束日期
+          return (
+            time.getTime() > new Date(this.addEditFormData.projectEndTime).getTime() ||
+            time.getTime() <
+              new Date(this.addEditFormData.projectStartTime).getTime() - 8.64e7
+          );
+        }
+      }
+    }
+  },
+  mounted() {
+    
     this.proAuditInit();
     // this.getDictList("project_phase"); // 项目阶段 project_phase
     // this.getDictList("project_type"); // 项目类型 project_type
@@ -1067,7 +1068,7 @@ export default {
         this.checkFormData.startTime = this.$route.query.startTime;
         this.checkFormData.endTime = this.$route.query.endTime;
         this.checkFormData.projectId = this.$route.query.projectId;
-        this.checkFormData.countScope = this.$route.query.countScope;
+        this.checkFormData.countScope = parseInt(this.$route.query.countScope);
       } else {
         // search 选择时间 或者范围的时候
         this.checkFormData.startTime = this.checkFormData.projectStartEndTime
@@ -1077,7 +1078,7 @@ export default {
           ? this.checkFormData.projectStartEndTime[1]
           : "";
         this.checkFormData.projectId = this.$route.query.projectId;
-        this.checkFormData.countScope = this.checkFormData.totalArea;
+        // this.checkFormData.countScope = this.checkFormData.totalArea;
       }
       queryInfoById(this.checkFormData).then((res) => {
         this.projectTable = res.data;

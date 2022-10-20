@@ -103,7 +103,6 @@ export default {
       console.log("fromData:", this.fromData);
       console.log("toData:", this.toData);
       console.log("obj:", obj);
-      this.toData = [...this.toData,...obj.keys]
     },
     // 监听穿梭框组件移除
     remove(fromData, toData, obj) {
@@ -112,23 +111,28 @@ export default {
       console.log("fromData:", fromData);
       console.log("toData:", toData);
       console.log("obj:", obj);
-       this.toData = []
-      const cityCodeList = []
-      this.filterCityCode(toData, cityCodeList)
-      this.toData = cityCodeList
-    },
-    // 过滤数据
-    filterCityCode(dataSource, cityCodeList) {
-      
-      dataSource.forEach((item) => {
-        const array = item.value
-        cityCodeList.push(array)
-        if (item.children) {
-          this.filterCityCode(item.children, cityCodeList)
+      let to_arrar_clone = flattenDeep(fromDate,'children')
+      let newFromData = []
+      to_arrar_clone.map(node=>{
+        let index = newFromData.findIndex(rs=>rs.id===node.id)
+        if(index===-1){
+          newFromData.push(node)
         }
       })
+      //组装能选中数据中心能福字关联的，将子节点插入父节点后只需要穿梭父节点
+      const assembly_data = newFromData.reduce((pre,item,idx,arr)=>{
+        const fing_parent = arr.find(i=>i.id==item.parentId)
+        // 没找到父节点，将节点保留
+        if(!find_parent)return pre.concat(item)
+        // 找到父节点的，将节点推入父节点的children,不保留此节点
+        if(!find_parent.children.some(node=>node.id===item.id)){
+          find_parent.children.push(item)
+        }
+        return pre
+      },[])
+      this.fromData = assembly_data
+
     },
- 
     flattenDeep(){
       var arr = arguments.length >0 && arguments[0]!==undefined?arguments[0]:[]
       var childs = arguments.lengt>1&&arguments[1]!==undefined?arguments[1]:"Children"
