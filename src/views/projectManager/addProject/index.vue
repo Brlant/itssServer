@@ -628,12 +628,14 @@ export default {
       this.formData.projectUserList[fatherIndex].workDay = totalDay / 8;
       this.formData.projectUserList[fatherIndex].workTime = totalTime;
       // 顶部的 计划负荷 预计成本
-      console.log( totalDay);
-      console.log( tempWorkDay)
+      if(totalDay===0){
+        this.addEditFormData.projectUserList[fatherIndex].planLoad =0
+      }else{
       this.formData.projectUserList[fatherIndex].planLoad = (
         (totalDay / (tempWorkDay * 8)) *
         100
       ).toFixed(2);
+      }
       this.formData.projectUserList[fatherIndex].expectedCost = (this.formData.projectUserList[fatherIndex].workDay*this.formData.projectUserList[fatherIndex].costNum).toFixed(2) ;
     },
     /*选择项目有效期*/
@@ -676,8 +678,12 @@ export default {
             });
             this.formData.projectUserList[index].projectUserScheduleList =
               res.data.list; // 此人的 每周安排
+               if(res.data.day===0){
+             this.addEditFormData.projectUserList[index].planLoad =0
+          }else{
             this.formData.projectUserList[index].planLoad = 
               (((8 * res.data.day) / (res.data.day * 8)) * 100).toFixed(2); // 计划负荷
+          }
           });
     },
     /*查询字典的接口*/

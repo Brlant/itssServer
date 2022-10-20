@@ -690,10 +690,14 @@ export default {
       // 顶部的 计划负荷 预计成本
       // console.log(totalDay);
       // console.log(tempWorkDay);
+       if(totalDay===0){
+        this.formData.projectUserList[fatherIndex].planLoad =0
+      }else{
       this.formData.projectUserList[fatherIndex].planLoad = (
         (totalDay / (tempWorkDay * 8)) *
         100
       ).toFixed(2);
+      }
       console.log(this.formData.projectUserList[fatherIndex].workDay ,
         this.formData.projectUserList[fatherIndex].costNum);
       this.formData.projectUserList[fatherIndex].expectedCost = (
@@ -748,10 +752,14 @@ export default {
         });
         this.formData.projectUserList[index].projectUserScheduleList =
           res.data.list; // 此人的 每周安排
+           if(res.data.day===0){
+             this.formData.projectUserList[index].planLoad =0
+          }else{
         this.formData.projectUserList[index].planLoad = (
           ((8 * res.data.day) / (res.data.day * 8)) *
           100
         ).toFixed(2); // 计划负荷
+          }
       });
     },
     /*查询字典的接口*/
@@ -791,7 +799,7 @@ export default {
             if (user.userId == userId) {
               // 双层循环 去掉已经选择的用户
               // res.data.splice(u, 1);
-              res.data[i].disabled=true
+              user.disabled=true
 
             }
           });

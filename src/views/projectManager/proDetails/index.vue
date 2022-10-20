@@ -543,6 +543,7 @@ export default {
       workDay: "" /**总天数*/,
       workTime: "" /**总工时*/,
       projectUserScheduleList: [] /**项目成员排期*/,
+      day:""// 同 workDay
     },
     // 新增编辑的初始化 数据结构集合
     addEditFormData: {},
@@ -685,6 +686,7 @@ export default {
       let oneUser = this.deepClone(this.projectUserList);
       oneUser.updateType = 1;
       this.addEditFormData.projectUserList.push(oneUser);
+      this.getUserList()
     },
     // 修改一个 项目成员的 工作计划
     updateProjectOne(index, row) {
@@ -834,11 +836,14 @@ export default {
       this.addEditFormData.projectUserList[fatherIndex].workDay = totalDay / 8;
       this.addEditFormData.projectUserList[fatherIndex].workTime = totalTime;
       // 顶部的 计划负荷 预计成本
-
-      this.addEditFormData.projectUserList[fatherIndex].planLoad = (
-        (totalDay / (tempWorkDay * 8)) *
+      if(totalDay===0){
+        this.addEditFormData.projectUserList[fatherIndex].planLoad =0
+      }else{
+        this.addEditFormData.projectUserList[fatherIndex].planLoad = (
+          (totalDay / (tempWorkDay * 8)) *
         100
       ).toFixed(2);
+        }
       this.addEditFormData.projectUserList[fatherIndex].expectedCost = (
         this.addEditFormData.projectUserList[fatherIndex].workDay *
         this.addEditFormData.projectUserList[fatherIndex].costNum
@@ -866,6 +871,7 @@ export default {
         };
         getTimeProcess(params).then((res) => {
           this.addEditFormData.projectUserList[index].workDay = res.data.day;
+          this.addEditFormData.projectUserList[index].day = res.data.day;
           this.addEditFormData.projectUserList[index].workDayTemp = res.data.day;
           this.addEditFormData.projectUserList[index].workTime = res.data.day * 8;
           this.addEditFormData.projectUserList[index].startTime = dates[0];
@@ -883,10 +889,14 @@ export default {
           });
           this.addEditFormData.projectUserList[index].projectUserScheduleList =
             res.data.list; // 此人的 每周安排
-          this.addEditFormData.projectUserList[index].planLoad = (
-            ((8 * res.data.day) / (res.data.day * 8)) *
-            100
-          ).toFixed(2); // 计划负荷
+          if(res.data.day===0){
+             this.addEditFormData.projectUserList[index].planLoad =0
+          }else{
+            this.addEditFormData.projectUserList[index].planLoad = (
+              ((8 * res.data.day) / (res.data.day * 8)) *
+              100
+            ).toFixed(2); // 计划负荷
+          }
         });
     },
     clearUser(userId, index){
@@ -952,13 +962,14 @@ export default {
         this.projectTable.projectUserList.map((item) => {
           // 拿到已经存在的用户id
           userIdsTemp.push(item.userId);
+
         });
           res.data.map((user, u) => {
           userIdsTemp.map((userId, i) => {
             if (user.userId == userId) {
               // 双层循环 去掉已经选择的用户
               // res.data.splice(u, 1);
-              res.data[i].disabled=true
+              user.disabled=true
 
             }
           });
@@ -1080,12 +1091,12 @@ export default {
          if(res.data.projectUserList.length>0){
 
            res.data.projectUserList[0].projectUserScheduleList.forEach((v,i)=>{  
-                console.log(v); //2022年1月 24周  01/01-01/07
+                // console.log(v); //2022年1月 24周  01/01-01/07
                
                   let startTime=moment(v.startTime,'YYYY-MM-DD').format('YYYY/MM/DD')
                   let endTime=moment(v.endTime,'YYYY-MM-DD').format('YYYY/MM/DD')
                 
-                console.log(startTime,'dddddd')
+                // console.log(startTime,'dddddd')
              let pp = `${v.startTime.substring(0,4)}年${v.weekMonth}月 ${v.week}周       ${startTime.substring(5) + "-" + endTime.substring(5)}`
             //  console.log(pp,'ddd')
              this.monthArrTemp.push(pp.toString())   
