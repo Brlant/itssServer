@@ -4,7 +4,7 @@
       <!-- <router-link :to="'/projectManager/proManager'"> < 编辑项目</router-link> -->
        <span
             @click="goManagerPage" style="cursor: pointer;color: #409eff;">
-              < 编辑项目
+              &lt; 编辑项目
         </span>
 
       <span> （仅项目负责人可对此项目下列对内进行编辑）</span>
@@ -49,7 +49,11 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="10" :offset="1">
+         
+         
+        </el-row>
+        <el-row>
+           <el-col :span="10" :offset="1">
             <el-form-item label="项目阶段：" prop="projectStage">
               <el-select
                 v-model="formData.projectStage"
@@ -59,7 +63,7 @@
                 :style="{ width: '100%' }"
               >
                 <el-option
-                  v-for="(dict, index) in projectStageOptions"
+                  v-for="(dict) in projectStageOptions"
                   :key="dict.dictCode"
                   :label="dict.dictLabel"
                   :value="dict.dictCode"
@@ -78,7 +82,7 @@
                 :style="{ width: '100%' }"
               >
                 <el-option
-                  v-for="(dict, index) in projectTypeOptions"
+                  v-for="(dict) in projectTypeOptions"
                   :key="dict.dictCode"
                   :label="dict.dictLabel"
                   :value="dict.dictCode"
@@ -87,7 +91,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="10" :offset="1">
+        </el-row>
+        <el-row>
+           <el-col :span="10" :offset="1">
             <el-form-item label="优先级：" prop="priority">
               <el-radio-group v-model="formData.priority" size="medium">
                 <el-radio
@@ -116,7 +122,7 @@
                 :style="{ width: '100%' }"
               >
                 <el-option
-                  v-for="(user, index) in projectUserIdOptions"
+                  v-for="(user) in projectUserIdOptions"
                   :key="user.userId"
                   :label="user.nickName"
                   :value="user.userId"
@@ -208,6 +214,7 @@
         <div
           class="UserLine"
           v-for="(addUserList, addUserListindex) in formData.projectUserList"
+          :key='addUserListindex'
         >
           <el-row>
             <el-col :span="3">
@@ -299,6 +306,7 @@
             v-for="(
               UserScheduleList, UserScheduleListIndex
             ) in addUserList.projectUserScheduleList"
+            :key='UserScheduleListIndex'
           >
             <el-col :offset="5" :span="4">
               <div class="colText" style="text-indent: 30px">
