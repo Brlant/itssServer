@@ -574,8 +574,8 @@ export default {
           item.workDayTemp = item.workDay;
           item.costNum =
             res.data.projectService == 1
-              ? res.data.costIn
-              : res.data.costOut;
+              ? item.costIn
+              : item.costOut;
           item.projectUserScheduleList.map((jtem, j) => {
             item["planLoadCh" + i + j] = jtem.planLoadCh;
             item["planLoadWorkDayCh" + i + j] = jtem.planLoadWorkDayCh;
@@ -654,7 +654,7 @@ export default {
     },
     /*修改每日工时*/
     changeDayTime(number, day, fatherIndex, myIndex) {
-      // console.log(number, day, fatherIndex, myIndex);
+      console.log(number, day, fatherIndex, myIndex);
       // 期间计划负荷 = 当前行的总天数day*number  /  当前行的总天数day * 8
       this.formData.projectUserList[fatherIndex].projectUserScheduleList[
         myIndex
@@ -676,7 +676,6 @@ export default {
           }
           totalTime += parseFloat(item.workTime) * parseFloat(item.day);
           item.weekDay = item.day;
-          item.week = item.weekOfYear;
         }
       );
 
@@ -864,7 +863,6 @@ export default {
           this.formData.projectUserList.map((item, i) => {
             // 存储的字段被架构师修改掉 导致 提交的时候 需要修改一下
             item.projectUserScheduleList.map((jtem) => {
-              jtem.week = jtem.weekOfYear;
               jtem.weekDay = jtem.day;
             });
           });

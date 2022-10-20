@@ -112,6 +112,7 @@ import { treeselect } from "@/api/system/menu"
                 });
             },
             getRightData(val){
+                console.log(JSON.stringify(val));
                 this.receiveData = val
             },
             recursive(data){
