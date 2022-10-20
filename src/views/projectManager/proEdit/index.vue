@@ -867,6 +867,7 @@ export default {
             // 存储的字段被架构师修改掉 导致 提交的时候 需要修改一下
             item.projectUserScheduleList.map((jtem) => {
               jtem.weekDay = jtem.day;
+              // jtem.week = jtem?.weekOfYear;
             });
           });
           let parame = {

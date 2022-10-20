@@ -132,6 +132,7 @@
                       range-separator="至"
                       size="mini"
                       clearable
+                      :picker-options="childDateArea"
                       @change="init('search')"
                     ></el-date-picker>
                   </el-form-item>
@@ -645,14 +646,14 @@ export default {
       // 项目成员安排的 可选时间区间
       disabledDate: (time) => {
             if (
-          this.addEditFormData.projectEndTime != "" &&
-          this.addEditFormData.projectStartTime != ""
+          this.formData.projectEndTime != "" &&
+          this.formData.projectStartTime != ""
         ) {
           // 设置可以选择的区间 时间为项目的 起始日期和结束日期
           return (
-            time.getTime() > new Date(this.addEditFormData.projectEndTime).getTime() ||
+            time.getTime() > new Date(this.formData.projectEndTime).getTime() ||
             time.getTime() <
-              new Date(this.addEditFormData.projectStartTime).getTime() - 8.64e7
+              new Date(this.formData.projectStartTime).getTime() - 8.64e7
           );
         }
       }
@@ -667,23 +668,6 @@ export default {
   },
 
   methods: {
-    // 生成 时间选择的区间
-    childDateAreaHandel(){
-      // 项目成员安排的 可选时间区间
-      disabledDate: (time) => {
-            if (
-          _this.addEditFormData.projectEndTime != "" &&
-          this.addEditFormData.projectStartTime != ""
-        ) {
-          // 设置可以选择的区间 时间为项目的 起始日期和结束日期
-          return (
-            time.getTime() > new Date(this.addEditFormData.projectEndTime).getTime() ||
-            time.getTime() <
-              new Date(this.addEditFormData.projectStartTime).getTime() - 8.64e7
-          );
-        }
-      }
-    },
     // 动态生成 表头样式
     headerClassName(row) {
       // console.log(row.column)
@@ -782,7 +766,7 @@ export default {
             index
           ].projectUserScheduleList.map((item, i) => {
             item.weekDay = item.day;
-            item.week = item.weekOfYear;
+            // item.week = item?.weekOfYear;
           });
           let parame = {
             ...this.addEditFormData,
@@ -839,7 +823,6 @@ export default {
         }
         totalTime += parseFloat(item.workTime) * parseFloat(item.day);
         item.weekDay = item.day;
-        // item.week = item.weekOfYear;
       });
 
       // 暂存一下 实际的天数
