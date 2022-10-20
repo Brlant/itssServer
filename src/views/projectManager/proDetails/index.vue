@@ -1384,6 +1384,9 @@ export default {
   thead>:first-child  .is-leaf{
     background:#E8E8F4!important;
   }
+  .el-form-item__content{
+    word-break: break-word!important;
+  }
 }
 
 

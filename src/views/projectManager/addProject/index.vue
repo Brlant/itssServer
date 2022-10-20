@@ -214,6 +214,7 @@
             <div
               class="UserLine"
               v-for="(addUserList, addUserListindex) in formData.projectUserList"
+              :key='addUserListindex'
             >
               <el-row >
                 <el-col   :span="3">
@@ -283,6 +284,7 @@
                 v-for="(
                   UserScheduleList, UserScheduleListIndex
                 ) in addUserList.projectUserScheduleList"
+                :key='UserScheduleListIndex'
               >
                 <el-col :offset="5" :span="4">
                   <div class="colText" style="text-indent:30px">
