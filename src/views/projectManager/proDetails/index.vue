@@ -4,7 +4,7 @@
       <b>{{ projectName }}详情</b
       ><span>（仅项目负责人可对此项目下列对内进行编辑）</span>
       <div class="rightBox">
-        <el-button size="mini" type="success">导出excel</el-button>
+        <!-- <el-button size="mini" type="success">导出excel</el-button> -->
       </div>
     </div>
     <div class="routerBar">
@@ -781,7 +781,7 @@ export default {
     },
     // 删除一个 项目成员
     delProjectOne(index, row) {
-      this.$confirm(`您确定要删除${row.nickName}吗?`, "温馨提示", {
+      this.$confirm(`您确定要删除${row.userName}吗?`, "温馨提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

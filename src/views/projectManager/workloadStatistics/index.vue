@@ -53,7 +53,9 @@
         <div v-if="mangerJurisdiction">
             <div v-for="(i,index) in deptData" :key='index' class='table-style'>
                 <div class='name'>{{i.deptName}}</div>
-                <el-table :data="i.workLoadUserVoList" border class="tableData" style="width:100%">
+                <el-table :data="i.workLoadUserVoList" border class="tableData myTable"
+                         :header-row-style="{ height: '14px', 'line-height': '14px' }"
+        :header-cell-class-name="headerClassName" style="width:100%">
                     <el-table-column label="执行人员" align="center"  min-width='150' fixed>
                         <template  slot-scope="scope">
                             <span  @click='nameClick(scope.row)' :class="['point', scope.row.userName != '总计' ? 'colorname' : '']">{{scope.row.userName}}</span>
@@ -209,7 +211,13 @@ export default {
         //   this.mangerJurisdiction=this.isJurisdiction('admin') || this.isJurisdiction('operatemanage')
         this.defaultDate()
     },
-    methods:{   
+    methods:{  
+            // 动态生成 表头样式
+    headerClassName(row) {
+      // console.log(row.column)
+      // if(row.column.property=='total')
+      return "proUserList";
+    }, 
         workLoadStyle(data){
             if(data.planLoadCh<data.realLoadCh){
                 return 'piancha2'
@@ -471,5 +479,28 @@ color:#3D7DFF
     thead>:first-child  .is-leaf{
     background:#E8E8F4!important;
   }
+}
+.myTable .el-table__body-wrapper {
+  margin-top: 0px;
+  // z-index: 2;
+}
+.myTable .el-table__fixed {
+  // z-index: 5;
+ bottom: 0px !important;
+ margin-top: 0px;
+       box-sizing: content-box;
+        padding-bottom: 10px;
+    }
+.myTable .el-table__fixed-right {
+  // z-index: 5;
+ bottom: 0px !important;
+}
+.myTable .el-table__fixed .el-table__fixed-body-wrapper{
+  padding: 5px 0;
+}
+ 
+.proUserList {
+  height: 20px !important;
+  padding: 2px 0 !important;
 }
 </style>
