@@ -156,6 +156,7 @@
           </div>
           <div class="parent" v-if='editId == -1' style=" border-left: 1px solid #ddd">
             <div @click="add" class="child">添加</div>
+            <div @click="remove(index)" class="child" v-if='datalist.length>1'>删除</div>
           </div>
         </div>  
       </div>
@@ -190,7 +191,13 @@ export default {
       list:[],
       listOne:[],
       listTwo:[],
-      datalist:[{}],
+      datalist:[{
+        projectId:'',
+        workTypeId:'',
+        workTime:'',
+        workContent:'',
+        workTitle:''
+      }],
       plan:[],
       editId:-1,
       projectName:[],
@@ -432,13 +439,22 @@ export default {
     //添加
     add(){
       let form={
-        projectName:'',
-        workType:'',
+        projectId:'',
+        workTypeId:'',
         workTime:'',
         workContent:'',
         workTitle:''
       }
       this.datalist.push(form)
+    },
+    remove(index){
+      console.log(index)
+    
+      this.datalist.splice(index,1)
+        // this.datalist=[{}]
+          this.datalist.forEach((v, i) => {
+            this.$refs[i][0].reset()
+          })
     },
     //编辑
   edit(item){
@@ -464,6 +480,7 @@ export default {
      //添加,编辑工时
   submit(){
     let flagList = []
+    console.log('datalist',this.datalist)
     this.datalist.forEach((v, i) => {
       flagList.push(this.$refs[i][0].validate())
     })
@@ -479,7 +496,10 @@ export default {
         if(res.code==200){
           this.$message.success('提交成功')
           this.queryProject(this.datalist[0].workDate)
-          this.datalist=[{}]
+          // this.datalist=[{}]
+          this.datalist.forEach((v, i) => {
+            this.$refs[i][0].reset()
+          })
         }else {
           this.$message.error(res.msg)
         }
@@ -493,7 +513,9 @@ export default {
         if(res.code==200){
           this.$message.success('编辑成功')
           this.queryProject(this.datalist[0].workDate)
-          this.datalist=[{}]
+          this.datalist.forEach((v, i) => {
+            this.$refs[i][0].reset()
+          })
           this.editId=-1
            this.listTwo=[]
         }else {
