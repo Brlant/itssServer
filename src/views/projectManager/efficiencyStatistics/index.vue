@@ -45,8 +45,8 @@
         <div v-if="mangerJurisdiction">
             <div v-for="(item,index) in deptData" :key='index' class='table-style'>
                 <div class='name'>{{item.deptName}}</div>
-                <el-table v-if='item' :data="item.userList" border class="tableData" style="width:100%">
-                    <el-table-column label="执行人员" align="center"   min-width='150'>
+                <el-table v-if='item' :data="item.userList" border class="tableData myTable" style="width:100%">
+                    <el-table-column label="执行人员" align="center"   min-width='150' fixed="left">
                         <template  slot-scope="scope">
                             <span @click='nameClick(scope.row)' :class="[scope.row.username != '总计' ? 'colorname' : '']">{{scope.row.username}}</span>
                         </template>
@@ -96,15 +96,15 @@
         <div v-if='selfJurisdiction'>
             <div v-for="(item,index) in userData" :key='index'  class='table-style'>
                 <div class='name'>{{item.username}}</div>
-                <el-table :data="item.projectEfficiencyList" border class="tableData" style="width:100%" :span-method="arraySpanMethod">
-                    <el-table-column label="项目" align="center"   min-width='150' prop='projectName'>
+                <el-table :data="item.projectEfficiencyList" border class="tableData myTable" style="width:100%" :span-method="arraySpanMethod">
+                    <el-table-column label="项目" align="center"   min-width='150' prop='projectName' fixed="left">
                          <template slot-scope="scope">
                             <span :class="['yuan','yuan'+scope.row.priority]"></span>
                             {{ scope.row.projectName }}
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="项目状态" align="center"   min-width='150' prop='projectStatus'>
+                     <el-table-column label="项目状态" align="center"   min-width='150' prop='projectStatus' fixed="left">
                          <template slot-scope="scope">
                             <span :class="[scope.row.projectStatus== 4 ? 'color4' : '']">{{ scope.row.projectStatus | filterProjectStatus }}</span>        
                         </template>
@@ -450,5 +450,24 @@ color:#3D7DFF
     thead>:first-child  .is-leaf{
     background:#E8E8F4!important;
   }
+}
+.myTable .el-table__body-wrapper {
+  margin-top: 0px;
+  // z-index: 2;
+}
+.myTable .el-table__fixed {
+  // z-index: 5;
+ bottom: 0px !important;
+ margin-top: 2px;
+}
+.myTable .el-table__fixed-right {
+  // z-index: 5;
+ bottom: 0px !important;
+}
+.myTable .el-table__fixed .el-table__fixed-body-wrapper{
+  padding: 5px 0;
+}
+.myTable .el-table__fixed-right .el-table__fixed-body-wrapper{
+  padding: 5px 0;
 }
 </style>

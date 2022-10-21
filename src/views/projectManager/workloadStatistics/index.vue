@@ -54,7 +54,7 @@
             <div v-for="(i,index) in deptData" :key='index' class='table-style'>
                 <div class='name'>{{i.deptName}}</div>
                 <el-table :data="i.workLoadUserVoList" border class="tableData" style="width:100%">
-                    <el-table-column label="执行人员" align="center"  min-width='150'>
+                    <el-table-column label="执行人员" align="center"  min-width='150' fixed>
                         <template  slot-scope="scope">
                             <span  @click='nameClick(scope.row)' :class="['point', scope.row.userName != '总计' ? 'colorname' : '']">{{scope.row.userName}}</span>
                         </template>
@@ -116,14 +116,14 @@
             <div class='table-style'>
                 <div class='name'>{{userData.userName}}</div>
                 <el-table :data="userData.workUserProjectVoList" border class="tableData" style="width:100%" :span-method="arraySpanMethod">
-                    <el-table-column label="项目" align="center"  min-width='150' prop='projectName'>
+                    <el-table-column label="项目" align="center"  min-width='150' prop='projectName' fixed>
                          <template slot-scope="scope">
                             <span :class="['yuan','yuan'+scope.row.priority]"></span>
                             {{ scope.row.projectName }}
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="项目状态" align="center"   min-width='150' prop='projectStatus'>
+                     <el-table-column label="项目状态" align="center"   min-width='150' prop='projectStatus' fixed>
                          <template slot-scope="scope">
                             <span :class="[scope.row.projectStatus== 4 ? 'color4' : '']">{{ scope.row.projectStatus | filterProjectStatus }}</span>        
                         </template>
