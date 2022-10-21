@@ -458,8 +458,10 @@ color:#3D7DFF
 .myTable .el-table__fixed {
   // z-index: 5;
  bottom: 0px !important;
- margin-top: 2px;
-}
+ margin-top: 0px;
+       box-sizing: content-box;
+        padding-bottom: 20px;
+    }
 .myTable .el-table__fixed-right {
   // z-index: 5;
  bottom: 0px !important;
