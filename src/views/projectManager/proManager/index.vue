@@ -626,6 +626,13 @@ export default {
     display: inline-block;
     position: absolute;
 }
+  .myTable 
+       /deep/  .el-table__fixed{
+        height:auto !important;
+        bottom:17px !important;
+         
+  
+  }     
 </style>
 <style lang="scss">
 .app-containers{
@@ -640,12 +647,8 @@ export default {
         margin-top: 0px;
         z-index:2;       
     }
-.el-table{
-       .el-table__fixed{
-      height:auto !important;
-      bottom:17px !important;
-      }
-
-}     
+ .myTable .el-table__fixed-footer-wrapper tbody td.el-table__cell{
+  padding: 9px;
+ }   
        
 </style>

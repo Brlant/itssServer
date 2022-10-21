@@ -10,22 +10,21 @@
     <div class="routerBar">
       <div class="backBar">
         <!-- <router-link :to=""> < 返回</router-link> -->
-        <span
-            @click="goManagerPage" style="cursor: pointer;color: #409eff;">
-             < 返回
+        <span @click="goManagerPage" style="cursor: pointer; color: #409eff">
+          < 返回
         </span>
         <div class="rightLink">
           <!-- <router-link :to="'/projectManager/proEdit?projectId=' + projectId+'&countScope='+countScope"  
             >编辑</router-link
           > -->
-            <span
-            @click="goEditPage" style="cursor: pointer;" class="color2">
+          <span @click="goEditPage" style="cursor: pointer" class="color2">
             编辑
-            </span>
+          </span>
           |
 
           <span
-            @click="stopProject" style="cursor: pointer;"
+            @click="stopProject"
+            style="cursor: pointer"
             :class="[projectTable.projectStatus == 4 ? 'color5' : 'color4']"
           >
             {{ projectTable.projectStatus == 4 ? "开启" : "终止" }}
@@ -187,63 +186,107 @@
         :data="projectTable.projectUserList"
         :cell-style="columnStyle"
         border
+        class="myTable"
         :header-row-style="{ height: '14px', 'line-height': '14px' }"
         :header-cell-class-name="headerClassName"
         style="width: 100%"
         max-height="650"
       >
-        <el-table-column prop="userName" label="执行人员" width="120">
+        <el-table-column
+          prop="userName"
+          label="执行人员"
+          width="120"
+          fixed="left"
+        >
         </el-table-column>
-        <el-table-column prop="planLoad" label="计划负荷" width="120">
+        <el-table-column
+          prop="planLoad"
+          label="计划负荷"
+          width="120"
+          fixed="left"
+        >
           <template slot-scope="scope">
             {{ scope.row.planLoad + "%" }}
-            <span class="color1">（{{ scope.row.planLoadWorkDay + "人日" }}）</span>
+            <span class="color1"
+              >（{{ scope.row.planLoadWorkDay + "人日" }}）</span
+            >
           </template>
         </el-table-column>
-        <el-table-column prop="realLoad" label="实际负荷" width="100">
+        <el-table-column
+          prop="realLoad"
+          label="实际负荷"
+          width="100"
+          fixed="left"
+        >
           <template slot-scope="scope">
-            <span :class="['loadType' + scope.row.loadType]">{{scope.row.realLoad + "%"}}</span>         
-            <span :class="['loadType' + scope.row.loadType]">（{{scope.row.realLoadWorkDay + "人日"}}）</span>
+            <span :class="['loadType' + scope.row.loadType]">{{
+              scope.row.realLoad + "%"
+            }}</span>
+            <span :class="['loadType' + scope.row.loadType]"
+              >（{{ scope.row.realLoadWorkDay + "人日" }}）</span
+            >
           </template>
         </el-table-column>
-        <el-table-column prop="planCost" label="计划投入" width="120">
+        <el-table-column
+          prop="planCost"
+          label="计划投入"
+          width="120"
+          fixed="left"
+        >
         </el-table-column>
-        <el-table-column prop="realCost" label="实际投入" width="120">
+        <el-table-column
+          prop="realCost"
+          label="实际投入"
+          width="120"
+          fixed="left"
+        >
           <template slot-scope="scope">
-            <span :class="['loadType' + scope.row.costType]">{{scope.row.realCost}}</span>
+            <span :class="['loadType' + scope.row.costType]">{{
+              scope.row.realCost
+            }}</span>
           </template>
         </el-table-column>
         <!-- 滑动的内容块 start  -->
-       <el-table-column
-               v-for="(months, m) in monthArrTemp" 
-              align="center"
-              style="height: 15px"
-              :label="months" >  
-              <el-table-column label="计划负荷"   min-width="130"  align="center">
-                  <template slot-scope="{row}">
-                      <span>
-                        {{ row.projectUserScheduleList[m]
-                        .planLoadCh+"%（"+row.projectUserScheduleList[m].planLoadWorkDayCh + "人日）" }}
-                      </span>
-                  </template>
-              </el-table-column>
-              <el-table-column label="实际负荷"   min-width="130"  align="center">
-                  <template slot-scope="{row}">
-                    <span :class="['loadType' + row.projectUserScheduleList[m].loadType]">
-                        {{ row.projectUserScheduleList[m].realLoadCh+"%（"+row.projectUserScheduleList[m].realLoadWorkDayCh + "人日）" }}</span
-                      >
-                  </template>
-              </el-table-column> 
-
-
+        <el-table-column
+          v-for="(months, m) in monthArrTemp"
+          align="center"
+          style="height: 15px"
+          :label="months"
+        >
+          <el-table-column label="计划负荷" min-width="130" align="center">
+            <template slot-scope="{ row }">
+              <span>
+                {{
+                  row.projectUserScheduleList[m].planLoadCh +
+                  "%（" +
+                  row.projectUserScheduleList[m].planLoadWorkDayCh +
+                  "人日）"
+                }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column label="实际负荷" min-width="130" align="center">
+            <template slot-scope="{ row }">
+              <span
+                :class="['loadType' + row.projectUserScheduleList[m].loadType]"
+              >
+                {{
+                  row.projectUserScheduleList[m].realLoadCh +
+                  "%（" +
+                  row.projectUserScheduleList[m].realLoadWorkDayCh +
+                  "人日）"
+                }}</span
+              >
+            </template>
+          </el-table-column>
         </el-table-column>
 
         <!-- 滑动的内容块 end  -->
-        <el-table-column label="操作" width="120">
+        <el-table-column label="操作" width="120" fixed="right">
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <el-button
-            v-show="scope.$index!=projectTable.projectUserList.length-1"
+              v-show="scope.$index != projectTable.projectUserList.length - 1"
               type="text"
               size="small"
               @click="updateProjectOne(scope.$index, scope.row)"
@@ -251,7 +294,7 @@
               修改
             </el-button>
             <el-button
-             v-show="scope.$index!=projectTable.projectUserList.length-1"
+              v-show="scope.$index != projectTable.projectUserList.length - 1"
               type="text"
               size="small"
               @click="delProjectOne(scope.$index, scope.row)"
@@ -288,7 +331,9 @@
               >
                 <template v-if="addUserList.updateType == 3">
                   <!-- 我是修改的 -->
-                   <span style="margin-left:30px">{{ addUserList.userName }}</span>
+                  <span style="margin-left: 30px">{{
+                    addUserList.userName
+                  }}</span>
                 </template>
 
                 <template v-if="addUserList.updateType == 1">
@@ -302,9 +347,11 @@
                         getUserCost(userId, addUserListindex);
                       }
                     "
-                    @clear="(addUserList) => {
+                    @clear="
+                      (addUserList) => {
                         clearUser(addUserList, addUserListindex);
-                      }"
+                      }
+                    "
                     :style="{ width: '100%' }"
                   >
                     <el-option
@@ -312,7 +359,7 @@
                       :key="user.userId"
                       :label="user.userNameAndPost"
                       :value="user.userId"
-                       :disabled="user.disabled"
+                      :disabled="user.disabled"
                     ></el-option>
                   </el-select>
                 </template>
@@ -463,26 +510,31 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="120">
-          <template slot-scope="scope" >
+          <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <!-- 他必须是项目主管和项目负责人 才可以点击取消 -->
-            <div v-show="auditStatus==1">
-
-            <el-button
-              type="text"
-              size="small" v-show="isProjectByUser(formData)||isJurisdiction('admin')"             
-              @click="updateAuditPro(scope.row, '4')"
-              ><span class="color1"> 取消 </span></el-button>
-            <el-button
-              type="text"
-              size="small"
-              @click="updateAuditPro(scope.row, '2')" v-show="isJurisdiction('projectsupervision','admin')"
-              ><span class="color2"> 通过 </span></el-button>
-            <el-button
-              type="text"
-              size="small"
-              @click="updateAuditPro(scope.row, '3')"  v-show="isJurisdiction('projectsupervision','admin')"
-              ><span class="color3"> 拒绝 </span></el-button>
+            <div v-show="auditStatus == 1">
+              <el-button
+                type="text"
+                size="small"
+                v-show="isProjectByUser(formData) || isJurisdiction('admin')"
+                @click="updateAuditPro(scope.row, '4')"
+                ><span class="color1"> 取消 </span></el-button
+              >
+              <el-button
+                type="text"
+                size="small"
+                @click="updateAuditPro(scope.row, '2')"
+                v-show="isJurisdiction('projectsupervision', 'admin')"
+                ><span class="color2"> 通过 </span></el-button
+              >
+              <el-button
+                type="text"
+                size="small"
+                @click="updateAuditPro(scope.row, '3')"
+                v-show="isJurisdiction('projectsupervision', 'admin')"
+                ><span class="color3"> 拒绝 </span></el-button
+              >
             </div>
           </template>
         </el-table-column>
@@ -512,8 +564,7 @@ export default {
   components: {},
   props: {},
   data: () => ({
-    
-    monthArrTemp:[],
+    monthArrTemp: [],
     userOptions: [],
     addEditUserActive: false, // 默认是详情页 不可以编辑
     rules: {
@@ -543,7 +594,7 @@ export default {
       workDay: "" /**总天数*/,
       workTime: "" /**总工时*/,
       projectUserScheduleList: [] /**项目成员排期*/,
-      day:""// 同 workDay
+      day: "", // 同 workDay
     },
     // 新增编辑的初始化 数据结构集合
     addEditFormData: {},
@@ -570,7 +621,7 @@ export default {
     },
     projectName: "",
     projectId: "",
-    countScope:"",
+    countScope: "",
     countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
     countScopeInit: "",
     projectTable: [
@@ -595,13 +646,11 @@ export default {
       { title: "已通过", name: "2" },
       { title: "已拒绝", name: "3" },
     ],
-    childDateArea:null
+    childDateArea: null,
   }),
-  computed: {
-    
-  },
+  computed: {},
   watch: {},
-    
+
   created() {
     // 额外的判断 页面初始化 判断用户的角色  isJurisdiction 判断当前的值是否存在 返回true or false
     // 部门主管 deptdirector  3
@@ -643,10 +692,10 @@ export default {
     this.projectId = this.$route.query.projectId;
     this.countScope = this.$route.query.countScope;
     this.init("init");
-    this.childDateArea= {
+    this.childDateArea = {
       // 项目成员安排的 可选时间区间
       disabledDate: (time) => {
-            if (
+        if (
           this.formData.projectEndTime != "" &&
           this.formData.projectStartTime != ""
         ) {
@@ -657,11 +706,10 @@ export default {
               new Date(this.formData.projectStartTime).getTime() - 8.64e7
           );
         }
-      }
-    }
+      },
+    };
   },
   mounted() {
-    
     this.proAuditInit();
     // this.getDictList("project_phase"); // 项目阶段 project_phase
     // this.getDictList("project_type"); // 项目类型 project_type
@@ -686,7 +734,7 @@ export default {
       let oneUser = this.deepClone(this.projectUserList);
       oneUser.updateType = 1;
       this.addEditFormData.projectUserList.push(oneUser);
-      this.getUserList()
+      this.getUserList();
     },
     // 修改一个 项目成员的 工作计划
     updateProjectOne(index, row) {
@@ -795,11 +843,11 @@ export default {
       //   type: "warning",
       // })
       //   .then(() => {
-          this.addEditFormData.projectUserList.splice(index, 1);
-          this.addEditFormData = {};
-          this.addEditUserActive = false;
-        // })
-        // .catch(() => {});
+      this.addEditFormData.projectUserList.splice(index, 1);
+      this.addEditFormData = {};
+      this.addEditUserActive = false;
+      // })
+      // .catch(() => {});
     },
     /*修改每日工时*/
     changeDayTime(number, day, fatherIndex, myIndex) {
@@ -826,25 +874,28 @@ export default {
         totalTime += parseFloat(item.workTime) * parseFloat(item.day);
         item.weekDay = item.day;
       });
-      // totalDay = (totalDay).toFixed(2)  
-      // totalTime = (totalTime).toFixed(2)   
+      // totalDay = (totalDay).toFixed(2)
+      // totalTime = (totalTime).toFixed(2)
       // 暂存一下 实际的天数
       // console.log(totalDay);
       // console.log(this.addEditFormData.projectUserList[fatherIndex].workDayTemp);
       const tempWorkDay =
         this.addEditFormData.projectUserList[fatherIndex].workDayTemp;
       // 顶部的 共计多少小时  多少天
-      this.addEditFormData.projectUserList[fatherIndex].workDay = (totalDay / 8).toFixed(2);
-      this.addEditFormData.projectUserList[fatherIndex].workTime = (totalTime).toFixed(2);
+      this.addEditFormData.projectUserList[fatherIndex].workDay = (
+        totalDay / 8
+      ).toFixed(2);
+      this.addEditFormData.projectUserList[fatherIndex].workTime =
+        totalTime.toFixed(2);
       // 顶部的 计划负荷 预计成本
-      if(totalDay===0){
-        this.addEditFormData.projectUserList[fatherIndex].planLoad =0
-      }else{
+      if (totalDay === 0) {
+        this.addEditFormData.projectUserList[fatherIndex].planLoad = 0;
+      } else {
         this.addEditFormData.projectUserList[fatherIndex].planLoad = (
           (totalDay / (tempWorkDay * 8)) *
-        100
-      ).toFixed(2);
-        }
+          100
+        ).toFixed(2);
+      }
       this.addEditFormData.projectUserList[fatherIndex].expectedCost = (
         this.addEditFormData.projectUserList[fatherIndex].workDay *
         this.addEditFormData.projectUserList[fatherIndex].costNum
@@ -852,9 +903,9 @@ export default {
     },
     /* 时间区间选择之前 请判断 是否选择了前面的用户 成员*/
     userIsNull(dates, index) {
-      if(this.addEditFormData.projectUserList[index].userId==""){
+      if (this.addEditFormData.projectUserList[index].userId == "") {
         this.$message.error("请先选择项目成员！");
-        return false
+        return false;
       }
     },
     /*根据起始和结束 生成下面表格*/
@@ -862,45 +913,45 @@ export default {
       // if(this.addEditFormData.projectUserList[index].userId==""){
       //   this.$message.error("请先选择项目成员！");
       //   return false
-      // } 
-      this.constAll(dates, index)
+      // }
+      this.constAll(dates, index);
     },
-    constAll(dates,index){
-       let params = {
-          startDate: dates[0],
-          endDate: dates[1],
-        };
-        getTimeProcess(params).then((res) => {
-          this.addEditFormData.projectUserList[index].workDay = res.data.day;
-          this.addEditFormData.projectUserList[index].day = res.data.day;
-          this.addEditFormData.projectUserList[index].workDayTemp = res.data.day;
-          this.addEditFormData.projectUserList[index].workTime = res.data.day * 8;
-          this.addEditFormData.projectUserList[index].startTime = dates[0];
-          this.addEditFormData.projectUserList[index].endTime = dates[1];
-          this.addEditFormData.projectUserList[index].expectedCost = (
-            res.data.day * this.addEditFormData.projectUserList[index].costNum
+    constAll(dates, index) {
+      let params = {
+        startDate: dates[0],
+        endDate: dates[1],
+      };
+      getTimeProcess(params).then((res) => {
+        this.addEditFormData.projectUserList[index].workDay = res.data.day;
+        this.addEditFormData.projectUserList[index].day = res.data.day;
+        this.addEditFormData.projectUserList[index].workDayTemp = res.data.day;
+        this.addEditFormData.projectUserList[index].workTime = res.data.day * 8;
+        this.addEditFormData.projectUserList[index].startTime = dates[0];
+        this.addEditFormData.projectUserList[index].endTime = dates[1];
+        this.addEditFormData.projectUserList[index].expectedCost = (
+          res.data.day * this.addEditFormData.projectUserList[index].costNum
+        ).toFixed(2);
+        res.data.list.map((item) => {
+          item.startTime = item.startDate;
+          item.endTime = item.endDate;
+          item.workTime = "8";
+          item.planLoad = (
+            ((item.day * 8) / (item.day * 8)) * 100 || 0
           ).toFixed(2);
-          res.data.list.map((item) => {
-            item.startTime = item.startDate;
-            item.endTime = item.endDate;
-            item.workTime = "8";
-            item.planLoad = (
-              ((item.day * 8) / (item.day * 8)) * 100 || 0
-            ).toFixed(2);
-          });
-          this.addEditFormData.projectUserList[index].projectUserScheduleList =
-            res.data.list; // 此人的 每周安排
-          if(res.data.day===0){
-             this.addEditFormData.projectUserList[index].planLoad =0
-          }else{
-            this.addEditFormData.projectUserList[index].planLoad = (
-              ((8 * res.data.day) / (res.data.day * 8)) *
-              100
-            ).toFixed(2); // 计划负荷
-          }
         });
+        this.addEditFormData.projectUserList[index].projectUserScheduleList =
+          res.data.list; // 此人的 每周安排
+        if (res.data.day === 0) {
+          this.addEditFormData.projectUserList[index].planLoad = 0;
+        } else {
+          this.addEditFormData.projectUserList[index].planLoad = (
+            ((8 * res.data.day) / (res.data.day * 8)) *
+            100
+          ).toFixed(2); // 计划负荷
+        }
+      });
     },
-    clearUser(userId, index){
+    clearUser(userId, index) {
       // alert(userId)
       // alert(index)
     },
@@ -930,9 +981,11 @@ export default {
             res.data[0].costIn;
         }
         //  this.addEditFormData.projectUserList[index].startEndTime=[]
-        if(this.addEditFormData.projectUserList[index].startEndTime?.length>0){
-          let dates = this.addEditFormData.projectUserList[index].startEndTime
-          this.constAll(dates,index)
+        if (
+          this.addEditFormData.projectUserList[index].startEndTime?.length > 0
+        ) {
+          let dates = this.addEditFormData.projectUserList[index].startEndTime;
+          this.constAll(dates, index);
         }
         // this.projectUserIdOptions = res.data;
         // this.userOptions = res.data;
@@ -948,12 +1001,12 @@ export default {
         }
       });
       let data = {
-        userIds: []//userIdsTemp,
+        userIds: [], //userIdsTemp,
       };
       queryUserlist(data).then((res) => {
         res.data.map((item) => {
           item.userNameAndPost = item.nickName + "（" + item.postName + "）";
-          item.disabled = false
+          item.disabled = false;
         });
         this.projectUserIdOptions = res.data;
         // 过滤已经有的
@@ -963,15 +1016,13 @@ export default {
         this.projectTable.projectUserList.map((item) => {
           // 拿到已经存在的用户id
           userIdsTemp.push(item.userId);
-
         });
-          res.data.map((user, u) => {
+        res.data.map((user, u) => {
           userIdsTemp.map((userId, i) => {
             if (user.userId == userId) {
               // 双层循环 去掉已经选择的用户
               // res.data.splice(u, 1);
-              user.disabled=true
-
+              user.disabled = true;
             }
           });
         });
@@ -985,14 +1036,17 @@ export default {
         return "background:	#f4f4ff;";
       }
     },
-    goManagerPage(){
-         const obj = { path:'/projectManager/proManager'};
-        this.$tab.closeOpenPage(obj);
+    goManagerPage() {
+      const obj = { path: "/projectManager/proManager" };
+      this.$tab.closeOpenPage(obj);
     },
-    goEditPage(){
-      // :to="'?projectId=' + projectId+'&countScope='+countScope"  
-      const obj = { path:'/projectManager/proEdit', query:{ projectId:this.projectId,countScope:this.countScope}};
-        this.$tab.closeOpenPage(obj);
+    goEditPage() {
+      // :to="'?projectId=' + projectId+'&countScope='+countScope"
+      const obj = {
+        path: "/projectManager/proEdit",
+        query: { projectId: this.projectId, countScope: this.countScope },
+      };
+      this.$tab.closeOpenPage(obj);
     },
     stopProject() {
       // 终止项目
@@ -1087,37 +1141,43 @@ export default {
         this.getUserList();
         // }
         // 拼接列名
-        this.monthArrTemp =[]
+        this.monthArrTemp = [];
         // 动态生成 合计天数周数 日期区间
-         if(res.data.projectUserList.length>0){
+        if (res.data.projectUserList.length > 0) {
+          res.data.projectUserList[0].projectUserScheduleList.forEach(
+            (v, i) => {
+              // console.log(v); //2022年1月 24周  01/01-01/07
 
-           res.data.projectUserList[0].projectUserScheduleList.forEach((v,i)=>{  
-                // console.log(v); //2022年1月 24周  01/01-01/07
-               
-                  let startTime=moment(v.startTime,'YYYY-MM-DD').format('YYYY/MM/DD')
-                  let endTime=moment(v.endTime,'YYYY-MM-DD').format('YYYY/MM/DD')
-                
-                // console.log(startTime,'dddddd')
-             let pp = `${v.startTime.substring(0,4)}年${v.weekMonth}月 ${v.week}周       ${startTime.substring(5) + "-" + endTime.substring(5)}`
-            //  console.log(pp,'ddd')
-             this.monthArrTemp.push(pp.toString())   
-            //  this.monthArrTemp.push((v.weekMonth +'月- ' +v.week +'周 (' +v.startTime + "-" + v.endTime +')').toString())
-                        })
-        res.data.projectUserList.map((item, i) => {
-          item.projectUserScheduleList.map((jtem, j) => {
-            // item["planLoadCh" + i + j] = jtem.planLoadCh;
-            // item["planLoadWorkDayCh" + i + j] = jtem.planLoadWorkDayCh;
-            // item["realLoadCh" + i + j] = jtem.realLoadCh;
-            // item["realLoadWorkDayCh" + i + j] = jtem.realLoadWorkDayCh;
-            // 最后一条 不处理
-            if (i < res.data.projectUserList.length - 1) {
-              jtem.weekTimeArea =
-                jtem.startTime.substring(5) + "-" + jtem.endTime.substring(5);
+              let startTime = moment(v.startTime, "YYYY-MM-DD").format(
+                "YYYY/MM/DD"
+              );
+              let endTime = moment(v.endTime, "YYYY-MM-DD").format(
+                "YYYY/MM/DD"
+              );
+
+              // console.log(startTime,'dddddd')
+              let pp = `${v.startTime.substring(0, 4)}年${v.weekMonth}月 ${
+                v.week
+              }周       ${startTime.substring(5) + "-" + endTime.substring(5)}`;
+              //  console.log(pp,'ddd')
+              this.monthArrTemp.push(pp.toString());
+              //  this.monthArrTemp.push((v.weekMonth +'月- ' +v.week +'周 (' +v.startTime + "-" + v.endTime +')').toString())
             }
-          });
-        });
+          );
+          res.data.projectUserList.map((item, i) => {
+            item.projectUserScheduleList.map((jtem, j) => {
+              // item["planLoadCh" + i + j] = jtem.planLoadCh;
+              // item["planLoadWorkDayCh" + i + j] = jtem.planLoadWorkDayCh;
+              // item["realLoadCh" + i + j] = jtem.realLoadCh;
+              // item["realLoadWorkDayCh" + i + j] = jtem.realLoadWorkDayCh;
+              // 最后一条 不处理
+              if (i < res.data.projectUserList.length - 1) {
+                jtem.weekTimeArea =
+                  jtem.startTime.substring(5) + "-" + jtem.endTime.substring(5);
               }
-
+            });
+          });
+        }
 
         this.formData = res.data; // 填充详情的
         this.formData.projectTimeArea =
@@ -1383,15 +1443,33 @@ export default {
   padding: 2px 0 !important;
 }
 </style>
-<style lang='scss'>
-.containers{
-  thead>:first-child  .is-leaf{
-    background:#E8E8F4!important;
+<style lang="scss">
+.containers {
+  thead > :first-child .is-leaf {
+    background: #e8e8f4 !important;
   }
-  .el-form-item__content{
-    word-break: break-word!important;
+  .el-form-item__content {
+    word-break: break-word !important;
   }
 }
-
+.myTable .el-table__body-wrapper {
+  margin-top: 0px;
+  // z-index: 2;
+}
+.myTable .el-table__fixed {
+  // z-index: 5;
+ bottom: 0px !important;
+ margin-top: 2px;
+}
+.myTable .el-table__fixed-right {
+  // z-index: 5;
+ bottom: 0px !important;
+}
+.myTable .el-table__fixed .el-table__fixed-body-wrapper{
+  padding: 5px 0;
+}
+.myTable .el-table__fixed-right .el-table__fixed-body-wrapper{
+  padding: 5px 0;
+}
 
 </style>
