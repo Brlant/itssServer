@@ -110,6 +110,7 @@
         :data="tableData"
         show-summary
         :summary-method="totalOutYear"
+        class="myTable"
         border
         style="width: 100%"
         max-height="650"
@@ -119,7 +120,7 @@
           sortable
           fixed
           label="项目"
-          width="150"
+          width="120"
         >
           <template slot-scope="scope">
             <span :class="[scope.row.isNew==1?'isNew':'']"></span>
@@ -635,9 +636,19 @@ export default {
     background:#E8E8F4!important;
   }
 }
- .el-table__body-wrapper{
+ .myTable .el-table__body-wrapper{
         margin-top: 1px;
-        z-index:2
+        z-index:2;
+       
 
     }
+    // .myTable{
+    //   .el-table__footer-wrapper{
+    //     ::-webkit-scrollbar{
+    //         background-color: pink;
+    //   }
+    //   ::-webkit-scrollbar-thumb{ background:red; border:solid 1px rgba(0,0,0,.1); border-radius:1em; }
+    //       }
+    // } 
+       
 </style>

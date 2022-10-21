@@ -103,7 +103,7 @@ export default {
       console.log("fromData:", this.fromData);
       console.log("toData:", this.toData);
       console.log("obj:", obj);
-      this.toData = [...this.toData,...obj.keys]
+      // this.toData = [...this.toData,...obj.keys]
     },
     // 监听穿梭框组件移除
     remove(fromData, toData, obj) {
@@ -112,11 +112,21 @@ export default {
       console.log("fromData:", fromData);
       console.log("toData:", toData);
       console.log("obj:", obj);
-       this.toData = []
-      const cityCodeList = []
-      this.filterCityCode(toData, cityCodeList)
-      this.toData = cityCodeList
+      //  this.toData = []
+      // const cityCodeList = []
+      // this.filterCityCode(toData, cityCodeList)
+      // this.toData = cityCodeList
     },
+    getAddress() {
+      this.fromData.forEach((item) => {
+        //el-tree-transfer组件的第一个pid必须为0
+        item.pid = 0;
+      });
+      this.toData.forEach((item) => {
+        item.pid = 0;
+      })
+    },
+
     // 过滤数据
     filterCityCode(dataSource, cityCodeList) {
       
