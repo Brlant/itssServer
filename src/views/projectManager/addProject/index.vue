@@ -29,6 +29,7 @@
                     v-model="formData.projectCode"
                     placeholder="请输入项目编号"
                     show-word-limit
+                    maxlength="20"
                     clearable
                     :style="{ width: '100%' }"
                   ></el-input>
@@ -39,6 +40,8 @@
                   <el-input
                     v-model="formData.projectName"
                     placeholder="请输入项目名称"
+                     show-word-limit
+                     maxlength="20"
                     clearable
                     :style="{ width: '100%' }"
                   ></el-input>

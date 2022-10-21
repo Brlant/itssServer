@@ -75,7 +75,10 @@ export default {
                 flag = valid
             })
             return flag
-        }
+        },
+        reset() {
+            this.$refs.ruleForm.resetFields()
+         }
     }
    
 }
