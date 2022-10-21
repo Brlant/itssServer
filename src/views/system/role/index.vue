@@ -544,33 +544,33 @@ export default {
       // this.$router.push({ path:'/system/role-auth/roleEdit/', query:{ isAdd:'add'}})
     },
     /** 修改按钮操作 */
-    // handleUpdate(row) {
-    //   this.reset();
-    //   const roleId = row.roleId || this.ids
-    //   const roleMenu = this.getRoleMenuTreeselect(roleId);
-    //   getRole(roleId).then(response => {
-    //     this.form = response.data;
-    //     this.open = true;
-    //     this.$nextTick(() => {
-    //       roleMenu.then(res => {
-    //         let checkedKeys = res.checkedKeys
-    //         checkedKeys.forEach((v) => {
-    //             this.$nextTick(()=>{
-    //                 this.$refs.menu.setChecked(v, true ,false);
-    //             })
-    //         })
-    //       });
-    //     });
-    //     this.title = "修改角色";
-    //   });
-    // },
-    // 编辑
     handleUpdate(row) {
-      this.$router.push({ path:'/system/role-auth/roleEdit/',
-       query:{ isAdd:'edit',
-       roleId:row.roleId,
-       }})
+      this.reset();
+      const roleId = row.roleId || this.ids
+      const roleMenu = this.getRoleMenuTreeselect(roleId);
+      getRole(roleId).then(response => {
+        this.form = response.data;
+        this.open = true;
+        this.$nextTick(() => {
+          roleMenu.then(res => {
+            let checkedKeys = res.checkedKeys
+            checkedKeys.forEach((v) => {
+                this.$nextTick(()=>{
+                    this.$refs.menu.setChecked(v, true ,false);
+                })
+            })
+          });
+        });
+        this.title = "修改角色";
+      });
     },
+    // 编辑
+    // handleUpdate(row) {
+    //   this.$router.push({ path:'/system/role-auth/roleEdit/',
+    //    query:{ isAdd:'edit',
+    //    roleId:row.roleId,
+    //    }})
+    // },
     // 详情
     handleToView(row) {
       this.$router.push({ path:'/system/role-auth/roleDetail/',
