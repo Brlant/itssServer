@@ -628,8 +628,8 @@ export default {
         this.formData.projectUserList[fatherIndex].workDayTemp;
       console.log(tempWorkDay);
       // 顶部的 共计多少小时  多少天
-      this.formData.projectUserList[fatherIndex].workDay = totalDay / 8;
-      this.formData.projectUserList[fatherIndex].workTime = totalTime;
+      this.formData.projectUserList[fatherIndex].workDay = (totalDay / 8).toFixed(2);
+      this.formData.projectUserList[fatherIndex].workTime = (totalTime).toFixed(2);
       // 顶部的 计划负荷 预计成本
       if(totalDay===0){
         this.addEditFormData.projectUserList[fatherIndex].planLoad =0

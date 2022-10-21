@@ -826,15 +826,16 @@ export default {
         totalTime += parseFloat(item.workTime) * parseFloat(item.day);
         item.weekDay = item.day;
       });
-
+      // totalDay = (totalDay).toFixed(2)  
+      // totalTime = (totalTime).toFixed(2)   
       // 暂存一下 实际的天数
       // console.log(totalDay);
       // console.log(this.addEditFormData.projectUserList[fatherIndex].workDayTemp);
       const tempWorkDay =
         this.addEditFormData.projectUserList[fatherIndex].workDayTemp;
       // 顶部的 共计多少小时  多少天
-      this.addEditFormData.projectUserList[fatherIndex].workDay = totalDay / 8;
-      this.addEditFormData.projectUserList[fatherIndex].workTime = totalTime;
+      this.addEditFormData.projectUserList[fatherIndex].workDay = (totalDay / 8).toFixed(2);
+      this.addEditFormData.projectUserList[fatherIndex].workTime = (totalTime).toFixed(2);
       // 顶部的 计划负荷 预计成本
       if(totalDay===0){
         this.addEditFormData.projectUserList[fatherIndex].planLoad =0

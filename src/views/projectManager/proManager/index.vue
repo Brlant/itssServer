@@ -637,18 +637,15 @@ export default {
   }
 }
  .myTable .el-table__body-wrapper{
-        margin-top: 1px;
-        z-index:2;
-       
-
+        margin-top: 0px;
+        z-index:2;       
     }
-    // .myTable{
-    //   .el-table__footer-wrapper{
-    //     ::-webkit-scrollbar{
-    //         background-color: pink;
-    //   }
-    //   ::-webkit-scrollbar-thumb{ background:red; border:solid 1px rgba(0,0,0,.1); border-radius:1em; }
-    //       }
-    // } 
+.el-table{
+       .el-table__fixed{
+      height:auto !important;
+      bottom:17px !important;
+      }
+
+}     
        
 </style>
