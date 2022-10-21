@@ -329,7 +329,7 @@
                 :prop="`projectUserList.${addUserListindex}.userId`"
                 :rules="rules.projectUserListAllUserId"
               >
-                <template v-if="addUserList.updateType == 3">
+                <template v-if="addUserList.updateType == 3||addUserList.updateType == 2">
                   <!-- 我是修改的 -->
                   <span style="margin-left: 30px">{{
                     addUserList.userName

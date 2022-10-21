@@ -223,7 +223,7 @@
                 :rules="rules.projectUserListAllUserId"
                 label-width="30px"
               >
-                <template v-if="addUserList.updateType == 3">
+                <template v-if="addUserList.updateType == 3||addUserList.updateType == 2">
                   <!-- 我是修改的 -->
                   <span style="margin-left: 30px">
                     {{ addUserList.userName }}</span
@@ -296,6 +296,7 @@
             <el-col :span="3"
               ><div class="colText2">
                 <el-button
+                 v-show="addUserList.updateType!=2"
                   size="mini"
                   @click="DelUserList(addUserListindex, addUserList)"
                   type="error"
@@ -549,6 +550,7 @@ export default {
           value: 2,
         },
       ],
+      DelUserListTemp:[]//存储删除用户的
     };
   },
   mounted() {
@@ -845,21 +847,24 @@ export default {
         type: "warning",
       })
         .then(() => {
+          // 修改类型（1.新增,2.删除,3.修改原数据）
           if (row.updateType == 3) {
             // 修改 就提交接口
             let params = this.deepClone(this.formData);
             params.projectUserList = [];
             params.projectUserList.push(row);
-            // 修改类型（1.新增,2.删除,3.修改原数据）
             params.projectUserList[0].updateType = 2;
 
-            updateProjectUserAddEdit(params).then((res) => {
-              let { code, msg } = res;
-              this.$message.success(msg);
-              if (+code == 200) {
-                // 提交删除成功 无需操作什么 因为 需要审核
-              }
-            });
+            // updateProjectUserAddEdit(params).then((res) => {
+            //   let { code, msg } = res;
+            //   this.$message.success(msg);
+            //   if (+code == 200) {
+            //     // 提交删除成功 无需操作什么 因为 需要审核
+            //   }
+            // });
+            this.DelUserListTemp.push(...params.projectUserList)
+            this.formData.projectUserList.splice(index, 1);
+            // this.formData.projectUserList[index].updateType=2;
           }
           if (row.updateType == 1) {
             // 新增的就前端删除
@@ -881,11 +886,13 @@ export default {
               // jtem.week = jtem?.weekOfYear;
             });
           });
+          // 把删除的用户也添加进去
           let parame = {
             ...this.formData,
             // carrierId:this.temData.carrierId,
             // status:0
           };
+          parame.projectUserList.push(...this.DelUserListTemp)
           updateProjectUserAddEdit(parame).then((res) => {
             let { code, msg } = res;
             this.$message.success(msg);
