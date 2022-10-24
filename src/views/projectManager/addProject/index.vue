@@ -740,7 +740,11 @@ export default {
         if (valid) {
              
             let oneUser = this.deepClone(this.projectUserList);
+            oneUser.startTime = this.formData.projectStartTime
+            oneUser.endTime =  this.formData.projectEndTime
+            oneUser.startEndTime =  this.formData.projectTimeArea
             this.formData.projectUserList.push(oneUser);
+            this.$forceUpdate()
              let data = {}
             queryUserlist(data).then((res) => {
               res.data.map((item) => {

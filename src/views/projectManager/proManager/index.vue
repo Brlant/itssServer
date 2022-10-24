@@ -223,8 +223,8 @@
 
         <el-table-column label="操作" width="120" fixed="right">
           <template slot-scope="scope">
+              <!-- v-show="isProjectByUser(scope.row)||isJurisdiction('admin','deptdirector','projectdirector','projectsupervision','operatemanage')" -->
             <el-button
-              v-show="isProjectByUser(scope.row)||isJurisdiction('admin','deptdirector','projectdirector','projectsupervision','operatemanage')"
               @click.native.prevent="detailProject(scope.$index, scope.row)"
               type="text"
               size="small"
@@ -371,6 +371,7 @@ export default {
     let deptdirector = this.isJurisdiction("deptdirector"); // 部门主管
     let projectdirector = this.isJurisdiction("projectdirector"); // 项目主管
     let projectsupervision = this.isJurisdiction("projectsupervision"); // 项目监管
+    let operatemanage = this.isJurisdiction("operatemanage"); // 运营管理
     let admin = this.isJurisdiction("admin"); // 管理员
     // 运营管理        operatemanage
     let countScopeOptionsTemp = [];
@@ -391,8 +392,8 @@ export default {
       });
     }
 
-    if (projectsupervision || admin) {
-      // 项目监管
+    if (projectsupervision || admin|| operatemanage) {
+      // 项目监管 超管 运营管理
       this.countScopeInit = 1
       countScopeOptionsTemp.push({
         label: "全部",

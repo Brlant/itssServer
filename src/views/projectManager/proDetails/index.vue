@@ -13,11 +13,11 @@
         <span @click="goManagerPage" style="cursor: pointer; color: #409eff">
           < 返回
         </span>
-        <div class="rightLink">
+        <div class="rightLink"  v-show="isProjectByUser(formData)||isJurisdiction('admin')" >
           <!-- <router-link :to="'/projectManager/proEdit?projectId=' + projectId+'&countScope='+countScope"  
             >编辑</router-link
           > -->
-          <span @click="goEditPage" style="cursor: pointer" class="color2">
+          <span @click="goEditPage"style="cursor: pointer" class="color2">
             编辑
           </span>
           |
@@ -102,7 +102,7 @@
       <div class="basicLine">
         <el-row>
           <el-col :span="4">
-            <el-button
+            <el-button  v-show="isProjectByUser(formData)||isJurisdiction('admin')" 
               size="mini"
               type="text"
               style="margin-top: 4px"
@@ -282,7 +282,7 @@
         </el-table-column>
 
         <!-- 滑动的内容块 end  -->
-        <el-table-column label="操作" width="120" fixed="right">
+        <el-table-column label="操作" width="120" fixed="right"  v-if="isProjectByUser(formData)||isJurisdiction('admin')" >
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <el-button
@@ -509,7 +509,7 @@
             {{ scope.row.status | toStatus }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120">
+        <el-table-column label="操作" width="120"   >
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <!-- 他必须是项目主管和项目负责人 才可以点击取消 -->
@@ -659,6 +659,7 @@ export default {
     let deptdirector = this.isJurisdiction("deptdirector"); // 部门主管
     let projectdirector = this.isJurisdiction("projectdirector"); // 项目主管
     let projectsupervision = this.isJurisdiction("projectsupervision"); // 项目监管
+    let operatemanage = this.isJurisdiction("operatemanage"); // 运营管理
     let admin = this.isJurisdiction("admin"); // 管理员
     let countScopeOptionsTemp = [];
     if (projectdirector) {
@@ -678,7 +679,7 @@ export default {
       });
     }
 
-    if (projectsupervision || admin) {
+    if (projectsupervision || admin ||operatemanage) {
       // 项目监管
       this.countScopeInit = 1;
       countScopeOptionsTemp.push({
@@ -730,10 +731,14 @@ export default {
       this.addEditFormData = {};
       this.addEditFormData = this.deepClone(this.formData); // 填充编辑和新增的
       this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
-
       let oneUser = this.deepClone(this.projectUserList);
+      oneUser.startTime = this.formData.projectStartTime
+      oneUser.endTime =  this.formData.projectEndTime
+      oneUser.startEndTime = [this.formData.projectStartTime,this.formData.projectEndTime]
       oneUser.updateType = 1;
       this.addEditFormData.projectUserList.push(oneUser);
+            this.$forceUpdate()
+
       this.getUserList();
     },
     // 修改一个 项目成员的 工作计划

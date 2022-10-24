@@ -831,9 +831,13 @@ export default {
         // TODO 上面基础信息填写好 再填写下面，因为需要用到上面的 服务对象和项目有效期
         if (valid) {
           let oneUser = this.deepClone(this.projectUserList);
+            oneUser.startTime = this.formData.projectStartTime
+            oneUser.endTime =  this.formData.projectEndTime
+            oneUser.startEndTime =  this.formData.projectTimeArea
           // 修改类型（1.新增,2.删除,3.修改原数据）
           oneUser.updateType = 1;
           this.formData.projectUserList.push(oneUser);
+          this.$forceUpdate()
         }
       });
     },

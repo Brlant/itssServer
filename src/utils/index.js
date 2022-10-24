@@ -424,6 +424,11 @@ export function getToday(){
     return Y+M+D;
   }
 // 判断 此人是否有此权限  返回 true false
+// parent ("deptdirector"); // 部门主管
+// parent ("projectdirector"); // 项目主管
+// parent ("projectsupervision"); // 项目监管
+// parent ("operatemanage"); // 运营管理
+// parent ("admin"); // 管理员
 export function isJurisdiction(...roleStrs) {
   const rols = JSON.parse(window.localStorage.getItem("roles"))?JSON.parse(window.localStorage.getItem("roles")):[]
   let result = false
@@ -437,6 +442,12 @@ export function isProjectByUser(projectInfo){
   // console.log(projectInfo);
   let result = false
   const userInfo = JSON.parse(window.localStorage.getItem("user"))?JSON.parse(window.localStorage.getItem("user")):[]
-  if(userInfo.userId == projectInfo.projectUserId){ result = true}
+  // 预先判断这个人是不是 项目主管
+  if(isJurisdiction("projectdirector")){
+    // 项目主管
+    if(userInfo.userId == projectInfo.projectUserId){
+       result = true
+      }
+  } 
   return result
 }
