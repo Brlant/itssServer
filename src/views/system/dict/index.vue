@@ -67,7 +67,7 @@
         <el-button type="primary" plain @click="handleAdd" v-hasPermi="['system:dict:add']">新增</el-button>
         <!-- <el-button type="success" plain :disabled="single" @click="handleUpdate" v-hasPermi="['system:dict:edit']">修改</el-button>
         <el-button type="danger" plain :disabled="multiple" @click="handleDelete" v-hasPermi="['system:dict:remove']">删除</el-button> -->
-        <el-button type="warning" plain @click="handleExport" v-hasPermi="['system:dict:export']">导出</el-button>
+        <!-- <el-button type="warning" plain @click="handleExport" v-hasPermi="['system:dict:export']">导出</el-button> -->
         <!-- <el-button type="danger" plain @click="handleRefreshCache" v-hasPermi="['system:dict:remove']">刷新缓存</el-button> -->
       </div>
       <el-table v-loading="loading" :data="typeList" @selection-change="handleSelectionChange">
