@@ -1,11 +1,14 @@
 <template>
     <div class='efficiency'>
-        <el-row  v-if='mangerJurisdiction || selfJurisdiction'>
-            <el-col :span='15'>
-                 <div class='header' >
+        <!-- <el-row  v-if='mangerJurisdiction || selfJurisdiction'>
+        
+            <el-col :span='13'> -->
+        <div style='display:flex;justify-content:space-between;' v-if='mangerJurisdiction || selfJurisdiction'>
+          
+                 <div class='header'  style='width:40%'>
                     <div>
-                        <i class='el-icon-arrow-left' v-if='selfJurisdiction && drillDowm' @click='goBack'></i>
-                        <div style="font-size:16px;color:#666666;display:inline-block"><i  @click="showMorTime" class='el-icon-date'></i><span v-if='dateRange' style="margin-left:15px;">{{dateRange}}</span></div>
+                        <i class='el-icon-arrow-left point' v-if='selfJurisdiction && drillDowm' @click='goBack'></i>
+                        <div style="font-size:16px;color:#666666;display:inline-block"><i  @click="showMorTime" class='el-icon-date point'></i><span v-if='dateRange' style="margin-left:15px;">{{dateRange}}</span></div>
                         <el-date-picker
                             class='timePickCss'
                             v-model="selectTimes"
@@ -18,29 +21,43 @@
                             @change="pickerChange">
                         </el-date-picker>
                     </div>
-                     </div>
-            </el-col>
-            <el-col :span='8'>
-                <div style="font-size:16px;color:#666666;">
-                    <el-form ref="form" :model="form" label-width="80px">
-                        <el-row>
-                            <el-col :span="12"  v-if='mangerJurisdiction || drillDowm'>
-                                <el-form-item label="人员" prop="userId" >
+                    </div>
+            <!-- </el-col>
+            
+            <el-col :span='11'> -->
+            
+                <div style="font-size:16px;color:#666666;width:50%"  v-if='mangerJurisdiction'>
+                    <el-form ref="form" :model="form" label-width="20%">
+                        <el-row >
+                            <el-col :span="12">
+                                <el-form-item label="人员" prop="userId"  width='30%'>
                                     <el-select v-model="form.userId"  size="medium"  placeholder="请选择人员" filterable clearable  @change='searchUser'>
                                         <el-option v-for='(item) in users' :key='item.userId' :value='item.userId' :label='item.nickName'></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="12"  v-if="mangerJurisdiction">
-                                <el-form-item label="部门" prop="deptId">
+                            <el-col :span="12">
+                                <el-form-item label="部门" prop="deptId" width='30%'>
                                     <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择部门" @input='searchDept'  @change='searchDept'/>
                                 </el-form-item>
                             </el-col>
                         </el-row>
+                          
+                    </el-form>
+              
+                </div>
+                <div  v-if='selfJurisdiction' style="font-size:16px;color:#666666;width:30%">
+                         <el-form  inline>
+                          <el-form-item label="人员" prop="userId" width='20%'>
+                                    <el-select v-model="form.userId"  size="medium"  placeholder="请选择人员" filterable clearable  @change='searchUser'>
+                                        <el-option v-for='(item) in users' :key='item.userId' :value='item.userId' :label='item.nickName'></el-option>
+                                    </el-select>
+                                </el-form-item>
                     </el-form>
                 </div>
-            </el-col>
-        </el-row>        
+            </div>
+            <!-- </el-col>
+        </el-row>         -->
         <!-- 部门效率 -->
         <div v-if="mangerJurisdiction">
             <div v-for="(item,index) in deptData" :key='index' class='table-style'>
@@ -437,7 +454,8 @@ export default {
   background-color: #f56c6c;
 }
 .colorname{
-color:#3D7DFF
+color:#3D7DFF;
+cursor:pointer;
 }
 .table-style{
     background:#ffffff;

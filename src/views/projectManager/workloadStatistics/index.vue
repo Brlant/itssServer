@@ -1,11 +1,12 @@
 <template>
     <div class='work'>
-        <el-row  v-if='mangerJurisdiction || selfJurisdiction'>
-            <el-col :span='17'>
-                 <div class='header' >
+        <!-- <el-row  v-if='mangerJurisdiction || selfJurisdiction'>
+            <el-col :span='17'> -->
+         <div style='display:flex;justify-content:space-between;' v-if='mangerJurisdiction || selfJurisdiction'>
+                 <div class='header'   style='width:40%' >
                     <div>
                         <i class='el-icon-arrow-left point color2' style="margin-right:10px" v-if='selfJurisdiction && drillDowm'  @click='goBack'></i> 
-                        <div style="font-size:16px;color:#666666;display:inline-block"><i  @click="showMorTime" class='el-icon-date'></i><span v-if='dateRange' style="margin-left:15px;">{{dateRange}}</span></div>
+                        <div style="font-size:16px;color:#666666;display:inline-block"><i  @click="showMorTime" class='el-icon-date point'></i><span v-if='dateRange' style="margin-left:15px;">{{dateRange}}</span></div>
                         <el-date-picker
                             class='timePickCss'
                             v-model="selectTimes"
@@ -19,9 +20,9 @@
                         </el-date-picker>
                     </div>
                      </div>
-            </el-col>
-            <el-col :span='7'>
-                <div style="font-size:16px;color:#666666;">
+            <!-- </el-col>
+            <el-col :span='7'> -->
+                <div style="font-size:16px;color:#666666;width:50%">
                     <el-form ref="form" :model="form" label-width="80px"   v-if="mangerJurisdiction">
                         <el-row>
                             <el-col :span="12">
@@ -38,7 +39,7 @@
                             </el-col>
                         </el-row>
                     </el-form>
-                    <span v-else>
+                    <span v-else style='float:right;padding-right:20px;'>
                         <span style='margin-right:20px;'>
                             <span>计划负荷</span><span>{{userData.planLoad+'%('+userData.planLoadWorkDay+'人日)'}}</span>
                         </span>
@@ -47,8 +48,9 @@
                         </span>
                     </span>
                 </div>
-            </el-col>
-        </el-row>        
+         </div>
+            <!-- </el-col> -->
+        <!-- </el-row>         -->
         <!-- 部门效率 -->
         <div v-if="mangerJurisdiction">
             <div v-for="(i,index) in deptData" :key='index' class='table-style'>
@@ -58,7 +60,7 @@
         :header-cell-class-name="headerClassName" style="width:100%">
                     <el-table-column label="执行人员" align="center"  min-width='150' fixed>
                         <template  slot-scope="scope">
-                            <span  @click='nameClick(scope.row)' :class="['point', scope.row.userName != '总计' ? 'colorname' : '']">{{scope.row.userName}}</span>
+                            <span  @click='nameClick(scope.row)' :class="[scope.row.userName != '总计' ? 'colorname' : '']">{{scope.row.userName}}</span>
                         </template>
 
                     </el-table-column>
@@ -450,7 +452,8 @@ export default {
   background-color: #f56c6c;
 }
 .colorname{
-color:#3D7DFF
+color:#3D7DFF;
+cursor: pointer;
 }
 .table-style{
     background:#ffffff;
