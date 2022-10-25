@@ -55,7 +55,7 @@
         <div v-if="mangerJurisdiction">
             <div v-for="(i,index) in deptData" :key='index' class='table-style'>
                 <div class='name'>{{i.deptName}}</div>
-                <el-table :data="i.workLoadUserVoList" border class="tableData myTable"
+                <el-table :data="i.workLoadUserVoList" border class="tableData "
                          :header-row-style="{ height: '14px', 'line-height': '14px' }"
         :header-cell-class-name="headerClassName" style="width:100%">
                     <el-table-column label="执行人员" align="center"  min-width='150' fixed>
