@@ -62,7 +62,7 @@
         <div v-if="mangerJurisdiction">
             <div v-for="(item,index) in deptData" :key='index' class='table-style'>
                 <div class='name'>{{item.deptName}}</div>
-                <el-table v-if='item' :data="item.userList" border class="tableData myTable" style="width:100%">
+                <el-table v-if='item' :data="item.userList" border class="tableData" style="width:100%">
                     <el-table-column label="执行人员" align="center"   min-width='150' fixed="left">
                         <template  slot-scope="scope">
                             <span @click='nameClick(scope.row)' :class="[scope.row.username != '总计' ? 'colorname' : '']">{{scope.row.username}}</span>
@@ -113,7 +113,7 @@
         <div v-if='selfJurisdiction'>
             <div v-for="(item,index) in userData" :key='index'  class='table-style'>
                 <div class='name'>{{item.username}}</div>
-                <el-table :data="item.projectEfficiencyList" border class="tableData myTable" style="width:100%" :span-method="arraySpanMethod">
+                <el-table :data="item.projectEfficiencyList" border class="tableData" style="width:100%" :span-method="arraySpanMethod">
                     <el-table-column label="项目" align="center"   min-width='150' prop='projectName' fixed="left">
                          <template slot-scope="scope">
                             <span :class="['yuan','yuan'+scope.row.priority]"></span>
@@ -467,19 +467,17 @@ cursor:pointer;
 .efficiency{
     thead>:first-child  .is-leaf{
     background:#E8E8F4!important;
-  }
-}
-.myTable .el-table__body-wrapper {
-  margin-top: 0px;
+    // .myTable .el-table__body-wrapper {
+//   margin-top: 0px;
   // z-index: 2;
-}
+// }
 .myTable .el-table__fixed {
   // z-index: 5;
 //  bottom: 0px !important;
 //  margin-top: 0px;
 //        box-sizing: content-box;
 //         padding-bottom: 20px;
-height:220px!important;
+// height:220px!important;
     }
 // .myTable .el-table__fixed-right {
 //   // z-index: 5;
@@ -491,4 +489,7 @@ height:220px!important;
 // .myTable .el-table__fixed-right .el-table__fixed-body-wrapper{
 //   padding: 5px 0;
 // }
+  }
+}
+
 </style>

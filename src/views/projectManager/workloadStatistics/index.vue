@@ -55,7 +55,7 @@
         <div v-if="mangerJurisdiction">
             <div v-for="(i,index) in deptData" :key='index' class='table-style'>
                 <div class='name'>{{i.deptName}}</div>
-                <el-table :data="i.workLoadUserVoList" border class="tableData myTable"
+                <el-table :data="i.workLoadUserVoList" border class="tableData "
                          :header-row-style="{ height: '14px', 'line-height': '14px' }"
         :header-cell-class-name="headerClassName" style="width:100%">
                     <el-table-column label="执行人员" align="center"  min-width='150' fixed>
@@ -64,14 +64,14 @@
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="计划负荷" align="center"  min-width='150'>
+                     <el-table-column label="计划负荷" align="center"  min-width='150' fixed>
                         <template  slot-scope="scope">
                             {{ scope.row.planLoad }}%
                             <span class="color1">（{{ scope.row.planLoadWorkDay }}人日）</span>
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="实际负荷" align="center"  min-width='150'>
+                     <el-table-column label="实际负荷" align="center"  min-width='150' fixed>
                         <template  slot-scope="scope">
                             <span :class="['loadType' + scope.row.loadType]">
                         {{ scope.row.realLoad+"%（"+scope.row.realLoadWorkDay + "人日）" }}</span
@@ -79,7 +79,7 @@
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="空闲负荷" align="center"   min-width='150'>
+                     <el-table-column label="空闲负荷" align="center"   min-width='150' fixed>
                         <template  slot-scope="scope">
                              <span :class="['loadType' + scope.row.loadType]">
                         {{ scope.row.freeLoad+"%（"+scope.row.freeLoadWorkDay + "人日）" }}</span
@@ -481,18 +481,16 @@ cursor: pointer;
 .work{
     thead>:first-child  .is-leaf{
     background:#E8E8F4!important;
-  }
-}
-// .myTable .el-table__body-wrapper {
+    // .myTable .el-table__body-wrapper {
 //   margin-top: 0px;
 //   // z-index: 2;
 // }
-.myTable .el-table__fixed {
+.tableData .el-table__fixed {
   // z-index: 5;
 //  bottom: 0px !important;
 //  margin-top: 0px;
 //        box-sizing: content-box;
-height: 220px!important;
+height: 195px!important;
 //         padding-bottom: 10px;
     }
 // .myTable .el-table__fixed-right {
@@ -507,4 +505,8 @@ height: 220px!important;
 //   height: 20px !important;
 //   padding: 2px 0 !important;
 // }
+  }
+}
+
 </style>
+
