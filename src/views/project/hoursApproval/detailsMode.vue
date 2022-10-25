@@ -10,7 +10,7 @@
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
-                    ref='timePick'                  
+                    ref='timePick'
                     :clearable="false"
                      @change="pickerChange">
                 </el-date-picker>
@@ -38,8 +38,8 @@
                         >
                         <el-col :span="6">
                             <span>当前对比：
-                                <span v-if='item2.approvedWorkTime>item2.scheduleWorkTime' style="color:#FF435A">+{{item2.approvedWorkTime-item2.scheduleWorkTime + '小时'}}</span>
-                                <span v-else-if='item2.approvedWorkTime<item2.scheduleWorkTime' style="color:#75f1e8">-{{item2.scheduleWorkTime-item2.approvedWorkTime +'小时'}}</span>
+                                <span v-if='item2.projectScheduleWorkTime<item2.projectWorkTime' style="color:#FF435A">+{{item2.projectWorkTime-item2.projectScheduleWorkTime + '小时'}}</span>
+                                <span v-else-if='item2.projectWorkTime<item2.projectScheduleWorkTime' style="color:#75f1e8">-{{item2.projectScheduleWorkTime-item2.projectWorkTime +'小时'}}</span>
                                 <span v-else>--</span>
                             </span>
                         </el-col>
@@ -70,12 +70,12 @@
                                 <span>工作内容：{{item3.workContent}}</span></el-col
                             >
                             </el-row>
-                        </div>                      
+                        </div>
                             <div style="width: 5%; text-align: center; border-left: 1px solid #ddd;display:inline-block;padding:20px;" v-if='item3.status==0 && projectdirector'>
                             <div> <el-button class="editBtn" type="text" @click='pass(item3)'>通过</el-button></div>
                             <div > <el-button type="text" class="rejectBtn" @click='noPass(item3)'>拒绝</el-button></div>
                         </div>
-                        
+
                         <div style='background:#f7d3d3;color:red;padding:5px 20px' v-if="item3.status==2 && item3.rejectReason">{{item3.rejectReason}}</div>
                     </div>
                 </div>
@@ -114,7 +114,7 @@ export default{
             trackId:'',
             form:{reason:''},
             projectdirector:''
-           
+
         }
     },
    created(){
@@ -138,9 +138,9 @@ export default{
             }else{
                 this.status=''
             }
-            
+
             this.searchParent()
-            
+
         },
         showMorTime(){
             this.$refs.timePick.$refs.reference.childNodes[1].focus()
@@ -161,7 +161,7 @@ export default{
            this.endDate=moment(val[1]).format('YYYY-MM-DD')
           this.searchParent()
         },
-        searchParent(){     
+        searchParent(){
            let query={
            startDate:this.beginDate,
            endDate:this.endDate,
@@ -174,10 +174,10 @@ export default{
                 trackId:val.id,
                 approved:true
 
-            }   
-           
+            }
+
             this.approval2(data)
-         
+
         },
         noPass(val){
             this.trackId=val.id
@@ -189,8 +189,8 @@ export default{
                 approved:false,
                 reason:this.form.reason
 
-            } 
-            this.approval2(data) 
+            }
+            this.approval2(data)
             this.dialogVisible=false
         },
         approval2(data){
@@ -205,7 +205,7 @@ export default{
             })
         },
     }
-   
+
 }
 </script>
 <style lang="scss" scoped>
@@ -223,7 +223,7 @@ export default{
         margin:15px 10px;
     }
     .project-head{
-        
+
         background:#8295A8;
         height:40px;
         line-height:40px;
