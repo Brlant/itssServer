@@ -187,7 +187,7 @@
           <template slot-scope="scope"> {{ scope.row.sjConfig }}人日 </template>
         </el-table-column>
         <el-table-column prop="sjCost" label="实际预算已用" width="130">
-          <template slot-scope="scope"> {{ scope.row.sjCost }}人日 </template>
+          <template slot-scope="scope"> {{ scope.row.sjCost }} </template>
         </el-table-column>
 
         <el-table-column prop="realWork" label="实际完成工作" width="130">
