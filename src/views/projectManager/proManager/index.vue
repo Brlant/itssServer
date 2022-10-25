@@ -479,8 +479,14 @@ export default {
     },
     init() {
       // let params = this.clearNullParam({ ...this.searchParame });
-      this.searchForm.projectStartTime = this.searchForm.projectStartEndTime[0];
-      this.searchForm.projectEndTime = this.searchForm.projectStartEndTime[1];
+      if(this.searchForm.projectStartEndTime){
+        // if(this.searchForm.projectStartEndTime&&this.searchForm.projectStartEndTime.length>0){
+             this.searchForm.projectStartTime = this.searchForm.projectStartEndTime[0];
+        this.searchForm.projectEndTime = this.searchForm.projectStartEndTime[1];
+      }else{
+        this.searchForm.projectStartTime = "";
+        this.searchForm.projectEndTime = "";
+      }
       searchProjectList(this.searchForm).then((res) => {
         let { msg } = res;
         this.tableData = res.data;
