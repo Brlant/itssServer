@@ -64,14 +64,14 @@
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="计划负荷" align="center"  min-width='150'>
+                     <el-table-column label="计划负荷" align="center"  min-width='150' fixed>
                         <template  slot-scope="scope">
                             {{ scope.row.planLoad }}%
                             <span class="color1">（{{ scope.row.planLoadWorkDay }}人日）</span>
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="实际负荷" align="center"  min-width='150'>
+                     <el-table-column label="实际负荷" align="center"  min-width='150' fixed>
                         <template  slot-scope="scope">
                             <span :class="['loadType' + scope.row.loadType]">
                         {{ scope.row.realLoad+"%（"+scope.row.realLoadWorkDay + "人日）" }}</span
@@ -79,7 +79,7 @@
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="空闲负荷" align="center"   min-width='150'>
+                     <el-table-column label="空闲负荷" align="center"   min-width='150' fixed>
                         <template  slot-scope="scope">
                              <span :class="['loadType' + scope.row.loadType]">
                         {{ scope.row.freeLoad+"%（"+scope.row.freeLoadWorkDay + "人日）" }}</span
