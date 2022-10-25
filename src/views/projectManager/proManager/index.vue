@@ -649,13 +649,14 @@ export default {
   .el-table__fixed-right .el-table__fixed-header-wrapper tr:last-child  .is-leaf{
     background:#E8E8F4!important;
   }
-}
- .myTable .el-table__body-wrapper{
+  .myTable .el-table__body-wrapper{
         margin-top: 0px;
         z-index:2;       
     }
  .myTable .el-table__fixed-footer-wrapper tbody td.el-table__cell{
   padding: 9px;
  }   
+}
+ 
        
 </style>

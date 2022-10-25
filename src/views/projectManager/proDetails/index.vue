@@ -1456,8 +1456,7 @@ export default {
   .el-form-item__content {
     word-break: break-word !important;
   }
-}
-.myTable .el-table__body-wrapper {
+  .myTable .el-table__body-wrapper {
   margin-top: 0px;
   // z-index: 2;
 }
@@ -1476,5 +1475,7 @@ export default {
 .myTable .el-table__fixed-right .el-table__fixed-body-wrapper{
   padding: 5px 0;
 }
+}
+
 
 </style>

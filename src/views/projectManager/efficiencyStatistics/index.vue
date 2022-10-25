@@ -467,19 +467,17 @@ cursor:pointer;
 .efficiency{
     thead>:first-child  .is-leaf{
     background:#E8E8F4!important;
-  }
-}
-.myTable .el-table__body-wrapper {
+    // .myTable .el-table__body-wrapper {
 //   margin-top: 0px;
   // z-index: 2;
-}
+// }
 .myTable .el-table__fixed {
   // z-index: 5;
 //  bottom: 0px !important;
 //  margin-top: 0px;
 //        box-sizing: content-box;
 //         padding-bottom: 20px;
-height:220px!important;
+// height:220px!important;
     }
 // .myTable .el-table__fixed-right {
 //   // z-index: 5;
@@ -491,4 +489,7 @@ height:220px!important;
 // .myTable .el-table__fixed-right .el-table__fixed-body-wrapper{
 //   padding: 5px 0;
 // }
+  }
+}
+
 </style>

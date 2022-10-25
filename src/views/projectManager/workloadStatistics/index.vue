@@ -481,18 +481,16 @@ cursor: pointer;
 .work{
     thead>:first-child  .is-leaf{
     background:#E8E8F4!important;
-  }
-}
-// .myTable .el-table__body-wrapper {
+    // .myTable .el-table__body-wrapper {
 //   margin-top: 0px;
 //   // z-index: 2;
 // }
-.myTable .el-table__fixed {
+.tableData .el-table__fixed {
   // z-index: 5;
 //  bottom: 0px !important;
 //  margin-top: 0px;
 //        box-sizing: content-box;
-height: 220px!important;
+height: 195px!important;
 //         padding-bottom: 10px;
     }
 // .myTable .el-table__fixed-right {
@@ -507,4 +505,8 @@ height: 220px!important;
 //   height: 20px !important;
 //   padding: 2px 0 !important;
 // }
+  }
+}
+
 </style>
+
