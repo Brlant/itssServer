@@ -1,18 +1,18 @@
 <template>
     <div class="compact">
         <div class="header">
-            <div></div>
+            <div class='left'></div>
             <div class="select-date">
                 <div>  
-                    <el-button round @click='pre' style='color:#409EFF'><i class='el-icon-arrow-left'></i>上一周</el-button>
-                    <span style='margin:0 20px;font-size:20px;'>
+                    <el-button round @click='pre' style='color:#409EFF;'><i class='el-icon-arrow-left'></i>上一周</el-button>
+                    <span style='margin:0 5px;font-size:18px;'>
                         <span>{{childData.year1}}</span>
                         <span v-if='childData.year1 != childData.year2'>{{'、'+childData.year2}}</span>
                         年
                         <span>{{childData.month1}}</span>
                         <span v-if="childData.month1 != childData.month2">{{'、'+childData.month2}}</span>月 
-                        <span style="margin-left:20px">{{childData.week}}周</span></span>
-                    <el-button round @click='next' style='color:#409EFF'>下一周<i class='el-icon-arrow-right'></i></el-button></div>  
+                        <span style="margin-left:5px">{{childData.week}}周</span></span>
+                    <el-button round @click='next' style='color:#409EFF;'>下一周<i class='el-icon-arrow-right'></i></el-button></div>  
                 </div>
             <div class="select-input">
                 <span>搜索</span> 
@@ -240,21 +240,25 @@ export default {
 </script>
 <style lang="scss" scoped>
 .compact{
+    // min-width:750px;
     .header{
     background:#ffffff;
-    padding:20px;
+    padding:25px;
     width:100%;
     display: flex;
-    >div{
-        width:33%;
+    justify-content: space-between;
+    .left{
+        width:20%;
     }
     .select-date{
+        width:60%;
        text-align: center;
     }
     .select-input{
-       text-align: right;
+        width:20%;
+    //    text-align: right;
         .el-input--prefix{
-            width:350px;
+            width:70%;
              display:inline-block!important;
         }
     }

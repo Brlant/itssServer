@@ -480,27 +480,28 @@ color:#3D7DFF
     background:#E8E8F4!important;
   }
 }
-.myTable .el-table__body-wrapper {
-  margin-top: 0px;
-  // z-index: 2;
-}
+// .myTable .el-table__body-wrapper {
+//   margin-top: 0px;
+//   // z-index: 2;
+// }
 .myTable .el-table__fixed {
   // z-index: 5;
- bottom: 0px !important;
- margin-top: 0px;
-       box-sizing: content-box;
-        padding-bottom: 10px;
+//  bottom: 0px !important;
+//  margin-top: 0px;
+//        box-sizing: content-box;
+height: 220px!important;
+//         padding-bottom: 10px;
     }
-.myTable .el-table__fixed-right {
-  // z-index: 5;
- bottom: 0px !important;
-}
-.myTable .el-table__fixed .el-table__fixed-body-wrapper{
-  padding: 5px 0;
-}
+// .myTable .el-table__fixed-right {
+//   // z-index: 5;
+//  bottom: 0px !important;
+// }
+// .myTable .el-table__fixed .el-table__fixed-body-wrapper{
+//   padding: 5px 0;
+// }
  
-.proUserList {
-  height: 20px !important;
-  padding: 2px 0 !important;
-}
+// .proUserList {
+//   height: 20px !important;
+//   padding: 2px 0 !important;
+// }
 </style>
