@@ -243,7 +243,8 @@ export default {
         },
         //初始时间
         defaultDate(){
-            let preOne=moment().subtract(1,'month').startOf('month').format('YYYY/MM/DD')
+            // let preOne=moment().subtract(1,'month').startOf('month').format('YYYY/MM/DD')
+            let preOne = moment().subtract(5, 'months').startOf('month').format('YYYY/MM/DD');
             let today=moment().format('YYYY/MM/DD')
             this.dateRange=`${preOne}-${today}`
             this.beginDate=moment(preOne).format('YYYY-MM-DD')
@@ -471,14 +472,14 @@ cursor:pointer;
 //   margin-top: 0px;
   // z-index: 2;
 // }
-.myTable .el-table__fixed {
+// .myTable .el-table__fixed {
   // z-index: 5;
 //  bottom: 0px !important;
 //  margin-top: 0px;
 //        box-sizing: content-box;
 //         padding-bottom: 20px;
 // height:220px!important;
-    }
+    // }
 // .myTable .el-table__fixed-right {
 //   // z-index: 5;
 //  bottom: 0px !important;
