@@ -243,8 +243,8 @@ export default {
         },
         //初始时间
         defaultDate(){
-            let preOne=moment().subtract(6, "months").format('YYYY/MM/DD')
-            let today=moment().format('YYYY/MM/DD')
+            let today=moment().add(180, "days").format('YYYY/MM/DD')
+            let preOne=moment().format('YYYY/MM/DD')
             this.dateRange=`${preOne}-${today}`
             this.beginDate=moment(preOne).format('YYYY-MM-DD')
             this.endDate=moment(today,'YYYY/MM/DD').format('YYYY-MM-DD')
@@ -481,30 +481,30 @@ cursor: pointer;
 .work{
     thead>:first-child  .is-leaf{
     background:#E8E8F4!important;
-    // .myTable .el-table__body-wrapper {
-//   margin-top: 0px;
-//   // z-index: 2;
-// }
+     .tableData .el-table__body-wrapper {
+ margin-top: 0px;
+z-index: 2;
+ }
 .tableData .el-table__fixed {
   // z-index: 5;
-//  bottom: 0px !important;
-//  margin-top: 0px;
-//        box-sizing: content-box;
-height: 195px!important;
-//         padding-bottom: 10px;
+ border: 0px !important;
+ margin-top: 0px !important;
+box-sizing: content-box !important;
+// height: 195px!important;
+        padding-bottom: 10px;
     }
-// .myTable .el-table__fixed-right {
-//   // z-index: 5;
-//  bottom: 0px !important;
-// }
-// .myTable .el-table__fixed .el-table__fixed-body-wrapper{
-//   padding: 5px 0;
-// }
+ .tableData .el-table__fixed-right {
+  // z-index: 5;
+ bottom: 0px !important;
+ }
+ .tableData .el-table__fixed .el-table__fixed-body-wrapper{
+  padding: 5px 0;
+ }
  
-// .proUserList {
-//   height: 20px !important;
-//   padding: 2px 0 !important;
-// }
+ .proUserList {
+  height: 20px !important;
+   padding: 2px 0 !important;
+ }
   }
 }
 
