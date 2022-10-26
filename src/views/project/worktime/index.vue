@@ -41,11 +41,11 @@
             <span v-for='(item,index) in plan' :key='index'>
               {{item.projectName}}{{`(${item.currentDayScheduleTime}h)`}}
               <span v-if='item.currentProjectTotalWorkTime<item.currentProjectScheduleTime'>
-                  <span style="color:#00A99D">{{',总体-'+(item.currentProjectScheduleTime - item.currentProjectTotalWorkTime)}}</span>
+                  <span style="color:#00A99D">{{',总体-'+(item.comparison)}}</span>
                   <span>小时</span>
               </span>
              <span  v-if='item.currentProjectTotalWorkTime>item.currentProjectScheduleTime'>
-                <span style="color:#FF435A">{{',总体+'+(item.currentProjectTotalWorkTime - item.currentProjectScheduleTime)}}</span>
+                <span style="color:#FF435A">{{',总体+'+(item.comparison)}}</span>
                 <span>小时</span></span><span v-show="index < plan.length - 1">;</span>
             </span>
           </span>
