@@ -252,6 +252,7 @@ export default {
             this.userInfo=this.$store.state.user.user          
            if(this.mangerJurisdiction){
             this.queryTable()
+            // this.queryTablehasYieldNum()
            }else if(this.selfJurisdiction && this.drillDowm){
            
             this.userId=this.form.userId
@@ -281,6 +282,7 @@ export default {
             this.endDate=moment(val[1]).format('YYYY-MM-DD')
             if(this.mangerJurisdiction){            
             this.queryTable()
+            // this.queryTablehasYieldNum()
 
             }else if(this.selfJurisdiction && this.drillDowm){
                 this.queryTableBySelf()
@@ -293,6 +295,7 @@ export default {
         searchUser(){
             if(this.mangerJurisdiction){
                 this.queryTable()
+                // this.queryTablehasYieldNum()
             }else{
                this.userId=this.form.userId
                 this.queryTableBySelf()
@@ -301,20 +304,24 @@ export default {
         //通过部门搜索
         searchDept(){
             this.queryTable()
+            // this.queryTablehasYieldNum()
         },
         //查询部门表格方法
-        queryTable(){
+        queryTablehasYieldNum(){
+            this.deptData=[]
             this.months=[]
             let data={
                 startDate:this.beginDate,
                 endDate:this.endDate,
                 userId:this.form.userId,
                 deptId:this.form.deptId,
+                hasYieldNum:true
             }
             departmentQuery(data).then(res=>{
                 if(res.code==200){
                     if(res.data){
                         this.deptData=res.data
+                        console.log(this.deptData,'2222222222222')
                             let value1 = res.data.find(item => item.userList.length)
                              if(value1){
                                 let value2 = value1.userList.find(item => item.monthEfficiencyList.length)
@@ -335,6 +342,42 @@ export default {
               
             })
         },
+         queryTable(){
+            this.months=[]
+            this.deptData=[]
+            let data={
+                startDate:this.beginDate,
+                endDate:this.endDate,
+                userId:this.form.userId,
+                deptId:this.form.deptId,
+                 hasYieldNum:false
+            }
+            departmentQuery(data).then(res=>{
+                if(res.code==200){
+                    if(res.data){
+                        this.deptData=res.data
+                         console.log(this.deptData,'1111111')
+                            let value1 = res.data.find(item => item.userList.length)
+                             if(value1){
+                                let value2 = value1.userList.find(item => item.monthEfficiencyList.length)
+                                if (value2) {
+                                    value2.monthEfficiencyList.forEach((v,i)=>{  
+                                    this.months.push(v.month)   
+                                    })
+                                }
+                            }
+                            // let monthDate=res.data[0].userList[0].monthEfficiencyList
+                            // monthDate.forEach((v,i)=>{   
+                            //     this.months.push(v.month)   
+                            // })
+                            // console.log(this.months)
+                            this.queryTablehasYieldNum()
+                        }
+                       
+                }
+              
+            })
+        },
         //查询个人效率表格方法
         queryTableBySelf(){
             this.months=[]
@@ -342,15 +385,54 @@ export default {
                 startDate:this.beginDate,
                 endDate:this.endDate,
                 userId:this.userId,
+                hasYieldNum:false
             }
             userQuery(data).then(res=>{
                 if(res.code==200){
                     if(res.data){
                         this.userData=res.data
+                          console.log( this.userData,111111111111)
                          let value1 = res.data.find(item => item.projectEfficiencyList.length)
                              if(value1){
                                 let value2 = value1.projectEfficiencyList.find(item => item.monthEfficiencyList.length)
-                                console.log(value2,11111)
+                                // console.log(value2,11111)
+                                if (value2) {
+                                    value2.monthEfficiencyList.forEach((v,i)=>{  
+                                    this.months.push(v.month)   
+                                    })
+                                }
+                            }
+                        // if(res.data[0]){
+                        //     let monthDate=res.data[0].projectEfficiencyList[0].monthEfficiencyList
+                        //     monthDate.forEach((v,i)=>{   
+                        //         this.months.push(v.month)   
+                        //     })
+                        // }
+                       
+                    }
+                   this.queryTableBySelfYieldNum()
+                }
+              
+            })
+        },
+         queryTableBySelfYieldNum(){
+            this.months=[]
+             let data={
+                startDate:this.beginDate,
+                endDate:this.endDate,
+                userId:this.userId,
+                hasYieldNum:true
+
+            }
+            userQuery(data).then(res=>{
+                if(res.code==200){
+                    if(res.data){
+                        this.userData=res.data
+                         console.log( this.userData,2222222222)
+                         let value1 = res.data.find(item => item.projectEfficiencyList.length)
+                             if(value1){
+                                let value2 = value1.projectEfficiencyList.find(item => item.monthEfficiencyList.length)
+                                // console.log(value2,11111)
                                 if (value2) {
                                     value2.monthEfficiencyList.forEach((v,i)=>{  
                                     this.months.push(v.month)   
@@ -393,6 +475,7 @@ export default {
             this.drillDowm=false
             this.form.userId=''
             this.queryTable()
+            // this.queryTablehasYieldNum()
         },
         //合计列合并
         arraySpanMethod({ row, column, rowIndex, columnIndex }){
