@@ -551,6 +551,119 @@ export default {
     
   },
   methods: {
+        // 动态修改 时间选择器的区间值  
+    changeChildDateArea(userInfo,index) {
+      // 项目成员安排的 可选时间区间
+      this.childDateArea = {
+        disabledDate: (time) => {
+          if (
+            this.formData.projectEndTime != "" &&
+            this.formData.projectStartTime != ""
+          ) {
+            // 判断此人是否已经在职在职在职
+            if (userInfo.status == 0) {
+              if (
+                this.date2Number(userInfo.inTime) >
+                this.date2Number(this.formData.projectStartTime + " 23:59:59")
+              ) {
+                // 如果入职时间是否 大于 项目起始时间
+                // 就采用 该人的入职日期 和 项目结束日期
+                // console.log("入职时间晚于项目起始时间")
+                return (
+                  time.getTime() >
+                    new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() <
+                    new Date(userInfo.inTime).getTime() - 8.64e7
+                );
+              } else {
+                // 如果入职时间是否 小于 项目起始时间
+                return (
+                  // 就采用 项目开始日期 和 项目结束日期
+                  time.getTime() >
+                    new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() <
+                    new Date(this.formData.projectStartTime).getTime() - 8.64e7
+                );
+              }
+            }
+            // 判断此人是否已经离职
+            if (userInfo.status == 1) {
+              if (
+                this.date2Number(userInfo.outTime) >
+                this.date2Number(this.formData.projectEndTime)
+              ) {
+                // 如果离职时间是否 大于 项目结束时间
+                return (
+                  // 就采用 项目开始日期 和 项目结束日期
+                  time.getTime() >
+                    new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() <
+                    new Date(this.formData.projectStartTime).getTime() - 8.64e7
+                );
+              } else {
+                // 如果离职时间 小于 项目结束时间
+                // 就采用 项目起始时间 该人的离职日期
+                return (
+                  time.getTime() > new Date(userInfo.outTime).getTime() ||
+                  time.getTime() <
+                    new Date(this.formData.projectStartTime).getTime() - 8.64e7
+                );
+              }
+            }
+          }
+        },
+      };
+    },
+    // 动态修改 默认的日期区间
+    changeAddUserDateArea(userInfo,index) {
+      // 项目成员安排的 可选时间区间
+          if (
+            this.formData.projectEndTime != "" &&
+            this.formData.projectStartTime != ""
+          ) {
+                console.log("有项目开始和结束日期")
+            // 判断此人是否已经在职在职在职
+            if (userInfo.status == 0) {
+              console.log("是在职");
+              if (
+                this.date2Number(userInfo.inTime) >
+                this.date2Number(this.formData.projectStartTime + " 23:59:59")
+              ) {
+                // 如果入职时间是否 大于 项目起始时间
+                // 就采用 该人的入职日期 和 项目结束日期
+                console.log("入职时间晚于项目起始时间")
+                //  this.addEditFormData.projectUserList[index].startEndTime = [userInfo.inTime,this.formData.projectEndTime]
+                return  [userInfo.inTime,this.formData.projectEndTime]
+              } else {
+                console.log("入职时间早于项目起始时间")
+                // 如果入职时间是否 小于 项目起始时间
+                return  [this.formData.projectStartTime,this.formData.projectEndTime]
+              }
+            }
+            // 实际上此段判断无用，原因是 查询用户的接口已经把
+            // 离职的员工给隔离了
+            // 判断此人是否已经离职
+            if (userInfo.status == 1) {
+              console.log("是离职");
+              if (
+                this.date2Number(userInfo.outTime) >
+                this.date2Number(this.formData.projectEndTime)
+              ) {
+                console.log("离职时间晚于项目结束时间，就拿项目结束时间")
+                // console.log("晚于项目起始时间")
+                // 如果离职时间是否 大于 项目结束时间
+                 return  [this.formData.projectStartTime,this.formData.projectEndTime]
+                 
+              } else {
+                // 如果离职时间 小于 项目结束时间
+                // 就采用 项目起始时间 该人的离职日期
+                console.log("离职时间早于项目起始时间，就拿最后的离职时间作为服务时间")
+               return  [this.formData.projectStartTime,userInfo.outTime]
+              }
+            }
+          }
+       
+    },
     // 添加人员之后  根据 对内 还是对外  设置 选择人员的成本 
     // 存储到 单行的 新建字段 costNum 内 用于下一步存储  计算
     getUserCost(userId,index){
@@ -563,6 +676,8 @@ export default {
           item.userNameAndPost = item.nickName + "（" + item.postName + "）";
           item.disabled = false
         });
+        this.changeChildDateArea(res.data[0]);
+
         // formData.projectUserList[index].costNum  
         // costNum 是我自己设置第一个值 用于存储 成本的单位
         //  对外        
@@ -574,7 +689,8 @@ export default {
           }
         //  this.formData.projectUserList[index].startEndTime=[]
           if(this.formData.projectUserList[index].startEndTime?.length>0){
-          let dates = this.formData.projectUserList[index].startEndTime
+          this.formData.projectUserList[index].startEndTime =  this.changeAddUserDateArea(res.data[0],index)
+          let dates =  this.formData.projectUserList[index].startEndTime
           this.constAll(dates,index)
         }
         if(this.formData.projectUserList[index].userId!=""){// 添加成员之后，未选择用户的情况下 不筛选

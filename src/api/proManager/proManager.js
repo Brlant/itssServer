@@ -102,10 +102,14 @@ export function updateAuditProById(query) {
 }
 // 查询用户 下拉 不带分页
 export function queryUserlist(data) {
+  // 此处的查询 额外的增加一个 状态 就是 在岗 未离职
+  // status 1 离职
+  // status 0 在职
+  let dataTemp = {...data,status:0}
   return request({
     url: '/system/user/queryUserlist',
     method: 'post',
-    data: data
+    data: dataTemp
   })
 }
 // 查询拥有项目主管权限的用户

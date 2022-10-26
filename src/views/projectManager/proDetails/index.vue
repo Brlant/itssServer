@@ -13,11 +13,14 @@
         <span @click="goManagerPage" style="cursor: pointer; color: #409eff">
           < 返回
         </span>
-        <div class="rightLink"  v-show="isProjectByUser(formData)||isJurisdiction('admin')" >
+        <div
+          class="rightLink"
+          v-show="isProjectByUser(formData) || isJurisdiction('admin')"
+        >
           <!-- <router-link :to="'/projectManager/proEdit?projectId=' + projectId+'&countScope='+countScope"  
             >编辑</router-link
           > -->
-          <span @click="goEditPage"style="cursor: pointer" class="color2">
+          <span @click="goEditPage" style="cursor: pointer" class="color2">
             编辑
           </span>
           |
@@ -102,7 +105,8 @@
       <div class="basicLine">
         <el-row>
           <el-col :span="4">
-            <el-button  v-show="isProjectByUser(formData)||isJurisdiction('admin')" 
+            <el-button
+              v-show="isProjectByUser(formData) || isJurisdiction('admin')"
               size="mini"
               type="text"
               style="margin-top: 4px"
@@ -282,7 +286,12 @@
         </el-table-column>
 
         <!-- 滑动的内容块 end  -->
-        <el-table-column label="操作" width="120" fixed="right"  v-if="isProjectByUser(formData)||isJurisdiction('admin')" >
+        <el-table-column
+          label="操作"
+          width="120"
+          fixed="right"
+          v-if="isProjectByUser(formData) || isJurisdiction('admin')"
+        >
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <el-button
@@ -329,7 +338,11 @@
                 :prop="`projectUserList.${addUserListindex}.userId`"
                 :rules="rules.projectUserListAllUserId"
               >
-                <template v-if="addUserList.updateType == 3||addUserList.updateType == 2">
+                <template
+                  v-if="
+                    addUserList.updateType == 3 || addUserList.updateType == 2
+                  "
+                >
                   <!-- 我是修改的 -->
                   <span style="margin-left: 30px">{{
                     addUserList.userName
@@ -376,14 +389,20 @@
                   v-model="addUserList.startEndTime"
                   format="yyyy-MM-dd"
                   value-format="yyyy-MM-dd"
-                  :style="{ width: '100%' }"
+                  :style="{ width: '90%' }"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                   range-separator="至"
                   :picker-options="childDateArea"
                   @change="(dates) => getTimeArea(dates, addUserListindex)"
                   clearable
-                ></el-date-picker>
+                ></el-date-picker
+                >&nbsp;&nbsp;
+                <i
+                  v-show="addUserList.isShow == 1"
+                  class="el-icon-warning color4 ft18"
+                  title="此用户已离职！"
+                ></i>
               </el-form-item>
             </el-col>
             <el-col :span="3">
@@ -509,7 +528,7 @@
             {{ scope.row.status | toStatus }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120"   >
+        <el-table-column label="操作" width="120">
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <!-- 他必须是项目主管和项目负责人 才可以点击取消 -->
@@ -679,7 +698,7 @@ export default {
       });
     }
 
-    if (projectsupervision || admin ||operatemanage) {
+    if (projectsupervision || admin || operatemanage) {
       // 项目监管
       this.countScopeInit = 1;
       countScopeOptionsTemp.push({
@@ -732,14 +751,130 @@ export default {
       this.addEditFormData = this.deepClone(this.formData); // 填充编辑和新增的
       this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
       let oneUser = this.deepClone(this.projectUserList);
-      oneUser.startTime = this.formData.projectStartTime
-      oneUser.endTime =  this.formData.projectEndTime
-      oneUser.startEndTime = [this.formData.projectStartTime,this.formData.projectEndTime]
+      oneUser.startTime = this.formData.projectStartTime;
+      oneUser.endTime = this.formData.projectEndTime;
+      oneUser.startEndTime = [
+        this.formData.projectStartTime,
+        this.formData.projectEndTime,
+      ];
       oneUser.updateType = 1;
       this.addEditFormData.projectUserList.push(oneUser);
-            this.$forceUpdate()
+      this.$forceUpdate();
 
       this.getUserList();
+    },
+    // 动态修改 时间选择器的区间值  
+    changeChildDateArea(userInfo,index) {
+      // 项目成员安排的 可选时间区间
+      this.childDateArea = {
+        disabledDate: (time) => {
+          if (
+            this.formData.projectEndTime != "" &&
+            this.formData.projectStartTime != ""
+          ) {
+            // 判断此人是否已经在职在职在职
+            if (userInfo.status == 0) {
+              if (
+                this.date2Number(userInfo.inTime) >
+                this.date2Number(this.formData.projectStartTime + " 23:59:59")
+              ) {
+                // 如果入职时间是否 大于 项目起始时间
+                // 就采用 该人的入职日期 和 项目结束日期
+                // console.log("入职时间晚于项目起始时间")
+                return (
+                  time.getTime() >
+                    new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() <
+                    new Date(userInfo.inTime).getTime() - 8.64e7
+                );
+              } else {
+                // 如果入职时间是否 小于 项目起始时间
+                return (
+                  // 就采用 项目开始日期 和 项目结束日期
+                  time.getTime() >
+                    new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() <
+                    new Date(this.formData.projectStartTime).getTime() - 8.64e7
+                );
+              }
+            }
+            // 判断此人是否已经离职
+            if (userInfo.status == 1) {
+              if (
+                this.date2Number(userInfo.outTime) >
+                this.date2Number(this.formData.projectEndTime)
+              ) {
+                // 如果离职时间是否 大于 项目结束时间
+                return (
+                  // 就采用 项目开始日期 和 项目结束日期
+                  time.getTime() >
+                    new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() <
+                    new Date(this.formData.projectStartTime).getTime() - 8.64e7
+                );
+              } else {
+                // 如果离职时间 小于 项目结束时间
+                // 就采用 项目起始时间 该人的离职日期
+                return (
+                  time.getTime() > new Date(userInfo.outTime).getTime() ||
+                  time.getTime() <
+                    new Date(this.formData.projectStartTime).getTime() - 8.64e7
+                );
+              }
+            }
+          }
+        },
+      };
+    },
+    // 动态修改 默认的日期区间
+    changeAddUserDateArea(userInfo,index) {
+      // 项目成员安排的 可选时间区间
+          if (
+            this.formData.projectEndTime != "" &&
+            this.formData.projectStartTime != ""
+          ) {
+                console.log("有项目开始和结束日期")
+            // 判断此人是否已经在职在职在职
+            if (userInfo.status == 0) {
+              console.log("是在职");
+              if (
+                this.date2Number(userInfo.inTime) >
+                this.date2Number(this.formData.projectStartTime + " 23:59:59")
+              ) {
+                // 如果入职时间是否 大于 项目起始时间
+                // 就采用 该人的入职日期 和 项目结束日期
+                console.log("入职时间晚于项目起始时间")
+                //  this.addEditFormData.projectUserList[index].startEndTime = [userInfo.inTime,this.formData.projectEndTime]
+                return  [userInfo.inTime,this.formData.projectEndTime]
+              } else {
+                console.log("入职时间早于项目起始时间")
+                // 如果入职时间是否 小于 项目起始时间
+                return  [this.formData.projectStartTime,this.formData.projectEndTime]
+              }
+            }
+            // 实际上此段判断无用，原因是 查询用户的接口已经把
+            // 离职的员工给隔离了
+            // 判断此人是否已经离职
+            if (userInfo.status == 1) {
+              console.log("是离职");
+              if (
+                this.date2Number(userInfo.outTime) >
+                this.date2Number(this.formData.projectEndTime)
+              ) {
+                console.log("离职时间晚于项目结束时间，就拿项目结束时间")
+                // console.log("晚于项目起始时间")
+                // 如果离职时间是否 大于 项目结束时间
+                 return  [this.formData.projectStartTime,this.formData.projectEndTime]
+                 
+              } else {
+                // 如果离职时间 小于 项目结束时间
+                // 就采用 项目起始时间 该人的离职日期
+                console.log("离职时间早于项目起始时间，就拿最后的离职时间作为服务时间")
+               return  [this.formData.projectStartTime,userInfo.outTime]
+              }
+            }
+          }
+       
     },
     // 修改一个 项目成员的 工作计划
     updateProjectOne(index, row) {
@@ -777,6 +912,8 @@ export default {
           oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
 
           this.addEditFormData.projectUserList.push(oneUser);
+          // console.log(oneUser);
+          this.changeChildDateArea(oneUser);
           // }
           // // 删除成功 只会去查询 审核的方法
           // this.auditStatus = "1"; // 初始化 显示 待审核
@@ -919,8 +1056,10 @@ export default {
       //   this.$message.error("请先选择项目成员！");
       //   return false
       // }
+
       this.constAll(dates, index);
     },
+    // 公共计算方法
     constAll(dates, index) {
       let params = {
         startDate: dates[0],
@@ -972,6 +1111,7 @@ export default {
         //   item.userNameAndPost = item.nickName + "（" + item.postName + "）";
         //   item.disabled = false
         // });
+        this.changeChildDateArea(res.data[0]);
         // addEditFormData.projectUserList[index].costNum
         // costNum 是我自己设置第一个值 用于存储 成本的单位
         //  对外
@@ -989,7 +1129,8 @@ export default {
         if (
           this.addEditFormData.projectUserList[index].startEndTime?.length > 0
         ) {
-          let dates = this.addEditFormData.projectUserList[index].startEndTime;
+           this.addEditFormData.projectUserList[index].startEndTime =  this.changeAddUserDateArea(res.data[0],index)
+          let dates = this.addEditFormData.projectUserList[index].startEndTime 
           this.constAll(dates, index);
         }
         // this.projectUserIdOptions = res.data;
@@ -1084,7 +1225,6 @@ export default {
           // });
         });
     },
-
     /*选择项目有效期*/
     getProjectTimeArea(dates) {
       this.formData.projectStartTime = dates[0];
@@ -1463,18 +1603,20 @@ export default {
 }
 .myTable .el-table__fixed {
   // z-index: 5;
- bottom: 0px !important;
- margin-top: 2px;
+  bottom: 0px !important;
+  margin-top: 2px;
 }
 .myTable .el-table__fixed-right {
   // z-index: 5;
- bottom: 0px !important;
+  bottom: 0px !important;
 }
-.myTable .el-table__fixed .el-table__fixed-body-wrapper{
+.myTable .el-table__fixed .el-table__fixed-body-wrapper {
   padding: 5px 0;
 }
-.myTable .el-table__fixed-right .el-table__fixed-body-wrapper{
+.myTable .el-table__fixed-right .el-table__fixed-body-wrapper {
   padding: 5px 0;
 }
-
+.ft18 {
+  font-size: 18px;
+}
 </style>

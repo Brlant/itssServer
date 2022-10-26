@@ -223,7 +223,11 @@
                 :rules="rules.projectUserListAllUserId"
                 label-width="30px"
               >
-                <template v-if="addUserList.updateType == 3||addUserList.updateType == 2">
+                <template
+                  v-if="
+                    addUserList.updateType == 3 || addUserList.updateType == 2
+                  "
+                >
                   <!-- 我是修改的 -->
                   <span style="margin-left: 30px">
                     {{ addUserList.userName }}</span
@@ -266,14 +270,21 @@
                   v-model="addUserList.startEndTime"
                   format="yyyy-MM-dd"
                   value-format="yyyy-MM-dd"
-                  :style="{ width: '100%' }"
+                  :style="{ width: '90%' }"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                   range-separator="至"
                   :picker-options="childDateArea"
+                  @focus="(dates) => changeTimeArea(dates, addUserListindex)"
                   @change="(dates) => getTimeArea(dates, addUserListindex)"
                   clearable
                 ></el-date-picker>
+                &nbsp;&nbsp;
+                <i
+                  v-show="addUserList.isShow == 1"
+                  class="el-icon-warning color4 ft18"
+                  title="此用户已离职！"
+                ></i>
                 <!-- @focus="(dates) => userIsNull(dates, addUserListindex)" -->
               </el-form-item>
             </el-col>
@@ -296,7 +307,7 @@
             <el-col :span="3"
               ><div class="colText2">
                 <el-button
-                 v-show="addUserList.updateType!=2"
+                  v-show="addUserList.updateType != 2"
                   size="mini"
                   @click="DelUserList(addUserListindex, addUserList)"
                   type="error"
@@ -550,7 +561,7 @@ export default {
           value: 2,
         },
       ],
-      DelUserListTemp:[]//存储删除用户的
+      DelUserListTemp: [], //存储删除用户的
     };
   },
   mounted() {
@@ -605,6 +616,119 @@ export default {
         // }
       });
     },
+    // 动态修改 时间选择器的区间值  
+    changeChildDateArea(userInfo,index) {
+      // 项目成员安排的 可选时间区间
+      this.childDateArea = {
+        disabledDate: (time) => {
+          if (
+            this.formData.projectEndTime != "" &&
+            this.formData.projectStartTime != ""
+          ) {
+            // 判断此人是否已经在职在职在职
+            if (userInfo.status == 0) {
+              if (
+                this.date2Number(userInfo.inTime) >
+                this.date2Number(this.formData.projectStartTime + " 23:59:59")
+              ) {
+                // 如果入职时间是否 大于 项目起始时间
+                // 就采用 该人的入职日期 和 项目结束日期
+                // console.log("入职时间晚于项目起始时间")
+                return (
+                  time.getTime() >
+                    new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() <
+                    new Date(userInfo.inTime).getTime() - 8.64e7
+                );
+              } else {
+                // 如果入职时间是否 小于 项目起始时间
+                return (
+                  // 就采用 项目开始日期 和 项目结束日期
+                  time.getTime() >
+                    new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() <
+                    new Date(this.formData.projectStartTime).getTime() - 8.64e7
+                );
+              }
+            }
+            // 判断此人是否已经离职
+            if (userInfo.status == 1) {
+              if (
+                this.date2Number(userInfo.outTime) >
+                this.date2Number(this.formData.projectEndTime)
+              ) {
+                // 如果离职时间是否 大于 项目结束时间
+                return (
+                  // 就采用 项目开始日期 和 项目结束日期
+                  time.getTime() >
+                    new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() <
+                    new Date(this.formData.projectStartTime).getTime() - 8.64e7
+                );
+              } else {
+                // 如果离职时间 小于 项目结束时间
+                // 就采用 项目起始时间 该人的离职日期
+                return (
+                  time.getTime() > new Date(userInfo.outTime).getTime() ||
+                  time.getTime() <
+                    new Date(this.formData.projectStartTime).getTime() - 8.64e7
+                );
+              }
+            }
+          }
+        },
+      };
+    },
+    // 动态修改 默认的日期区间
+    changeAddUserDateArea(userInfo,index) {
+      // 项目成员安排的 可选时间区间
+          if (
+            this.formData.projectEndTime != "" &&
+            this.formData.projectStartTime != ""
+          ) {
+                console.log("有项目开始和结束日期")
+            // 判断此人是否已经在职在职在职
+            if (userInfo.status == 0) {
+              console.log("是在职");
+              if (
+                this.date2Number(userInfo.inTime) >
+                this.date2Number(this.formData.projectStartTime + " 23:59:59")
+              ) {
+                // 如果入职时间是否 大于 项目起始时间
+                // 就采用 该人的入职日期 和 项目结束日期
+                console.log("入职时间晚于项目起始时间")
+                //  this.addEditFormData.projectUserList[index].startEndTime = [userInfo.inTime,this.formData.projectEndTime]
+                return  [userInfo.inTime,this.formData.projectEndTime]
+              } else {
+                console.log("入职时间早于项目起始时间")
+                // 如果入职时间是否 小于 项目起始时间
+                return  [this.formData.projectStartTime,this.formData.projectEndTime]
+              }
+            }
+            // 实际上此段判断无用，原因是 查询用户的接口已经把
+            // 离职的员工给隔离了
+            // 判断此人是否已经离职
+            if (userInfo.status == 1) {
+              console.log("是离职");
+              if (
+                this.date2Number(userInfo.outTime) >
+                this.date2Number(this.formData.projectEndTime)
+              ) {
+                console.log("离职时间晚于项目结束时间，就拿项目结束时间")
+                // console.log("晚于项目起始时间")
+                // 如果离职时间是否 大于 项目结束时间
+                 return  [this.formData.projectStartTime,this.formData.projectEndTime]
+                 
+              } else {
+                // 如果离职时间 小于 项目结束时间
+                // 就采用 项目起始时间 该人的离职日期
+                console.log("离职时间早于项目起始时间，就拿最后的离职时间作为服务时间")
+               return  [this.formData.projectStartTime,userInfo.outTime]
+              }
+            }
+          }
+       
+    },
     // 添加人员之后  根据 对内 还是对外  设置 选择人员的成本
     // 存储到 单行的 新建字段 costNum 内 用于下一步存储  计算
     getUserCost(userId, index) {
@@ -617,6 +741,7 @@ export default {
           item.userNameAndPost = item.nickName + "（" + item.postName + "）";
           item.disabled = false;
         });
+        this.changeChildDateArea(res.data[0]);
         // formData.projectUserList[index].costNum
         // costNum 是我自己设置第一个值 用于存储 成本的单位
         //  对外 服务对象(1.对内，2.对外)
@@ -632,7 +757,8 @@ export default {
         //   oneUser.updateType = 1;
         //  this.formData.projectUserList[index] = oneUser
         if (this.formData.projectUserList[index].startEndTime?.length > 0) {
-          let dates = this.formData.projectUserList[index].startEndTime;
+          this.formData.projectUserList[index].startEndTime= this.changeAddUserDateArea(res.data[0],index);
+          let dates =this.formData.projectUserList[index].startEndTime
           this.constAll(dates, index);
         }
 
@@ -688,8 +814,11 @@ export default {
         this.formData.projectUserList[fatherIndex].workDayTemp;
       // console.log(tempWorkDay);
       // 顶部的 共计多少小时  多少天
-      this.formData.projectUserList[fatherIndex].workDay = (totalDay / 8).toFixed(2);
-      this.formData.projectUserList[fatherIndex].workTime = (totalTime).toFixed(2);
+      this.formData.projectUserList[fatherIndex].workDay = (
+        totalDay / 8
+      ).toFixed(2);
+      this.formData.projectUserList[fatherIndex].workTime =
+        totalTime.toFixed(2);
       // 顶部的 计划负荷 预计成本
       // console.log(totalDay);
       // console.log(tempWorkDay);
@@ -724,6 +853,11 @@ export default {
         return false;
       }
     },
+    /* 鼠标点击 日期触发 日期区间限制的方法*/
+    changeTimeArea(dates,index){
+      // console.log(this.formData.projectUserList[index]);
+      this.changeChildDateArea(this.formData.projectUserList[index])
+    },
     /*根据起始和结束 生成下面表格*/
     getTimeArea(dates, index) {
       // if(this.formData.projectUserList[index].userId==""){
@@ -732,6 +866,7 @@ export default {
       // }
       this.constAll(dates, index);
     },
+    // 公共计算方法
     constAll(dates, index) {
       let params = {
         startDate: dates[0],
@@ -831,13 +966,13 @@ export default {
         // TODO 上面基础信息填写好 再填写下面，因为需要用到上面的 服务对象和项目有效期
         if (valid) {
           let oneUser = this.deepClone(this.projectUserList);
-            oneUser.startTime = this.formData.projectStartTime
-            oneUser.endTime =  this.formData.projectEndTime
-            oneUser.startEndTime =  this.formData.projectTimeArea
+          oneUser.startTime = this.formData.projectStartTime;
+          oneUser.endTime = this.formData.projectEndTime;
+          oneUser.startEndTime = this.formData.projectTimeArea;
           // 修改类型（1.新增,2.删除,3.修改原数据）
           oneUser.updateType = 1;
           this.formData.projectUserList.push(oneUser);
-          this.$forceUpdate()
+          this.$forceUpdate();
         }
       });
     },
@@ -866,7 +1001,7 @@ export default {
             //     // 提交删除成功 无需操作什么 因为 需要审核
             //   }
             // });
-            this.DelUserListTemp.push(...params.projectUserList)
+            this.DelUserListTemp.push(...params.projectUserList);
             this.formData.projectUserList.splice(index, 1);
             // this.formData.projectUserList[index].updateType=2;
           }
@@ -896,7 +1031,7 @@ export default {
             // carrierId:this.temData.carrierId,
             // status:0
           };
-          parame.projectUserList.push(...this.DelUserListTemp)
+          parame.projectUserList.push(...this.DelUserListTemp);
           updateProjectUserAddEdit(parame).then((res) => {
             let { code, msg } = res;
             this.$message.success(msg);
@@ -1013,6 +1148,9 @@ export default {
   color: #e6a23c;
 }
 .priority1 {
+  color: #f56c6c;
+}
+.color4 {
   color: #f56c6c;
 }
 </style>

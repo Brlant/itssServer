@@ -1,6 +1,13 @@
 import { parseTime } from './ruoyi'
 
 /**
+ * 时间日志转时间戳
+ */
+ export function date2Number(date) {
+  date = date.toString(); //return false
+  return Date.parse(date)
+}
+/**
  * 表格时间格式化
  */
 export function formatDate(cellValue) {
