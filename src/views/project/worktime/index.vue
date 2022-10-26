@@ -8,6 +8,7 @@
         type="date"
         ref="timePick"
         @change="pickerChange"
+        @blur='clickDate'
         :clearable="false"
         :editable="false"
         placeholder="选择日期"
@@ -41,11 +42,11 @@
             <span v-for='(item,index) in plan' :key='index'>
               {{item.projectName}}{{`(${item.currentDayScheduleTime}h)`}}
               <span v-if='item.currentProjectTotalWorkTime<item.currentProjectScheduleTime'>
-                  <span style="color:#00A99D">{{',总体-'+item.currentProjectTotalWorkTime}}</span>
+                  <span style="color:#00A99D">{{',总体-'+(item.comparison)}}</span>
                   <span>小时</span>
               </span>
              <span  v-if='item.currentProjectTotalWorkTime>item.currentProjectScheduleTime'>
-                <span style="color:#FF435A">+{{',总体+'+item.currentProjectTotalWorkTime}}</span>
+                <span style="color:#FF435A">{{',总体+'+(item.comparison)}}</span>
                 <span>小时</span></span><span v-show="index < plan.length - 1">;</span>
             </span>
           </span>
@@ -136,10 +137,10 @@
             </div>
             <div style="width: 10%; text-align: center;display:inline-block">
              <div> <el-button class="editBtn" type="text"  @click="edit(item)" :disabled='item.status==1'>编辑</el-button></div>
-            <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>           
+            <div > <el-button type="text" class="delBtn"  @click='del(item)'  :disabled='item.status==1'>删除</el-button></div>
             </div>
             <div style='background:#f7d3d3;color:red;padding:5px 20px' v-if='item.status == 2 && item.rejectReason'>{{item.rejectReason}}</div>
-          </div>  
+          </div>
       </div>
       </div>
     </div>
@@ -149,7 +150,7 @@
       {{editId==-1 ? '新增' : '编辑'}}工时
     </div>
      <div style="width: 100%">
-      
+
         <div style="padding: 20px; display: flex;margin:10px 0;" v-for='(item,index) in datalist' :key="index"  class='time-style'>
           <div style="width: 90%;">
             <my-form :formList='item' :projectName='projectName' :workName='workName' :ref="index"></my-form>
@@ -158,7 +159,7 @@
             <div @click="add" class="child">添加</div>
             <div @click="remove(index)" class="child" v-if='datalist.length>1'>删除</div>
           </div>
-        </div>  
+        </div>
       </div>
       <div style="text-align:center">
          <el-button type="primary" @click='submit'>提交审核</el-button>
@@ -232,7 +233,7 @@ export default {
     let defaultDate=moment().format('YYYY-MM')
     this.getMarkDate(defaultDate)
     this.getProject()
-    this.workTypes()  
+    this.workTypes()
   },
 
   methods: {
@@ -265,6 +266,8 @@ export default {
     //获取工时
     queryProject(time){
       let data={workDate:time}
+      this.listTwo=[]
+      this.show=true
       queryTime(data).then(res=>{
           this.data=res.data
           this.list=res.data.currentDayTimeTrackList
@@ -273,11 +276,11 @@ export default {
             this.show=true
             this.listOne=this.list.filter((item,index)=>{
                 return index<2
-            })     
-          }else{          
+            })
+          }else{
           this.show=false
-          this.listOne= this.list        
-        }        
+          this.listOne= this.list
+        }
       })
     },
    async addEvent() {
@@ -286,7 +289,7 @@ export default {
     // document.querySelector('.el-month-table').addEventListener('click', () => {
     //   this.monthChange()
     // })
- 
+
     document.querySelectorAll("[aria-label='下个月'],[aria-label='上个月'],[aria-label='后一年'],[aria-label='前一年']")
       .forEach(item => item.addEventListener('click', () => {
       this.monthChange()
@@ -294,10 +297,10 @@ export default {
     this.setClick = true
   },
   monthChange() {
- 
+
     let dateClick=this.$refs['elPicker'].picker.date
     let timeDate=moment(dateClick).format('YYYY-MM')
-    
+
    this.getMarkDate(timeDate)
   },
   //获取日期
@@ -309,7 +312,7 @@ export default {
 //日期标记
      async initCustomDate (Date) {
        setTimeout(() => {
-    
+
          this.addEvent()
         //  this.customDateArr = ['2022-08-24', '2022-08-27', '2022-09-10', '2022-08-15']
        }, 100)
@@ -329,13 +332,15 @@ export default {
       console.log(111)
       this.listTwo=[]
       let time=moment(value).format('YYYY-MM-DD')
+       this.weekStart=time
+      this.weekLast=time
       this.workDate=moment(time, 'YYYY/M/D').format('YYYY-MM-DD')
       this.queryProject(time)
       if (value.getDay() === 0) {
         this.n = 6;
       } else {
         this.n = value.getDay() - 1;
-   
+
       }
       this.projectList = [];
       this.ticketList = [];
@@ -361,6 +366,11 @@ export default {
         );
       }
     },
+    clickDate(aa){
+      console.log('aa',aa.picker.date)
+        // let time=moment(aa.picker.date).format('YYYY-MM-DD')
+       this.pickerChange(aa.picker.date)
+    },
     getWeekNumber(d) {
       let date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
       date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
@@ -384,7 +394,7 @@ export default {
     },
     onTabClick(tab, event) {
       if (this.n === tab) return;
-      this.n = tab;  
+      this.n = tab;
       let time = this.weekList[tab].date;
       this.workDate=moment(time, 'YYYY/M/D').format('YYYY-MM-DD')
        this.queryProject(this.workDate)
@@ -449,7 +459,7 @@ export default {
     },
     remove(index){
       console.log(index)
-    
+
       this.datalist.splice(index,1)
         // this.datalist=[{}]
           this.datalist.forEach((v, i) => {
@@ -458,10 +468,10 @@ export default {
     },
     //编辑
   edit(item){
- 
+
     this.editId=item.id
     this.datalist.length=0
-    this.datalist.push(item) 
+    this.datalist.push(item)
   },
   //删除
   del(item){
@@ -486,8 +496,8 @@ export default {
     })
     const flag = flagList.every(v => v)
     if (!flag) return
- 
-  
+
+
     if(this.editId == -1){
         this.datalist.forEach(v=>{
           v.workDate=this.workDate
@@ -522,10 +532,10 @@ export default {
           this.$message.error(res.msg)
         }
       })
-    } 
+    }
   }
   },
- 
+
 };
 </script>
 <style lang='scss'>
@@ -588,7 +598,7 @@ cursor:pointer;
 .submitted-time{
  color:#708399;
  padding:10px 20px;
-display: flex; 
+display: flex;
 justify-content: space-between;
 div{
 margin:10px 0;
@@ -624,8 +634,8 @@ span{
 }
 
 .el-date-picker-custom {
-// 用了/deep/后不兼容ie,所以还是不要随便加上样式穿透,vue-cli3以上也不支持/deep/  
-// /deep/ 
+// 用了/deep/后不兼容ie,所以还是不要随便加上样式穿透,vue-cli3以上也不支持/deep/
+// /deep/
 .el-date-table td {
     padding: 10px 0;
   }

@@ -1,11 +1,14 @@
 <template>
     <div class='efficiency'>
-        <el-row  v-if='mangerJurisdiction || selfJurisdiction'>
-            <el-col :span='15'>
-                 <div class='header' >
+        <!-- <el-row  v-if='mangerJurisdiction || selfJurisdiction'>
+        
+            <el-col :span='13'> -->
+        <div style='display:flex;justify-content:space-between;' v-if='mangerJurisdiction || selfJurisdiction'>
+          
+                 <div class='header'  style='width:40%'>
                     <div>
-                        <i class='el-icon-arrow-left' v-if='selfJurisdiction && drillDowm' @click='goBack'></i>
-                        <div style="font-size:16px;color:#666666;display:inline-block"><i  @click="showMorTime" class='el-icon-date'></i><span v-if='dateRange' style="margin-left:15px;">{{dateRange}}</span></div>
+                        <i class='el-icon-arrow-left point' v-if='selfJurisdiction && drillDowm' @click='goBack'></i>
+                        <div style="font-size:16px;color:#666666;display:inline-block"><i  @click="showMorTime" class='el-icon-date point'></i><span v-if='dateRange' style="margin-left:15px;">{{dateRange}}</span></div>
                         <el-date-picker
                             class='timePickCss'
                             v-model="selectTimes"
@@ -18,34 +21,48 @@
                             @change="pickerChange">
                         </el-date-picker>
                     </div>
-                     </div>
-            </el-col>
-            <el-col :span='8'>
-                <div style="font-size:16px;color:#666666;">
-                    <el-form ref="form" :model="form" label-width="80px">
-                        <el-row>
-                            <el-col :span="12"  v-if='mangerJurisdiction || drillDowm'>
-                                <el-form-item label="人员" prop="userId" >
+                    </div>
+            <!-- </el-col>
+            
+            <el-col :span='11'> -->
+            
+                <div style="font-size:16px;color:#666666;width:50%"  v-if='mangerJurisdiction'>
+                    <el-form ref="form" :model="form" label-width="20%">
+                        <el-row >
+                            <el-col :span="12">
+                                <el-form-item label="人员" prop="userId"  width='30%'>
                                     <el-select v-model="form.userId"  size="medium"  placeholder="请选择人员" filterable clearable  @change='searchUser'>
                                         <el-option v-for='(item) in users' :key='item.userId' :value='item.userId' :label='item.nickName'></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="12"  v-if="mangerJurisdiction">
-                                <el-form-item label="部门" prop="deptId">
+                            <el-col :span="12">
+                                <el-form-item label="部门" prop="deptId" width='30%'>
                                     <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择部门" @input='searchDept'  @change='searchDept'/>
                                 </el-form-item>
                             </el-col>
                         </el-row>
+                          
+                    </el-form>
+              
+                </div>
+                <div  v-if='selfJurisdiction' style="font-size:16px;color:#666666;width:30%">
+                         <el-form  inline>
+                          <el-form-item label="人员" prop="userId" width='20%'>
+                                    <el-select v-model="form.userId"  size="medium"  placeholder="请选择人员" filterable clearable  @change='searchUser'>
+                                        <el-option v-for='(item) in users' :key='item.userId' :value='item.userId' :label='item.nickName'></el-option>
+                                    </el-select>
+                                </el-form-item>
                     </el-form>
                 </div>
-            </el-col>
-        </el-row>        
+            </div>
+            <!-- </el-col>
+        </el-row>         -->
         <!-- 部门效率 -->
         <div v-if="mangerJurisdiction">
             <div v-for="(item,index) in deptData" :key='index' class='table-style'>
                 <div class='name'>{{item.deptName}}</div>
-                <el-table v-if='item' :data="item.userList" border class="tableData myTable" style="width:100%">
+                <el-table v-if='item' :data="item.userList" border class="tableData" style="width:100%">
                     <el-table-column label="执行人员" align="center"   min-width='150' fixed="left">
                         <template  slot-scope="scope">
                             <span @click='nameClick(scope.row)' :class="[scope.row.username != '总计' ? 'colorname' : '']">{{scope.row.username}}</span>
@@ -96,7 +113,7 @@
         <div v-if='selfJurisdiction'>
             <div v-for="(item,index) in userData" :key='index'  class='table-style'>
                 <div class='name'>{{item.username}}</div>
-                <el-table :data="item.projectEfficiencyList" border class="tableData myTable" style="width:100%" :span-method="arraySpanMethod">
+                <el-table :data="item.projectEfficiencyList" border class="tableData" style="width:100%" :span-method="arraySpanMethod">
                     <el-table-column label="项目" align="center"   min-width='150' prop='projectName' fixed="left">
                          <template slot-scope="scope">
                             <span :class="['yuan','yuan'+scope.row.priority]"></span>
@@ -226,7 +243,8 @@ export default {
         },
         //初始时间
         defaultDate(){
-            let preOne=moment().subtract(1,'month').startOf('month').format('YYYY/MM/DD')
+            // let preOne=moment().subtract(1,'month').startOf('month').format('YYYY/MM/DD')
+            let preOne = moment().subtract(5, 'months').startOf('month').format('YYYY/MM/DD');
             let today=moment().format('YYYY/MM/DD')
             this.dateRange=`${preOne}-${today}`
             this.beginDate=moment(preOne).format('YYYY-MM-DD')
@@ -234,6 +252,7 @@ export default {
             this.userInfo=this.$store.state.user.user          
            if(this.mangerJurisdiction){
             this.queryTable()
+            // this.queryTablehasYieldNum()
            }else if(this.selfJurisdiction && this.drillDowm){
            
             this.userId=this.form.userId
@@ -263,6 +282,7 @@ export default {
             this.endDate=moment(val[1]).format('YYYY-MM-DD')
             if(this.mangerJurisdiction){            
             this.queryTable()
+            // this.queryTablehasYieldNum()
 
             }else if(this.selfJurisdiction && this.drillDowm){
                 this.queryTableBySelf()
@@ -275,6 +295,7 @@ export default {
         searchUser(){
             if(this.mangerJurisdiction){
                 this.queryTable()
+                // this.queryTablehasYieldNum()
             }else{
                this.userId=this.form.userId
                 this.queryTableBySelf()
@@ -283,20 +304,24 @@ export default {
         //通过部门搜索
         searchDept(){
             this.queryTable()
+            // this.queryTablehasYieldNum()
         },
         //查询部门表格方法
-        queryTable(){
+        queryTablehasYieldNum(){
+            this.deptData=[]
             this.months=[]
             let data={
                 startDate:this.beginDate,
                 endDate:this.endDate,
                 userId:this.form.userId,
                 deptId:this.form.deptId,
+                hasYieldNum:true
             }
             departmentQuery(data).then(res=>{
                 if(res.code==200){
                     if(res.data){
                         this.deptData=res.data
+                        console.log(this.deptData,'2222222222222')
                             let value1 = res.data.find(item => item.userList.length)
                              if(value1){
                                 let value2 = value1.userList.find(item => item.monthEfficiencyList.length)
@@ -317,6 +342,42 @@ export default {
               
             })
         },
+         queryTable(){
+            this.months=[]
+            this.deptData=[]
+            let data={
+                startDate:this.beginDate,
+                endDate:this.endDate,
+                userId:this.form.userId,
+                deptId:this.form.deptId,
+                 hasYieldNum:false
+            }
+            departmentQuery(data).then(res=>{
+                if(res.code==200){
+                    if(res.data){
+                        this.deptData=res.data
+                         console.log(this.deptData,'1111111')
+                            let value1 = res.data.find(item => item.userList.length)
+                             if(value1){
+                                let value2 = value1.userList.find(item => item.monthEfficiencyList.length)
+                                if (value2) {
+                                    value2.monthEfficiencyList.forEach((v,i)=>{  
+                                    this.months.push(v.month)   
+                                    })
+                                }
+                            }
+                            // let monthDate=res.data[0].userList[0].monthEfficiencyList
+                            // monthDate.forEach((v,i)=>{   
+                            //     this.months.push(v.month)   
+                            // })
+                            // console.log(this.months)
+                            this.queryTablehasYieldNum()
+                        }
+                       
+                }
+              
+            })
+        },
         //查询个人效率表格方法
         queryTableBySelf(){
             this.months=[]
@@ -324,15 +385,54 @@ export default {
                 startDate:this.beginDate,
                 endDate:this.endDate,
                 userId:this.userId,
+                hasYieldNum:false
             }
             userQuery(data).then(res=>{
                 if(res.code==200){
                     if(res.data){
                         this.userData=res.data
+                          console.log( this.userData,111111111111)
                          let value1 = res.data.find(item => item.projectEfficiencyList.length)
                              if(value1){
                                 let value2 = value1.projectEfficiencyList.find(item => item.monthEfficiencyList.length)
-                                console.log(value2,11111)
+                                // console.log(value2,11111)
+                                if (value2) {
+                                    value2.monthEfficiencyList.forEach((v,i)=>{  
+                                    this.months.push(v.month)   
+                                    })
+                                }
+                            }
+                        // if(res.data[0]){
+                        //     let monthDate=res.data[0].projectEfficiencyList[0].monthEfficiencyList
+                        //     monthDate.forEach((v,i)=>{   
+                        //         this.months.push(v.month)   
+                        //     })
+                        // }
+                       
+                    }
+                   this.queryTableBySelfYieldNum()
+                }
+              
+            })
+        },
+         queryTableBySelfYieldNum(){
+            this.months=[]
+             let data={
+                startDate:this.beginDate,
+                endDate:this.endDate,
+                userId:this.userId,
+                hasYieldNum:true
+
+            }
+            userQuery(data).then(res=>{
+                if(res.code==200){
+                    if(res.data){
+                        this.userData=res.data
+                         console.log( this.userData,2222222222)
+                         let value1 = res.data.find(item => item.projectEfficiencyList.length)
+                             if(value1){
+                                let value2 = value1.projectEfficiencyList.find(item => item.monthEfficiencyList.length)
+                                // console.log(value2,11111)
                                 if (value2) {
                                     value2.monthEfficiencyList.forEach((v,i)=>{  
                                     this.months.push(v.month)   
@@ -375,6 +475,7 @@ export default {
             this.drillDowm=false
             this.form.userId=''
             this.queryTable()
+            // this.queryTablehasYieldNum()
         },
         //合计列合并
         arraySpanMethod({ row, column, rowIndex, columnIndex }){
@@ -437,7 +538,8 @@ export default {
   background-color: #f56c6c;
 }
 .colorname{
-color:#3D7DFF
+color:#3D7DFF;
+cursor:pointer;
 }
 .table-style{
     background:#ffffff;
@@ -449,20 +551,18 @@ color:#3D7DFF
 .efficiency{
     thead>:first-child  .is-leaf{
     background:#E8E8F4!important;
-  }
-}
-.myTable .el-table__body-wrapper {
-  margin-top: 0px;
+    // .myTable .el-table__body-wrapper {
+//   margin-top: 0px;
   // z-index: 2;
-}
-.myTable .el-table__fixed {
+// }
+// .myTable .el-table__fixed {
   // z-index: 5;
 //  bottom: 0px !important;
 //  margin-top: 0px;
 //        box-sizing: content-box;
 //         padding-bottom: 20px;
-height:220px!important;
-    }
+// height:220px!important;
+    // }
 // .myTable .el-table__fixed-right {
 //   // z-index: 5;
 //  bottom: 0px !important;
@@ -473,4 +573,7 @@ height:220px!important;
 // .myTable .el-table__fixed-right .el-table__fixed-body-wrapper{
 //   padding: 5px 0;
 // }
+  }
+}
+
 </style>
