@@ -8,6 +8,7 @@
         type="date"
         ref="timePick"
         @change="pickerChange"
+        @blur='clickDate'
         :clearable="false"
         :editable="false"
         placeholder="选择日期"
@@ -265,6 +266,8 @@ export default {
     //获取工时
     queryProject(time){
       let data={workDate:time}
+      this.listTwo=[]
+      this.show=true
       queryTime(data).then(res=>{
           this.data=res.data
           this.list=res.data.currentDayTimeTrackList
@@ -329,6 +332,8 @@ export default {
       console.log(111)
       this.listTwo=[]
       let time=moment(value).format('YYYY-MM-DD')
+       this.weekStart=time
+      this.weekLast=time
       this.workDate=moment(time, 'YYYY/M/D').format('YYYY-MM-DD')
       this.queryProject(time)
       if (value.getDay() === 0) {
@@ -360,6 +365,11 @@ export default {
           )
         );
       }
+    },
+    clickDate(aa){
+      console.log('aa',aa.picker.date)
+        // let time=moment(aa.picker.date).format('YYYY-MM-DD')
+       this.pickerChange(aa.picker.date)
     },
     getWeekNumber(d) {
       let date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
