@@ -37,9 +37,9 @@
                             <span class='span2'>{{item.approvalPendingWorkTimeTotal}}</span>小时</span>
                     </div>
                 </div>
-                <el-table :data="item.memberList" border style="width: 100%"  v-if='thisIndex.indexOf (index)!=-1'    :header-cell-style="{'text-align':'center'}"
+                <el-table :data="item.memberList" border  v-if='thisIndex.indexOf (index)!=-1' style="width: 100%"   :header-cell-style="{'text-align':'center'}"
                     :cell-style="{'text-align':'center'}">
-                    <el-table-column  v-for="(i,index) in tableHead" :key="index" :label="i.label" :property='i.property'> 
+                    <el-table-column  v-for="(i,index) in tableHead" :key="index" :label="i.label" :property='i.property' :min-width='i.label=="所属部门"? "250" : "200"'> 
                         <template slot-scope="scope">
                             <div class="row">
                                 <!-- <div v-html="matchData(scope.row, index).content" class="html"></div> -->
@@ -307,10 +307,10 @@ export default {
     min-height:30px;
     // line-height:60px;
 }
- .left,.right{
-    height: 15px;
+//  .left,.right{
+//     height: 15px;
    
-}
+// }
 }
 
 </style>
