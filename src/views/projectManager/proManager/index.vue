@@ -126,18 +126,18 @@
             <span :class="[scope.row.isNew==1?'isNew':'']"></span>
             <span :class="['yuan','yuan'+scope.row.priority]"></span>
             {{ scope.row.projectName }}
-           
+
           </template>
         </el-table-column>
         <el-table-column
           prop="projectStatus"
           fixed
-          sortable 
+          sortable
           label="项目状态"
           width="100"
         >
           <template slot-scope="scope">
-            <span :class="[scope.row.projectStatus== 4 ? 'color4' : '']">{{ scope.row.projectStatus | filterProjectStatus }}</span>        
+            <span :class="[scope.row.projectStatus== 4 ? 'color4' : '']">{{ scope.row.projectStatus | filterProjectStatus }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -218,7 +218,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="jdSchedule" label="进度偏差" width="130">
-          <template slot-scope="scope"> {{ scope.row.jdSchedule }}% </template>
+          <template slot-scope="scope"> {{ scope.row.jdSchedule }} </template>
         </el-table-column>
 
         <el-table-column label="操作" width="120" fixed="right">
@@ -502,9 +502,9 @@ export default {
           sums[index] = "总计";
           return;
         }
-        if (index ===2||index ===3) { 
+        if (index ===2||index ===3) {
             sums[index] = "--";
-          } 
+          }
         const values = data.map((item) => Number(item[column.property]));
         // 总计核心代码块
         if (!values.every((value) => isNaN(value))) {
@@ -524,7 +524,7 @@ export default {
           ) {
             sums[index] =sums[index].toFixed(2)
             sums[index] += "人日";
-          } 
+          }
           else if (
             column.property == "ysCost" ||
             column.property == "jhCost" ||
@@ -534,7 +534,7 @@ export default {
           ) {
             sums[index] =sums[index].toFixed(2)
             sums[index] += "";
-          } 
+          }
           else {
             sums[index] = "--";
           }
@@ -633,13 +633,13 @@ export default {
     display: inline-block;
     position: absolute;
 }
-  .myTable 
+  .myTable
        /deep/  .el-table__fixed{
         height:auto !important;
         bottom:17px !important;
-         
-  
-  }     
+
+
+  }
 </style>
 <style lang="scss">
 .app-containers{
@@ -651,12 +651,12 @@ export default {
   }
   .myTable .el-table__body-wrapper{
         margin-top: 0px;
-        z-index:2;       
+        z-index:2;
     }
  .myTable .el-table__fixed-footer-wrapper tbody td.el-table__cell{
   padding: 9px;
- }   
+ }
 }
- 
-       
+
+
 </style>
