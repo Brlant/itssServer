@@ -1,10 +1,10 @@
 <template>
     <div class='efficiency'>
         <!-- <el-row  v-if='mangerJurisdiction || selfJurisdiction'>
-        
+
             <el-col :span='13'> -->
         <div style='display:flex;justify-content:space-between;' v-if='mangerJurisdiction || selfJurisdiction'>
-          
+
                  <div class='header'  style='width:40%'>
                     <div>
                         <i class='el-icon-arrow-left point' v-if='selfJurisdiction && drillDowm' @click='goBack'></i>
@@ -16,16 +16,16 @@
                             range-separator="至"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期"
-                            ref='timePick'                  
+                            ref='timePick'
                             :clearable="false"
                             @change="pickerChange">
                         </el-date-picker>
                     </div>
                     </div>
             <!-- </el-col>
-            
+
             <el-col :span='11'> -->
-            
+
                 <div style="font-size:16px;color:#666666;width:50%"  v-if='mangerJurisdiction'>
                     <el-form ref="form" :model="form" label-width="20%">
                         <el-row >
@@ -42,9 +42,9 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                          
+
                     </el-form>
-              
+
                 </div>
                 <div  v-if='selfJurisdiction' style="font-size:16px;color:#666666;width:30%">
                          <el-form  inline>
@@ -73,7 +73,7 @@
                         <el-table-column label="计划负荷" align="center"   min-width='150'>
                             <template  slot-scope="scope">
                                 <span>{{scope.row.monthEfficiencyList[indexs].scheduleLoad+'%'}}</span><span>{{'('+scope.row.monthEfficiencyList[indexs].scheduleDay+'人日)'}}</span>
-                            
+
                             </template>
                         </el-table-column>
                         <el-table-column label="实际负荷" align="center"   min-width='150'>
@@ -107,7 +107,7 @@
                     </el-table-column>
                 </el-table>
             </div>
-           
+
         </div>
         <!-- 个人效率 -->
         <div v-if='selfJurisdiction'>
@@ -123,7 +123,7 @@
                     </el-table-column>
                      <el-table-column label="项目状态" align="center"   min-width='150' prop='projectStatus' fixed="left">
                          <template slot-scope="scope">
-                            <span :class="[scope.row.projectStatus== 4 ? 'color4' : '']">{{ scope.row.projectStatus | filterProjectStatus }}</span>        
+                            <span :class="[scope.row.projectStatus== 4 ? 'color4' : '']">{{ scope.row.projectStatus | filterProjectStatus }}</span>
                         </template>
 
                     </el-table-column>
@@ -132,7 +132,7 @@
                          <el-table-column label="计划负荷" align="center"   min-width='150'>
                             <template  slot-scope="{row}">
                                 <span>{{row.monthEfficiencyList[indexs].scheduleLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[indexs].scheduleDay+'人日)'}}</span>
-                            
+
                             </template>
                         </el-table-column>
                         <el-table-column label="实际负荷" align="center"   min-width='150'>
@@ -158,7 +158,7 @@
                             </template>
                         </el-table-column>
                     </el-table-column>
-                   
+
                 </el-table>
             </div>
         </div>
@@ -202,11 +202,11 @@ export default {
             deptOptions:[]
         }
     },
-    created(){       
-        console.log(this.$store.state.user.user.userId)    
-        this.queryUser() 
-        this.getDeptTree()   
-        // this.drillDowm=this.isJurisdiction('common') ? false : true      
+    created(){
+        console.log(this.$store.state.user.user.userId)
+        this.queryUser()
+        this.getDeptTree()
+        // this.drillDowm=this.isJurisdiction('common') ? false : true
         // this.selfJurisdiction=this.isJurisdiction('common')
         // this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')
          if(this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')){
@@ -219,7 +219,7 @@ export default {
         //   this.mangerJurisdiction=this.isJurisdiction('admin') || this.isJurisdiction('operatemanage')
         this.defaultDate()
     },
-    methods:{   
+    methods:{
         workLoadStyle(data){
             if(data.workLoad>data.scheduleLoad){
                 return 'piancha2'
@@ -249,12 +249,12 @@ export default {
             this.dateRange=`${preOne}-${today}`
             this.beginDate=moment(preOne).format('YYYY-MM-DD')
             this.endDate=moment(today,'YYYY/MM/DD').format('YYYY-MM-DD')
-            this.userInfo=this.$store.state.user.user          
+            this.userInfo=this.$store.state.user.user
            if(this.mangerJurisdiction){
             this.queryTable()
             // this.queryTablehasYieldNum()
            }else if(this.selfJurisdiction && this.drillDowm){
-           
+
             this.userId=this.form.userId
             this.queryTableBySelf()
            }else{
@@ -268,7 +268,7 @@ export default {
             this.$refs.timePick.$refs.reference.childNodes[3].focus()
         },
         //选择时间调用
-        pickerChange(val){   
+        pickerChange(val){
             let value=[]
                 val.forEach(v=>{
                     value.push(moment(v).format('YYYY/MM/DD'))
@@ -280,7 +280,7 @@ export default {
             }
             this.beginDate=moment(val[0]).format('YYYY-MM-DD')
             this.endDate=moment(val[1]).format('YYYY-MM-DD')
-            if(this.mangerJurisdiction){            
+            if(this.mangerJurisdiction){
             this.queryTable()
             // this.queryTablehasYieldNum()
 
@@ -289,7 +289,7 @@ export default {
            }else {
                this.userId=this.userInfo.userId
                 this.queryTableBySelf()
-           }           
+           }
         },
         //通过人员搜索
         searchUser(){
@@ -299,7 +299,7 @@ export default {
             }else{
                this.userId=this.form.userId
                 this.queryTableBySelf()
-            }           
+            }
         },
         //通过部门搜索
         searchDept(){
@@ -325,20 +325,20 @@ export default {
                              if(value1){
                                 let value2 = value1.userList.find(item => item.monthEfficiencyList.length)
                                 if (value2) {
-                                    value2.monthEfficiencyList.forEach((v,i)=>{  
-                                    this.months.push(v.month)   
+                                    value2.monthEfficiencyList.forEach((v,i)=>{
+                                    this.months.push(v.month)
                                     })
                                 }
                             }
                             // let monthDate=res.data[0].userList[0].monthEfficiencyList
-                            // monthDate.forEach((v,i)=>{   
-                            //     this.months.push(v.month)   
+                            // monthDate.forEach((v,i)=>{
+                            //     this.months.push(v.month)
                             // })
                             // console.log(this.months)
                         }
-                       
+
                 }
-              
+
             })
         },
          queryTable(){
@@ -360,22 +360,23 @@ export default {
                              if(value1){
                                 let value2 = value1.userList.find(item => item.monthEfficiencyList.length)
                                 if (value2) {
-                                    value2.monthEfficiencyList.forEach((v,i)=>{  
-                                    this.months.push(v.month)   
+                                    value2.monthEfficiencyList.forEach((v,i)=>{
+                                    this.months.push(v.month)
                                     })
                                 }
                             }
                             // let monthDate=res.data[0].userList[0].monthEfficiencyList
-                            // monthDate.forEach((v,i)=>{   
-                            //     this.months.push(v.month)   
+                            // monthDate.forEach((v,i)=>{
+                            //     this.months.push(v.month)
                             // })
                             // console.log(this.months)
-                            this.queryTablehasYieldNum()
+                            //this.queryTablehasYieldNum()
                         }
-                       
+
                 }
-              
+
             })
+            this.queryTablehasYieldNum()
         },
         //查询个人效率表格方法
         queryTableBySelf(){
@@ -396,22 +397,22 @@ export default {
                                 let value2 = value1.projectEfficiencyList.find(item => item.monthEfficiencyList.length)
                                 // console.log(value2,11111)
                                 if (value2) {
-                                    value2.monthEfficiencyList.forEach((v,i)=>{  
-                                    this.months.push(v.month)   
+                                    value2.monthEfficiencyList.forEach((v,i)=>{
+                                    this.months.push(v.month)
                                     })
                                 }
                             }
                         // if(res.data[0]){
                         //     let monthDate=res.data[0].projectEfficiencyList[0].monthEfficiencyList
-                        //     monthDate.forEach((v,i)=>{   
-                        //         this.months.push(v.month)   
+                        //     monthDate.forEach((v,i)=>{
+                        //         this.months.push(v.month)
                         //     })
                         // }
-                       
+
                     }
                    this.queryTableBySelfYieldNum()
                 }
-              
+
             })
         },
          queryTableBySelfYieldNum(){
@@ -433,22 +434,22 @@ export default {
                                 let value2 = value1.projectEfficiencyList.find(item => item.monthEfficiencyList.length)
                                 // console.log(value2,11111)
                                 if (value2) {
-                                    value2.monthEfficiencyList.forEach((v,i)=>{  
-                                    this.months.push(v.month)   
+                                    value2.monthEfficiencyList.forEach((v,i)=>{
+                                    this.months.push(v.month)
                                     })
                                 }
                             }
                         // if(res.data[0]){
                         //     let monthDate=res.data[0].projectEfficiencyList[0].monthEfficiencyList
-                        //     monthDate.forEach((v,i)=>{   
-                        //         this.months.push(v.month)   
+                        //     monthDate.forEach((v,i)=>{
+                        //         this.months.push(v.month)
                         //     })
                         // }
-                       
+
                     }
-                    
+
                 }
-              
+
             })
         },
         //下钻
@@ -487,7 +488,7 @@ export default {
             }
         }
 
-   
+
     }
 }
 </script>
