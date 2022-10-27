@@ -155,7 +155,7 @@ export default{
             val.forEach(v=>{
                 value.push(moment(v).format('YYYY/MM/DD'))
             })
-         
+
             this.dateRange=`${value[0]}-${value[1]}`
            this.beginDate=moment(val[0]).format('YYYY-MM-DD')
            this.endDate=moment(val[1]).format('YYYY-MM-DD')
@@ -170,7 +170,7 @@ export default{
            this.$emit('datailParent',query)
         },
          pass(val){
-             if(this.queryId.includes(val.id)){
+             if(this.queryId.includes(val.projectId)){
                  let data={
                     trackId:val.id,
                     approved:true
@@ -179,11 +179,11 @@ export default{
              }else{
                this.$message.error('没有审批权限')
              }
-        
+
 
         },
         noPass(val){
-            if(this.queryId.includes(val.id)){
+            if(this.queryId.includes(val.projectId)){
             this.trackId=val.id
             this.dialogVisible=true
             }else{
