@@ -2,7 +2,7 @@
     <div class="details">
         <div class='header'>
             <div>
-                <div style="font-size:16px;color:#666666;"><i  @click="showMorTime" class='el-icon-date'></i><span v-if='dateRange' style="margin-left:15px;">{{dateRange}}</span></div>
+                <div style="font-size:16px;color:#666666;"><i  @click="showMorTime" class='el-icon-date'></i><span style="margin-left:15px;">{{dateRange}}</span></div>
                 <el-date-picker
                     class='timePickCss'
                     v-model="selectTime"
@@ -152,11 +152,8 @@ export default{
             val.forEach(v=>{
                 value.push(moment(v).format('YYYY/MM/DD'))
             })
-           if(value[0]==value[1]){
-                this.dateRange=''
-           }else{
+         
             this.dateRange=`${value[0]}-${value[1]}`
-           }
            this.beginDate=moment(val[0]).format('YYYY-MM-DD')
            this.endDate=moment(val[1]).format('YYYY-MM-DD')
           this.searchParent()

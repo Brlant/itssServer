@@ -303,6 +303,7 @@
                       size="mini"
                       :style="{ width: '100px' }"
                       v-model="UserScheduleList.workTime"
+                       @input.native="changeInput($event)"
                       :min="0"
                       :max="24"
                       @change="
@@ -551,6 +552,12 @@ export default {
     
   },
   methods: {
+     changeInput(e) {
+            if (e.target.value.indexOf('.') >= 0) {
+                e.target.value = e.target.value.substring(0, e.target.value.indexOf('.') + 2);
+                console.log( e.target.value,'ssssssss')
+            }
+        },
         // 动态修改 时间选择器的区间值  
     changeChildDateArea(userInfo,index) {
       // 项目成员安排的 可选时间区间

@@ -339,6 +339,7 @@
                   v-model="UserScheduleList.workTime"
                   :min="0"
                   :max="24"
+                  @input.native="changeInput($event)"
                   @change="
                     (number) => {
                       changeDayTime(
@@ -576,6 +577,12 @@ export default {
     // this.addUserListHandel()
   },
   methods: {
+      changeInput(e) {
+            if (e.target.value.indexOf('.') >= 0) {
+                e.target.value = e.target.value.substring(0, e.target.value.indexOf('.') + 2);
+                console.log( e.target.value,'ssssssss')
+            }
+        },
     init() {
       let projectId = this.$route.query.projectId;
       proDetailBFEdit(projectId).then((res) => {
