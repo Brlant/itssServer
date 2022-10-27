@@ -234,8 +234,8 @@
                     :value="user.userId"
                     :disabled="user.disabled"
                   ></el-option>
-                </el-select> </el-form-item
-            ></el-col>
+                </el-select> </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item
                 label=""
@@ -277,8 +277,7 @@
             <el-col :span="3"
               ><div class="colText2">
                 <el-button size="mini" @click="DelUserList(addUserListindex)" type="error"
-                  >删除</el-button
-                >
+                  >删除</el-button>
               </div>
             </el-col>
           </el-row>
@@ -303,6 +302,7 @@
                   v-model="UserScheduleList.workTime"
                   :min="0"
                   :max="24"
+                  @input.native="changeInput($event)"
                   @change="
                     (number) => {
                       changeDayTime(
@@ -553,8 +553,15 @@ export default {
     // this.addUserListHandel()
   },
   methods: {
-    // 动态修改 时间选择器的区间值
-    changeChildDateArea(userInfo, index) {
+ 
+    changeInput(e) {
+            if (e.target.value.indexOf('.') >= 0) {
+                e.target.value = e.target.value.substring(0, e.target.value.indexOf('.') + 2);
+                console.log( e.target.value,'ssssssss')
+            }
+        },
+        // 动态修改 时间选择器的区间值  
+    changeChildDateArea(userInfo,index) {
       // 项目成员安排的 可选时间区间
       this.childDateArea = {
         disabledDate: (time) => {
