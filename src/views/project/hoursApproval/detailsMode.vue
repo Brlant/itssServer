@@ -101,7 +101,7 @@ import moment from "moment";
 import "moment/locale/zh-cn";
 import { datailApproval } from '@/api/workproject/approval.js'
 export default{
-    props:['detailDatas'],
+    props:['detailDatas','queryId','start','end'],
     data(){
         return{
             selectTime:'',
@@ -119,6 +119,9 @@ export default{
     },
    created(){
      this.projectdirector=this.isJurisdiction('projectdirector')
+     let a=moment(this.start,'YYYY-MM-DD').format('YYYY/MM/DD')
+    let b=moment(this.end,'YYYY-MM-DD').format('YYYY/MM/DD')
+     this.dateRange=a+'-'+b
    },
     methods:{
             filterStatus(item){
@@ -167,18 +170,25 @@ export default{
            this.$emit('datailParent',query)
         },
          pass(val){
-            let data={
-                trackId:val.id,
-                approved:true
-
-            }
-
-            this.approval2(data)
+             if(this.queryId.includes(val.id)){
+                 let data={
+                    trackId:val.id,
+                    approved:true
+                }
+             this.approval2(data)
+             }else{
+               this.$message.error('没有审批权限')
+             }
+        
 
         },
         noPass(val){
+            if(this.queryId.includes(val.id)){
             this.trackId=val.id
             this.dialogVisible=true
+            }else{
+                 this.$message.error('没有审批权限')
+            }
         },
         surenoPass(){
             let data={
