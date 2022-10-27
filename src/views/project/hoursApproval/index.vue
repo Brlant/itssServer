@@ -58,6 +58,7 @@ export default {
           projectName:name,
           workDate:time
         }
+       
          approvalItems(data).then(res=>{
           if(res.data){
               this.parentData=res.data
@@ -72,8 +73,10 @@ export default {
        
       },
     //详情模式
-    detailMode(data){
-      approvalMonth(data).then(res=>{
+    detailMode(date){
+      console.log(date,'ddddd')
+       this.queryDetail=date
+      approvalMonth(date).then(res=>{
         if(res.code==200){
           if(res.data){
             this.detailData=res.data
