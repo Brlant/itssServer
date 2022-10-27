@@ -355,7 +355,7 @@ export default {
                  hasYieldNum:false
             }
             departmentQuery(data).then(res=>{
-                
+
                 if(res.code==200){
                       this.months=[]
                     if(res.data){
@@ -416,10 +416,11 @@ export default {
                         // }
 
                     }
-                   this.queryTableBySelfYieldNum()
+                    //this.queryTableBySelfYieldNum()
                 }
 
             })
+            this.queryTableBySelfYieldNum()
         },
          queryTableBySelfYieldNum(){
             this.months=[]
