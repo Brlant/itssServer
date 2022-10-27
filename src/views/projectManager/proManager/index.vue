@@ -284,8 +284,8 @@ import {
 import { getMonthStartEnd ,getToday} from "@/utils/index";
 export default {
   data() {
-    let startDate = getMonthStartEnd("start");
-    let endDate = getMonthStartEnd("endD");
+    let startDate = ''//getMonthStartEnd("start");
+    let endDate = ''//getMonthStartEnd("endD");
     return {
       realWorkActive: false,
       realFormData: {
@@ -352,7 +352,7 @@ export default {
         // 优先级（1.最高，2.高，3.普通，4.较低）
         priority: "",
         // 开始和结束时间
-        projectStartEndTime: [startDate, endDate],
+        projectStartEndTime:'',// [startDate, endDate],
         // 项目开始时间
         projectStartTime: startDate,
         // 项目结束时间
