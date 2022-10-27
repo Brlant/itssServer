@@ -20,46 +20,64 @@
 export default {
   data() {
     return {
-      tableData: []
+      tableData: [],
+      qaList: [
+        {id:1, qaNumber: 123 },
+        {id:2, qaNumber: 223 },
+        {id:3, qaNumber: 323 },
+        {id:4, qaNumber: 423 },
+      ],
     };
   },
   mounted() {
-     setTimeout(() => {
-            this.init()
-        }, 1200)
+    setTimeout(() => {
+      this.init();
+    }, 1200);
   },
   methods: {
-      init() {
-            // 假装我是Axios
-            this.tableData.push({
-                date: '2016-05-02',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄', 
-                qnumber: ""
-            }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄',
-                    qnumber: ""
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄',
-                    qnumber: ""
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄',
-                    qnumber: ""
-                })
-           // 假装请求成功后
-          setTimeout(()=>{
-               this.tableData.map((item,i)=>{
-               item.qnumber = "123"
-           })
-          },1300)     
-
+    init() {
+      // 假装我是Axios
+      this.tableData.push(
+        {
+          date: "2016-05-02",
+          name: "王小虎1",
+          address: "上海市普陀区金沙江路 1518 弄",
+          qnumber: "",
+          id:1
+        },
+        {
+          date: "2016-05-04",
+          name: "王小虎2",
+          address: "上海市普陀区金沙江路 1517 弄",
+          qnumber: "",
+          id:2
+        },
+        {
+          date: "2016-05-01",
+          name: "王小虎3",
+          address: "上海市普陀区金沙江路 1519 弄",
+          qnumber: "",
+          id:3
+        },
+        {
+          date: "2016-05-03",
+          name: "王小虎4",
+          address: "上海市普陀区金沙江路 1516 弄",
+          qnumber: "",
+          id:4
         }
+      );
+      // 假装请求成功后
+      setTimeout(() => {
+        this.tableData.map((item, i) => {
+          this.qaList.map((jtem, j) => {
+            if(item.id==jtem.id){
+              item.qnumber = jtem.qaNumber;
+            }
+          });
+        });
+      }, 1300);
+    },
   },
 
   beforeCreate() {
