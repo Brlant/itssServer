@@ -308,7 +308,6 @@ export default {
         },
         //查询部门表格方法
         queryTablehasYieldNum(){
-            this.deptData=[]
             this.months=[]
             let data={
                 startDate:this.beginDate,

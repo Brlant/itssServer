@@ -7,6 +7,14 @@ export function approvalItems(query) {
       params: query
     })
 }
+// 权限
+export function listByUserId(query) {
+  return request({
+    url: '/projectManage/project/listByUserId',
+    method: 'get',
+    params: query
+  })
+}
 //精简模式审批
 export function approval(data) {
     return request({

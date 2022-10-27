@@ -93,7 +93,7 @@ import "moment/locale/zh-cn";
 import handleTableData from '@/utils/handleTableData'
 import { approval } from '@/api/workproject/approval.js'
 export default {
-    props:['childData'],
+    props:['childData','queryId'],
     data(){
         return {
             today:'',
@@ -175,23 +175,32 @@ export default {
             }
         },
         agree(val,row,id){
-            let data={
-                userId:row.userId,
-                workDate:val.workDate,
-                workTime:val.approvalPendingWorkTime,
-                approved:true,
-                projectId:id
-
-            }   
+            if(this.queryId.includes(id)){
+                let data={
+                    userId:row.userId,
+                    workDate:val.workDate,
+                    workTime:val.approvalPendingWorkTime,
+                    approved:true,
+                    projectId:id
+                }   
             this.approval1(data)
+            }else{
+                this.$message.error('没有审批权限')
+            }
+          
          
         },
 
         reject(val,row,id){
-            this.val=val
-            this.row=row
-            this.id=id
-            this.dialogVisible=true
+            if(this.queryId.includes(id)){
+                 this.val=val
+                this.row=row
+                this.id=id
+                this.dialogVisible=true
+               }else{
+                 this.$message.error('没有审批权限')
+               }
+           
         },
         sureJect(){
              let data={
