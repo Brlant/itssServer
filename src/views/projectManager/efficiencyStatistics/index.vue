@@ -71,7 +71,7 @@
                     </el-table-column>
                     <el-table-column :label="item" align="center" v-for="(item,indexs) in months" :key='indexs'>
                         <el-table-column label="计划负荷" align="center"   min-width='150'>
-                            <template  slot-scope="scope">
+                            <template  slot-scope="scope" v-if='scope.row.monthEfficiencyList[indexs]'>
                                 <span>{{scope.row.monthEfficiencyList[indexs].scheduleLoad+'%'}}</span><span>{{'('+scope.row.monthEfficiencyList[indexs].scheduleDay+'人日)'}}</span>
 
                             </template>
@@ -319,6 +319,9 @@ export default {
             departmentQuery(data).then(res=>{
                 if(res.code==200){
                     if(res.data){
+                        this.deptData=[]
+                        this.months=[]
+                        console.log( this.deptData,' this.deptData')
                         this.deptData=res.data
                         console.log(this.deptData,'2222222222222')
                             let value1 = res.data.find(item => item.userList.length)
@@ -352,7 +355,9 @@ export default {
                  hasYieldNum:false
             }
             departmentQuery(data).then(res=>{
+                
                 if(res.code==200){
+                      this.months=[]
                     if(res.data){
                         this.deptData=res.data
                          console.log(this.deptData,'1111111')
@@ -390,6 +395,7 @@ export default {
             userQuery(data).then(res=>{
                 if(res.code==200){
                     if(res.data){
+                         this.months=[]
                         this.userData=res.data
                           console.log( this.userData,111111111111)
                          let value1 = res.data.find(item => item.projectEfficiencyList.length)
@@ -426,6 +432,7 @@ export default {
             }
             userQuery(data).then(res=>{
                 if(res.code==200){
+                     this.months=[]
                     if(res.data){
                         this.userData=res.data
                          console.log( this.userData,2222222222)

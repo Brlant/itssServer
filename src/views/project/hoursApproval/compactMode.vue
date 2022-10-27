@@ -43,10 +43,15 @@
                         <template slot-scope="scope">
                             <div class="row">
                                 <!-- <div v-html="matchData(scope.row, index).content" class="html"></div> -->
-                                <div class="left" v-if='index<=4'>
-                                    {{matchData(scope.row, index).content}}
+                                <div class="left" v-if='index<=2'>
+                                   
+                                   <span> {{matchData(scope.row, index).content}}</span>
+                                </div> 
+                                <div  class="left" v-if='4>=index && index>2'>
+                                     <span v-if='styleRed(matchData(scope.row, 2).content , matchData(scope.row, 3).content,matchData(scope.row, 4).content)' style='color:red;'> {{matchData(scope.row, index).content}}</span>
+                                     <span v-else> {{matchData(scope.row, index).content}}</span>
                                 </div>
-                                <div class='right' v-else>
+                                <div class='right' v-if='index>4'>
                                     <span style="color:#cfc5c5;" v-if="matchData(scope.row, index).approvedWorkTime">{{matchData(scope.row, index).approvedWorkTime}}</span>
                                     <span v-if="matchData(scope.row, index).approvalPendingWorkTime">
                                         <span v-if="matchData(scope.row, index).approvedWorkTime" style='margin:0 10px;'>|</span>
@@ -119,6 +124,7 @@ export default {
             console.log(this.projectdirector)
     },
     watch: {
+       
         childData: {
             handler(val) {
                 console.log('sssss',val.list.length)
@@ -131,6 +137,20 @@ export default {
         }
     },
     methods:{
+         styleRed(two,three,four){
+            if(two<three){
+                if(three != 0 && four != 0){
+                    return true
+                }
+            }else{
+                if(three*1+four*1>two && four != 0){
+                    return true
+                }
+                
+            }
+          
+           
+        },
         matchData(row, index) {        
             return handleTableData(row, index)
         },
