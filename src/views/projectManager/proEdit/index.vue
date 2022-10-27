@@ -8,12 +8,8 @@
 
       <span> （仅项目负责人可对此项目下列对内进行编辑）</span>
       <div class="rightBox">
-        <el-button size="mini" @click="submitForm" type="primary"
-          >保存</el-button
-        >
-        <el-button size="mini" @click="backDetail" type="default"
-          >取消</el-button
-        >
+        <el-button size="mini" @click="submitForm" type="primary">保存</el-button>
+        <el-button size="mini" @click="backDetail" type="default">取消</el-button>
       </div>
     </div>
     <div class="titleBar">项目基础信息</div>
@@ -224,14 +220,10 @@
                 label-width="30px"
               >
                 <template
-                  v-if="
-                    addUserList.updateType == 3 || addUserList.updateType == 2
-                  "
+                  v-if="addUserList.updateType == 3 || addUserList.updateType == 2"
                 >
                   <!-- 我是修改的 -->
-                  <span style="margin-left: 30px">
-                    {{ addUserList.userName }}</span
-                  >
+                  <span style="margin-left: 30px"> {{ addUserList.userName }}</span>
                 </template>
 
                 <template v-if="addUserList.updateType == 1">
@@ -245,6 +237,7 @@
                         getUserCost(userId, addUserListindex);
                       }
                     "
+                    @clear="releaseUser(addUserListindex)"
                     :style="{ width: '100%' }"
                   >
                     <el-option
@@ -325,9 +318,7 @@
           >
             <el-col :offset="5" :span="4">
               <div class="colText" style="text-indent: 30px">
-                {{
-                  UserScheduleList.startTime + "-" + UserScheduleList.endTime
-                }}
+                {{ UserScheduleList.startTime + "-" + UserScheduleList.endTime }}
               </div></el-col
             >
             <el-col :span="3">
@@ -384,14 +375,10 @@ export default {
       childDateArea: {
         // 项目成员安排的 可选时间区间
         disabledDate: (time) => {
-          if (
-            this.formData.projectTimeArea &&
-            this.formData.projectTimeArea.length > 1
-          ) {
+          if (this.formData.projectTimeArea && this.formData.projectTimeArea.length > 1) {
             // 设置可以选择的区间 时间为项目的 起始日期和结束日期
             return (
-              time.getTime() >
-                new Date(this.formData.projectTimeArea[1]).getTime() ||
+              time.getTime() > new Date(this.formData.projectTimeArea[1]).getTime() ||
               time.getTime() <
                 new Date(this.formData.projectTimeArea[0]).getTime() - 8.64e7
             );
@@ -590,8 +577,7 @@ export default {
           item.startEndTime = [item.startTime, item.endTime];
           item.updateType = 3;
           item.workDayTemp = item.workDay;
-          item.costNum =
-            res.data.projectService == 1 ? item.costIn : item.costOut;
+          item.costNum = res.data.projectService == 1 ? item.costIn : item.costOut;
           item.projectUserScheduleList.map((jtem, j) => {
             item["planLoadCh" + i + j] = jtem.planLoadCh;
             item["planLoadWorkDayCh" + i + j] = jtem.planLoadWorkDayCh;
@@ -616,8 +602,8 @@ export default {
         // }
       });
     },
-    // 动态修改 时间选择器的区间值  
-    changeChildDateArea(userInfo,index) {
+    // 动态修改 时间选择器的区间值
+    changeChildDateArea(userInfo, index) {
       // 项目成员安排的 可选时间区间
       this.childDateArea = {
         disabledDate: (time) => {
@@ -635,17 +621,14 @@ export default {
                 // 就采用 该人的入职日期 和 项目结束日期
                 // console.log("入职时间晚于项目起始时间")
                 return (
-                  time.getTime() >
-                    new Date(this.formData.projectEndTime).getTime() ||
-                  time.getTime() <
-                    new Date(userInfo.inTime).getTime() - 8.64e7
+                  time.getTime() > new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() < new Date(userInfo.inTime).getTime() - 8.64e7
                 );
               } else {
                 // 如果入职时间是否 小于 项目起始时间
                 return (
                   // 就采用 项目开始日期 和 项目结束日期
-                  time.getTime() >
-                    new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() > new Date(this.formData.projectEndTime).getTime() ||
                   time.getTime() <
                     new Date(this.formData.projectStartTime).getTime() - 8.64e7
                 );
@@ -660,8 +643,7 @@ export default {
                 // 如果离职时间是否 大于 项目结束时间
                 return (
                   // 就采用 项目开始日期 和 项目结束日期
-                  time.getTime() >
-                    new Date(this.formData.projectEndTime).getTime() ||
+                  time.getTime() > new Date(this.formData.projectEndTime).getTime() ||
                   time.getTime() <
                     new Date(this.formData.projectStartTime).getTime() - 8.64e7
                 );
@@ -680,54 +662,73 @@ export default {
       };
     },
     // 动态修改 默认的日期区间
-    changeAddUserDateArea(userInfo,index) {
+    changeAddUserDateArea(userInfo, index) {
       // 项目成员安排的 可选时间区间
+      if (this.formData.projectEndTime != "" && this.formData.projectStartTime != "") {
+        console.log("有项目开始和结束日期");
+        // 判断此人是否已经在职在职在职
+        if (userInfo.status == 0) {
+          console.log("是在职");
           if (
-            this.formData.projectEndTime != "" &&
-            this.formData.projectStartTime != ""
+            this.date2Number(userInfo.inTime) >
+            this.date2Number(this.formData.projectStartTime + " 23:59:59")
           ) {
-                console.log("有项目开始和结束日期")
-            // 判断此人是否已经在职在职在职
-            if (userInfo.status == 0) {
-              console.log("是在职");
-              if (
-                this.date2Number(userInfo.inTime) >
-                this.date2Number(this.formData.projectStartTime + " 23:59:59")
-              ) {
-                // 如果入职时间是否 大于 项目起始时间
-                // 就采用 该人的入职日期 和 项目结束日期
-                console.log("入职时间晚于项目起始时间")
-                //  this.addEditFormData.projectUserList[index].startEndTime = [userInfo.inTime,this.formData.projectEndTime]
-                return  [userInfo.inTime,this.formData.projectEndTime]
-              } else {
-                console.log("入职时间早于项目起始时间")
-                // 如果入职时间是否 小于 项目起始时间
-                return  [this.formData.projectStartTime,this.formData.projectEndTime]
-              }
-            }
-            // 实际上此段判断无用，原因是 查询用户的接口已经把
-            // 离职的员工给隔离了
-            // 判断此人是否已经离职
-            if (userInfo.status == 1) {
-              console.log("是离职");
-              if (
-                this.date2Number(userInfo.outTime) >
-                this.date2Number(this.formData.projectEndTime)
-              ) {
-                console.log("离职时间晚于项目结束时间，就拿项目结束时间")
-                // console.log("晚于项目起始时间")
-                // 如果离职时间是否 大于 项目结束时间
-                 return  [this.formData.projectStartTime,this.formData.projectEndTime]
-                 
-              } else {
-                // 如果离职时间 小于 项目结束时间
-                // 就采用 项目起始时间 该人的离职日期
-                console.log("离职时间早于项目起始时间，就拿最后的离职时间作为服务时间")
-               return  [this.formData.projectStartTime,userInfo.outTime]
-              }
-            }
+            // 如果入职时间是否 大于 项目起始时间
+            // 就采用 该人的入职日期 和 项目结束日期
+            console.log("入职时间晚于项目起始时间");
+            //  this.addEditFormData.projectUserList[index].startEndTime = [userInfo.inTime,this.formData.projectEndTime]
+            return [userInfo.inTime, this.formData.projectEndTime];
+          } else {
+            console.log("入职时间早于项目起始时间");
+            // 如果入职时间是否 小于 项目起始时间
+            return [this.formData.projectStartTime, this.formData.projectEndTime];
           }
-       
+        }
+        // 实际上此段判断无用，原因是 查询用户的接口已经把
+        // 离职的员工给隔离了
+        // 判断此人是否已经离职
+        if (userInfo.status == 1) {
+          console.log("是离职");
+          if (
+            this.date2Number(userInfo.outTime) >
+            this.date2Number(this.formData.projectEndTime)
+          ) {
+            console.log("离职时间晚于项目结束时间，就拿项目结束时间");
+            // console.log("晚于项目起始时间")
+            // 如果离职时间是否 大于 项目结束时间
+            return [this.formData.projectStartTime, this.formData.projectEndTime];
+          } else {
+            // 如果离职时间 小于 项目结束时间
+            // 就采用 项目起始时间 该人的离职日期
+            console.log("离职时间早于项目起始时间，就拿最后的离职时间作为服务时间");
+            return [this.formData.projectStartTime, userInfo.outTime];
+          }
+        }
+      }
+    },
+    filterUserList() {
+      // 过滤 当前已经选中的用户
+      let data = {};
+      queryUserlist(data).then((res) => {
+        res.data.map((item) => {
+          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+          item.disabled = false;
+        });
+        this.formData.projectUserList.map((item, i) => {
+          res.data.map((user, u) => {
+            if (item.userId != "" && item.userId == user.userId) {
+              // res.data.splice(u, 1);
+              user.disabled=true
+            }
+          });
+        });
+        // res.data[index].disabled=true
+        this.userOptions = res.data; // 需要根据已经选择的人 来过滤
+      });
+    },
+    // 点击选择人员的 删除事件，释放人员回到下拉内
+    releaseUser(index) {
+      this.filterUserList();
     },
     // 添加人员之后  根据 对内 还是对外  设置 选择人员的成本
     // 存储到 单行的 新建字段 costNum 内 用于下一步存储  计算
@@ -757,28 +758,32 @@ export default {
         //   oneUser.updateType = 1;
         //  this.formData.projectUserList[index] = oneUser
         if (this.formData.projectUserList[index].startEndTime?.length > 0) {
-          this.formData.projectUserList[index].startEndTime= this.changeAddUserDateArea(res.data[0],index);
-          let dates =this.formData.projectUserList[index].startEndTime
+          this.formData.projectUserList[index].startEndTime = this.changeAddUserDateArea(
+            res.data[0],
+            index
+          );
+          let dates = this.formData.projectUserList[index].startEndTime;
           this.constAll(dates, index);
         }
 
-        // if (this.formData.projectUserList[index].userId != "") {
-        //   // 添加成员之后，未选择用户的情况下 不筛选
-        //   let userIdsTemp = [];
-        //   this.formData.projectUserList.map((item) => {
-        //     // 拿到已经存在的用户id
-        //     userIdsTemp.push(item.userId);
-        //   });
-        //   this.userOptions.map((user, u) => {
-        //     userIdsTemp.map((userId, i) => {
-        //       if (user.userId == userId) {
-        //         // 双层循环 去掉已经选择的用户
-        //         // this.userOptions.splice(u, 1);
-        //         this.userOptions[i].disabled=true
-        //       }
-        //     });
-        //   });
-        // }
+        if (this.formData.projectUserList[index].userId != "") {
+          // 添加成员之后，未选择用户的情况下 不筛选
+          let userIdsTemp = [];
+          this.formData.projectUserList.map((item) => {
+            // 拿到已经存在的用户id
+            userIdsTemp.push(item.userId);
+          });
+          console.log(userIdsTemp);
+          this.userOptions.map((user, u) => {
+            userIdsTemp.map((userId, i) => {
+              if (user.userId == userId) {
+                // 双层循环 去掉已经选择的用户
+                // this.userOptions.splice(u, 1);
+                user.disabled=true
+              }
+            });
+          });
+        }
         // this.userOptions = res.data;
       });
     },
@@ -810,15 +815,11 @@ export default {
       );
 
       // 暂存一下 实际的天数
-      const tempWorkDay =
-        this.formData.projectUserList[fatherIndex].workDayTemp;
+      const tempWorkDay = this.formData.projectUserList[fatherIndex].workDayTemp;
       // console.log(tempWorkDay);
       // 顶部的 共计多少小时  多少天
-      this.formData.projectUserList[fatherIndex].workDay = (
-        totalDay / 8
-      ).toFixed(2);
-      this.formData.projectUserList[fatherIndex].workTime =
-        totalTime.toFixed(2);
+      this.formData.projectUserList[fatherIndex].workDay = (totalDay / 8).toFixed(2);
+      this.formData.projectUserList[fatherIndex].workTime = totalTime.toFixed(2);
       // 顶部的 计划负荷 预计成本
       // console.log(totalDay);
       // console.log(tempWorkDay);
@@ -854,9 +855,9 @@ export default {
       }
     },
     /* 鼠标点击 日期触发 日期区间限制的方法*/
-    changeTimeArea(dates,index){
+    changeTimeArea(dates, index) {
       // console.log(this.formData.projectUserList[index]);
-      this.changeChildDateArea(this.formData.projectUserList[index])
+      this.changeChildDateArea(this.formData.projectUserList[index]);
     },
     /*根据起始和结束 生成下面表格*/
     getTimeArea(dates, index) {
@@ -873,7 +874,6 @@ export default {
         endDate: dates[1],
       };
       getTimeProcess(params).then((res) => {
-        console.log(res.data);
         this.formData.projectUserList[index].workDay = res.data.day;
         this.formData.projectUserList[index].workDayTemp = res.data.day;
         this.formData.projectUserList[index].workTime = res.data.day * 8;
@@ -886,12 +886,9 @@ export default {
           item.startTime = item.startDate;
           item.endTime = item.endDate;
           item.workTime = "8";
-          item.planLoad = (
-            ((item.day * 8) / (item.day * 8)) * 100 || 0
-          ).toFixed(2);
+          item.planLoad = (((item.day * 8) / (item.day * 8)) * 100 || 0).toFixed(2);
         });
-        this.formData.projectUserList[index].projectUserScheduleList =
-          res.data.list; // 此人的 每周安排
+        this.formData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
         if (res.data.day === 0) {
           this.formData.projectUserList[index].planLoad = 0;
         } else {
@@ -1008,6 +1005,7 @@ export default {
           if (row.updateType == 1) {
             // 新增的就前端删除
             this.formData.projectUserList.splice(index, 1);
+            this.filterUserList()
           }
         })
         .catch(() => {});
@@ -1055,15 +1053,11 @@ export default {
       this.$refs["elForm"].resetFields();
     },
     backDetail() {
-      this.$confirm(
-        `您确定要返回详情页吗?刚刚修改的数据将不会被保存！`,
-        "温馨提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
+      this.$confirm(`您确定要返回详情页吗?刚刚修改的数据将不会被保存！`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(() => {
           const obj = {
             path: "/projectManager/proDetails/",
