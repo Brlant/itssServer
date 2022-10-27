@@ -1598,23 +1598,23 @@ export default {
   }
   .myTable .el-table__body-wrapper {
   margin-top: 0px;
-  // z-index: 2;
+  z-index: 2;
 }
 .myTable .el-table__fixed {
   // z-index: 5;
-  bottom: 0px !important;
+  // bottom: 0px !important;
   margin-top: 2px;
 }
-.myTable .el-table__fixed-right {
-  // z-index: 5;
-  bottom: 0px !important;
-}
-.myTable .el-table__fixed .el-table__fixed-body-wrapper {
-  padding: 5px 0;
-}
-.myTable .el-table__fixed-right .el-table__fixed-body-wrapper {
-  padding: 5px 0;
-}
+// .myTable .el-table__fixed-right {
+//   // z-index: 5;
+//   bottom: 0px !important;
+// }
+// .myTable .el-table__fixed .el-table__fixed-body-wrapper {
+//   padding: 5px 0;
+// }
+// .myTable .el-table__fixed-right .el-table__fixed-body-wrapper {
+//   padding: 5px 0; 1
+// }
  
 .ft18 {
   font-size: 18px;

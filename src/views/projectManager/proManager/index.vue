@@ -120,7 +120,7 @@
           sortable
           fixed
           label="项目"
-          width="120"
+          min-width="120"
         >
           <template slot-scope="scope">
             <span :class="[scope.row.isNew==1?'isNew':'']"></span>
