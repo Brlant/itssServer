@@ -1,5 +1,5 @@
 import axios from 'axios' ;
-
+import { getToken } from '@/utils/auth'
 let   configObj =   {
                         baseURL : process.env.VUE_APP_BASE_API,
                         // baseURL : '/api',
@@ -11,6 +11,10 @@ let   configObj =   {
     , reqFn     =   null ;
 
 axiosObj.interceptors.request.use( config => {
+    const isToken = (config.headers || {}).isToken === false
+    if (getToken() && !isToken) {
+        config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+      }
     // TO DO SOMETHING...
     return config ;
 }, err => {
