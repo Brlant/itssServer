@@ -57,6 +57,7 @@
     "plop": "^3.1.1",
     "quill": "1.3.7",
     "screenfull": "5.0.2",
+    "sinopharm": "git+http://gitlab.sinopharm-bio.com/framework/client/sinopharm-organization.git",
     "sortablejs": "1.10.2",
     "vue": "2.6.12",
     "vue-count-to": "1.0.13",
