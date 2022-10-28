@@ -48,7 +48,9 @@ import Moment from 'moment'
 
 
 
-
+import sinopharm from 'sinopharm';
+import 'sinopharm/dist/index.scss' ;
+Vue.use( sinopharm ) ;
 
 
 // 全局方法挂载
