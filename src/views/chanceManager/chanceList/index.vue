@@ -4,7 +4,7 @@
       <el-form ref="form" :model="searchForm" label-width="60px" inline>
         <el-row>
           <el-col :span="6" style="text-align: left"> 机会列表 </el-col>
-          <el-col :offset="8" :span="4">
+          <el-col :offset="6" :span="5">
             <el-form-item label="搜索">
               <el-input
                 v-model="searchForm.chanceName"
@@ -14,7 +14,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="5">
             <el-form-item label="状态">
               <el-select
                 v-model="searchForm.chanceStatus"
@@ -47,33 +47,47 @@
         style="width: 100%"
         max-height="650"
       >
-        <el-table-column prop="chanceName" fixed label="机会名称" min-width="120">
+        <el-table-column prop="chanceName"  fixed="left" label="机会名称" min-width="120">
           <template slot-scope="scope">
-            <span :class="[scope.row.isNew == 1 ? 'isNew' : '']"></span>
             <span :class="['yuan', 'yuan' + scope.row.priority]"></span>
             {{ scope.row.chanceName }}
           </template>
         </el-table-column>
-        <el-table-column prop="chanceStatus" fixed label="状态" width="120">
+        <el-table-column prop="chanceStatus" fixed="left" label="状态" width="80">
+           <template slot-scope="scope">
+            {{ scope.row.chanceStatus|filterChanceStatus }}
+          </template>
         </el-table-column>
-        <el-table-column prop="chanceName" label="已转项目"> </el-table-column>
+        <el-table-column prop="" label="已转项目"  width="160">
+            <template slot-scope="scope">
+               <router-link class="priority3" :to="{path:'/projectManager/proDetails/', query:{ projectId:scope.row.projectId,projectName:scope.row.projectName,countScope:countScope}}">{{ scope.row.projectName}}</router-link>
+            </template>
+        </el-table-column>
         <el-table-column prop="chanceUserName" label="负责人" width="120"> </el-table-column>
-        <el-table-column prop="chanceName" label="客户"> </el-table-column>
-        <el-table-column prop="chanceName" label="客户联系人"> </el-table-column>
-        <el-table-column prop="chanceName" label="客户预算"> </el-table-column>
-        <el-table-column prop="chanceName" label="成功率" width="120"> </el-table-column>
-        <el-table-column prop="chanceName" label="预计开始日期"> </el-table-column>
-        <el-table-column prop="chanceName" label="估算工时(人日)"> </el-table-column>
-        <el-table-column prop="chanceName" label="估计报价"> </el-table-column>
-        <el-table-column prop="chanceName" label="备注"> </el-table-column>
+        <el-table-column prop="customer" label="客户" width="300"> </el-table-column>
+        <el-table-column prop="customerLink" label="客户联系人" width="180">
+           <template slot-scope="scope">
+            {{ scope.row.customerLink+"("+scope.row.tel+")" }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="budget" label="客户预算" width="120"> </el-table-column>
+        <el-table-column prop="successRate" label="成功率" width="120"> </el-table-column>
+        <el-table-column prop="expectStartTime" label="预计开始日期" width="120"> </el-table-column>
+        <el-table-column prop="expectWork" label="估算工时(人日)" width="120"> </el-table-column>
+        <el-table-column prop="expectOffer" label="估计报价" width="120"> </el-table-column>
+        <el-table-column prop="remark" label="备注" width="220"> </el-table-column>
       </el-table>
     </div>
   </div>
 </template>
 <script>
+import {
+ getChanceList
+} from "@/api/chanceManager/chanceManager";
 export default {
   data() {
     return {
+      countScope:"",// 统计范围
       tableData: [
         {
           chanceName: "", //          机会名称
@@ -139,10 +153,41 @@ export default {
       },
     };
   },
-  mounted() {},
+  
+  mounted() {
+    // 额外的判断 页面初始化 判断用户的角色  isJurisdiction 判断当前的值是否存在 返回true or false
+    // 部门主管 deptdirector  3
+    // 项目主管 projectdirector 2
+    // 运营管理 operatemanage
+    // 项目监管 管理员 projectsupervision || admin ==>  1
+    let deptdirector = this.isJurisdiction("deptdirector"); // 部门主管
+    let projectdirector = this.isJurisdiction("projectdirector"); // 项目主管
+    let projectsupervision = this.isJurisdiction("projectsupervision"); // 项目监管
+    let operatemanage = this.isJurisdiction("operatemanage"); // 运营管理
+    let admin = this.isJurisdiction("admin"); // 管理员
+    // 运营管理        operatemanage
+       if (projectdirector) {
+          // 项目主管
+          this.countScope = 2
+        }
+        if (deptdirector) {
+          // 部门主管
+          this.countScope = 3
+        }
+
+        if (projectsupervision || admin|| operatemanage) {
+          // 项目监管 超管 运营管理
+          this.countScope = 1
+        }
+    /*------------------额外的初始化查询的判断------------------------------*/
+    this.init()
+  },
   methods: {
     init() {
       console.log("init");
+      getChanceList(this.searchForm).then((res)=>{
+          this.tableData = res.data
+      })
     },
     addChance() {
       // 新增 机会
@@ -167,8 +212,12 @@ export default {
   padding: 0;
 }
 .searchBox {
-  padding: 10px 20px;
+  padding: 20px 30px 0px 30px;
   margin-top: 10px;
+}
+.pageTitle{
+  padding:0px 14px 34px 14px;
+
 }
 .priority4 {
   color: #909399;
@@ -182,4 +231,25 @@ export default {
 .priority1 {
   color: #f56c6c;
 }
+.yuan{
+  width: 8px;
+  height: 8px;
+  border-radius: 10px;
+  border: none;
+  display: inline-block;
+  margin-left: 8px;
+}
+.yuan1 {
+  background-color: #f56c6c;
+  }
+.yuan2 {
+  background-color: #e6a23c;
+  }
+.yuan3 {
+  background-color: #409eff;
+}
+.yuan4 {
+  background-color: #909399;
+}
+
 </style>

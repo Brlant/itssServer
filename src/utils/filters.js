@@ -7,6 +7,15 @@ const filterProjectStatus = function (val) {
   }
   return statusMap[val]
 }
+const filterChanceStatus = function(val){
+  const statusMap = {
+        1:"新建",
+        2:"跟进中",
+        3:"已结束",
+        4:"已转项目"
+      }
+  return statusMap[val]
+}
 const formatDate = function (dateString) {
   if (dateString === null || dateString === undefined) {
     return ""
@@ -72,7 +81,7 @@ const toPriority=((val)=>{
 })
 
 export default {
-  filterProjectStatus,
+  filterProjectStatus,filterChanceStatus,
   formatDate,
   toObject,
   toUpdateScope,
