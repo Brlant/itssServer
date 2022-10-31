@@ -46,6 +46,7 @@
         border
         style="width: 100%"
         max-height="650"
+        @row-click="clickRow"
       >
         <el-table-column prop="chanceName"  fixed="left" label="机会名称" min-width="120">
           <template slot-scope="scope">
@@ -82,7 +83,8 @@
 </template>
 <script>
 import {
- getChanceList
+ getChanceList,// 字典查询 传入字典名称
+  queryDict 
 } from "@/api/chanceManager/chanceManager";
 export default {
   data() {
@@ -188,6 +190,10 @@ export default {
       getChanceList(this.searchForm).then((res)=>{
           this.tableData = res.data
       })
+    },
+    // 单击行 查看详情
+    clickRow(row, column, event){
+      console.log(row, column, event);
     },
     addChance() {
       // 新增 机会

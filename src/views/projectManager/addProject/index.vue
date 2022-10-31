@@ -634,7 +634,6 @@ export default {
             // 如果入职时间是否 大于 项目起始时间
             // 就采用 该人的入职日期 和 项目结束日期
             console.log("入职时间晚于项目起始时间");
-            //  this.addEditFormData.projectUserList[index].startEndTime = [userInfo.inTime,this.formData.projectEndTime]
             return [userInfo.inTime, this.formData.projectEndTime];
           } else {
             console.log("入职时间早于项目起始时间");
@@ -755,7 +754,7 @@ export default {
       this.formData.projectUserList[fatherIndex].workTime = totalTime.toFixed(2);
       // 顶部的 计划负荷 预计成本
       if (totalDay === 0) {
-        this.addEditFormData.projectUserList[fatherIndex].planLoad = 0;
+        this.formData.projectUserList[fatherIndex].planLoad = 0;
       } else {
         this.formData.projectUserList[fatherIndex].planLoad = (
           (totalDay / (tempWorkDay * 8)) *
@@ -809,7 +808,7 @@ export default {
         });
         this.formData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
         if (res.data.day === 0) {
-          this.addEditFormData.projectUserList[index].planLoad = 0;
+          this.formData.projectUserList[index].planLoad = 0;
         } else {
           this.formData.projectUserList[index].planLoad = (
             ((8 * res.data.day) / (res.data.day * 8)) *

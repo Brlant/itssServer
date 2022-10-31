@@ -25,3 +25,11 @@ export function proDetailBFEdit(projectId) {
     // params: query
   })
 }
+// 字典查询 传入字典名称
+export function queryDict(dictCode) {
+  return request({
+    url: '/system/dict/data/type/'+dictCode,
+    method: 'get',
+    // params: query
+  })
+}
