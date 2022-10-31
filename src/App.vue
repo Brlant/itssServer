@@ -26,3 +26,11 @@ export default  {
   padding: 0;
 }
 </style>
+<style lang="scss">
+// .el-form-item{
+//   margin:10px!important;
+// }
+// .el-row{
+//   padding:0px!important;
+// }
+</style>
