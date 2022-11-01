@@ -3,7 +3,7 @@
     <div class="routerBar">
       <!-- <router-link :to="'/projectManager/proManager'"> < 编辑项目</router-link> -->
       <span @click="goManagerPage" style="cursor: pointer; color: #409eff">
-        &lt; 编辑/编辑项目组
+        &lt; 编辑项目组
       </span>
 <!-- 
       <span> （仅项目负责人可对此项目下列对内进行编辑）</span> -->

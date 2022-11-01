@@ -6,7 +6,7 @@
         <div class="rightBtns">
           <!-- 必须是项目主管的角色 -->
           <el-button size="mini" type="primary" v-if="isJurisdiction('projectdirector','admin')">
-            <router-link :replace="true"  :to="'/ProjectManager/AddProject'"
+            <router-link :replace="true"  :to="'/ProjectManager/addTeam'"
               >新建项目组</router-link
             >
           </el-button>
@@ -180,6 +180,14 @@
             >
             编辑
             </el-button>
+            <el-button
+              @click.native.prevent="toggleActive(scope.$index, scope.row)"
+              type="text"
+              size="small"
+              style='color:red;'
+            >
+            删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -275,10 +283,17 @@ export default {
   },
   methods: {
     detailProject(){
-         this.$router.push('/projectManager/teamDetail')
+         // startTime:row.projectStartTime,endTime:getToday()}})
+       const obj = { path:'/projectManager/teamDetail'};
+            // getToday()
+      this.$tab.closeOpenPage(obj);
+        //  this.$router.push('/projectManager/teamDetail')
     },
     toggleActive(){
-        this.$router.push('/projectManager/editTeam')
+        // this.$router.push('/projectManager/editTeam')
+         const obj = { path:'/projectManager/editTeam'};
+            // getToday()
+      this.$tab.closeOpenPage(obj);
     }
     }
 };

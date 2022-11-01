@@ -343,7 +343,8 @@ export default {
   },
   methods: {
     goBack(){
-        this.$router.push('/projectManager/projectTeam')
+       const obj = { path: "/projectManager/projectTeam" };
+      this.$tab.closeOpenPage(obj);
     },
     handleConfirm() {
       this.$refs["realForm"].validate((valid) => {
