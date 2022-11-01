@@ -17,10 +17,10 @@ export function addChance(data) {
     data: data
   })
 }
-// 详情页面，点击编辑进入编辑页面
-export function proDetailBFEdit(projectId) {
+// 机会管理详情接口
+export function chanceDetail(chanceId) {
   return request({
-    url: `/projectManage/project/getById/${projectId}`,
+    url: `/opportunityManage/itssChance/${chanceId}`,
     method: 'get',
     // params: query
   })
@@ -33,3 +33,12 @@ export function queryDict(dictCode) {
     // params: query
   })
 }
+// 转换为正式项目
+export function toProject(chanceId) {
+  return request({
+    url: `/opportunityManage/itssChance/toProject/${chanceId}`,
+    method: 'get',
+    // params: query
+  })
+}
+ 

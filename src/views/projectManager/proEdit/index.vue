@@ -231,7 +231,7 @@
                   <el-select
                     v-model="addUserList.userId"
                     placeholder="请选择项目成员"
-                    clearable
+                    clearable filterable
                     @change="
                       (userId) => {
                         getUserCost(userId, addUserListindex);

@@ -193,7 +193,10 @@ export default {
     },
     // 单击行 查看详情
     clickRow(row, column, event){
-      console.log(row, column, event);
+      // console.log(row);
+       // 点击单行进入详情页
+      const obj = { path: "/chanceManager/chanceDetail/",query:{"chanceId":row.chanceId} };
+      this.$tab.closeOpenPage(obj);
     },
     addChance() {
       // 新增 机会

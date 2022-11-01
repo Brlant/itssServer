@@ -218,7 +218,7 @@
                 <el-select
                   v-model="addUserList.userId"
                   placeholder="请选择项目成员"
-                  clearable
+                  clearable filterable
                   @change="
                     (userId) => {
                       getUserCost(userId, addUserListindex);
@@ -339,7 +339,9 @@ import {
   searchProjectList,
   queryUserlistByRole,
 } from "@/api/proManager/proManager";
-
+ import {
+  chanceDetail 
+} from "@/api/chanceManager/chanceManager";
 export default {
   data() {
     return {
@@ -551,6 +553,15 @@ export default {
 
     // 页面默认点击一下  添加成员
     // this.addUserListHandel()
+    // 额外的判断  需要判断这个页面是不是从 机会跳转过来的
+    
+    if(this.$route.query.chanceId){
+        chanceDetail(this.$route.query.chanceId).then((res)=>{
+          console.log(res.data);
+          this.formData = res.data
+        })
+  
+    }
   },
   methods: {
  
