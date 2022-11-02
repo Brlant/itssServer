@@ -195,25 +195,24 @@
           </el-col>
         </el-row>
         <el-row>  
-             <el-col :span="10" :offset="1">
+          <el-col :span="10" :offset="1">
             <el-form-item label="归属项目组" prop="projectChance">
-                  <el-select
-                    v-model="formData.projectTeam"
-                    placeholder="请选择归属项目组"
-                    clearable
-                    :style="{ width: '100%' }"
-                  >
-                    <el-option
-                      v-for="(item, index) in projectTeams"
-                      :key="index"
-                      :label="item.label"
-                      :value="item.value"
-                      :disabled="item.disabled"
-                    ></el-option>
-                  </el-select>
-                </el-form-item>
+              <el-select
+                v-model="formData.projectTeam"
+                placeholder="请选择归属项目组"
+                clearable
+                :style="{ width: '100%' }"
+              >
+                <el-option
+                  v-for="(item, index) in projectTeams"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                  :disabled="item.disabled"
+                ></el-option>
+              </el-select>
+            </el-form-item>
           </el-col>
-      
         </el-row>
       </div>
       <div class="titleBar">

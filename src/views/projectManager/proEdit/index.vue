@@ -163,7 +163,7 @@
         </el-row>
         <el-row>
           <el-col :span="10" :offset="1">
-            <el-form-item label="项目有效期" prop="projectTimeArea">
+            <el-form-item label="项目有效期" prop="projectTimeArea" class='date-style'>
               <el-date-picker
                 type="daterange"
                 v-model="formData.projectTimeArea"
@@ -177,6 +177,7 @@
                 @change="getProjectTimeArea"
               ></el-date-picker>
             </el-form-item>
+             <i class='el-icon-warning' style='color:red;'></i>
           </el-col>
           <el-col :span="10" :offset="1">
             <!-- <el-form-item label="关联机会" prop="projectChance">
@@ -196,6 +197,26 @@
                   </el-select>
                 </el-form-item> -->
           </el-col>
+          <el-row>
+            <el-col :span="10" :offset="1">
+              <el-form-item label="归属项目组" prop="projectChance">
+                <el-select
+                  v-model="formData.projectTeam"
+                  placeholder="请选择归属项目组"
+                  clearable
+                  :style="{ width: '100%' }"
+                >
+                  <el-option
+                    v-for="(item, index) in projectTeams"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                    :disabled="item.disabled"
+                  ></el-option>
+                </el-select>
+            </el-form-item>
+          </el-col>
+          </el-row>
         </el-row>
       </div>
       <div class="titleBar">
@@ -388,6 +409,8 @@ export default {
       },
       // 人员 列表
       userOptions: [],
+       projectTeams:[],
+      projectTeam:'',
       formData: {
         priority: 3 /**优先级（1.最高，2.高，3.普通，4.较低）*/,
         projectChance: "" /**关联机会*/,
@@ -1099,6 +1122,9 @@ export default {
 <style lang="scss" scoped>
 .app-container {
   padding: 0;
+}
+.date-style{
+  display: inline-block;
 }
 .UserLine {
   border-bottom: 1px #efefef solid;
