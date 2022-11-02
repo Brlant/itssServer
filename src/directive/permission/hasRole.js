@@ -1,6 +1,7 @@
  /**
  * v-hasRole 角色权限处理
  * Copyright (c) 2019 ruoyi
+ * <span v-hasRole="['projectsupervision']">del</span>
  */
  
 import store from '@/store'

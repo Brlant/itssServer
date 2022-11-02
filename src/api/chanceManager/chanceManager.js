@@ -41,4 +41,56 @@ export function toProject(chanceId) {
     // params: query
   })
 }
- 
+// 机会详情，资源配置 点击修改之后 查询内容的
+export function getResourceLineDetail(id) {
+  return request({
+    url: `/opportunityManage/itssChanceConfig/${id}`,
+    method: 'get',
+    // params: query
+  })
+}
+
+// 保存点击修改之后的 资源配置接口 修改的
+export function updateChanceConfig(data) {
+  return request({
+    url: '/opportunityManage/itssChanceConfig/updateChanceConfig',
+    method: 'put',
+    data: data
+  })
+}
+// 删除 当前行的配置 信息
+export function delChanceConfigLine(id) {
+  return request({
+    url: `/opportunityManage/itssChanceConfig/${id}`,
+    method: 'delete',
+    // params: query
+  })
+}
+// 保存点击新增资源配置之后的 资源配置接口 新增的
+export function addChanceConfig(data) {
+  return request({
+    url: '/opportunityManage/itssChanceConfig/addChanceConfig',
+    method: 'post',
+    data: data
+  })
+}
+
+
+
+// 跟进记录的列表
+export function getFollowList(data) {
+  return request({
+    url: '/opportunityManage/itssChanceRecord/list',
+    method: 'post',
+    data: data
+  })
+}
+export function addChanceRecord(data) {
+  return request({
+    url: '/opportunityManage/itssChanceRecord/addChanceRecord',
+    method: 'post',
+    data: data
+  })
+}
+
+

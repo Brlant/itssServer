@@ -136,53 +136,53 @@
       <div class="whiteBox UserListBox configFont" style="padding-left:70px">
         <div v-for="(chanceConfigItem,chanceConfigIndex) in formData.chanceConfigList">
 
-      <el-row >
-        <el-col :span="6">
-          
-          <el-form-item label="区域：" :prop="`chanceConfigList.${chanceConfigIndex}.areaId`" :rules="rules.chanceConfigItemAreaId">
-            <el-select v-model="chanceConfigItem.areaId" placeholder="请选择区域" 
-              :style="{width: '100%'}"
-             @change="(dates) => editNext('region',dates, chanceConfigIndex)">
-              <el-option v-for="(dict, index) in regionOptions"   
-                  :key="dict.dictCode"
-                  :label="dict.dictLabel"
-                  :value="dict.dictCode"
-                  :disabled="dict.disabled"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="职位：" :prop="`chanceConfigList.${chanceConfigIndex}.postId`" :rules="rules.chanceConfigItemPostId">
-            <el-select v-model="chanceConfigItem.postId" placeholder="请选择职位" 
-            :disabled="chanceConfigItem.postTypeActive"   :style="{width: '100%'}"
-             @change="(dates) => editNext('postType',dates, chanceConfigIndex)">
-              <el-option v-for="(dict, index) in postTypeOptions"  :key="dict.dictCode"
-                  :label="dict.dictLabel"
-                  :value="dict.dictCode"
-                  :disabled="dict.disabled"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="等级：" :prop="`chanceConfigList.${chanceConfigIndex}.gradeId`" :rules="rules.chanceConfigItemGradeId">
-            <el-select v-model="chanceConfigItem.gradeId" placeholder="请选择等级"  
-            :disabled="chanceConfigItem.gradeIdActive"   :style="{width: '100%'}"
-             @change="(dates) => editNext('gradeId',dates, chanceConfigIndex)">
-              <el-option v-for="(dict, index) in gradeIdOptions"  :key="dict.dictCode"
-                  :label="dict.dictLabel"
-                  :value="dict.dictCode"
-                  :disabled="dict.disabled"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label=""  >
-            <el-button type="primary" size="mini"  @click="DelConfigList(chanceConfigIndex)"> 删除 </el-button>
-          
-            <!-- <el-button type="info" size="mini"> 取消 </el-button> -->
-          </el-form-item>
-        </el-col>
-      </el-row>
+        <el-row >
+          <el-col :span="6">
+            
+            <el-form-item label="区域：" :prop="`chanceConfigList.${chanceConfigIndex}.areaId`" :rules="rules.chanceConfigItemAreaId">
+              <el-select v-model="chanceConfigItem.areaId" placeholder="请选择区域" 
+                :style="{width: '100%'}"
+              @change="(dates) => editNext('region',dates, chanceConfigIndex)">
+                <el-option v-for="(dict, index) in regionOptions"   
+                    :key="dict.dictCode"
+                    :label="dict.dictLabel"
+                    :value="dict.dictCode"
+                    :disabled="dict.disabled"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="职位：" :prop="`chanceConfigList.${chanceConfigIndex}.postId`" :rules="rules.chanceConfigItemPostId">
+              <el-select v-model="chanceConfigItem.postId" placeholder="请选择职位" 
+              :disabled="chanceConfigItem.postTypeActive"   :style="{width: '100%'}"
+              @change="(dates) => editNext('postType',dates, chanceConfigIndex)">
+                <el-option v-for="(dict, index) in postTypeOptions"  :key="dict.dictCode"
+                    :label="dict.dictLabel"
+                    :value="dict.dictCode"
+                    :disabled="dict.disabled"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="等级：" :prop="`chanceConfigList.${chanceConfigIndex}.gradeId`" :rules="rules.chanceConfigItemGradeId">
+              <el-select v-model="chanceConfigItem.gradeId" placeholder="请选择等级"  
+              :disabled="chanceConfigItem.gradeIdActive"   :style="{width: '100%'}"
+              @change="(dates) => editNext('gradeId',dates, chanceConfigIndex)">
+                <el-option v-for="(dict, index) in gradeIdOptions"  :key="dict.dictCode"
+                    :label="dict.dictLabel"
+                    :value="dict.dictCode"
+                    :disabled="dict.disabled"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label=""  >
+              <el-button type="primary" size="mini"  @click="DelConfigList(chanceConfigIndex)"> 删除 </el-button>
+            
+              <!-- <el-button type="info" size="mini"> 取消 </el-button> -->
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row>
         <el-col :span="18">
           <el-form-item label="技能需求：" :prop="`chanceConfigList.${chanceConfigIndex}.skillIdList`" :rules="rules.chanceConfigItemSkillIdList">
@@ -198,7 +198,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-       </el-row>
+        </el-row>
         <el-row>
         <el-col :span="6">
           <el-form-item label="配置安排：" :prop="`chanceConfigList.${chanceConfigIndex}.startEndTime`"   :rules="rules.chanceConfigItemStartEndTime" >
@@ -288,16 +288,16 @@ export default {
           }
         },
       },
+      techniqueOptions:[], // 技能需求
       regionOptions:[], // 区域
       postTypeOptions:[], // 职位
       gradeIdOptions:[
-        {dictCode:"1",dictLabel:"初级"},
-        {dictCode:"2",dictLabel:"中级"},
-        {dictCode:"3",dictLabel:"高级"},
+        {dictCode:1,dictLabel:"初级"},
+        {dictCode:2,dictLabel:"中级"},
+        {dictCode:3,dictLabel:"高级"},
       ],  // 等级 后端还未开发
-      techniqueOptions:[], // 技能需求
       formData: {
-          // chanceName: "", //          机会名称
+        // chanceName: "", //          机会名称
           // chanceStatus: "", //          机会状态：1.新建、2.跟进中、3.已结束、4.已转项目
           // priority: 3, //          优先级（1.最高;2.高，3.普通，4.较低）
           // projectId:null, //      已转项目
@@ -474,6 +474,7 @@ export default {
         "label": "对外",
         "value": 2
       }],
+      
     }
   },
   mounted() {

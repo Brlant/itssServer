@@ -79,11 +79,19 @@ const toPriority=((val)=>{
   }
   return sourceMap[val]
 })
-
+const toChanceStatus = ((val)=>{
+  const sourceMap={
+    1:"新建",
+    2:"跟进中",
+    3:"已结束",
+    4:"已转项目",
+  }
+  return sourceMap[val]
+})
 export default {
   filterProjectStatus,filterChanceStatus,
   formatDate,
   toObject,
-  toUpdateScope,
+  toUpdateScope,toChanceStatus,
   toStatus,toProjectService,toPriority
 }

@@ -340,7 +340,7 @@ import {
   queryUserlistByRole,
 } from "@/api/proManager/proManager";
  import {
-  chanceDetail 
+  toProject 
 } from "@/api/chanceManager/chanceManager";
 export default {
   data() {
@@ -556,10 +556,10 @@ export default {
     // 额外的判断  需要判断这个页面是不是从 机会跳转过来的
     
     if(this.$route.query.chanceId){
-        chanceDetail(this.$route.query.chanceId).then((res)=>{
-          console.log(res.data);
+      toProject(this.$route.query.chanceId).then((res)=>{
           this.formData = res.data
-        })
+    })
+        
   
     }
   },
