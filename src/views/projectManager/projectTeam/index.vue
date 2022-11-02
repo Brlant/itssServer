@@ -6,8 +6,8 @@
         <div class="rightBtns">
           <!-- 必须是项目主管的角色 -->
           <el-button size="mini" type="primary" v-if="isJurisdiction('projectdirector','admin')">
-            <router-link :replace="true"  :to="'/ProjectManager/AddProject'"
-              >新建项目组</router-link
+            <span @click='add'  v-hasPermi="['projectManager:addTeam:add']"
+              >新建项目组</span
             >
           </el-button>
 
@@ -170,6 +170,7 @@
               @click.native.prevent="detailProject(scope.$index, scope.row)"
               type="text"
               size="small"
+               v-hasPermi="['projectManager:teamDtail:query']"
             >
               详情
             </el-button>
@@ -177,8 +178,17 @@
               @click.native.prevent="toggleActive(scope.$index, scope.row)"
               type="text"
               size="small"
+               v-hasPermi="['projectManager:editTeam:edit']"
             >
             编辑
+            </el-button>
+            <el-button
+              type="text"
+              size="small"
+              style='color:red;'
+              v-hasPermi="['projectManager:editTeam:edit']"
+            >
+            删除
             </el-button>
           </template>
         </el-table-column>
@@ -275,10 +285,22 @@ export default {
   },
   methods: {
     detailProject(){
-         this.$router.push('/projectManager/teamDetail')
+         // startTime:row.projectStartTime,endTime:getToday()}})
+       const obj = { path:'/projectManager/teamDetail'};
+            // getToday()
+      this.$tab.closeOpenPage(obj);
+        //  this.$router.push('/projectManager/team/teamDetail')
+    },
+    add(){
+       const obj = { path:'/projectManager/addTeam'};
+            // getToday()
+      this.$tab.closeOpenPage(obj);
     },
     toggleActive(){
-        this.$router.push('/projectManager/editTeam')
+        // this.$router.push('/projectManager/editTeam')
+         const obj = { path:'/projectManager/editTeam'};
+            // getToday()
+      this.$tab.closeOpenPage(obj);
     }
     }
 };

@@ -256,6 +256,62 @@ export const dynamicRoutes = [
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
       }
     ]
+  },
+  {
+    path: '/projectManager',
+    component: Layout,
+    hidden: true,
+    permissions: ['projectManager:teamDtail:query'],
+    children: [
+      {
+        path: 'teamDetail',
+        component: () => import('@/views/projectManager/teamDetail'),
+        name: 'TeamDetail',
+        meta: { title: '项目组项目详情', activeMenu: '/projectManager/teamDetail' }
+      }
+    ]
+  },
+  {
+    path: '/projectManager',
+    component: Layout,
+    hidden: true,
+    permissions: ['projectManager:addTeam:add'],
+    children: [
+      {
+        path: 'TeamAdd',
+        component: () => import('@/views/projectManager/addTeam'),
+        name: 'GenEdit',
+        meta: { title: '项目组新建', activeMenu: '/projectManager/addTeam' }
+      }
+    ]
+  },
+  {
+    path: '/projectManager',
+    component: Layout,
+    hidden: true,
+    permissions: ['projectManager:editTeam:edit'],
+    children: [
+      {
+        path: 'editTeam',
+        component: () => import('@/views/projectManager/editTeam'),
+        name: 'TeamEdit',
+        meta: { title: '项目组编辑', activeMenu: '/projectManager/editTeam' }
+      }
+    ]
+  },
+  {
+    path: '/system/user-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:user:query'],
+    children: [
+      {
+        path: 'userInfo',
+        component: () => import('@/views/system/user/userInfo'),
+        name: 'UserInfo',
+        meta: { title: '成员信息', activeMenu: '/system/user' }
+      }
+    ]
   }
 ]
 
