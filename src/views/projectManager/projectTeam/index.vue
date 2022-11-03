@@ -9,8 +9,10 @@
             size="mini"
             type="primary"
             v-if="isJurisdiction('projectdirector', 'admin')"
+             v-hasPermi="['projectManager:addTeam:add']"
+              @click="add"
           >
-            <span @click="add" v-hasPermi="['projectManager:addTeam:add']"
+            <span
               >新建项目组</span
             >
           </el-button>
