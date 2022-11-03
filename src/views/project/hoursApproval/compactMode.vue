@@ -60,7 +60,7 @@
                                         <span v-if='matchData(scope.row, index).approvalPendingWorkTime || !matchData(scope.row, index).approvalPendingWorkTime && matchData(scope.row, index).approvedWorkTime'  style='margin:0 10px;'>|</span>
                                         <span  style="color:red">{{matchData(scope.row, index).approvalRejectionWorkTime}}</span></span>
                                 </div>
-                                <div v-if='projectdirector'>
+                                <div v-if='projectdirector' v-hasPermi="['project:approval:leader']">
                                     <div class="icon" v-if="matchData(scope.row, index).show" style='margin-top:10px;'>
                                         <div class="pass" @click='agree(matchData(scope.row, index).workDate,scope.row,item.projectId)'>
                                             <i class="el-icon-check"></i>

@@ -131,7 +131,13 @@ export function listUser(query) {
     params: query
   })
 }
-
+// 项目组查询
+export function teamQuery() {
+  return request({
+    url: '/projectManage/projectGroup/listAll',
+    method: 'get',
+  })
+}
 // 查询用户详细
 export function getUser(userId) {
   return request({
