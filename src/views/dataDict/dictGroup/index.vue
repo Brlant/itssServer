@@ -40,7 +40,7 @@
         <el-table-column align="center" label="名称" prop="dictLabel" />
         <el-table-column align="center" label="标签颜色" v-if="dict.dictType === 'skill_type'">
           <template slot-scope="{row}">
-            <span class="color" :style="{background: row.cssClass}"></span>
+            <span class="color" :style="{background: matchColor(row.cssClass)}"></span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="创建时间" prop="createTime" />
@@ -71,6 +71,7 @@
 import AddEdit from './AddEdit'
 import { dictList, dictData, addAndEdit } from '@/api/dataGroup/dictGroup'
 import debounce from '@/utils/debounce'
+import { color } from '@/components/ColorSelect/options'
 
 export default {
   components: {
@@ -194,6 +195,11 @@ export default {
       this.flag = index
       this.pageNum = 1
       this.getTableData()
+    },
+    matchColor(cssClass) {
+      if (cssClass) {
+        return color.find(v => v.cssClass === cssClass).color
+      }
     }
   }
 }

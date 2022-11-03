@@ -4,7 +4,7 @@
       class="color_box"
       v-for="(item, index) in color"
       :key="index"
-      :style="{background: item}"
+      :style="{background: item.color}"
       @click="change(index)"
     >
       <i :class="['el-icon-check', {current: index === n}]"></i>
@@ -24,19 +24,22 @@ export default {
     }
   },
   watch: {
-    value(val) {
-      if (!val) {
-        this.n = -1
-      } else {
-        this.n = color.findIndex(v => v === val)
-      }
+    value: {
+      handler(val) {
+        if (!val) {
+          this.n = -1
+        } else {
+          this.n = color.findIndex(v => v.cssClass === val)
+        }
+      },
+      immediate: true
     }
   },
   methods: {
     change(index) {
       if (this.n === index) return
       this.n = index
-      this.$emit('input', color[index])
+      this.$emit('input', color[index].cssClass)
     }
   }
 }
