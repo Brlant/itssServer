@@ -91,11 +91,11 @@
               {{ formData.projectGitUrl }}
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="7" :offset="1">
+          <el-col :span="7" :offset="1">
                 <el-form-item label="关联机会" prop="projectChance">
                   {{formData.projectChanceName}}
                 </el-form-item>  
-              </el-col> -->
+              </el-col>
         </el-row>
       </el-form>
       <!--------------------------------------------------------------------------->

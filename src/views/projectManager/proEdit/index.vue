@@ -180,7 +180,8 @@
              <i class='el-icon-warning' style='color:red;'></i>
           </el-col>
           <el-col :span="10" :offset="1">
-            <!-- <el-form-item label="关联机会" prop="projectChance">
+            
+             <el-form-item label="关联机会" prop="projectChance">
                   <el-select
                     v-model="formData.projectChance"
                     placeholder="请选择关联机会"
@@ -195,11 +196,13 @@
                       :disabled="item.disabled"
                     ></el-option>
                   </el-select>
-                </el-form-item> -->
+                </el-form-item>  
           </el-col>
+        </el-row>
+
           <el-row>
             <el-col :span="10" :offset="1">
-              <el-form-item label="归属项目组" prop="projectChance">
+              <el-form-item label="归属项目组" prop="projectTeam">
                 <el-select
                   v-model="formData.projectTeam"
                   placeholder="请选择归属项目组"
@@ -217,7 +220,6 @@
             </el-form-item>
           </el-col>
           </el-row>
-        </el-row>
       </div>
       <div class="titleBar">
         项目成员安排
@@ -389,6 +391,9 @@ import {
   proDetailBFEdit,
   queryUserlistByRole,
 } from "@/api/proManager/proManager";
+import {
+ getChanceList, 
+} from "@/api/chanceManager/chanceManager";
 import { getToday } from "@/utils/index";
 
 export default {
@@ -505,13 +510,13 @@ export default {
             trigger: "change",
           },
         ],
-        // projectChance: [
-        //   {
-        //     required: true,
-        //     message: "请选择关联机会",
-        //     trigger: "change",
-        //   },
-        // ],
+        projectChance: [
+          {
+            required: true,
+            message: "请选择关联机会",
+            trigger: "change",
+          },
+        ],
       },
       // 单独的 用户列表
       projectUserList: {
@@ -562,16 +567,7 @@ export default {
           value: 2,
         },
       ],
-      projectChanceOptions: [
-        {
-          label: "选项一",
-          value: 1,
-        },
-        {
-          label: "选项二",
-          value: 2,
-        },
-      ],
+      projectChanceOptions: [],
       DelUserListTemp: [], //存储删除用户的
     };
   },
@@ -582,11 +578,23 @@ export default {
     this.getDictList("project_type"); // 项目类型 project_type
     // this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
     // this.getDictList("project_priority"); // 项目优先级
+    this.getChanceList()
     this.init();
     // 页面默认点击一下  添加成员
     // this.addUserListHandel()
   },
   methods: {
+    // import { getChanceList, } from "@/api/chanceManager/chanceManager";
+    // this.getChanceList() // 拿到机会列表
+    getChanceList(){
+      getChanceList({}).then((res)=>{
+        res.data.map((item)=>{
+          item.label=item.chanceName
+          item.value=item.chanceId
+        })
+        this.projectChanceOptions= res.data
+      })
+    },
       changeInput(e) {
             if (e.target.value.indexOf('.') >= 0) {
                 e.target.value = e.target.value.substring(0, e.target.value.indexOf('.') + 2);

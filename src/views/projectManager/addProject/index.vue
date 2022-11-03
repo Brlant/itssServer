@@ -176,7 +176,7 @@
             <i class='el-icon-warning' style='color:red;' v-if="redShow"></i>
           </el-col>
           <el-col :span="10" :offset="1">
-            <!-- <el-form-item label="关联机会" prop="projectChance">
+            <el-form-item label="关联机会" prop="projectChance">
                   <el-select
                     v-model="formData.projectChance"
                     placeholder="请选择关联机会"
@@ -191,12 +191,12 @@
                       :disabled="item.disabled"
                     ></el-option>
                   </el-select>
-                </el-form-item> -->
+                </el-form-item> 
           </el-col>
         </el-row>
         <el-row>  
           <el-col :span="10" :offset="1">
-            <el-form-item label="归属项目组" prop="projectChance">
+            <el-form-item label="归属项目组" prop="projectTeam">
               <el-select
                 v-model="formData.projectTeam"
                 placeholder="请选择归属项目组"
@@ -363,10 +363,11 @@ import {
   teamQuery
 } from "@/api/proManager/proManager";
  import {
-  toProject 
+  toProject,getChanceList
 } from "@/api/chanceManager/chanceManager";
 import moment from "moment";
 import "moment/locale/zh-cn";
+ 
 export default {
   data() {
     return {
@@ -496,13 +497,13 @@ export default {
             trigger: "change",
           },
         ],
-        // projectChance: [
-        //   {
-        //     required: true,
-        //     message: "请选择关联机会",
-        //     trigger: "change",
-        //   },
-        // ],
+        projectChance: [
+          {
+            required: true,
+            message: "请选择关联机会",
+            trigger: "change",
+          },
+        ],
       },
       // 单独的 用户列表
       projectUserList: {
@@ -561,20 +562,13 @@ export default {
           value: 2,
         },
       ],
-      projectChanceOptions: [
-        {
-          label: "选项一",
-          value: 1,
-        },
-        {
-          label: "选项二",
-          value: 2,
-        },
-      ],
+      projectChanceOptions: [],
     };
   },
   mounted() {
     this.team()
+    this.getChanceList() //拿到机会列表
+
     this.getUserList();
     this.queryUserlistByRole(); // 查询是 项目主管的用户集合
     this.getDictList("project_phase"); // 项目阶段 project_phase
@@ -595,6 +589,16 @@ export default {
     }
   },
   methods: {
+    // 拿到机会列表
+    getChanceList(){
+      getChanceList({}).then((res)=>{
+        res.data.map((item)=>{
+          item.label=item.chanceName
+          item.value=item.chanceId
+        })
+        this.projectChanceOptions= res.data
+      })
+    },
     team(){
       teamQuery().then(res=>{
         this.projectTeams=res.data
