@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="routerBar">
-      <router-link :to="'/projectManager/proManager'"> < 新建机会</router-link>
+      <router-link :to="'/projectManager/proManager'"> &lt; 新建机会</router-link>
       <div class="rightBox">
         <el-button size="mini" @click="submitForm" type="primary">保存</el-button>
         <el-button size="mini" @click="resetForm" type="default">取消</el-button>
@@ -195,8 +195,9 @@
         </el-row>
         <el-row>
         <el-col :span="18">
-          <el-form-item label="技能需求：" :prop="`chanceConfigList.${chanceConfigIndex}.skillIdList`" :rules="rules.chanceConfigItemSkillIdList">
-            <el-select v-model="chanceConfigItem.skillIdList" multiple  placeholder="请选择技能需求" @change="chageTextColor($event,'mySkillIdList')" ref="mySkillIdList"
+          <el-form-item label="技能需求：" :prop="`chanceConfigList.${chanceConfigIndex}.skillIdList`" :rules="rules.chanceConfigItemSkillIdList" >
+            {{ chanceConfigItem.skillIdList }}
+            <el-select v-model="chanceConfigItem.skillIdList" multiple  placeholder="请选择技能需求"  @change="chageTextColor($event,'mySkillIdList')" ref="mySkillIdList"
             :disabled="chanceConfigItem.nextActive"    :style="{width: '100%',}" >
               <el-option v-for="(dict, index) in techniqueOptions"  
                   :key="dict.dictCode"
@@ -510,15 +511,48 @@ export default {
           // console.log(this.$refs[refName][0]);
           // console.log(this.$refs[refName][0].$el.children[0].children[0]);
           // console.log(this.$refs[refName][0].$el.children[0].children[0].children[0]);
-        this.techniqueOptions.map(item=>{
-          listData.map((jtem,j)=>{
-              console.log(item.dictCode==jtem)
-              if(item.dictCode==jtem){
-                  console.log(this.$refs[refName][0].$el.children[0].children[0].children[j],j);
-                this.addClassName(this.$refs[refName][0].$el.children[0].children[0].children[j],item.cssClass)
-              }
-          })
-         })
+
+              
+        /**
+         * 之前逻辑
+         */
+          
+        //   this.techniqueOptions.map(item=>{
+        //   listData.map((jtem,j)=>{
+        //       console.log(item.dictCode==jtem)
+        //       if(item.dictCode==jtem){
+        //           console.log(this.$refs[refName][0].$el.children[0].children[0].children[j],j);
+        //         this.addClassName(this.$refs[refName][0].$el.children[0].children[0].children[j],item.cssClass)
+        //       }
+        //   })
+        //  })
+          
+
+            this.$nextTick( () => {
+              setTimeout( () => {
+                let arr = [] ; // 对应数据对象数组
+
+                listData.map( ind => {
+                  this.techniqueOptions.map( v => {
+                    if( v.dictCode === +ind ){
+                    arr.push( v ) ;
+                    }
+                  } ) ;
+                } ) ;
+
+                let eles = this.$refs[refName][0].$el.querySelectorAll( '.el-select__tags .el-tag' ) ; // 获取节点
+                
+                eles.forEach( ( v, i ) => {
+                  if( arr[i].dictCode === +listData[i] ){
+                    v.classList && v.classList.add( arr[i]['cssClass'] ) ; // 添加类名
+                  }
+                } ) ;
+
+              }, 100 ) ;
+
+            } ) ;
+          
+      
     },
     /*查询字典的接口*/
     getDictList(dictCode) {
@@ -747,5 +781,19 @@ export default {
 }
 .UserListBox .el-form-item{
   // margin-bottom: 0px;
+}
+
+
+</style>
+
+<style >
+.color4 {
+  background: #409eff!important; color:white!important;
+}
+.color2 {
+  background: #e6a23c!important; color:white!important;
+}
+.color1 {
+  background: #f56c6c!important; color:white!important;
 }
 </style>
