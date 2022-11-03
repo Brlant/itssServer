@@ -458,3 +458,16 @@ export function isProjectByUser(projectInfo){
   } 
   return result
 }
+//  js 模拟JQ addClass
+export function addClassName(ele,str){
+  if(ele){
+     if(ele.className){
+    let oriName = ele.className;
+    let newClass = oriName+ " "+str;
+    ele.className=newClass
+   }else{
+    ele.className =str
+   }
+  }
+  
+}

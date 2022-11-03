@@ -101,7 +101,7 @@
       </el-form>
     </div>
     <div class="toggleBar">
-      <!-- -->
+      <!-- 资源配置和跟进记录的切换 -->
       <template v-for="(item, i) in BarList">
         <span :class="[nowActive == i ? 'nowActive' : '']" @click="toggleWho(i)">
           {{ item }}
@@ -129,7 +129,7 @@
         <el-table-column prop="skillList" label="技能需求" min-width="120">
           <template slot-scope="scope">
             <div v-for="(item, i) in scope.row.skillList">
-              <span :class="['skill' + item.color]">{{ item.name }}</span>
+              <span :class="['skill' + item.cssClass]">{{ item.name }}</span>
             </div>
           </template>
         </el-table-column>
@@ -179,7 +179,7 @@
         >
           <div v-for="(chanceConfigItem, chanceConfigIndex) in formData.chanceConfigList">
             <el-row>
-              <el-col :span="6">
+              <el-col :span="5">
                 <el-form-item
                   label="区域："
                   :prop="`chanceConfigList.${chanceConfigIndex}.areaId`"
@@ -200,7 +200,19 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+               <el-col :span="5">
+            <el-form-item label="职位类型：" :prop="`chanceConfigList.${chanceConfigIndex}.postTypeId`" :rules="rules.chanceConfigItemPostTypeId">
+              <el-select v-model="chanceConfigItem.postTypeId" placeholder="请选择职位类型" 
+              :disabled="chanceConfigItem.postTypeActive"   :style="{width: '100%'}"
+              @change="(dates) => editNext('postType',dates, chanceConfigIndex)">
+                <el-option v-for="(dict, index) in postTypeOptions"  :key="dict.dictCode"
+                    :label="dict.dictLabel"
+                    :value="dict.dictCode"
+                    :disabled="dict.disabled"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+              <el-col :span="5">
                 <el-form-item
                   label="职位："
                   :prop="`chanceConfigList.${chanceConfigIndex}.postId`"
@@ -211,7 +223,7 @@
                     placeholder="请选择职位"
                     :disabled="chanceConfigItem.postTypeActive"
                     :style="{ width: '100%' }"
-                    @change="(dates) => editNext('postType', dates, chanceConfigIndex)"
+                    @change="(dates) => editNext('postId', dates, chanceConfigIndex)"
                   >
                     <el-option
                       v-for="(dict, index) in postTypeOptions"
@@ -223,7 +235,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="5">
                 <el-form-item
                   label="等级："
                   :prop="`chanceConfigList.${chanceConfigIndex}.gradeId`"
@@ -246,7 +258,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="4">
                 <el-form-item label="">
                   <el-button
                     type="primary"
@@ -400,27 +412,32 @@
      
     </div>
      <!-- 添加跟进记录的弹出层 -->
-          <el-dialog :visible.sync="followActive"   title="添加跟进记录">
-            <el-form ref="followElForm" :model="followFormData" :rules="followRules" size="medium"
-              label-width="150px">
-              <el-form-item label="跟进记录：" prop="followRecord">
-                <el-input v-model="followFormData.followRecord" type="textarea" placeholder="请输入跟进记录"
-                  :autosize="{minRows: 4, maxRows: 4}" :style="{width: '100%'}"></el-input>
-              </el-form-item>
-              <el-form-item label="跟进方式：" prop="followType">
-                <el-input v-model="followFormData.followType" placeholder="请输入跟进方式" clearable
-                  :style="{width: '100%'}"></el-input>
-              </el-form-item>
-              <el-form-item label="下次跟进时间：" prop="nextDate">
-                <el-date-picker v-model="followFormData.nextDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
-                  :style="{width: '100%'}" placeholder="请选择下次跟进时间" clearable></el-date-picker>
-              </el-form-item>
-            </el-form>
-            <div slot="footer">
-              <el-button @click="close">取消</el-button>
-              <el-button type="primary" @click="handleConfirm">确定</el-button>
-            </div>
-          </el-dialog>
+    <el-dialog :visible.sync="followActive"   title="添加跟进记录">
+      <el-form ref="followElForm" :model="followFormData" :rules="followRules" size="medium"
+        label-width="150px">
+        <el-form-item label="跟进记录：" prop="followRecord">
+          <el-input v-model="followFormData.followRecord" type="textarea" placeholder="请输入跟进记录"
+            :autosize="{minRows: 4, maxRows: 4}" :style="{width: '100%'}"></el-input>
+        </el-form-item>
+        <el-form-item label="跟进方式：" prop="followType">
+          <el-input v-model="followFormData.followType" placeholder="请输入跟进方式" clearable
+            :style="{width: '100%'}"></el-input>
+        </el-form-item>
+        <el-form-item label="下次跟进时间：" prop="nextDate">
+          <el-date-picker v-model="followFormData.nextDate" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+            :style="{width: '100%'}" placeholder="请选择下次跟进时间" clearable></el-date-picker>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="close">取消</el-button>
+        <el-button type="primary" @click="handleConfirm">确定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 人员推荐 表格 -->
+     <div class="titleBar">人员推荐</div>
+     <div class="whiteBox">
+
+     </div>
   </div>
 </template>
 <script>
@@ -678,14 +695,11 @@ export default {
           },
         ],
       },
-      techniqueOptions: [], // 技能需求
-      regionOptions: [], // 区域
-      postTypeOptions: [], // 职位
-      gradeIdOptions: [
-        { dictCode: 1, dictLabel: "初级" },
-        { dictCode: 2, dictLabel: "中级" },
-        { dictCode: 3, dictLabel: "高级" },
-      ], // 等级 后端还未开发
+      techniqueOptions:[], // 技能需求
+      regionOptions:[], // 区域
+      postTypeOptions:[], // 职位类型
+      postIdOptions:[], // 职位名称
+      gradeIdOptions:[],  // 职位等级  
       // 配置的基本信息
       chanceConfigList: {
         postId: "", //职位id
@@ -839,37 +853,45 @@ export default {
     },
     delConfigList(index) {},
     // 判断当前这个值是否选中了
-    editNext(who, data, index) {
+    editNext(who,data,index){
       // console.log(who,data,index);
-      if (who == "region") {
-        this.formData.chanceConfigList[index].postTypeActive = false;
+      console.log(who);
+      if(who=='region'){
+        this.formData.chanceConfigList[index].postTypeActive = false
       }
-      if (who == "postType") {
-        this.formData.chanceConfigList[index].gradeIdActive = false;
+      if(who=='postType'){
+        this.formData.chanceConfigList[index].postIdActive = false
       }
-      if (who == "gradeId") {
-        this.formData.chanceConfigList[index].nextActive = false;
+      if(who=='postId'){
+        this.formData.chanceConfigList[index].gradeIdActive = false
+      }
+       if(who=='gradeId'){
+         this.formData.chanceConfigList[index].nextActive = false
         // 此处去请求 成本
-        this.formData.chanceConfigList[index].costNum = 1000; // 写死成本为 1000
+        this.formData.chanceConfigList[index].costNum =  1000// 写死成本为 1000
         // 并计算 下面的周排期
-        this.getTimeArea(this.formData.chanceConfigList[index].startEndTime, index);
+        this.getTimeArea(this.formData.chanceConfigList[index].startEndTime,index)
       }
     },
-    /*查询字典的接口*/
+     /*查询字典的接口*/
     getDictList(dictCode) {
       queryDict(dictCode).then((res) => {
-        if (dictCode == "post_type") {
+        if (dictCode == "post_type") { // 职位类型
           this.postTypeOptions = res.data;
         }
-        if (dictCode == "region") {
+        if (dictCode == "region") { // 人员区域
           this.regionOptions = res.data;
         }
-        if (dictCode == "gradeId") {
+        if (dictCode == "post_level") { // 职位等级
           this.gradeIdOptions = res.data;
         }
-        if (dictCode == "technique") {
+        if (dictCode == "skill_type") { // 人员技能
           this.techniqueOptions = res.data;
         }
+        if(dictCode =="post_name"){ // 职位名称
+          this.postIdOptions = res.data
+        }
+       
       });
     },
     // 点击修改
