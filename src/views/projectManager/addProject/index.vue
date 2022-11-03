@@ -173,7 +173,7 @@
                 @change="getProjectTimeArea"
               ></el-date-picker>
             </el-form-item>
-            <i class='el-icon-warning' style='color:red;'></i>
+            <i class='el-icon-warning' style='color:red;' v-if="redShow"></i>
           </el-col>
           <el-col :span="10" :offset="1">
             <!-- <el-form-item label="关联机会" prop="projectChance">
@@ -202,12 +202,13 @@
                 placeholder="请选择归属项目组"
                 clearable
                 :style="{ width: '100%' }"
+                @change='teamChange'
               >
                 <el-option
                   v-for="(item, index) in projectTeams"
                   :key="index"
-                  :label="item.label"
-                  :value="item.value"
+                  :value="item.projectGroupId"
+                  :label="item.projectGroupName"
                   :disabled="item.disabled"
                 ></el-option>
               </el-select>
@@ -359,10 +360,13 @@ import {
   addProjectList,
   searchProjectList,
   queryUserlistByRole,
+  teamQuery
 } from "@/api/proManager/proManager";
  import {
   toProject 
 } from "@/api/chanceManager/chanceManager";
+import moment from "moment";
+import "moment/locale/zh-cn";
 export default {
   data() {
     return {
@@ -383,6 +387,9 @@ export default {
       userOptions: [],
       projectTeams:[],
       projectTeam:'',
+      date1:'',
+      date2:'',
+      redShow:false,
       formData: {
         priority: 3,/**优先级（1.最高，2.高，3.普通，4.较低）*/
         projectChance: "",/**关联机会*/
@@ -567,6 +574,7 @@ export default {
     };
   },
   mounted() {
+    this.team()
     this.getUserList();
     this.queryUserlistByRole(); // 查询是 项目主管的用户集合
     this.getDictList("project_phase"); // 项目阶段 project_phase
@@ -587,7 +595,30 @@ export default {
     }
   },
   methods: {
- 
+    team(){
+      teamQuery().then(res=>{
+        this.projectTeams=res.data
+      })
+    },
+    teamChange(){
+      console.log(this.formData.projectTeam,'fffff')
+      let aa = this.projectTeams.filter(v=>{
+       return  v.projectGroupId == this.formData.projectTeam
+      })
+      this.date1=aa[0].startDate
+      this.date2=aa[0].endDate
+      console.log(aa)
+      console.log(this.date1)
+      console.log( this.formData.projectStartTime)
+      console.log(moment(this.date1, 'YYYY-MM-DD').valueOf() < moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf())
+      if(moment(this.date1, 'YYYY-MM-DD').valueOf() < moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf() &&  moment(this.date2, 'YYYY-MM-DD').valueOf()>moment( this.formData.projectEndTime, 'YYYY-MM-DD').valueOf()){
+        this.redShow=false
+      }else{
+        this.redShow=true
+      }
+     
+      
+    },
     changeInput(e) {
             if (e.target.value.indexOf('.') >= 0) {
                 e.target.value = e.target.value.substring(0, e.target.value.indexOf('.') + 2);
@@ -802,8 +833,19 @@ export default {
     },
     /*选择项目有效期*/
     getProjectTimeArea(dates) {
+  
       this.formData.projectStartTime = dates[0];
       this.formData.projectEndTime = dates[1];
+      console.log(this.formData.projectStartTime)
+      console.log(this.date1)
+      if(this.date1 != '' && this.date2 != ''){
+         if(moment(this.date1, 'YYYY-MM-DD').valueOf() < moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf() &&  moment(this.date2, 'YYYY-MM-DD').valueOf()>moment( this.formData.projectEndTime, 'YYYY-MM-DD').valueOf()){
+        this.redShow=false
+      }else{
+        this.redShow=true
+      }
+      }
+      
     },
     /* 时间区间选择之前 请判断 是否选择了前面的用户 成员*/
     // userIsNull(dates, index) {
@@ -949,7 +991,10 @@ export default {
     },
     // 保存 addProjectList 新增用户信息的
     submitForm() {
-      this.$refs["elForm"].validate((valid) => {
+      if(this.redShow){
+        this.$message.error('信息填写有误，请检查填写内容')
+      }else{
+           this.$refs["elForm"].validate((valid) => {
         if (!valid) return;
         // TODO 提交表单
         if (valid) {
@@ -974,6 +1019,8 @@ export default {
           });
         }
       });
+      }
+   
     },
     // 取消重置表单的
     resetForm() {
