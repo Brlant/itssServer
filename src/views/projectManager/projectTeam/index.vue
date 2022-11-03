@@ -180,7 +180,7 @@
         </el-table-column>
 
         <el-table-column label="操作" width="120" fixed="right">
-          <template slot-scope="scope">
+          <template slot-scope="scope" v-if='scope.row.projectGroupName!="总计"'>
             <!-- v-show="isProjectByUser(scope.row)||isJurisdiction('admin','deptdirector','projectdirector','projectsupervision','operatemanage')" -->
             <el-button
               @click.native.prevent="detailProject(scope.$index, scope.row)"
