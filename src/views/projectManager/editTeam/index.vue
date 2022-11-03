@@ -24,9 +24,9 @@
       <div class="whiteBox">
         <el-row>
           <el-col :span="10" :offset="1">
-            <el-form-item label="项目组名称：" prop="teamName">
+            <el-form-item label="项目组名称：" prop="projectGroupName">
               <el-input
-                v-model="formData.teamName"
+                v-model="formData.projectGroupName"
                 placeholder="请输入项目组名称"
                 show-word-limit
                 maxlength="20"
@@ -58,11 +58,11 @@
           <el-col :span="10" :offset="1">
             <el-form-item
               label="项目组负责人"
-              prop="teamUserId"
+              prop="projectGroupUserId"
               style="position: relative"
             >
               <el-select
-                v-model="formData.teamUserId"
+                v-model="formData.projectGroupUserId"
                 placeholder="请选择项目组负责人"
                 clearable
                 :style="{ width: '100%' }"
@@ -84,8 +84,9 @@
   </div>
 </template>
 <script>
-
-import { getToday } from "@/utils/index";
+import {
+teamedit,queryUserlist
+} from "@/api/proManager/teamMange";
 
 export default {
   data() {
@@ -136,12 +137,34 @@ export default {
     };
   },
   mounted() {
-  
+      this.userList()
+    console.log(this.$route.query.project)
+    this.formData=this.$route.query.project
+      this.$set(this.formData, "teamTimeArea", [
+        this.$route.query.project.startDate,
+         this.$route.query.project.endDate
+        ]);
   },
   methods: {
-    
+     userList(){
+      queryUserlist({}).then(res=>{
+        this.teamUserIdOptions=res.data
+      })
+    },
     // 保存 updateProjectUserAddEdit 新增用户信息的
      submitForm() {
+       let data={
+        projectGroupId:this.$route.query.project.projectGroupId,
+        projectGroupName:this.formData.projectGroupName,
+        startDate:this.formData.teamTimeArea[0],
+         endDate:this.formData.teamTimeArea[1],
+         projectGroupUserId:this.formData.projectGroupUserId
+      }
+      teamedit(data).then(res=>{
+        if(res.code==200){
+          this.$message.success(res.msg)
+        }
+      })
         },
     backDetail(){},
     goManagerPage() {

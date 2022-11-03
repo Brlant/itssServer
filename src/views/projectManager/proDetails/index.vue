@@ -96,6 +96,11 @@
                   {{formData.projectChanceName}}
                 </el-form-item>  
               </el-col>
+            <el-col :span="7" :offset="1">
+                <el-form-item label="项目组" prop="projectGroupName">
+                  {{formData.projectGroupName}}
+                </el-form-item>  
+              </el-col>
         </el-row>
       </el-form>
       <!--------------------------------------------------------------------------->

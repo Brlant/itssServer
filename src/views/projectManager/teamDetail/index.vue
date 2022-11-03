@@ -2,7 +2,7 @@
   <div class="team-containers">
     <div class="pageTitle cls">
       <div class="leftTitle">
-        <i class='el-icon-arrow-left' @click="goBack"></i><span>xxx项目组</span>
+        <i class='el-icon-arrow-left' @click="goBack"></i><span>{{teamName}}</span>
         <div class="rightBtns">
           <!-- 必须是项目主管的角色 -->
           <el-button size="mini" type="primary" v-if="isJurisdiction('projectdirector','admin')">
@@ -278,6 +278,7 @@ export default {
       tableData: [],
       countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
       countScopeInit:'',
+      teamName:this.$route.query.project.projectGroupName,
       projectStatusOptions: [
         {
           label: "全部",
@@ -337,7 +338,9 @@ export default {
     };
   },
   mounted() {
-
+      this.searchForm.projectStartTime = this.$route.query.project.startDate;
+        this.searchForm.projectEndTime = this.$route.query.project.endDate;
+        //  this.teamName=this.$route.query.projectGroupName
     /*------------------额外的初始化查询的判断------------------------------*/
     this.init();
   },
@@ -392,7 +395,7 @@ export default {
       // countScope://统计范围 1.全部，2.仅我负责，3.仅部门成员
       // this.$router.push({ path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
       // startTime:row.projectStartTime,endTime:getToday()}})
-       const obj = { path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
+       const obj = { path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:'1',
             startTime:row.projectStartTime,endTime:row.projectEndTime}};
             // getToday()
       this.$tab.closeOpenPage(obj);
@@ -422,12 +425,22 @@ export default {
              this.searchForm.projectStartTime = this.searchForm.projectStartEndTime[0];
         this.searchForm.projectEndTime = this.searchForm.projectStartEndTime[1];
       }else{
-        this.searchForm.projectStartTime = "";
-        this.searchForm.projectEndTime = "";
+        this.searchForm.projectStartTime = this.$route.query.project.startDate;
+        this.searchForm.projectEndTime = this.$route.query.project.endDate;
       }
-      searchProjectList(this.searchForm).then((res) => {
+      let data={
+        countScope:'1',
+        projectGroupId:this.$route.query.project.projectGroupId,
+        projectStatus:this.searchForm.projectStatus,
+        priority:this.searchForm.priority,
+        projectStartTime: this.searchForm.projectStartTime,
+        projectEndTime:this.searchForm.projectEndTime
+
+      }
+      searchProjectList(data).then((res) => {
         let { msg } = res;
         this.tableData = res.data;
+       
         // this.$message.success(msg);
       });
     },
