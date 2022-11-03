@@ -28,7 +28,7 @@
                   value-format="yyyy-MM-dd"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
-                
+                  @change="pickerChange"
                 >
                 </el-date-picker>
               </el-form-item>
@@ -38,7 +38,7 @@
               <el-form-item label="搜索">
                 <el-input
                   v-model="searchForm.projectName"
-                  
+                  @blur='query'
                   placeholder="请输入项目名称"
                   clearable
                 ></el-input>
@@ -64,7 +64,7 @@
           fixed
           label="项目组"
           min-width="120"
-          prop='aa'
+          prop='projectGroupName'
         >
         </el-table-column>
         <el-table-column
@@ -72,7 +72,7 @@
           sortable
           label="负责人"
           width="100"
-          prop='bb'
+          prop='userName'
         >
         </el-table-column>
         <el-table-column        
@@ -80,6 +80,7 @@
           sortable
           label="开始日期"
           width="120"
+          prop='startDate'
         >
         </el-table-column>
         <el-table-column
@@ -88,44 +89,38 @@
           sortable
           label="结束日期"
           width="120"
+          prop='endDate'
         >
           <!-- <template slot-scope="scope">
             {{ scope.row.projectEndTime  }}
           </template> -->
         </el-table-column>
         <el-table-column label="预算配置" width="120">
-          <!-- <template slot-scope="scope"> {{ scope.row.ysConfig }}人日 </template> -->
-          <template>10</template>
+          <template slot-scope="scope"> {{ scope.row.ysConfig }}人日 </template>
         </el-table-column>
         <el-table-column label="成本预算" width="120">
-          <!-- <template slot-scope="scope">
+          <template slot-scope="scope">
             {{ scope.row.ysCost }}
-          </template> -->
-            <template>10</template>
+          </template>
         </el-table-column>
 
         <el-table-column label="计划配置已用" width="130">
-          <!-- <template slot-scope="scope"> {{ scope.row.jhConfig }}人日 </template> -->
-            <template>10</template>
+          <template slot-scope="scope"> {{ scope.row.jhConfig }}人日 </template>
         </el-table-column>
         <el-table-column label="计划预算已用" width="130">
-          <!-- <template slot-scope="scope">
+          <template slot-scope="scope">
             {{ scope.row.jhCost }}
-          </template> -->
-            <template>10</template>
+          </template>
         </el-table-column>
         <el-table-column label="计划当前进度" width="130">
-          <!-- <template slot-scope="scope"> {{ scope.row.jhSchedule }}% </template> -->
-            <template>10</template>
+          <template slot-scope="scope"> {{ scope.row.jhSchedule }}% </template>
         </el-table-column>
 
         <el-table-column   label="实际配置已用" width="130">
-          <!-- <template slot-scope="scope"> {{ scope.row.sjConfig }}人日 </template> -->
-            <template>10</template>
+          <template slot-scope="scope"> {{ scope.row.sjConfig }}人日 </template>
         </el-table-column>
         <el-table-column label="实际预算已用" width="130">
-          <!-- <template slot-scope="scope"> {{ scope.row.sjCost }} </template> -->
-            <template>10</template>
+          <template slot-scope="scope"> {{ scope.row.sjCost }} </template>
         </el-table-column>
 
         <el-table-column label="实际完成工作" width="130">
@@ -139,15 +134,14 @@
               >更改</el-button
             >
           </template> -->
-            <template>10</template>
+             <template slot-scope="scope"> {{ scope.row.realWork }} 人日</template>
         </el-table-column>
         <el-table-column label="实际当前进度" width="130">
-          <!-- <template slot-scope="scope"> {{ scope.row.sjSchedule }}% </template> -->
-            <template>10</template>
+          <template slot-scope="scope"> {{ scope.row.sjSchedule }}% </template>
         </el-table-column>
 
         <el-table-column label="预算偏差" width="130">
-          <!-- <template slot-scope="scope">
+          <template slot-scope="scope">
             <span :class="['piancha' + scope.row.pianchaActive]">
               {{
                 scope.row.pianchaActive == 2
@@ -155,12 +149,10 @@
                   : scope.row.ysDeviation
               }}
             </span>
-          </template> -->
-            <template>10</template>
+          </template>
         </el-table-column>
         <el-table-column label="进度偏差" width="130">
-          <!-- <template slot-scope="scope"> {{ scope.row.jdSchedule }} </template> -->
-            <template>10</template>
+          <template slot-scope="scope"> {{ scope.row.jdSchedule }} </template>
         </el-table-column>
 
         <el-table-column label="操作" width="120" fixed="right">
@@ -186,6 +178,7 @@
               type="text"
               size="small"
               style='color:red;'
+              @click='del(scope.row)'
               v-hasPermi="['projectManager:editTeam:edit']"
             >
             删除
@@ -199,12 +192,8 @@
 </template>
 <script>
 import {
-  queryDict,
-  searchProjectList,
-  updateProjectById,
-  updateProjectStatus,
-} from "@/api/proManager/proManager";
-import { getMonthStartEnd ,getToday} from "@/utils/index";
+  teamQuery,deleteTeam
+  } from "@/api/proManager/teamMange";
 export default {
   data() {
     let startDate = ''//getMonthStartEnd("start");
@@ -224,9 +213,11 @@ export default {
         ],
       },
       // 弹出层 以上
-      tableData: [{aa:'aa',bb:"bb"}],
+      tableData: [],
       countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
       countScopeInit:'',
+      startDate:'',
+      endDate:'',
       projectStatusOptions: [
         {
           label: "全部",
@@ -280,13 +271,30 @@ export default {
     };
   },
   mounted() {
-  
+    this.query()
  
   },
   methods: {
-    detailProject(){
+    pickerChange(value){
+      console.log(value,'aaaaa')
+      this.startDate=value[0]
+      this.endDate=value[1]
+      this.query()
+    },
+    query(){
+      let data={
+        startDate:this.startDate,
+        endDate:this.endDate,
+        projectGroupName:this.searchForm.projectName
+      }
+      teamQuery(data).then(res=>{
+        this.tableData=res.data
+      })
+    },
+    detailProject(index,row){
+      console.log(index,row)
          // startTime:row.projectStartTime,endTime:getToday()}})
-       const obj = { path:'/projectManager/teamDetail'};
+       const obj = { path:'/projectManager/teamDetail',query:{project:row,startDate:this.startDate,endDate:this.endDate} };
             // getToday()
       this.$tab.closeOpenPage(obj);
         //  this.$router.push('/projectManager/team/teamDetail')
@@ -296,9 +304,17 @@ export default {
             // getToday()
       this.$tab.closeOpenPage(obj);
     },
-    toggleActive(){
+    del(row){
+      deleteTeam(row.projectGroupId).then(res=>{
+        if(res.code==200){
+          this.$message.success(res.msg)
+           this.query()
+        }
+      })
+    },
+    toggleActive(index,row){
         // this.$router.push('/projectManager/editTeam')
-         const obj = { path:'/projectManager/editTeam'};
+         const obj = { path:'/projectManager/editTeam',query:{project:row}};
             // getToday()
       this.$tab.closeOpenPage(obj);
     }

@@ -85,7 +85,9 @@
 </template>
 <script>
 
-import { getToday } from "@/utils/index";
+import {
+teamAdd,queryUserlist
+} from "@/api/proManager/teamMange";
 
 export default {
   data() {
@@ -136,12 +138,27 @@ export default {
     };
   },
   mounted() {
-  
+    this.userList()
   },
   methods: {
-    
+    userList(){
+      queryUserlist({}).then(res=>{
+        this.teamUserIdOptions=res.data
+      })
+    },
     // 保存 updateProjectUserAddEdit 新增用户信息的
      submitForm() {
+      let data={
+        projectGroupName:this.formData.teamName,
+        startDate:this.formData.teamTimeArea[0],
+         endDate:this.formData.teamTimeArea[1],
+         projectGroupUserId:this.formData.teamUserId
+      }
+      teamAdd(data).then(res=>{
+        if(res.code==200){
+          this.$message.success(res.msg)
+        }
+      })
         },
     backDetail(){},
     goManagerPage() {
