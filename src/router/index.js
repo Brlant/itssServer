@@ -278,7 +278,7 @@ export const dynamicRoutes = [
     permissions: ['projectManager:addTeam:add'],
     children: [
       {
-        path: 'TeamAdd',
+        path: 'addTeam',
         component: () => import('@/views/projectManager/addTeam'),
         name: 'GenEdit',
         meta: { title: '项目组新建', activeMenu: '/projectManager/addTeam' }
@@ -309,6 +309,20 @@ export const dynamicRoutes = [
         path: 'userInfo',
         component: () => import('@/views/system/user/userInfo'),
         name: 'UserInfo',
+        meta: { title: '成员信息', activeMenu: '/system/user' }
+      }
+    ]
+  },
+  {
+    path: '/system/user-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:user:add'],
+    children: [
+      {
+        path: 'editAddInfo',
+        component: () => import('@/views/system/user/editAddInfo'),
+        name: 'EditAddInfo',
         meta: { title: '成员信息', activeMenu: '/system/user' }
       }
     ]

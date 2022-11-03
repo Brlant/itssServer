@@ -177,7 +177,7 @@
                 @change="getProjectTimeArea"
               ></el-date-picker>
             </el-form-item>
-             <i class='el-icon-warning' style='color:red;'></i>
+             <i class='el-icon-warning' style='color:red;padding-left:10px;' v-if='redShow'></i>
           </el-col>
           <el-col :span="10" :offset="1">
             
@@ -202,19 +202,20 @@
 
           <el-row>
             <el-col :span="10" :offset="1">
-              <el-form-item label="归属项目组" prop="projectTeam">
+              <el-form-item label="归属项目组" prop="projectGroupId">
                 <el-select
-                  v-model="formData.projectTeam"
+                  v-model="formData.projectGroupId"
                   placeholder="请选择归属项目组"
                   clearable
                   :style="{ width: '100%' }"
+                   @change='teamChange'
                 >
                   <el-option
-                    v-for="(item, index) in projectTeams"
-                    :key="index"
-                    :label="item.label"
-                    :value="item.value"
-                    :disabled="item.disabled"
+                   v-for="(item, index) in projectTeams"
+                  :key="index"
+                  :value="item.projectGroupId"
+                  :label="item.projectGroupName"
+                  :disabled="item.disabled"
                   ></el-option>
                 </el-select>
             </el-form-item>
@@ -390,12 +391,14 @@ import {
   searchProjectList,
   proDetailBFEdit,
   queryUserlistByRole,
+  teamQuery
 } from "@/api/proManager/proManager";
 import {
  getChanceList, 
 } from "@/api/chanceManager/chanceManager";
 import { getToday } from "@/utils/index";
-
+import moment from "moment";
+import "moment/locale/zh-cn";
 export default {
   data() {
     return {
@@ -416,6 +419,7 @@ export default {
       userOptions: [],
        projectTeams:[],
       projectTeam:'',
+      redShow:false,
       formData: {
         priority: 3 /**优先级（1.最高，2.高，3.普通，4.较低）*/,
         projectChance: "" /**关联机会*/,
@@ -430,6 +434,7 @@ export default {
         projectUserList: [] /**项目成员列表*/,
         projectGitUrl: "", // 项目git 地址
         projectTimeArea: [],
+        projectGroupId:''
       },
       rules: {
         projectUserListAllUserId: [
@@ -572,6 +577,7 @@ export default {
     };
   },
   mounted() {
+    this.team()
     // this.getUserList();
     this.queryUserlistByRole(); // 查询是 项目主管的用户集合
     this.getDictList("project_phase"); // 项目阶段 project_phase
@@ -594,6 +600,30 @@ export default {
         })
         this.projectChanceOptions= res.data
       })
+    },
+    team(){
+      teamQuery().then(res=>{
+        this.projectTeams=res.data
+      })
+    },
+    teamChange(){
+      console.log(this.formData.projectGroupId,'fffff')
+      let aa = this.projectTeams.filter(v=>{
+       return  v.projectGroupId == this.formData.projectGroupId
+      })
+      this.date1=aa[0].startDate
+      this.date2=aa[0].endDate
+      console.log(aa)
+      console.log(this.date1)
+      console.log( this.formData.projectStartTime)
+      console.log(moment(this.date1, 'YYYY-MM-DD').valueOf() < moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf())
+      if(moment(this.date1, 'YYYY-MM-DD').valueOf() < moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf() &&  moment(this.date2, 'YYYY-MM-DD').valueOf()>moment( this.formData.projectEndTime, 'YYYY-MM-DD').valueOf()){
+        this.redShow=false
+      }else{
+        this.redShow=true
+      }
+     
+      
     },
       changeInput(e) {
             if (e.target.value.indexOf('.') >= 0) {
@@ -884,6 +914,13 @@ export default {
       console.log(dates, "sssssssss");
       this.formData.projectStartTime = dates[0];
       this.formData.projectEndTime = dates[1];
+      if(this.date1 != '' && this.date2 != ''){
+        if(moment(this.date1, 'YYYY-MM-DD').valueOf() < moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf() &&  moment(this.date2, 'YYYY-MM-DD').valueOf()>moment( this.formData.projectEndTime, 'YYYY-MM-DD').valueOf()){
+          this.redShow=false
+        }else{
+          this.redShow=true
+        }
+      }
     },
     /* 时间区间选择之前 请判断 是否选择了前面的用户 成员*/
     userIsNull(dates, index) {
@@ -1049,8 +1086,11 @@ export default {
         .catch(() => {});
     },
     // 保存 updateProjectUserAddEdit 新增用户信息的
-    submitForm() {
-      this.$refs["elForm"].validate((valid) => {
+    submitForm() { 
+      if(this.redShow){
+        this.$message.error('项目时间超出项目组限制时间!')
+      }else{
+         this.$refs["elForm"].validate((valid) => {
         if (!valid) return;
         // TODO 提交表单
         if (valid) {
@@ -1085,6 +1125,8 @@ export default {
           });
         }
       });
+      }
+     
     },
     // 取消重置表单的
     resetForm() {

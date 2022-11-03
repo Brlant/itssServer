@@ -173,7 +173,7 @@
                 @change="getProjectTimeArea"
               ></el-date-picker>
             </el-form-item>
-            <i class='el-icon-warning' style='color:red;' v-if="redShow"></i>
+            <i class='el-icon-warning' style='color:red;;padding-left:10px;' v-if="redShow"></i>
           </el-col>
           <el-col :span="10" :offset="1">
             <el-form-item label="关联机会" prop="projectChance">
