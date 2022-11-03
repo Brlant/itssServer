@@ -996,7 +996,7 @@ export default {
     // 保存 addProjectList 新增用户信息的
     submitForm() {
       if(this.redShow){
-        this.$message.error('信息填写有误，请检查填写内容')
+        this.$message.error('项目时间超出项目组限制时间!')
       }else{
            this.$refs["elForm"].validate((valid) => {
         if (!valid) return;
