@@ -37,63 +37,42 @@
         <el-table
           v-loading="loading"
           :data="user"
-          @selection-change="handleSelectionChange"
         >
           <!-- <el-table-column type="selection" width="50" align="center" /> -->
           <el-table-column
             label="姓名"
             align="center"
-            key="userId"
             prop="userId"
-            v-if="columns[0].visible"
           />
           <el-table-column
             label="职位"
             align="center"
-            key="userName"
             prop="userName"
-            v-if="columns[1].visible"
-            :show-overflow-tooltip="true"
           />
           <el-table-column
             label="部门"
             align="center"
-            key="deptName"
-            prop="dept.deptName"
-            v-if="columns[3].visible"
-            :show-overflow-tooltip="true"
+            prop="deptName"
           />
           <el-table-column
-            label="直属领导"
+            label="邮箱"
             align="center"
-            key="phonenumber"
-            prop="phonenumber"
-            v-if="columns[2].visible"
-            :show-overflow-tooltip="true"
+            prop="email"
           />
           <el-table-column
             label="手机号码"
             align="center"
-            key="phonenumber"
             prop="phonenumber"
-            v-if="columns[4].visible"
-            width="120"
           />
           <el-table-column
             label="系统角色"
             align="center"
-            key="phonenumber"
             prop="phonenumber"
-            v-if="columns[2].visible"
-            :show-overflow-tooltip="true"
           />
           <el-table-column
             label="身份ID"
             align="center"
-            key="phonenumber"
             prop="phonenumber"
-            v-if="columns[2].visible"
-            :show-overflow-tooltip="true"
           />
           <el-table-column
             label="操作"
@@ -101,7 +80,7 @@
             width="160"
             class-name="small-padding fixed-width"
           >
-            <template slot-scope="scope" v-if="scope.row.userId !== 1">
+            <template slot-scope="scope">
               <el-button size="mini" type="text">邀请</el-button>
               <el-button size="mini" type="text"  v-hasPermi="['system:user:query']" @click='detail'>详情</el-button>
               <el-button size="mini" type="text" style="color: red"
