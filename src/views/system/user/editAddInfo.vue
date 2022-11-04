@@ -132,9 +132,15 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="!skills">
+          <el-row>
             <el-col>
-              <i class="el-icon-unlock"></i>
+              <el-form-item>
+                <div slot="label">
+                  <i class="el-icon-lock"></i> 工作技能：
+                </div>
+                <skill-select />
+              </el-form-item>
+              <!-- <i class="el-icon-unlock"></i>
               <i class="el-icon-lock"></i>
               <span>工作技能：</span>
               <el-popover placement="right" width="400" trigger="click">
@@ -148,19 +154,19 @@
                     <div class="skillColor"></div>
                     <div class="skillName">{{ item }}</div>
                   </div>
-                </div>
+                </div> -->
                 <!-- <span slot="reference">
                   <i class="el-icon-circle-plus"></i>
                   <span>添加技能标签</span>
                 </span> -->
-                <el-button slot="reference" type="text">
+                <!-- <el-button slot="reference" type="text">
                   <i class="el-icon-circle-plus"></i>
                   <span>添加技能标签</span>
                 </el-button>
-              </el-popover>
+              </el-popover> -->
             </el-col>
           </el-row>
-          <el-row v-if="skills">
+          <!-- <el-row v-if="skills">
             <el-col>
               <i class="el-icon-unlock"></i>
               <i class="el-icon-lock"></i>
@@ -187,18 +193,18 @@
                         <div class='skillName'>{{item}}</div>
                         <i class='el-icon-check'></i>
                     </div>
-                </div>
+                </div> -->
              
                 <!-- <span slot="reference">
                   <i class="el-icon-circle-plus"></i>
                   <span>添加技能标签</span>
                 </span> -->
-                <el-button slot="reference" type="text">
+                <!-- <el-button slot="reference" type="text">
                   <i class="el-icon-circle-plus" style="font-size: 25px"></i>
                 </el-button>
               </el-popover>
             </el-col>
-          </el-row>
+          </el-row> -->
         </el-form>
         <div>
           <div class="titleinfo">权限信息</div>
@@ -270,7 +276,12 @@ import {
   updatePost,
   areatypePost,
 } from "@/api/system/post";
+import SkillSelect from '@/components/SkillSelect/index'
+
 export default {
+  components: {
+    SkillSelect
+  },
   data() {
     return {
       options: [
@@ -295,6 +306,7 @@ export default {
           label: "北京烤鸭",
         },
       ],
+      skillData: [],
       value1: [],
       formData: {},
       areas: [],
