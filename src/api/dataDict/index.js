@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 
+// 以下为字典组接口
 // 字典组列表
 export function dictList(params) {
   return request({

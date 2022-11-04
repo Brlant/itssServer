@@ -57,18 +57,20 @@ export default {
   },
   methods: {
     open(row, dict) {
-      this.row = row
-      this.dict = dict
-      if (this.row) {
-        this.title = '编辑数据字典'
-        this.form.dictLabel = row.dictLabel
-        if (this.dict.dictType === 'skill_type') {
-          this.form.cssClass = row.cssClass
-        }
-      } else {
-        this.title = '添加数据字典'
-      }
       this.show = true
+      this.$nextTick(() => {
+        this.row = row
+        this.dict = dict
+        if (this.row) {
+          this.title = '编辑数据字典'
+          this.form.dictLabel = row.dictLabel
+          if (this.dict.dictType === 'skill_type') {
+            this.form.cssClass = row.cssClass
+          }
+        } else {
+          this.title = '添加数据字典'
+        }
+      })
     },
     onConfirm() {
       this.$refs.form.validate(valid => {

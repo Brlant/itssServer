@@ -69,7 +69,7 @@
 
 <script>
 import AddEdit from './AddEdit'
-import { dictList, dictData, addAndEdit } from '@/api/dataGroup/dictGroup'
+import { dictList, dictData, addAndEdit } from '@/api/dataDict'
 import debounce from '@/utils/debounce'
 import { color } from '@/components/ColorSelect/options'
 
