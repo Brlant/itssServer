@@ -1,5 +1,5 @@
 <template>
-  <div class="personnel">
+  <div class="post">
     <!-- 左侧搜索 -->
     <section class="search">
       <el-input
@@ -52,18 +52,7 @@
         </el-table-column>
       </el-table>
     </section>
-    <!-- 弹窗-添加职位 -->
-    <el-dialog :visible.sync="show" title="添加职位类型" width="30%" center>
-      <el-form :model="form" :rules="rules" ref="form" label-width="100px">
-        <el-form-item label="类型名称:" prop="name">
-          <el-input v-model.trim="form.name" maxlength="10" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="footer">
-        <el-button type="primary" @click="onConfirm">确定</el-button>
-        <el-button @click="close">取消</el-button>
-      </div>
-    </el-dialog>
+    <!-- 添加/编辑 -->
     <add-edit ref="dialog" />
   </div>
 </template>
@@ -83,16 +72,7 @@ export default {
       n: -1,
       n2: -1,
       list: [],
-      data: [{}],
-      show: false,
-      form: {
-        name: '',
-      },
-      rules: {
-        name: [
-          { required: true, message: '职位名称不能为空' }
-        ]
-      }
+      data: [{}]
     }
   },
   created() {
@@ -147,7 +127,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.personnel {
+.post {
   display: flex;
   font-size: 14px;
   align-items: flex-start;

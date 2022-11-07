@@ -52,6 +52,9 @@ export default {
     show(value) {
       if (!value) {
         this.$refs.form.resetFields()
+        if (this.dict.dictType === 'skill_type') {
+          this.form.cssClass = ''
+        }
       }
     }
   },
