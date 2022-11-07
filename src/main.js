@@ -112,7 +112,28 @@ Vue.use(Element, {
 })
 
 Vue.config.productionTip = false
-
+// 路由守卫 
+var flag; // 首先定义一个开关
+router.beforeEach((to, from, next) => {
+  debugger
+    if (to.path == '/projectManager/proDetails/') { // 当进入这个页面进行记录  || to.path == 'projectManager/projectTeam'
+        flag = true; // 改变信号
+        next();
+    } else {
+        if (flag) { // 如果路由发生变化判断信号
+            Vue.prototype.$confirm('当前页面内容尚未提交审批?', '提示', {
+                confirmButtonText: '提交审批',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                next()
+                flag = false;
+            })
+        } else {
+            next()
+        }
+    }
+});
 new Vue({
   el: '#app',
   router,

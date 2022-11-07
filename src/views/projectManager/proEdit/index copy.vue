@@ -223,65 +223,86 @@
           </el-row>
       </div>
       <div class="titleBar">
-        项目资源配置
+        项目成员安排
         <div class="rightBox">
           <el-button size="mini" @click="addUserListHandel" type="primary"
-            >添加配置</el-button
+            >添加成员</el-button
           >
         </div>
       </div>
       <div class="whiteBox UserListBox">
-      <div
+        <div
+          class="UserLine"
           v-for="(addUserList, addUserListindex) in formData.projectUserList"
           :key="addUserListindex"
-          style="padding: 10px 20px"
         >
           <el-row>
-            <el-col :span="6">
+            <el-col :span="3">
               <el-form-item
-                :prop="`projectUserList.${addUserListindex}.postId`"
-                :rules="rules.projectUserListAllPostId"
-                label-width="130px"
-                label="区域-职位-级别："
+                :prop="`projectUserList.${addUserListindex}.userId`"
+                :rules="rules.projectUserListAllUserId"
+                label-width="30px"
               >
-                <el-select
-                  v-model="addUserList.postId"
-                  placeholder="请选择职位"
-                  filterable
-                  :style="{ width: '100%' }"
-                  @change="(postId) => {getPostId(postId, addUserListindex);}"
+                <template
+                  v-if="addUserList.updateType == 3 || addUserList.updateType == 2"
                 >
-                  <el-option
-                    v-for="user in postIdOptions"
-                    :key="user.postId"
-                    :label="user.postIdOptions"
-                    :value="user.postId"
-                    :disabled="user.disabled"
-                  ></el-option>
-                </el-select>
+                  <!-- 我是修改的 -->
+                  <span style="margin-left: 30px"> {{ addUserList.userName }}</span>
+                </template>
+
+                <template v-if="addUserList.updateType == 1">
+                  <!-- 我是新增的 -->
+                  <el-select
+                    v-model="addUserList.userId"
+                    placeholder="请选择项目成员"
+                    clearable filterable
+                    @change="
+                      (userId) => {
+                        getUserCost(userId, addUserListindex);
+                      }
+                    "
+                    @clear="releaseUser(addUserListindex)"
+                    :style="{ width: '100%' }"
+                  >
+                    <el-option
+                      v-for="user in userOptions"
+                      :key="user.userId"
+                      :label="user.userNameAndPost"
+                      :value="user.userId"
+                      :disabled="user.disabled"
+                    ></el-option>
+                  </el-select>
+                </template>
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row>
-             <el-col :span="6">
+            <el-col :span="6">
               <el-form-item
-                label="配置安排："
+                label=""
                 :prop="`projectUserList.${addUserListindex}.startEndTime`"
                 :rules="rules.projectUserListAllStartEndTime"
-                label-width="130px"
+                label-width="30px"
               >
                 <el-date-picker
                   type="daterange"
                   v-model="addUserList.startEndTime"
                   format="yyyy-MM-dd"
                   value-format="yyyy-MM-dd"
-                  :style="{ width: '100%' }"
+                  :style="{ width: '90%' }"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
                   range-separator="至"
                   :picker-options="childDateArea"
+                  @focus="(dates) => changeTimeArea(dates, addUserListindex)"
                   @change="(dates) => getTimeArea(dates, addUserListindex)"
+                  clearable
                 ></el-date-picker>
+                &nbsp;&nbsp;
+                <i
+                  v-show="addUserList.isShow == 1"
+                  class="el-icon-warning color4 ft18"
+                  title="此用户已离职！"
+                ></i>
+                <!-- @focus="(dates) => userIsNull(dates, addUserListindex)" -->
               </el-form-item>
             </el-col>
             <el-col :span="3">
@@ -295,66 +316,67 @@
                 计划负荷：<span>{{ addUserList.planLoad }}</span> %
               </div></el-col
             >
-            <el-col :span="3"
+            <el-col :span="4"
               ><div class="colText">
                 预计成本：<span>{{ addUserList.expectedCost }}</span> 元
               </div></el-col
             >
-            <el-col :span="3" :offset="3"
+            <el-col :span="3"
               ><div class="colText2">
-                <el-button size="mini" @click="DelPostList(addUserListindex)" type="error"
-                  >删除</el-button>
+                <el-button
+                  v-show="addUserList.updateType != 2"
+                  size="mini"
+                  @click="DelUserList(addUserListindex, addUserList)"
+                  type="error"
+                  >删除</el-button
+                >
               </div>
             </el-col>
           </el-row>
-             <!----------------------内部-start------------------------------>
+          <!----------------------内部-start------------------------------>
           <el-row
             v-for="(
               UserScheduleList, UserScheduleListIndex
             ) in addUserList.projectUserScheduleList"
             :key="UserScheduleListIndex"
           >
-            <el-col :span="3" :offset="2">
-              <div class="colText" style="text-indent: 30px;">
-                {{ UserScheduleList.startTime + "---" + UserScheduleList.endTime }}
-              </div>
-            </el-col>
-            <el-col :span="4" :offset="1">
+            <el-col :offset="5" :span="4">
+              <div class="colText" style="text-indent: 30px">
+                {{ UserScheduleList.startTime + "-" + UserScheduleList.endTime }}
+              </div></el-col
+            >
+            <el-col :span="3">
               <div class="colText">
-                期间计划负荷
+                每日
                 <el-input-number
                   size="mini"
-                  :style="{ width: '120px' }"
-                  v-model="UserScheduleList.planLoad"
+                  :style="{ width: '100px' }"
+                  v-model="UserScheduleList.workTime"
                   :min="0"
-                  :max="100" :precision='0'
+                  :max="24"
+                  @input.native="changeInput($event)"
                   @change="
                     (number) => {
-                      changePlanLoad(
+                      changeDayTime(
                         number,
-                        UserScheduleList.weekDay,
+                        UserScheduleList.day,
                         addUserListindex,
                         UserScheduleListIndex
                       );
                     }
                   "
                 ></el-input-number>
-                %
+                小时
               </div>
             </el-col>
-            <el-col :span="5">
-              <div class="colText">
-                <span>{{ UserScheduleList.workDay }}</span> 人日
-              </div>
-            </el-col>
-            <el-col :span="3">
-              <div class="colText">
-                平均每日工作<span> {{ UserScheduleList.workTime }} </span>小时
-              </div>
-            </el-col>
+            <el-col :span="5"
+              ><div class="colText">
+                期间计划负荷：<span>{{ UserScheduleList.planLoad }}</span> %
+              </div></el-col
+            >
+            <el-col :span="3"><div class="colText2"></div> </el-col>
           </el-row>
           <!----------------------内部-end------------------------------>
-          
         </div>
       </div>
     </el-form>
@@ -369,7 +391,7 @@ import {
   searchProjectList,
   proDetailBFEdit,
   queryUserlistByRole,
-  teamQuery,getPostOptions
+  teamQuery
 } from "@/api/proManager/proManager";
 import {
  getChanceList, 
@@ -415,17 +437,10 @@ export default {
         projectGroupId:''
       },
       rules: {
-       projectUserListAllStartEndTime: [
+        projectUserListAllUserId: [
           {
             required: true,
-            message: "请选择配置安排",
-            trigger: "change",
-          },
-        ],
-        projectUserListAllPostId: [
-          {
-            required: true,
-            message: "请选择职位",
+            message: "请选择项目成员",
             trigger: "change",
           },
         ],
@@ -436,6 +451,14 @@ export default {
             trigger: "blur",
           },
         ],
+        projectUserListAllStartEndTime: [
+          {
+            required: true,
+            message: "请选择参与时间",
+            trigger: "change",
+          },
+        ],
+
         projectCode: [
           {
             required: true,
@@ -555,136 +578,19 @@ export default {
   },
   mounted() {
     this.team()
+    // this.getUserList();
     this.queryUserlistByRole(); // 查询是 项目主管的用户集合
     this.getDictList("project_phase"); // 项目阶段 project_phase
     this.getDictList("project_type"); // 项目类型 project_type
     // this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
     // this.getDictList("project_priority"); // 项目优先级
-    this.getPostOptions(); // 职位类型的
     this.getChanceList()
     this.init();
     // 页面默认点击一下  添加成员
     // this.addUserListHandel()
   },
   methods: {
-    
-    /* 查询所有职位下拉*/
-    getPostOptions() {
-      getPostOptions().then((res) => {
-        res.data.map((item) => {
-          // regionName
-          item.postIdOptions = `${item.regionName}-${item.postName}-${item.postLevel}`;
-
-          // item.disabled = false;
-        });
-        this.postIdOptions = res.data; // 需要根据已经选择的人 来过滤
-      });
-    },
-     DelPostList(index){
-      // 直接删除单行
-      this.formData.projectUserList.splice(index, 1);
-    },
-    // 选择职位之后的逻辑
-    getPostId(postId, index) {
-      // 选择职位之后
-      this.postIdOptions.map(item=>{
-        if(postId == item.postId){
-           // 选择 职位之后，拿到成本
-              if(this.formData.projectService == 2) {
-                //对外
-                this.formData.projectUserList[index].costNum = item.costOut;
-              } else {
-                // 对内
-                this.formData.projectUserList[index].costNum = item.costIn;
-              }
-        }
-      })
-      // 拿到成本之后，自动计算出 下面的期间负荷
-       let dates = this.formData.projectUserList[index].startEndTime;
-      this.constAll(dates, index);
-     
-    },
-    /*修改每周计划负荷*/
-    /*
-    * number 计划负荷的百分比 总天数 父级的下标 和自己的下标
-    */
-    changePlanLoad(number, weekDay, fatherIndex, myIndex){
-      // 修改每周期间 计划负荷
-      // 工作时间为固定的8  
-      if(number!=0){// 不等于0  就拿修改之后的百分比 除以 100 拿到比例  
-        this.formData.projectUserList[fatherIndex].projectUserScheduleList[myIndex].workDay = ((number/100)*weekDay).toFixed(2) //人日==> 现有百分比除以100 乘以天数
-        this.formData.projectUserList[fatherIndex].projectUserScheduleList[myIndex].workTime = ((number/100)*8).toFixed(2)      //每日工时==> 现有百分比除以100 乘以 8
-      }else{
-        this.formData.projectUserList[fatherIndex].projectUserScheduleList[myIndex].workDay = 0
-        this.formData.projectUserList[fatherIndex].projectUserScheduleList[myIndex].workTime = 0
-      }
-      /*----------------以上是 配置安排的具体计算-------------------*/
-      // 循环 取出每周的工作时长
-      let totalTime = 0,
-        totalDay = 0;
-      this.formData.projectUserList[fatherIndex].projectUserScheduleList.map(
-        (item, i) => {
-            // 其他的没有修改的 直接 拿天数累加
-            totalDay += parseFloat(item.workDay); // 总天数 == 每周人日累计
-            totalTime += parseFloat(item.workDay*8);// 总时长 == 每周人日*8
-          })
-          this.formData.projectUserList[fatherIndex].workTime = totalTime 
-          this.formData.projectUserList[fatherIndex].workDay = totalDay    
-          const tempWorkDay = this.formData.projectUserList[fatherIndex].workDayTemp; // 之前的总天数
-          console.log(tempWorkDay);
-           if (totalDay === 0) { // 防止憨批选到 节假日
-            this.formData.projectUserList[fatherIndex].planLoad = 0;
-          } else {
-            this.formData.projectUserList[fatherIndex].planLoad = ((totalDay/tempWorkDay)*100).toFixed(2) //计划负荷 == 实际人日/计划的人日 *100%
-          }
-          this.formData.projectUserList[fatherIndex].expectedCost = (totalDay*this.formData.projectUserList[fatherIndex].costNum).toFixed(2) /**预计成本*/
-           
-      /*----------------以上是 总计的安排的具体计算-------------------*/
-
-    },
-    // 修改配置安排
-    getTimeArea(dates, index) {
-      //  if(this.formData.projectUserList[index].userId==""){
-      //   this.$message.error("请先选择项目成员！");
-      //   return false
-      // }
-      this.constAll(dates, index);
-    },
-    constAll(dates, index) {
-      let params = {
-        startDate: dates[0],
-        endDate: dates[1],
-      };
-      getTimeProcess(params).then((res) => {
-        this.formData.projectUserList[index].workDay = res.data.day; // 总共多少人日
-        this.formData.projectUserList[index].workTime = res.data.day * 8; // 总共多少工时
-         if (res.data.day === 0) {
-          this.formData.projectUserList[index].planLoad = 0;
-        } else {
-          this.formData.projectUserList[index].planLoad = (
-            ((8 * res.data.day) / (res.data.day * 8)) *
-            100
-          ).toFixed(2); // 计划负荷
-        }
-        this.formData.projectUserList[index].expectedCost = ( // 预计成本
-          res.data.day * this.formData.projectUserList[index].costNum
-        ).toFixed(2);
-        /*---------第一行的数据-----------------*/
-
-        this.formData.projectUserList[index].workDayTemp = res.data.day; // 临时存一下后面有用
-        this.formData.projectUserList[index].startTime = dates[0]; // 开始时间 留给后面的传值
-        this.formData.projectUserList[index].endTime = dates[1]; // 结束时间 留给后面的传值
-        res.data.list.map((item) => {
-          item.startTime = item.startDate;
-          item.endTime = item.endDate;
-          item.workTime = item.weekDay!=0?"8":0; // 内部的每周时长
-          item.workDay = item.weekDay; // 内部的每周人日
-          item.planLoad = (((item.weekDay * 8) / (item.weekDay * 8)) * 100 || 0).toFixed(2);
-        });
-        this.formData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
-       
-      });
-    },
+    // import { getChanceList, } from "@/api/chanceManager/chanceManager";
     // this.getChanceList() // 拿到机会列表
     getChanceList(){
       getChanceList({}).then((res)=>{
@@ -732,6 +638,7 @@ export default {
         // this.projectTable.projectUserList = res.data.projectUserList;
         // 在有项目成员之后  再 过滤已经有的人
         // 获取并过滤用户的下拉
+        this.getUserList();
         res.data.projectUserList.map((item, i) => {
           // 修改类型（1.新增,2.删除,3.修改原数据）
           // oneUser.updateType = 1
@@ -822,8 +729,185 @@ export default {
         },
       };
     },
-    
-     
+    // 动态修改 默认的日期区间
+    changeAddUserDateArea(userInfo, index) {
+      // 项目成员安排的 可选时间区间
+      if (this.formData.projectEndTime != "" && this.formData.projectStartTime != "") {
+        console.log("有项目开始和结束日期");
+        // 判断此人是否已经在职在职在职
+        if (userInfo.status == 0) {
+          console.log("是在职");
+          if (
+            this.date2Number(userInfo.inTime) >
+            this.date2Number(this.formData.projectStartTime + " 23:59:59")
+          ) {
+            // 如果入职时间是否 大于 项目起始时间
+            // 就采用 该人的入职日期 和 项目结束日期
+            console.log("入职时间晚于项目起始时间");
+            //  this.addEditFormData.projectUserList[index].startEndTime = [userInfo.inTime,this.formData.projectEndTime]
+            return [userInfo.inTime, this.formData.projectEndTime];
+          } else {
+            console.log("入职时间早于项目起始时间");
+            // 如果入职时间是否 小于 项目起始时间
+            return [this.formData.projectStartTime, this.formData.projectEndTime];
+          }
+        }
+        // 实际上此段判断无用，原因是 查询用户的接口已经把
+        // 离职的员工给隔离了
+        // 判断此人是否已经离职
+        if (userInfo.status == 1) {
+          console.log("是离职");
+          if (
+            this.date2Number(userInfo.outTime) >
+            this.date2Number(this.formData.projectEndTime)
+          ) {
+            console.log("离职时间晚于项目结束时间，就拿项目结束时间");
+            // console.log("晚于项目起始时间")
+            // 如果离职时间是否 大于 项目结束时间
+            return [this.formData.projectStartTime, this.formData.projectEndTime];
+          } else {
+            // 如果离职时间 小于 项目结束时间
+            // 就采用 项目起始时间 该人的离职日期
+            console.log("离职时间早于项目起始时间，就拿最后的离职时间作为服务时间");
+            return [this.formData.projectStartTime, userInfo.outTime];
+          }
+        }
+      }
+    },
+    filterUserList() {
+      // 过滤 当前已经选中的用户
+      let data = {};
+      queryUserlist(data).then((res) => {
+        res.data.map((item) => {
+          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+          item.disabled = false;
+        });
+        this.formData.projectUserList.map((item, i) => {
+          res.data.map((user, u) => {
+            if (item.userId != "" && item.userId == user.userId) {
+              // res.data.splice(u, 1);
+              user.disabled=true
+            }
+          });
+        });
+        // res.data[index].disabled=true
+        this.userOptions = res.data; // 需要根据已经选择的人 来过滤
+      });
+    },
+    // 点击选择人员的 删除事件，释放人员回到下拉内
+    releaseUser(index) {
+      this.filterUserList();
+    },
+    // 添加人员之后  根据 对内 还是对外  设置 选择人员的成本
+    // 存储到 单行的 新建字段 costNum 内 用于下一步存储  计算
+    getUserCost(userId, index) {
+      //  此处 故意调用一次 用户的请求，用于规避 回显用户列表的bug
+      let data = {
+        userId: userId,
+      };
+      queryUserlist(data).then((res) => {
+        res.data.map((item) => {
+          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+          item.disabled = false;
+        });
+        this.changeChildDateArea(res.data[0]);
+        // formData.projectUserList[index].costNum
+        // costNum 是我自己设置第一个值 用于存储 成本的单位
+        //  对外 服务对象(1.对内，2.对外)
+        if (this.formData.projectService == 2) {
+          //对外
+          this.formData.projectUserList[index].costNum = res.data[0].costOut;
+        } else {
+          // 对内
+          this.formData.projectUserList[index].costNum = res.data[0].costIn;
+        }
+        //   let oneUser = this.deepClone(this.projectUserList);
+        //   // 修改类型（1.新增,2.删除,3.修改原数据）
+        //   oneUser.updateType = 1;
+        //  this.formData.projectUserList[index] = oneUser
+        if (this.formData.projectUserList[index].startEndTime?.length > 0) {
+          this.formData.projectUserList[index].startEndTime = this.changeAddUserDateArea(
+            res.data[0],
+            index
+          );
+          let dates = this.formData.projectUserList[index].startEndTime;
+          this.constAll(dates, index);
+        }
+
+        if (this.formData.projectUserList[index].userId != "") {
+          // 添加成员之后，未选择用户的情况下 不筛选
+          let userIdsTemp = [];
+          this.formData.projectUserList.map((item) => {
+            // 拿到已经存在的用户id
+            userIdsTemp.push(item.userId);
+          });
+          console.log(userIdsTemp);
+          this.userOptions.map((user, u) => {
+            userIdsTemp.map((userId, i) => {
+              if (user.userId == userId) {
+                // 双层循环 去掉已经选择的用户
+                // this.userOptions.splice(u, 1);
+                user.disabled=true
+              }
+            });
+          });
+        }
+        // this.userOptions = res.data;
+      });
+    },
+    /*修改每日工时*/
+    changeDayTime(number, day, fatherIndex, myIndex) {
+      console.log(number, day, fatherIndex, myIndex);
+      // 期间计划负荷 = 当前行的总天数day*number  /  当前行的总天数day * 8
+      this.formData.projectUserList[fatherIndex].projectUserScheduleList[
+        myIndex
+      ].planLoad = (((day * number) / (day * 8)) * 100 || 0).toFixed(2);
+      // 循环 取出每周的工作时长
+      let totalTime = 0,
+        totalDay = 0;
+      this.formData.projectUserList[fatherIndex].projectUserScheduleList.map(
+        (item, i) => {
+          if (myIndex == i) {
+            // 当前周的工时 转换为天数  计算一下
+            // 当前周的天数* 实际工作时长 除以8
+            // 等于 实际工作天数
+
+            totalDay += parseFloat(item.day * number);
+          } else {
+            // 其他的没有修改的 直接 拿天数累加
+            totalDay += parseFloat(item.day * item.workTime);
+          }
+          totalTime += parseFloat(item.workTime) * parseFloat(item.day);
+          item.weekDay = item.day;
+        }
+      );
+
+      // 暂存一下 实际的天数
+      const tempWorkDay = this.formData.projectUserList[fatherIndex].workDayTemp;
+      // console.log(tempWorkDay);
+      // 顶部的 共计多少小时  多少天
+      this.formData.projectUserList[fatherIndex].workDay = (totalDay / 8).toFixed(2);
+      this.formData.projectUserList[fatherIndex].workTime = totalTime.toFixed(2);
+      // 顶部的 计划负荷 预计成本
+      // console.log(totalDay);
+      // console.log(tempWorkDay);
+      if (totalDay === 0) {
+        this.formData.projectUserList[fatherIndex].planLoad = 0;
+      } else {
+        this.formData.projectUserList[fatherIndex].planLoad = (
+          (totalDay / (tempWorkDay * 8)) *
+          100
+        ).toFixed(2);
+      }
+      console.log(
+        this.formData.projectUserList[fatherIndex].workDay,
+        this.formData.projectUserList[fatherIndex].costNum
+      );
+      this.formData.projectUserList[fatherIndex].expectedCost = (
+        this.formData.projectUserList[fatherIndex].workDay *
+        this.formData.projectUserList[fatherIndex].costNum
+      ).toFixed(2);
+    },
     /*选择项目有效期*/
     getProjectTimeArea(dates) {
       // this.formData.projectTimeArea=[]
@@ -838,8 +922,58 @@ export default {
         }
       }
     },
-     
-  
+    /* 时间区间选择之前 请判断 是否选择了前面的用户 成员*/
+    userIsNull(dates, index) {
+      if (this.formData.projectUserList[index].userId == "") {
+        this.$message.error("请先选择项目成员！");
+        return false;
+      }
+    },
+    /* 鼠标点击 日期触发 日期区间限制的方法*/
+    changeTimeArea(dates, index) {
+      // console.log(this.formData.projectUserList[index]);
+      this.changeChildDateArea(this.formData.projectUserList[index]);
+    },
+    /*根据起始和结束 生成下面表格*/
+    getTimeArea(dates, index) {
+      // if(this.formData.projectUserList[index].userId==""){
+      //   this.$message.error("请先选择项目成员！");
+      //   return false
+      // }
+      this.constAll(dates, index);
+    },
+    // 公共计算方法
+    constAll(dates, index) {
+      let params = {
+        startDate: dates[0],
+        endDate: dates[1],
+      };
+      getTimeProcess(params).then((res) => {
+        this.formData.projectUserList[index].workDay = res.data.day;
+        this.formData.projectUserList[index].workDayTemp = res.data.day;
+        this.formData.projectUserList[index].workTime = res.data.day * 8;
+        this.formData.projectUserList[index].startTime = dates[0];
+        this.formData.projectUserList[index].endTime = dates[1];
+        this.formData.projectUserList[index].expectedCost = (
+          res.data.day * this.formData.projectUserList[index].costNum
+        ).toFixed(2);
+        res.data.list.map((item) => {
+          item.startTime = item.startDate;
+          item.endTime = item.endDate;
+          item.workTime = "8";
+          item.planLoad = (((item.day * 8) / (item.day * 8)) * 100 || 0).toFixed(2);
+        });
+        this.formData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
+        if (res.data.day === 0) {
+          this.formData.projectUserList[index].planLoad = 0;
+        } else {
+          this.formData.projectUserList[index].planLoad = (
+            ((8 * res.data.day) / (res.data.day * 8)) *
+            100
+          ).toFixed(2); // 计划负荷
+        }
+      });
+    },
     /*查询字典的接口*/
     getDictList(dictCode) {
       queryDict(dictCode).then((res) => {
@@ -857,7 +991,33 @@ export default {
         // }
       });
     },
-   
+    /* 查询用户列表 */
+    getUserList() {
+      let data = {};
+      queryUserlist(data).then((res) => {
+        res.data.map((item) => {
+          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+          item.disabled = false;
+        });
+        //---------------------------------------------------------
+        //  初始化用户列表之后， 需要剔除已经存在的userID
+        let userIdsTemp = [];
+        this.formData.projectUserList.map((item) => {
+          // 拿到已经存在的用户id
+          userIdsTemp.push(item.userId);
+        });
+        res.data.map((user, u) => {
+          userIdsTemp.map((userId, i) => {
+            if (user.userId == userId) {
+              // 双层循环 去掉已经选择的用户
+              // res.data.splice(u, 1);
+              user.disabled = true;
+            }
+          });
+        });
+        this.userOptions = res.data; // 需要根据已经选择的人 来过滤
+      });
+    },
     /* 查询是项目主管的用户列表 */
     queryUserlistByRole() {
       let data = {};
