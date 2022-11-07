@@ -49,7 +49,8 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
      '/itss': {
         // target: 'http://192.168.1.113/tdp', // 本地测试
-        target: `http://46207q371x.qicp.vip:48857`,
+        // target: `http://ep3anh26g0xr.ngrok.xiaomiqiu123.top/`,
+        target: `http://192.168.1.112:8080/`,
         // target: `http://192.168.5.144:8080/`,
         changeOrigin: true,
         logLevel:"debug",

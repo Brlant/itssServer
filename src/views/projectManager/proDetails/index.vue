@@ -15,16 +15,12 @@
         <div
           class="rightLink"
           v-show="isProjectByUser(formData) || isJurisdiction('admin')"
-        >
-          <!-- <router-link :to="'/projectManager/proEdit?projectId=' + projectId+'&countScope='+countScope"  
-            >编辑</router-link
-          > -->
-          <span @click="goEditPage" style="cursor: pointer" class="color2"> 编辑 </span>
-          |
-
+        >                  
+          <span @click="goEditPage" style="cursor: pointer"  v-show="isShowActive==0" class="color2"> 编辑 |</span>
+          
           <span
             @click="stopProject"
-            style="cursor: pointer"
+            style="cursor: pointer"  v-show="isShowActive==0"
             :class="[projectTable.projectStatus == 4 ? 'color5' : 'color4']"
           >
             {{ projectTable.projectStatus == 4 ? "开启" : "终止" }}
@@ -107,16 +103,19 @@
       <div class="basicLine">
         <el-row>
           <el-col :span="4">
-            <el-button
+            <div class="zhanwei"></div>
+            <div v-show="isShowActive==0">
+            <el-button 
               v-show="isProjectByUser(formData) || isJurisdiction('admin')"
+              v-if=""
               size="mini"
               type="text"
               style="margin-top: 4px"
               @click="initaddEditUserList"
-              >+资源配置</el-button
-            >
+              >+ 资源配置</el-button>
+            </div>
           </el-col>
-          <el-col :span="10" :offset="10">
+          <el-col :span="10" :offset="7">
             <el-row>
               <el-form
                 ref="checkForm"
@@ -165,6 +164,10 @@
               </el-form>
             </el-row>
           </el-col>
+          <el-col :span="3" style="    text-align: right;padding-top: 3px;">
+            <el-button size="mini" type="primary" v-show="isShowActive==0"  @click="goAudit">提交审核</el-button>
+            <el-button size="mini" type="default" v-show="isShowActive==0" @click="cancelSave">取消</el-button>
+          </el-col>
         </el-row>
       </div>
     </div>
@@ -187,8 +190,13 @@
         :header-cell-class-name="headerClassName"
         style="width: 100%"
         max-height="650"
+        :row-class-name="tableRowClassName"
+        @row-click="showRowDetail"
       >
         <el-table-column prop="userName" label="执行人员" width="120" fixed="left">
+          <template slot-scope="scope">
+              <span :class="[scope.row.userName=='无'?'':'priority3']">{{scope.row.userName?scope.row.userName:"无"}}</span>            
+          </template>
         </el-table-column>
         <el-table-column prop="planLoad" label="计划负荷" width="120" fixed="left">
           <template slot-scope="scope">
@@ -258,18 +266,18 @@
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <el-button
-              v-show="scope.$index != projectTable.projectUserList.length - 1"
+              v-show="scope.$index != projectTable.projectUserList.length - 1 && isShowActive==0"
               type="text"
               size="small"
-              @click="updateProjectOne(scope.$index, scope.row)"
+              @click.native.stop="updateProjectOne(scope.$index, scope.row)"
             >
               修改
             </el-button>
             <el-button
-              v-show="scope.$index != projectTable.projectUserList.length - 1"
+              v-show="scope.$index != projectTable.projectUserList.length - 1 && isShowActive==0"
               type="text"
               size="small"
-              @click="delProjectOne(scope.$index, scope.row)"
+              @click.native.stop="delProjectOne(scope.$index, scope.row)"
             >
               删除
             </el-button>
@@ -279,9 +287,9 @@
       </el-table>
     </div>
     <!---项目成员 添加 or 编辑--------------------------------------------->
-    <div v-if="addUserActive || editUserActive" class="hr"></div>
+    <div v-if="addEditUserActive || detailUserActive" class="hr"></div>
 
-    <div class="whiteBox" v-if="editUserActive" style="padding: 1%">
+    <div class="whiteBox" v-if="detailUserActive" style="padding: 1%">
       <el-form
         ref="addEditForm"
         :model="addEditFormData"
@@ -306,7 +314,7 @@
             <el-col :span="3" :offset="2">
               <el-form-item label-width="130px" label="执行人员：">
                 <div class="checkUser">
-                  {{ "张三" }}
+                  {{ addUserList.userName?addUserList.userName:'无' }}
                 </div>
               </el-form-item>
             </el-col>
@@ -319,7 +327,7 @@
             <el-col :span="5">
               <el-form-item label="配置安排：" label-width="130px">
                 <div class="colText" style="text-indent: 30px">
-                  <span>{{ addUserList.startTime + "---" + addUserList.endTime   }}</span>
+                  <span>{{ addUserList.startTime + "---" + addUserList.endTime }}</span>
                 </div>
               </el-form-item>
             </el-col>
@@ -376,7 +384,7 @@
         </div>
       </el-form>
     </div>
-    <div class="whiteBox" v-if="addUserActive"  >
+    <div class="whiteBox" v-if="addEditUserActive">
       <el-form
         ref="addEditForm"
         :model="addEditFormData"
@@ -416,6 +424,13 @@
                     :disabled="user.disabled"
                   ></el-option>
                 </el-select>
+              </el-form-item>
+            </el-col>
+             <el-col :span="6" :offset="2">
+              <el-form-item label-width="130px" label="执行人员：">
+                <div class="checkUser">
+                  {{ addUserList.userName?addUserList.userName:"无"}}
+                </div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -459,8 +474,15 @@
             >
             <el-col :span="3" :offset="3"
               ><div class="colText2">
-                 <el-button size="mini" @click="addUserListHandel(addUserListindex)" type="primary" >提交</el-button>
-                 <el-button size="mini" @click="DelUserList(addUserListindex)" type="error">取消</el-button>
+                <el-button
+                  size="mini"
+                  @click="addUserListHandel(addUserListindex)"
+                  type="primary"
+                  >暂存</el-button
+                >
+                <el-button size="mini" @click="DelUserList(addUserListindex)" type="error"
+                  >取消</el-button
+                >
               </div>
             </el-col>
           </el-row>
@@ -472,7 +494,7 @@
             :key="UserScheduleListIndex"
           >
             <el-col :span="3" :offset="2">
-              <div class="colText" style="text-indent: 30px;">
+              <div class="colText" style="text-indent: 30px">
                 {{ UserScheduleList.startTime + "---" + UserScheduleList.endTime }}
               </div>
             </el-col>
@@ -536,12 +558,17 @@
         <el-table-column prop="price" label="单价"></el-table-column>
         <el-table-column prop="allPrice" label="总价"></el-table-column>
         <el-table-column label="操作">
-          <el-button type="text" size="mini"
-            ><span class="color2"> 添加 </span></el-button
-          >
-          <el-button type="text" size="mini"
-            ><span class="color1"> 取消 </span></el-button
-          >
+          <template slot-scope="scope">
+            <div v-show="isShowActive==0">
+                <!-- 1 不显示 有审核记录，0显示  没有审核记录 -->
+            <el-button type="text" size="mini" v-if="showAddOrCancel(scope.row)">
+              <span class="color2"  @click="addUserToProject(scope.row)">添加 </span>
+            </el-button>
+            <el-button type="text" size="mini" v-else>
+              <span class="color1"  @click="delUserToProject(scope.row)">取消 </span>
+            </el-button>
+            </div>
+          </template>
         </el-table-column>
         <!-- nickName:"",//姓名
       regionName:"",//区域
@@ -570,13 +597,13 @@
         </div>
       </b>
       <p></p>
-      <el-table :data="projectAuditTable" border style="width: 100%" max-height="650">
+      <el-table :data="projectAuditTable" border style="width: 100%" class="myAuditTable" max-height="650">
         <el-table-column prop="applyDate" label="申请日期" width="150"> </el-table-column>
         <el-table-column prop="applyUserName" label="申请人" width="150">
         </el-table-column>
-        <el-table-column prop="relatePeople" label="涉及成员" width="250">
+        <el-table-column prop="relatePeople" label="涉及对象" width="250">
         </el-table-column>
-        <el-table-column prop="updateScope" label="修改范围" width="150">
+        <el-table-column prop="updateScope" label="变更事项" width="150">
           <template slot-scope="scope">
             {{ scope.row.updateScope | toUpdateScope }}
           </template>
@@ -639,6 +666,7 @@ import {
   queryUserByPostId,
   getPostOptions,
 } from "@/api/proManager/proManager";
+import Vue from 'vue'
 export default {
   name: "ProDetail",
   components: {},
@@ -647,24 +675,23 @@ export default {
     monthArrTemp: [],
     userOptions: [],
     postIdOptions: [],
-    addUserActive: false, // 添加的资源配置
-    editUserActive: false, // 编辑的资源配置 默认是详情页 不可以编辑
+    addEditUserActive: false, // 添加的资源配置 编辑的资源配置
+    detailUserActive: false, //  默认是详情页 不可以编辑
     rules: {
-        projectUserListAllStartEndTime: [
-          {
-            required: true,
-            message: "请选择配置安排",
-            trigger: "change",
-          },
-        ],
-        projectUserListAllPostId: [
-          {
-            required: true,
-            message: "请选择职位",
-            trigger: "change",
-          },
-        ],
-      
+      projectUserListAllStartEndTime: [
+        {
+          required: true,
+          message: "请选择配置安排",
+          trigger: "change",
+        },
+      ],
+      projectUserListAllPostId: [
+        {
+          required: true,
+          message: "请选择职位",
+          trigger: "change",
+        },
+      ],
     },
     projectUserIdOptions: [],
     // 单独的 用户列表
@@ -741,6 +768,9 @@ export default {
       { title: "已拒绝", name: "3" },
     ],
     childDateArea: null,
+    nowIndex:0,// 记录当前修改的那一条职位记录 资源
+    isShowActive: 1,//isShow;  //是否显示按钮 1 不显示，0显示 标识是否有审核记录在
+    isUpdateActive:false //是否点击了 添加  和暂存 的内容
   }),
   computed: {},
   watch: {},
@@ -806,9 +836,155 @@ export default {
     // this.getDictList("project_type"); // 项目类型 project_type
     // this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
     this.getPostOptions(); // 职位类型的
+    // Vue.prototype.goAuditHandel = this.goAudit()
   },
 
   methods: {
+    showAddOrCancel(row){
+      // 显示取消还是 添加
+      let showOrCancel = true; // 默认展示 添加按钮
+      if(this.projectTable.projectUserList[this.nowIndex].userId==row.userId){
+        showOrCancel =false
+      }
+      return showOrCancel
+    },
+    // 顶部的点击提交审核
+    goAudit(){
+      // 此处提交的是 全量数据
+           // 下面是塞入数据
+      this.formData.projectUserList[this.nowIndex].userId = this.projectTable.projectUserList[this.nowIndex].userId
+      this.formData.projectUserList[this.nowIndex].userName = this.projectTable.projectUserList[this.nowIndex].userName
+                let parame = {
+            ...this.formData,
+          };
+          updateProjectUserAddEdit(parame).then((res) => {
+            let { code, msg } = res;
+            this.$message.success(msg);
+            if (+code == 200) {
+              // 添加成功 只会去查询 审核的方法
+              this.auditStatus = "1"; // 初始化 显示 待审核
+              this.proAuditInit();
+              this.init("init")
+              this.addEditFormData = {};
+              this.addEditUserActive = false;
+              this.detailUserActive = false;
+              this.recommendUserActive = false;
+            }
+          });
+    },
+    // 顶部的点击取消
+    cancelSave() {
+      this.$confirm(`是否清空待审批内容?`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$router.go(0);
+        })
+        .catch(() => {});
+    },
+    delUserToProject(row){
+      // 取消当前的人 
+      console.log(row.userId,row.nickName);
+      this.addEditFormData.projectUserList[0].userId = ""
+      this.addEditFormData.projectUserList[0].userName = ""
+      this.$forceUpdate()
+
+      this.projectTable.projectUserList[this.nowIndex].userId =  ""
+      this.projectTable.projectUserList[this.nowIndex].userName =  ""
+      this.$nextTick(()=>{
+        this.$set(this.projectTable.projectUserList[this.nowIndex],'userId', "")
+        this.$set(this.projectTable.projectUserList[this.nowIndex],'userName', "")
+      })
+      this.$forceUpdate()
+
+      //  以上是展示
+                 // 下面是塞入数据
+      this.formData.projectUserList[this.nowIndex].userId =  ""
+      this.formData.projectUserList[this.nowIndex].userName =  ""
+      this.$forceUpdate()
+      this.isUpdateActive=true // 我删除了用户
+    },
+    addUserToProject(row) {
+      //点击添加人员到 资源配置中 去
+      // projectTable.projectUserList
+      console.log(row.userId,row.nickName);
+      this.addEditFormData.projectUserList[0].userId = row.userId
+      this.addEditFormData.projectUserList[0].userName = row.nickName
+      this.$forceUpdate()
+
+      this.projectTable.projectUserList[this.nowIndex].userId = row.userId
+      this.projectTable.projectUserList[this.nowIndex].userName = row.nickName
+      this.$nextTick(()=>{
+        this.$set(this.projectTable.projectUserList[this.nowIndex],'userId',row.userId)
+        this.$set(this.projectTable.projectUserList[this.nowIndex],'userName',row.nickName)
+      })
+      this.$forceUpdate()
+
+      //  以上是展示
+                 // 下面是塞入数据
+      this.formData.projectUserList[this.nowIndex].userId = row.userId
+      this.formData.projectUserList[this.nowIndex].userName = row.nickName
+      this.$forceUpdate()
+      this.isUpdateActive=true // 我添加了用户
+    },
+
+    tableRowClassName({ row, rowIndex }) {
+      // 存储下标
+      row.index = rowIndex;
+    },
+    showRowDetail(row) {
+      // 点击单行 显示信息
+      //  console.log(row.index,this.projectTable.projectUserList.length-1);  // 当前点击的行数据
+      //  console.log(row.index);   // 当前点击的行的索引值
+      if (row.index == this.projectTable.projectUserList.length - 1) {
+        // 防止点击到 总计哪一行
+        return false;
+      }
+      this.nowIndex = row.index // 存储刚刚点击是那一条
+      this.detailUserActive = true;
+      this.addEditUserActive = false;
+      // 我是修改
+      this.addEditFormData = {};
+      let params = {
+        id: row.id,
+      };
+      updateQueryUserById(params).then((res) => {
+        let { code, msg } = res;
+
+        if (+code == 200) {
+          this.addEditFormData = this.deepClone(this.formData); // 填充项目的基础数据
+          this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
+          // if (this.formData.projectService == "") {
+          //   this.$message.error("请您先选择项目基础信息内-服务对象！");
+          // } else {
+          // console.log(res);
+          res.data.workDayTemp = res.data.workDay;
+          // 点击修改，拿到此项目的 项目类型 对内对外
+          //  1:'对内', costIn
+          //  2:'对外' costOut
+          res.data.costNum =
+            this.formData.projectService == 1 ? res.data.costIn : res.data.costOut;
+          res.data.projectUserScheduleList.map((item) => {
+            item.day = item.weekDay;
+          });
+          let oneUser = this.deepClone(res.data);
+          // 修改类型（1.新增,2.删除,3.修改原数据）
+          oneUser.updateType = 3;
+          oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
+
+          this.addEditFormData.projectUserList.push(oneUser);
+          // console.log(oneUser);
+          this.changeChildDateArea(oneUser);
+          this.getRecommendUserList(row.index, row);
+          // }
+          // // 删除成功 只会去查询 审核的方法
+          // this.auditStatus = "1"; // 初始化 显示 待审核
+          // this.proAuditInit();
+        }
+      });
+    },
     /* 查询所有职位下拉*/
     getPostOptions() {
       getPostOptions().then((res) => {
@@ -858,7 +1034,7 @@ export default {
       this.addEditFormData.projectUserList[fatherIndex].workTime = totalTime;
       this.addEditFormData.projectUserList[fatherIndex].workDay = totalDay;
       const tempWorkDay = this.addEditFormData.projectUserList[fatherIndex].workDayTemp; // 之前的总天数
-      console.log(tempWorkDay);
+      // console.log(tempWorkDay);
       if (totalDay === 0) {
         // 防止憨批选到 节假日
         this.addEditFormData.projectUserList[fatherIndex].planLoad = 0;
@@ -876,7 +1052,7 @@ export default {
     },
     // 选择职位之后的逻辑
     getPostId(postId, index) {
-      console.log(postId, index);
+      // console.log(postId, index);
 
       // 选择职位之后
       this.postIdOptions.map((item) => {
@@ -910,8 +1086,8 @@ export default {
     // 初始化 新增成员
     initaddEditUserList() {
       // this.formData.projectUserList =[]
-      this.editUserActive = false;
-      this.addUserActive = true;
+      this.detailUserActive = false;
+      this.addEditUserActive = true;
       // 我是新增
       this.addEditFormData = {};
       this.addEditFormData = this.deepClone(this.formData); // 填充新增的
@@ -926,7 +1102,6 @@ export default {
       oneUser.updateType = 1;
       this.addEditFormData.projectUserList.push(oneUser);
       this.$forceUpdate();
-
     },
     // 动态修改 时间选择器的区间值
     changeChildDateArea(userInfo, index) {
@@ -989,8 +1164,10 @@ export default {
     },
     // 修改一个 项目成员的 工作计划
     updateProjectOne(index, row) {
-      this.editUserActive = true;
-      this.addUserActive = false;
+      this.detailUserActive = false;
+      this.addEditUserActive = true;
+      this.nowIndex = index // 存储刚刚点击是那一条
+
       // 我是修改
       this.addEditFormData = {};
       let params = {
@@ -1045,7 +1222,8 @@ export default {
     },
     // 删除一个 项目成员
     delProjectOne(index, row) {
-      this.$confirm(`您确定要删除${row.userName}吗?`, "温馨提示", {
+      console.log(row);
+      this.$confirm(`您确定要删除资源配置：(${row.postName}) 吗?`, "温馨提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -1056,7 +1234,9 @@ export default {
           params.projectUserList.push(row);
           // 修改类型（1.新增,2.删除,3.修改原数据）
           params.projectUserList[0].updateType = 2;
-
+          this.addEditUserActive = false;
+          this.detailUserActive = false;
+          this.recommendUserActive=false
           updateProjectUserAddEdit(params).then((res) => {
             let { code, msg } = res;
             this.$message.success(msg);
@@ -1064,39 +1244,25 @@ export default {
               // 提交删除成功  需要审核
               this.auditStatus = "1"; // 初始化 显示 待审核
               this.proAuditInit();
+            
             }
           });
         })
         .catch(() => {});
       // console.log(index,row);
     },
-    // 项目成员的添加的 保存 提交方法
+    // 项目成员的添加的 保存 提交方法 暂存
     addUserListHandel(index) {
       this.$refs["addEditForm"].validate((valid) => {
         if (!valid) return;
         // TODO 提交表单
         if (valid) {
-          // this.addEditFormData.projectUserList[index].projectUserScheduleList.map(
-          //   (item, i) => {
-          //     item.weekDay = item.day;
-          //     // item.week = item?.weekOfYear;
-          //   }
-          // );
-          let parame = {
-            ...this.addEditFormData,
-          };
-          updateProjectUserAddEdit(parame).then((res) => {
-            let { code, msg } = res;
-            this.$message.success(msg);
-            if (+code == 200) {
-              // 添加成功 只会去查询 审核的方法
-              this.auditStatus = "1"; // 初始化 显示 待审核
-              this.proAuditInit();
-              this.addEditFormData = {};
-              this.addUserActive = false;
-              this.editUserActive = false;
-            }
-          });
+          // 此处修改为 暂存 , 数据丢进去即可
+          this.formData.projectUserList[this.nowIndex].userId = this.addEditFormData.projectUserList[0].userId
+          this.formData.projectUserList[this.nowIndex].userName = this.addEditFormData.projectUserList[0].userName
+          this.formData.projectUserList[this.nowIndex] = this.deepClone(this.addEditFormData.projectUserList[0])
+          this.isUpdateActive=true // 我修改了 并且暂存了
+          this.$message.success("暂存成功！");
         }
       });
     },
@@ -1110,7 +1276,7 @@ export default {
       //   .then(() => {
       this.addEditFormData.projectUserList.splice(index, 1);
       this.addEditFormData = {};
-      this.addUserActive = false;
+      this.addEditUserActive = false;
       // })
       // .catch(() => {});
     },
@@ -1121,7 +1287,7 @@ export default {
     },
     // 公共计算方法
     constAll(dates, index) {
-      console.log(dates,index);
+      console.log(dates, index);
       let params = {
         startDate: dates[0],
         endDate: dates[1],
@@ -1137,8 +1303,9 @@ export default {
             100
           ).toFixed(2); // 计划负荷
         }
-        this.addEditFormData.projectUserList[index].expectedCost = // 预计成本
-        (res.data.day * this.addEditFormData.projectUserList[index].costNum).toFixed(2);
+        this.addEditFormData.projectUserList[index].expectedCost = ( // 预计成本
+          res.data.day * this.addEditFormData.projectUserList[index].costNum
+        ).toFixed(2);
         /*---------第一行的数据-----------------*/
 
         this.addEditFormData.projectUserList[index].workDayTemp = res.data.day; // 临时存一下后面有用
@@ -1153,7 +1320,8 @@ export default {
             2
           );
         });
-        this.addEditFormData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
+        this.addEditFormData.projectUserList[index].projectUserScheduleList =
+          res.data.list; // 此人的 每周安排
       });
     },
 
@@ -1210,7 +1378,7 @@ export default {
     // 点击取消  删除  提交
     updateAuditPro(rowData, type) {
       let params = {
-        id: rowData.id,
+        projectId: rowData.projectId,
         status: parseInt(type),
       };
       updateAuditProById(params).then((res) => {
@@ -1232,7 +1400,21 @@ export default {
       this.checkAuditFormData.projectId = this.$route.query.projectId;
       this.checkAuditFormData.status = this.auditStatus;
       queryProjectAudit(this.checkAuditFormData).then((res) => {
-        this.projectAuditTable = res.data;
+        // 因为现在逻辑控制 导致每次审核记录只存储一条。
+        // 如果多条，咱就拼接成一条
+        let newArr = [];
+        if (res.data.length > 1) {
+          let updateContentTemp = ""; //
+          // 当前项目的审核记录 大于1  才需要拼接
+          res.data.map((item) => {
+            updateContentTemp += item.updateContent + "\n\r";
+          });
+          newArr = res.data.slice(0, 1);
+          newArr[0].updateContent = updateContentTemp;
+          this.projectAuditTable = newArr;
+        }else{
+          this.projectAuditTable =res.data
+        }
       });
     },
     init(type) {
@@ -1254,6 +1436,8 @@ export default {
         // this.checkFormData.countScope = this.checkFormData.totalArea;
       }
       queryInfoById(this.checkFormData).then((res) => {
+         //isShow;  //是否显示按钮 1 不显示，0显示
+        this.isShowActive = res.data.isShow
         this.projectTable = res.data;
         this.projectTable.projectUserList = res.data.projectUserList;
         // 拼接列名
@@ -1317,13 +1501,35 @@ export default {
   beforeDestroy() {
     document.querySelector("body,html").removeAttribute("style");
   },
-//   destroyed() {
-//     this.$tab.updatePage(obj).then(() => {
-//   // 执行结束的逻辑
-//     this.$modal.notify("默认通知");
+  beforeRouteLeave(to, from, next) {
+      if(this.isUpdateActive){ // 修改了 就提示
+              this.$confirm(`当前内容尚未提交审批?`, "温馨提示", {
+                      confirmButtonText: "立即审批",
+                      cancelButtonText: "取消",
+                      type: "warning",
+                    })
+                      .then(() => {
+                        this.goAudit()
+                      })
+                      .catch(() => {});
+            }else{ // 没修改直接跳转
+              next()
+            }
+},
 
-// })
-//  }
+  destroyed() {
+      if(this.isUpdateActive){ // 修改了 就提示
+        this.$confirm(`当前内容尚未提交审批?`, "温馨提示", {
+                confirmButtonText: "立即审批",
+                cancelButtonText: "取消",
+                type: "warning",
+              })
+                .then(() => {
+                  this.goAudit()
+                })
+                .catch(() => {});
+      }
+   }
 };
 </script>
 
@@ -1468,10 +1674,17 @@ export default {
 .loadType3 {
   color: #26b0a8;
 }
+.zhanwei{
+  border: 1px transparent solid;
+}
 </style>
-<style>
+ 
+<style scoped>
 .UserLine /deep/.el-form-item {
   margin-bottom: 2px;
+}
+.myAuditTable /deep/  .cell {
+  white-space: pre-wrap;   /*这是重点。文本换行*/
 }
 .proUserList {
   height: 20px !important;
@@ -1493,17 +1706,15 @@ export default {
   }
 }
 .checkUser {
-  border: 1px #409eff solid;
-  padding: 0px 16px;
-  text-align: center;
-  height: 23px;
-  line-height: 22px;
-  color: #fff;
-  display: inline-block;
-  background-color: #409eff;
-  width: 75px;
-  font-weight: bold;
-  border-radius: 2px;
+    // border: 1px #409eff solid;
+    text-align: center;
+    height: 23px;
+    line-height: 22px;
+    color: #409eff;
+    font-weight: bold;
+    border-radius: 2px;
+    margin-top: 6px;
+    text-align: left;
 }
 
 .containers {
