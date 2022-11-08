@@ -865,7 +865,7 @@ export default {
       this.formData.projectEndTime = dates[1];
       console.log(this.formData.projectStartTime);
       console.log(this.date1);
-      if (this.date1 != "" && this.date2 != "") {
+      if (this.date1  && this.date2 ) {
         if (
           moment(this.date1, "YYYY-MM-DD").valueOf() <
             moment(this.formData.projectStartTime, "YYYY-MM-DD").valueOf() &&
