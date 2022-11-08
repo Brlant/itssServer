@@ -2,13 +2,18 @@
   <div class="post">
     <!-- 左侧搜索 -->
     <section class="search">
-      <el-input
-        v-model.trim="dictType"
-        placeholder="搜索职位类型"
-        suffix-icon="el-icon-search"
-        clearable
-        @input="search"
-      />
+      <div class="wrap">
+        <div class="input">
+          <el-input
+            v-model.trim="dictType"
+            placeholder="搜索职位类型"
+            suffix-icon="el-icon-search"
+            clearable
+            @input="search"
+          />
+        </div>
+        <i class="el-icon-plus" @click="showDialogForm"></i>
+      </div>
       <div class="tab">
         <div
           v-for="(item, index) in list"
@@ -55,11 +60,29 @@
     </section>
     <!-- 添加/编辑 -->
     <add-edit :data="rawRegion" ref="dialog" @confirm="confirm" />
+    <!-- 添加职位类型 -->
+    <el-dialog 
+      :visible.sync="show" 
+      title="添加职位类型"
+      width="30%"
+      center
+      destroy-on-close
+    >
+      <el-form :model="form" :rules="rules" ref="form" label-width="80px">
+        <el-form-item label="名称:" prop="dictLabel">
+          <el-input v-model.trim="form.dictLabel" placeholder="请输入名称" maxlength="10" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="footer">
+        <el-button type="primary" @click="add">确定</el-button>
+        <el-button @click="close">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { dictData, queryPost, updatePost } from '@/api/dataDict'
+import { dictData, addAndEdit, queryPost, updatePost } from '@/api/dataDict'
 import debounce from '@/utils/debounce'
 import AddEdit from './AddEdit'
 
@@ -80,7 +103,23 @@ export default {
       ],
       regionItem: {},
       index: -1,
-      data: []
+      data: [],
+      show: false,
+      form: {
+        dictLabel: ''
+      },
+      rules: {
+        dictLabel: [
+          { required: true, trigger: 'blur', message: '请输入名称' }
+        ]
+      },
+    }
+  },
+  watch: {
+    show(value) {
+      if (!value) {
+        this.$refs.form.resetFields()
+      }
     }
   },
   created() {
@@ -120,7 +159,7 @@ export default {
     getTableData() {
       this.loading = true
       let data = {
-        postNameId: this.list[this.n].dictCode,
+        postTypeId: this.list[this.n].dictCode,
         regionId: this.index === -1 ? null : this.regionItem.dictCode,
         status: '0'
       }
@@ -129,6 +168,29 @@ export default {
         this.loading = false
       }).catch(() => {
         this.loading = false
+      })
+    },
+    showDialogForm() {
+      this.show = true
+    },
+    close() {
+      this.show = false
+    },
+    // 添加职位类型
+    add() {
+      this.$refs.form.validate(valid => {
+        if (!valid) return
+        const data = {
+          dictLabel: this.form.dictLabel,
+          dictType: 'post_type'
+        }
+        addAndEdit(data, 'post').then(res => {
+          this.show = false
+          if (res.code === 200) {
+            this.$message.success(res.msg)
+            this.getPost()
+          }
+        })
       })
     },
     // 选择类型职位
@@ -190,6 +252,18 @@ export default {
   .search {
     width: 22%;
     margin-right: 8px;
+    .wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .input {
+        flex: 1;
+        margin-right: 8px;
+      }
+      .el-icon-plus {
+        cursor: pointer;
+      }
+    }
     .tab {
       background: #fff;
       margin-top: 8px;

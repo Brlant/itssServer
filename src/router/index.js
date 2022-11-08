@@ -326,7 +326,63 @@ export const dynamicRoutes = [
         meta: { title: '成员信息', activeMenu: '/system/user' }
       }
     ]
-  }
+  },
+  {
+    path: '/system/user-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:user:serch'],
+    children: [
+      {
+        path: 'search',
+        component: () => import('@/views/system/user/search'),
+        name: 'EditAddInfo',
+        meta: { title: '人员搜索', activeMenu: '/system/user' }
+      }
+    ]
+  },
+  {
+    path: '/projectManager/proManager-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['addProject'],
+    children: [
+      {
+        path: 'addProject',
+        component: () => import('@/views/projectManager/addProject'),
+        name: 'addProject',
+        meta: { title: '新建项目' }
+      }
+    ]
+  },
+  {
+    path: '/projectManager/proManager-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['proDetails'],
+    children: [
+      {
+        path: 'proDetails',
+        component: () => import('@/views/projectManager/proDetails'),
+        name: 'proDetails',
+        meta: { title: '项目详情' }
+      }
+    ]
+  },
+  {
+    path: '/projectManager/proManager-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['proEdit'],
+    children: [
+      {
+        path: 'proEdit',
+        component: () => import('@/views/projectManager/proEdit'),
+        name: 'proEdit',
+        meta: { title: '编辑项目' }
+      }
+    ]
+  },
 ]
 
 // 防止连续点击多次路由报错

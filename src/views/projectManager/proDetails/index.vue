@@ -1349,7 +1349,7 @@ export default {
     goEditPage() {
       // :to="'?projectId=' + projectId+'&countScope='+countScope"
       const obj = {
-        path: "/projectManager/proEdit",
+        path: "/projectManager/proManager-auth/proEdit",
         query: { projectId: this.projectId, countScope: this.countScope },
       };
       this.$tab.closeOpenPage(obj);

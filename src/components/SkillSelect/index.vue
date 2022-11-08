@@ -8,7 +8,7 @@
         :style="{background: matchColor(item.cssClass), borderColor: matchColor(item.cssClass)}"
       >
         {{ item.dictLabel }}
-        <i class="el-icon-error" @click="del(index)"></i>
+        <i class="el-icon-error" @click="del(item)"></i>
       </el-tag>
     </div>
 
@@ -24,12 +24,13 @@
       </div>
 
       <div class="content">
-        <el-input v-model.trim="skill" placeholder="搜索标签" />
+        <el-input v-model.trim="skill" placeholder="搜索标签"/>
         <div class="list">
           <div 
             class="item"
             v-for="(item, index) in data"
             :key="index"
+           
             @click="change(index)"
           >
             <div class="name">
@@ -49,21 +50,56 @@ import { dictData } from '@/api/dataDict'
 import { color } from '@/components/ColorSelect/options'
 
 export default {
+  props: ['value'],
   data() {
     return {
       skill: '',
       data: [],
+      dataCopy:[]
     }
   },
+    watch: {
+    
+      // skill(val) {
+      //   console.log(this.data,'sss')
+      // },
+      skill: {
+      immediate: true,
+      handler(val) {
+        this.data = this.dataCopy.filter((item) => {
+
+          return item.dictLabel.indexOf(val) !== -1;
+        })
+        
+      }
+      },
+      value: {
+        handler(value) {
+          this.dataCopy.forEach(v1 => {
+            value.forEach(v2 => {
+              if (v1.dictCode === v2) {
+                v1.tick = true
+              }
+            })
+          })
+        },
+        immediate: true,
+        deep: true
+      }
+    },
   computed: {
+   
     list() {
-      return this.data.filter(v => v.tick)
+      return this.dataCopy.filter(v => v.tick)
     }
   },
   created() {
+    console.log(this.skillDafault)
+    //  this.list=this.skillDafault
     this.getData()
   },
   methods: {
+   
     // 技能列表
     getData() {
       const params = {
@@ -75,15 +111,26 @@ export default {
         data.forEach(v => {
           v.tick = false
         })
-        this.data = data
+        this.data = data;
+        this.dataCopy=data
+        this.dataCopy.forEach(v1 => {
+          this.value.forEach(v2 => {
+            if (v1.dictCode === v2) {
+              v1.tick = true
+            }
+          })
+        })
       })
     },
     // 选中技能
     change(index) {
       this.data[index].tick = !this.data[index].tick
+      const skillId = this.list.map(v => v.dictCode)
+      this.$emit('input', skillId);
     },
     // 删除标签
-    del(index) {
+    del(item) {
+      const index = this.data.findIndex(v => v.dictLabel === item.dictLabel)
       this.data[index].tick = false
     },
     // 匹配颜色

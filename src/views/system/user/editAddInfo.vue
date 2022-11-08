@@ -1,13 +1,13 @@
 <template>
   <div class="app-container">
     <div class="icon">
-      <div>
+      <div @click="backuser">
         <i class="el-icon-arrow-left"></i>
         <span>成员信息新增/编辑</span>
       </div>
       <div>
-        <el-button type="primary">保存</el-button>
-        <el-button>取消</el-button>
+        <el-button type="primary" @click="save">保存</el-button>
+        <el-button @click="cancle">取消</el-button>
       </div>
     </div>
     <div class="input-info">
@@ -24,9 +24,9 @@
         >
           <el-row>
             <el-col :span="12">
-              <el-form-item label="姓名" prop="name">
+              <el-form-item label="姓名" prop="nickName">
                 <el-input
-                  v-model="formData.name"
+                  v-model="formData.nickName"
                   placeholder="请输入姓名"
                 ></el-input>
               </el-form-item>
@@ -37,27 +37,37 @@
             <el-col>
               <el-form-item label="性别" prop="sex">
                 <el-radio-group v-model="formData.sex">
-                  <el-radio label="男"></el-radio>
-                  <el-radio label="女"></el-radio>
+                  <el-radio label="0">男</el-radio>
+                  <el-radio label="1">女</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="手机号/账号" prop="phone">
+              <el-form-item label="手机号" prop="phonenumber">
                 <el-input
-                  v-model="formData.phone"
-                  placeholder="请输入手机号/账号"
+                  v-model="formData.phonenumber"
+                  placeholder="请输入手机号"
                 ></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="工号" prop="workId">
+              <el-form-item label="账号" prop="userName">
                 <el-input
-                  v-model="formData.workId"
+                  v-model="formData.userName"
+                  placeholder="请输入账号"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="工号" prop="employeeNo">
+                <el-input
+                  v-model="formData.employeeNo"
                   placeholder="请输入工号"
                 ></el-input>
               </el-form-item>
@@ -76,10 +86,15 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="区域">
-                <el-select v-model="formData.region" placeholder="请选择区域">
+                <el-select
+                  v-model="formData.regionId"
+                  placeholder="请选择区域"
+                  clearable
+                  @change="position"
+                >
                   <el-option
-                    v-for="dict in areas"
-                    :key="dict.dictCode"
+                    v-for="(dict, index) in areas"
+                    :key="index"
                     :label="dict.dictLabel"
                     :value="dict.dictCode"
                   />
@@ -92,12 +107,14 @@
             <el-col :span="8">
               <el-form-item label="职位类型">
                 <el-select
-                  v-model="formData.region"
+                  v-model="formData.postTypeId"
                   placeholder="请选择职位类型"
+                  clearable
+                  @change="position"
                 >
                   <el-option
-                    v-for="dict in areas"
-                    :key="dict.dictCode"
+                    v-for="(dict, index) in typeList"
+                    :key="index"
                     :label="dict.dictLabel"
                     :value="dict.dictCode"
                   />
@@ -107,104 +124,69 @@
             <el-col :span="8">
               <el-form-item label="职位名称">
                 <el-select
-                  v-model="formData.region"
+                  clearable
+                  v-model="formData.postNameId"
                   placeholder="请选择职位名称"
+                  @change="level"
+                  :disabled="!formData.postTypeId || !formData.regionId"
                 >
                   <el-option
-                    v-for="dict in areas"
-                    :key="dict.dictCode"
-                    :label="dict.dictLabel"
-                    :value="dict.dictCode"
+                    v-for="(dict, index) in positions"
+                    :key="index"
+                    :label="dict.postName"
+                    :value="dict.postNameId"
                   />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="等级">
-                <el-select v-model="formData.region" placeholder="请选择等级">
+                <el-select
+                  v-model="formData.postLevelId"
+                  placeholder="请选择等级"
+                  clearable
+                  :disabled="!formData.postNameId"
+                >
                   <el-option
-                    v-for="dict in areas"
-                    :key="dict.dictCode"
-                    :label="dict.dictLabel"
-                    :value="dict.dictCode"
+                    v-for="(dict, index) in levelList"
+                    :key="index"
+                    :label="dict.postLevelName"
+                    :value="dict.postLevelId"
                   />
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
-            <el-col>
-              <el-form-item>
-                <div slot="label">
-                  <i class="el-icon-lock"></i> 工作技能：
-                </div>
-                <skill-select />
+            <el-col :span="8">
+              <el-form-item label="入职时间" prop="inTime">
+                <el-date-picker
+                  type="date"
+                  placeholder="选择日期"
+                  v-model="formData.inTime"
+                  style="width: 100%"
+                ></el-date-picker>
               </el-form-item>
-              <!-- <i class="el-icon-unlock"></i>
-              <i class="el-icon-lock"></i>
-              <span>工作技能：</span>
-              <el-popover placement="right" width="400" trigger="click">
-                <div>
-                  <el-input v-model="input" placeholder="搜索标签"></el-input>
-                  <div
-                    class="skill"
-                    v-for="(item, index) in skillList"
-                    :key="index"
-                  >
-                    <div class="skillColor"></div>
-                    <div class="skillName">{{ item }}</div>
-                  </div>
-                </div> -->
-                <!-- <span slot="reference">
-                  <i class="el-icon-circle-plus"></i>
-                  <span>添加技能标签</span>
-                </span> -->
-                <!-- <el-button slot="reference" type="text">
-                  <i class="el-icon-circle-plus"></i>
-                  <span>添加技能标签</span>
-                </el-button>
-              </el-popover> -->
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="离职时间">
+                <el-date-picker
+                  type="date"
+                  placeholder="选择日期"
+                  v-model="formData.outTime"
+                  style="width: 100%"
+                ></el-date-picker>
+              </el-form-item>
             </el-col>
           </el-row>
-          <!-- <el-row v-if="skills">
+          <el-row>
             <el-col>
-              <i class="el-icon-unlock"></i>
-              <i class="el-icon-lock"></i>
-              <span>工作技能：</span>
-              <div class="workSkill">
-                <div
-                  v-for="(item, index) in skills"
-                  :key="index"
-                  @mouseover="isDel(index)"
-                >
-                  <span>{{ item }}</span
-                  ><i
-                    class="el-icon-close"
-                    style="margin-left: 20px"
-                    v-if="index == ss"
-                  ></i>
-                </div>
-              </div>
-              <el-popover placement="right" width="400" trigger="click">
-                <div>
-                    <el-input v-model="input" placeholder="搜索标签"></el-input>
-                      <div class="skill" v-for="(item,index) in skillList" :key='index' @click='select(index)'> 
-                        <div class='skillColor'></div>
-                        <div class='skillName'>{{item}}</div>
-                        <i class='el-icon-check'></i>
-                    </div>
-                </div> -->
-             
-                <!-- <span slot="reference">
-                  <i class="el-icon-circle-plus"></i>
-                  <span>添加技能标签</span>
-                </span> -->
-                <!-- <el-button slot="reference" type="text">
-                  <i class="el-icon-circle-plus" style="font-size: 25px"></i>
-                </el-button>
-              </el-popover>
+              <el-form-item>
+                <div slot="label"><i class="el-icon-lock"></i> 工作技能：</div>
+                <skill-select v-model="formData.skillIds" />
+              </el-form-item>
             </el-col>
-          </el-row> -->
+          </el-row>
         </el-form>
         <div>
           <div class="titleinfo">权限信息</div>
@@ -219,15 +201,18 @@
               <el-col :span="12">
                 <el-form-item label="系统角色">
                   <el-select
-                    v-model="formData.region"
-                    placeholder="请选择系统角色"
+                    v-model="formData.roleIds"
+                    multiple
+                    placeholder="请选择角色"
                   >
                     <el-option
-                      v-for="dict in areas"
-                      :key="dict.dictCode"
-                      :label="dict.dictLabel"
-                      :value="dict.dictCode"
-                    />
+                      v-for="item in roleOptions"
+                      :key="item.roleId"
+                      :label="item.roleName"
+                      :value="item.roleId"
+                      :disabled="item.status == 1"
+                    >
+                    </el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -235,29 +220,13 @@
 
             <el-row>
               <el-col :span="12">
-                <el-form-item label="所属部门">
-                  <el-select v-model="formData.region" placeholder="请选择部门">
-                    <el-option
-                      v-for="dict in areas"
-                      :key="dict.dictCode"
-                      :label="dict.dictLabel"
-                      :value="dict.dictCode"
-                    />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="直属领导">
-                  <el-select v-model="formData.region" placeholder="请选择">
-                    <el-option
-                      v-for="dict in areas"
-                      :key="dict.dictCode"
-                      :label="dict.dictLabel"
-                      :value="dict.dictCode"
-                    />
-                  </el-select>
+                <el-form-item label="所属部门" prop="deptId">
+                  <treeselect
+                    v-model="formData.deptId"
+                    :options="deptOptions"
+                    :show-count="true"
+                    placeholder="请选择归属部门"
+                  />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -276,60 +245,171 @@ import {
   updatePost,
   areatypePost,
 } from "@/api/system/post";
-import SkillSelect from '@/components/SkillSelect/index'
-
+import {
+  getUser,
+  addUser,
+  positionName,
+  updateUser,
+  userDetail,
+} from "@/api/system/user";
+import SkillSelect from "@/components/SkillSelect/index";
+import { treeselect } from "@/api/system/dept";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import moment from "moment";
+import "moment/locale/zh-cn";
 export default {
   components: {
-    SkillSelect
+    SkillSelect,
+    Treeselect,
   },
   data() {
     return {
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕",
-        },
-        {
-          value: "选项2",
-          label: "双皮奶",
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎",
-        },
-        {
-          value: "选项4",
-          label: "龙须面",
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭",
-        },
-      ],
       skillData: [],
-      value1: [],
-      formData: {},
+      formData: {
+        skillIds: [],
+      },
       areas: [],
+      typeList: [],
+      deptOptions: [],
       input: "",
       skills: ["ss", "dd"],
       skillList: ["java", "js"],
       aa: false,
+      roleOptions: [],
+      skillId: [],
+      positions: [],
+      levelList: [],
+      userId: "",
       ss: -1,
       rules: {
-        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        nickName: [{ required: true, message: "请输入姓名", trigger: "blur" }],
         sex: [{ required: true, message: "请选择性别", trigger: "change" }],
-        phone: [
-          { required: true, message: "请输入手机号/账号", trigger: "blur" },
+        phonenumber: [
+          { required: true, message: "请输入手机号", trigger: "blur" },
+        ],
+        userName: [{ required: true, message: "请输入账号", trigger: "blur" }],
+        inTime: [
+          { required: true, message: "请选择入职时间", trigger: "change" },
         ],
       },
     };
   },
   mounted() {
+    if (this.$route.query.isEdit == 1) {
+      this.userId = this.$route.query.userInfo.userId;
+      // this.formData = this.$route.query.userInfo;
+      // this.formData.skillIds = this.$route.query.userInfo.userSkills.map(
+      //   (v) => v.skillId
+      // // );
+      // if (this.formData.regionId && this.formData.postTypeId) {
+      //   this.position();
+      // }
+      // if (this.formData.postNameId) {
+      //   this.level();
+      // }
+      this.detailInfo();
+    }
+    
     this.positinType("region");
+    this.positinType("post_type");
+    this.getTreeselect();
+    this.role();
   },
   methods: {
-    dd() {
-      console.log(this.value1);
+    // 详情
+    detailInfo() {
+      userDetail(this.userId).then((res) => {
+        this.formData = res.data;
+        this.formData.skillIds = res.data.userSkills.map((v) => v.skillId);
+        if (this.formData.regionId && this.formData.postTypeId) {
+          this.position();
+        }
+        if (this.formData.postNameId) {
+          this.level();
+        }
+      });
+      // );
+    },
+    workSkill(data) {
+      this.skillId = [];
+      data.forEach((i) => {
+        this.formData.skillId.push(i.dictCode);
+      });
+
+      console.log(this.skillId, "data");
+    },
+    position() {
+      if (this.formData.regionId) {
+        let data = {
+          regionId: this.formData.regionId,
+          postTypeId: this.formData.postTypeId,
+        };
+        positionName(data).then((res) => {
+          this.positions = res.data;
+        });
+      }
+    },
+    level() {
+      if (this.formData.regionId && this.formData.postTypeId) {
+        let data = {
+          regionId: this.formData.regionId,
+          postTypeId: this.formData.postTypeId,
+          postNameId: this.formData.postNameId,
+        };
+        positionName(data).then((res) => {
+          this.levelList = res.data;
+        });
+      }
+    },
+    //保存
+    save() {
+      if (this.$route.query.isEdit == 1) {
+        this.$refs["elForm"].validate((valid) => {
+          if (valid) {
+            this.formData.inTime = moment(this.formData.inTime).format(
+              "YYYY-MM-DD"
+            );
+            this.formData.outTime = moment(this.formData.outTime).format(
+              "YYYY-MM-DD"
+            );
+            let data = {
+              ...this.formData,
+            };
+            console.log(data, "ssssssssss");
+           
+            updateUser(data).then((res) => {
+              if (res.code == 200) {
+                this.$message.success(res.msg);
+                 this.detailInfo();
+              }
+            });
+          }
+        });
+      } else {
+        this.$refs["elForm"].validate((valid) => {
+          if (valid) {
+            this.formData.inTime = moment(this.formData.inTime).format(
+              "YYYY-MM-DD"
+            );
+            this.formData.outTime = moment(this.formData.outTime).format(
+              "YYYY-MM-DD"
+            );
+            let data = {
+              ...this.formData,
+            };
+            console.log(data, "ssssssssss");
+            addUser(data).then((res) => {
+              if (res.code == 200) {
+                this.$message.success(res.msg);
+              }
+            });
+          }
+        });
+      }
+    },
+    cancle() {
+      this.$refs["elForm"].resetFields();
     },
     /*查询字典的接口*/
     positinType(val) {
@@ -341,11 +421,35 @@ export default {
         }
       });
     },
+    role() {
+      getUser().then((response) => {
+        // if(response)
+        // response.posts.map((item,i)=>{
+        //   item.postName =  item.regionName+'-'+item.postName+'-'+item.postLevel
+        // })
+
+        this.roleOptions = response.roles;
+      });
+    },
+    /** 查询部门下拉树结构 */
+    getTreeselect() {
+      treeselect().then((response) => {
+        this.deptOptions = response.data;
+      });
+    },
     //添加技能
     addSkill() {},
     isDel(index) {
       console.log(index);
       this.ss = index;
+    },
+    //返回
+    backuser() {
+      const obj = {
+        path: "/system/user",
+      };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
     },
   },
 };
@@ -381,7 +485,7 @@ export default {
   }
   .skillName {
     display: inline-block;
-    margin-right:200px;
+    margin-right: 200px;
   }
 }
 .workSkill {
