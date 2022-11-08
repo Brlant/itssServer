@@ -7,22 +7,41 @@
     destroy-on-close
    >
     <el-form :model="form" :rules="rules" ref="form" label-width="120px">
-      <el-form-item label="区域:" prop="area">
-        <el-select v-model="form.area" placeholder="请选择区域">
-
+      <el-form-item label="区域:" prop="regionId">
+        <el-select v-model="form.regionId" placeholder="请选择区域">
+          <el-option 
+            v-for="(item, index) in data"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictCode"
+          />
         </el-select>
       </el-form-item>
-      <el-form-item label="职位名称:" prop="position">
-        <el-input v-model.trim="form.position" placeholder="请输入职位名称" />
+      <el-form-item label="职位名称:" prop="postNameId">
+        <el-select v-model="form.postNameId" placeholder="请选择职位名称">
+          <el-option 
+            v-for="(item, index) in post"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictCode"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="等级:" prop="level">
-        <el-input v-model.trim="form.level" placeholder="请输入等级" />
+      <el-form-item label="等级:" prop="postLevelId">
+        <el-select v-model="form.postLevelId" placeholder="请选择等级">
+          <el-option 
+            v-for="(item, index) in level"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictCode"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="成本预设（内）:" prop="inner">
-        <el-input v-model.trim="form.inner" placeholder="请输入成本预设（内）" />
+      <el-form-item label="成本预设（内）:" prop="costIn">
+        <el-input v-model.trim="form.costIn" placeholder="请输入成本预设（内）" />
       </el-form-item>
-      <el-form-item label="成本预设（外）:" prop="outer">
-        <el-input v-model.trim="form.outer" placeholder="请输入成本预设（外）" />
+      <el-form-item label="成本预设（外）:" prop="costOut">
+        <el-input v-model.trim="form.costOut" placeholder="请输入成本预设（外）" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="footer">
@@ -33,7 +52,10 @@
 </template>
 
 <script>
+import { dictData } from '@/api/dataDict'
+
 export default {
+  props: ['data'],
   data() {
     const check = (rule, value, callback) => {
       if (!value) {
@@ -54,24 +76,27 @@ export default {
       show: false,
       title: '',
       row: {},
+      post: [],
+      level: [],
+      postTypeId: '',
       form: {
-        area: '',
-        position: '',
-        level: '',
-        inner: '',
-        outer: ''
+        regionId: null,
+        postNameId: null,
+        postLevelId: null,
+        costIn: null,
+        costOut: null
       },
       rules: {
-        area: [
+        regionId: [
           { required: true, trigger: 'blur', message: '请选择区域' }
         ],
-        position: [
-          { required: true, trigger: 'blur', message: '请输入职位名称' }
+        postNameId: [
+          { required: true, trigger: 'blur', message: '请选择职位名称' }
         ],
-        inner: [
+        costIn: [
           { validator: check, trigger: 'blur' }
         ],
-        outer: [
+        costOut: [
           { validator: check, trigger: 'blur' }
         ]
       }
@@ -84,22 +109,70 @@ export default {
       }
     }
   },
+  created() {
+    this.getPost()
+    this.getLevel()
+  },
   methods: {
+    // 获取职位
+    getPost() {
+      const params = {
+        dictType: 'post_name',
+        status: '0'
+      }
+      dictData(params).then(res => {
+        this.post = res.rows
+      })
+    },
+    // 获取等级
+    getLevel() {
+      const params = {
+        dictType: 'post_level',
+        status: '0'
+      }
+      dictData(params).then(res => {
+        this.level = res.rows
+      })
+    },
     onConfirm() {
       this.$refs.form.validate(valid => {
         if (!valid) return
+        let method = 'post'
+        let data = {
+          regionId: this.form.regionId,
+          postNameId: this.form.postNameId,
+          postLevelId: this.form.postLevelId,
+          costIn: this.form.costIn - 0,
+          costOut: this.form.costOut - 0,
+          postTypeId: this.postTypeId,
+          status: '0'
+        }
+        if (this.row) {
+          data.postId = this.row.postId
+          method = 'put'
+        }
+        this.$emit('confirm', data, method)
       })
     },
-    open(row) {
+    open(row, postTypeId) {
       this.show = true
       this.$nextTick(() => {
         this.row = row
+        this.postTypeId = postTypeId
         if (this.row) {
           this.title = '编辑'
+          this.matchFormData()
         } else {
           this.title = '添加'
         }
       })
+    },
+    matchFormData() {
+      this.form.regionId = this.row.regionId
+      this.form.postNameId = this.row.postNameId
+      this.form.postLevelId = this.row.postLevelId
+      this.form.costIn = this.row.costIn
+      this.form.costOut = this.row.costOut
     },
     close() {
       this.show = false

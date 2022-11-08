@@ -23,13 +23,14 @@
     <!-- 右侧表格 -->
     <section class="table">
       <div class="heading">
-        <el-dropdown>
+        <el-dropdown trigger="click">
           <span class="el-dropdown-link">
-            全部区域<i class="el-icon-arrow-down el-icon--right"></i>
+            {{ regionItem.dictLabel }}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>111</el-dropdown-item>
-            <el-dropdown-item>222</el-dropdown-item>
+            <el-dropdown-item v-for="(item, index) in region" :key="index" @click.native="onClick(index)">
+              {{ item.dictLabel }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         <div class="add" @click="handleDialog(null)">
@@ -37,28 +38,28 @@
           <span class="text">添加</span>
         </div>
       </div>
-      <el-table :data="data">
-        <el-table-column align="center" width="80" label="字典ID" />
-        <el-table-column align="center" label="区域" />
-        <el-table-column align="center" label="职位" />
-        <el-table-column align="center" label="等级" />
-        <el-table-column align="center" label="对内成本预设（元/天）" />
-        <el-table-column align="center" label="对外成本预设（元/天）" />
+      <el-table :data="data" v-loading="loading">
+        <el-table-column align="center" width="100" label="字典ID" prop="postId" />
+        <el-table-column align="center" label="区域" prop="regionName" />
+        <el-table-column align="center" label="职位" prop="postName" />
+        <el-table-column align="center" label="等级" prop="postLevelName" />
+        <el-table-column align="center" label="对内成本预设（元/天）" prop="costIn" />
+        <el-table-column align="center" label="对外成本预设（元/天）" prop="costOut" />
         <el-table-column align="center" label="操作">
           <template slot-scope="{row}">
             <span class="edit" @click="handleDialog(row)">编辑</span>
-            <span class="del">删除</span>
+            <span class="del" @click="del(row)">删除</span>
           </template>
         </el-table-column>
       </el-table>
     </section>
     <!-- 添加/编辑 -->
-    <add-edit ref="dialog" />
+    <add-edit :data="rawRegion" ref="dialog" @confirm="confirm" />
   </div>
 </template>
 
 <script>
-import { dictData } from '@/api/dataDict'
+import { dictData, queryPost, updatePost } from '@/api/dataDict'
 import debounce from '@/utils/debounce'
 import AddEdit from './AddEdit'
 
@@ -69,18 +70,26 @@ export default {
   data() {
     return {
       dictType: '',
+      loading: false,
       n: -1,
-      n2: -1,
       list: [],
-      data: [{}]
+      rawRegion: [],
+      region: [],
+      allRegion: [
+        { dictLabel: '全部区域', dictCode: null }
+      ],
+      regionItem: {},
+      index: -1,
+      data: []
     }
   },
   created() {
-    this.getList()
+    this.getPost()
+    this.getRegion()
   },
   methods: {
-    // 左侧列表
-    getList() {
+    // 职位类型列表
+    getPost() {
       const params = {
         dictType: 'post_type',
         status: '0'
@@ -88,39 +97,86 @@ export default {
       dictData(params).then(res => {
         this.list = res.rows
         if (this.list.length) {
-          if (!this.dictType) {
-            this.n = 0
-          } else {
-            this.n = -1
-          }
+          this.n = 0
+          this.getTableData()
         }
       })
     },
+    // 区域列表
+    getRegion() {
+      const params = {
+        dictType: 'region',
+        status: '0'
+      }
+      dictData(params).then(res => {
+        let { rows } = res
+        this.rawRegion = rows
+        this.region = [...rows, ...this.allRegion ]
+        this.index = this.region.length - 1
+        this.regionItem = this.region[this.index]
+      })
+    },
+    // 表格数据
+    getTableData() {
+      this.loading = true
+      let data = {
+        postNameId: this.list[this.n].dictCode,
+        regionId: this.index === -1 ? null : this.regionItem.dictCode,
+        status: '0'
+      }
+      queryPost(data).then(res => {
+        this.data = res.data
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+    // 选择类型职位
+    change(index) {
+      if (this.n === index) return
+      this.n = index
+      this.getTableData()
+    },
+    // 选择区域
+    onClick(index) {
+      if (this.index === index) return
+      this.index = index
+      this.regionItem = this.region[index]
+      this.getTableData()
+    },
     // 添加与编辑
     handleDialog(row) {
-      this.$refs.dialog.open(row)
+      this.$refs.dialog.open(row, this.list[this.n].dictCode)
+    },
+    // 弹窗确认
+    confirm(data, method) {
+      updatePost(data, method).then(res => {
+        this.$refs.dialog.close()
+        if (res.code === 200) {
+          this.$message.success(res.msg)
+          this.getTableData()
+        }
+      })
+    },
+    del(row) {
+      this.$confirm('是否确认删除?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        const data = {
+          postId: row.postId,
+          delFlag: 1
+        }
+        updatePost(data).then(res => {
+          if (res.code === 200) {
+            this.$message.success(res.msg)
+            this.getTableData()
+          }
+        })
+      }).catch(() => {})
     },
     // 搜索
     search() {
       debounce(this.getList)
-    },
-    onConfirm() {
-      this.$refs.form.validate(valid => {
-        if (!valid) return
-      })
-    },
-    update() {
-      this.$refs.dialog.open()
-    },
-    add() {
-      this.show = true
-    },
-    close() {
-      this.show = false
-    },
-    change(index) {
-      if (this.n === index) return
-      this.n = index
     },
   }
 }
@@ -182,5 +238,8 @@ export default {
       cursor: pointer;
     }
   }
+}
+.el-dropdown-menu__item {
+  text-align: center;
 }
 </style>
