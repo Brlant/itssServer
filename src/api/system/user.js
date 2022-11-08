@@ -141,3 +141,41 @@ export function deptTreeSelect() {
     method: 'get'
   })
 }
+export function queryUserList(query){
+  return request({
+    url: '/system/user/listByDeptId',
+    method: 'get',
+    params: query
+  })
+}
+//人员详情
+export function userDetail(userId) {
+  return request({
+    url: '/system/user/' + userId,
+    method: 'get'
+  })
+}
+//停用启用
+export function stopUse(data) {
+  return request({
+    url: '/system/user/enableUserStatus',
+    method: 'put',
+    data: data
+  })
+}
+//技能锁定
+export function skillLocking(data) {
+  return request({
+    url: '/system/user/userSkillLock',
+    method: 'put',
+    data: data
+  })
+}
+//职位名称
+export function positionName(data) {
+  return request({
+    url: '/system/post_dict/list',
+    method: 'post',
+    data: data
+  })
+}
