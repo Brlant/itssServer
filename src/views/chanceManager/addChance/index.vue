@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="routerBar">
-      <router-link :to="'/projectManager/proManager'"> &lt; 新建机会</router-link>
+      <router-link :to="'/chanceManager/chanceList'"> &lt; 新建机会</router-link>
       <div class="rightBox">
         <el-button size="mini" @click="submitForm" type="primary">保存</el-button>
         <el-button size="mini" @click="resetForm" type="default">取消</el-button>

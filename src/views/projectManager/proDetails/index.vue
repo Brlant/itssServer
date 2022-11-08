@@ -473,10 +473,10 @@
               </div></el-col
             >
             <el-col :span="3" :offset="3"
-              ><div class="colText2">
+              ><div class="colText2" v-show="resouceBtnActive">
                 <el-button
                   size="mini"
-                  @click="addUserListHandel(addUserListindex)"
+                  @click="addUserListHandel(addUserListindex)" 
                   type="primary"
                   >暂存</el-button
                 >
@@ -561,11 +561,11 @@
           <template slot-scope="scope">
             <div v-show="isShowActive==0">
                 <!-- 1 不显示 有审核记录，0显示  没有审核记录 -->
-            <el-button type="text" size="mini" v-if="showAddOrCancel(scope.row)">
-              <span class="color2"  @click="addUserToProject(scope.row)">添加 </span>
+            <el-button type="text" size="mini" v-if="scope.row.showOrCancel==1&&resouceBtnActive">
+              <span class="color2"  @click="addUserToProject(scope.row,scope.index)">添加 </span>
             </el-button>
-            <el-button type="text" size="mini" v-else>
-              <span class="color1"  @click="delUserToProject(scope.row)">取消 </span>
+            <el-button type="text" size="mini"  v-if="scope.row.showOrCancel==2&&resouceBtnActive">
+              <span class="color1"  @click="delUserToProject(scope.row,scope.index)&&resouceBtnActive">取消 </span>
             </el-button>
             </div>
           </template>
@@ -672,6 +672,7 @@ export default {
   components: {},
   props: {},
   data: () => ({
+
     monthArrTemp: [],
     userOptions: [],
     postIdOptions: [],
@@ -707,6 +708,8 @@ export default {
     },
     // 新增编辑的初始化 数据结构集合
     addEditFormData: {},
+    resouceBtnActive:true, // 是否展示 暂存和取消
+
     // 详情页面显示的
     formData: {
       priority: 3 /*优先级（1.最高，2.高，3.普通，4.较低）*/,
@@ -722,7 +725,7 @@ export default {
       projectUserList: [] /* 项目成员列表*/,
       projectGitUrl: "", // 项目git 地址
     },
-    recommendUserActive: false,
+    recommendUserActive: false, // 是否展示人选推荐
     recommendUserTableData: [
       // {
       //   nickName: "", //姓名
@@ -769,7 +772,7 @@ export default {
     childDateArea: null,
     nowIndex:0,// 记录当前修改的那一条职位记录 资源
     isShowActive: 1,//isShow;  //是否显示按钮 1 不显示，0显示 标识是否有审核记录在
-    isUpdateActive:false //是否点击了 添加  和暂存 的内容
+    isUpdateActive:false, //是否点击了 添加  和暂存 的内容
   }),
   computed: {},
   watch: {},
@@ -839,14 +842,7 @@ export default {
   },
 
   methods: {
-    showAddOrCancel(row){
-      // 显示取消还是 添加
-      let showOrCancel = true; // 默认展示 添加按钮
-      if(this.projectTable.projectUserList[this.nowIndex].userId==row.userId){
-        showOrCancel =false
-      }
-      return showOrCancel
-    },
+    
     // 顶部的点击提交审核
     goAudit(){
       // 此处提交的是 全量数据
@@ -868,13 +864,14 @@ export default {
               this.addEditUserActive = false;
               this.detailUserActive = false;
               this.recommendUserActive = false;
+              this.isUpdateActive = false; // 点击了立即审批 就删除编辑状态
             }
           });
     },
     // 顶部的点击取消
     cancelSave() {
-      this.$confirm(`是否清空待审批内容?`, "温馨提示", {
-        confirmButtonText: "确定",
+      this.$confirm(`当前内容尚未保存，是否退出?`, "温馨提示", {
+        confirmButtonText: "退出",
         cancelButtonText: "取消",
         type: "warning",
       })
@@ -883,9 +880,8 @@ export default {
         })
         .catch(() => {});
     },
-    delUserToProject(row){
+    delUserToProject(row,index){
       // 取消当前的人 
-      console.log(row.userId,row.nickName);
       this.addEditFormData.projectUserList[0].userId = ""
       this.addEditFormData.projectUserList[0].userName = ""
       this.$forceUpdate()
@@ -904,11 +900,17 @@ export default {
       this.formData.projectUserList[this.nowIndex].userName =  ""
       this.$forceUpdate()
       this.isUpdateActive=true // 我删除了用户
+      // 点击添加成功后 显示取消按钮
+      this.recommendUserTableData.map(item=>{
+        item.showOrCancel=1// 全部 显示添加
+        if(this.projectTable.projectUserList[this.nowIndex].userId===item.userId){
+          item.showOrCancel=2
+        }
+      })
     },
-    addUserToProject(row) {
+    addUserToProject(row,index) {
       //点击添加人员到 资源配置中 去
       // projectTable.projectUserList
-      console.log(row.userId,row.nickName);
       this.addEditFormData.projectUserList[0].userId = row.userId
       this.addEditFormData.projectUserList[0].userName = row.nickName
       this.$forceUpdate()
@@ -927,6 +929,14 @@ export default {
       this.formData.projectUserList[this.nowIndex].userName = row.nickName
       this.$forceUpdate()
       this.isUpdateActive=true // 我添加了用户
+       // 点击添加成功后 显示取消按钮
+      this.recommendUserTableData.map(item=>{
+        item.showOrCancel=1// 全部 显示添加
+        if(this.projectTable.projectUserList[this.nowIndex].userId===item.userId){
+          item.showOrCancel=2
+        }
+      })
+   
     },
 
     tableRowClassName({ row, rowIndex }) {
@@ -977,6 +987,7 @@ export default {
           this.formData.projectUserList[row.index] = oneUser //因为后台对于生成的三级数据没有id
           // console.log(oneUser);
           this.changeChildDateArea(oneUser);
+          console.log("showRowDetail");
           this.getRecommendUserList(row.index, row);
           // }
           // // 删除成功 只会去查询 审核的方法
@@ -1074,6 +1085,13 @@ export default {
           workDay: this.addEditFormData.projectUserList[index].workDay, // 总人日
         };
         queryUserByPostId(params).then((res) => {
+          res.data.map((item)=>{
+               item.showOrCancel= 1; // 默认显示  添加
+             if(this.projectTable.projectUserList[this.nowIndex].userId==item.userId){
+              // 如果 当前点击的行的userID === 当前行id 就显示取消
+                item.showOrCancel= 2;
+              }
+          })
           this.recommendUserTableData = res.data;
         });
       // 拿到成本之后，自动计算出 下面的期间负荷
@@ -1175,6 +1193,7 @@ export default {
     updateProjectOne(index, row) {
       this.detailUserActive = false;
       this.addEditUserActive = true;
+      this.resouceBtnActive = true;// 隐藏按钮的逻辑
       this.nowIndex = index // 存储刚刚点击是那一条
 
       // 我是修改
@@ -1210,6 +1229,7 @@ export default {
           this.formData.projectUserList[index] = oneUser //因为后台对于生成的三级数据没有id
           // console.log(oneUser);
           this.changeChildDateArea(oneUser);
+          console.log("updateProjectOne");
           this.getRecommendUserList(index, row);
           // }
           // // 删除成功 只会去查询 审核的方法
@@ -1226,7 +1246,15 @@ export default {
         projectService: this.formData.projectService, //服务对象
         workDay: row.workDay, // 总人日
       };
+        console.log(this.addEditFormData.projectUserList[0].userId ,row.userId);
       queryUserByPostId(params).then((res) => {
+          res.data.map((item)=>{
+             item.showOrCancel= 1; // 默认显示  添加
+             if(this.projectTable.projectUserList[this.nowIndex].userId==item.userId){
+              // 如果 当前点击的行的userID === 当前行id 就显示取消
+                item.showOrCancel= 2;
+              }
+          })
         this.recommendUserTableData = res.data;
       });
     },
@@ -1273,22 +1301,22 @@ export default {
           this.formData.projectUserList[this.nowIndex] = this.deepClone(this.addEditFormData.projectUserList[0])
           this.isUpdateActive=true // 我修改了 并且暂存了
           this.$message.success("暂存成功！");
+          this.resouceBtnActive = false;// 隐藏按钮的逻辑
+
         }
       });
     },
     // 删除单行用户的
     DelUserList(index) {
-      // this.$confirm(`您确定要删除这条记录吗?`, "温馨提示", {
-      //   confirmButtonText: "确定",
-      //   cancelButtonText: "取消",
-      //   type: "warning",
-      // })
-      //   .then(() => {
-      this.addEditFormData.projectUserList.splice(index, 1);
-      this.addEditFormData = {};
-      this.addEditUserActive = false;
-      // })
-      // .catch(() => {});
+     
+      // this.addEditFormData.projectUserList.splice(index, 1);
+      // this.addEditFormData = {};
+      // this.addEditUserActive = false;
+      // this.detailUserActive = false;
+      // this.recommendUserActive = false;
+      this.resouceBtnActive = false;// 隐藏按钮的逻辑
+
+      
     },
 
     /*根据起始和结束 生成下面表格*/
@@ -1387,7 +1415,14 @@ export default {
     },
     // 点击取消  删除  提交
     updateAuditPro(rowData, type) {
-      let params = {
+      if(type==4){
+               this.$confirm(`是否清空待审内容`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          let params = {
         projectId: rowData.projectId,
         status: parseInt(type),
       };
@@ -1398,6 +1433,24 @@ export default {
         this.auditStatus = "1"; // 初始化 显示 待审核
         this.proAuditInit();
       });
+        })
+        .catch(()=>{
+
+        })
+      }
+      else{
+        let params = {
+        projectId: rowData.projectId,
+        status: parseInt(type),
+      };
+      updateAuditProById(params).then((res) => {
+        let { msg } = res;
+        this.$message.success(msg);
+        this.init("init");
+        this.auditStatus = "1"; // 初始化 显示 待审核
+        this.proAuditInit();
+      });
+      }
     },
     // 点击上面的 项目修改记录的 状态切换
     handleClick(tab, event) {
