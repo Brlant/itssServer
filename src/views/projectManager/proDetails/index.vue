@@ -16,11 +16,11 @@
           class="rightLink"
           v-show="isProjectByUser(formData) || isJurisdiction('admin')"
         >                  
-          <span @click="goEditPage" style="cursor: pointer"  v-show="isShowActive==0" class="color2"> 编辑 |</span>
+          <span @click="goEditPage" style="cursor: pointer"  v-show="isShowActive==0&&!isUpdateActive" class="color2"> 编辑 |</span>
           
           <span
             @click="stopProject"
-            style="cursor: pointer"  v-show="isShowActive==0"
+            style="cursor: pointer"  v-show="isShowActive==0&&!isUpdateActive"
             :class="[projectTable.projectStatus == 4 ? 'color5' : 'color4']"
           >
             {{ projectTable.projectStatus == 4 ? "开启" : "终止" }}
@@ -165,8 +165,8 @@
             </el-row>
           </el-col>
           <el-col :span="3" style="    text-align: right;padding-top: 3px;">
-            <el-button size="mini" type="primary" v-show="isShowActive==0"  @click="goAudit">提交审核</el-button>
-            <el-button size="mini" type="default" v-show="isShowActive==0" @click="cancelSave">取消</el-button>
+            <el-button size="mini" type="primary" v-show="isShowActive==0&&isUpdateActive"  @click="goAudit">提交审核</el-button>
+            <el-button size="mini" type="default" v-show="isShowActive==0&&isUpdateActive" @click="cancelSave">取消</el-button>
           </el-col>
         </el-row>
       </div>
@@ -311,7 +311,7 @@
                 </div>
               </el-form-item>
             </el-col>
-            <el-col :span="3" :offset="2">
+            <el-col :span="6" :offset="2">
               <el-form-item label-width="130px" label="执行人员：">
                 <div class="checkUser">
                   {{ addUserList.userName?addUserList.userName:'无' }}
