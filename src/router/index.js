@@ -326,6 +326,20 @@ export const dynamicRoutes = [
         meta: { title: '成员信息', activeMenu: '/system/user' }
       }
     ]
+  },
+  {
+    path: '/system/user-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:user:serch'],
+    children: [
+      {
+        path: 'search',
+        component: () => import('@/views/system/user/search'),
+        name: 'EditAddInfo',
+        meta: { title: '人员搜索', activeMenu: '/system/user' }
+      }
+    ]
   }
 ]
 
