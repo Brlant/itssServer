@@ -125,7 +125,7 @@ export function queryUserlistByRole(data) {
 // 
 export function getPostOptions() {
   return request({
-    url: '/system/post/optionselect',
+    url: '/system/post_manage/optionselect',
     method: 'get',
   })
 }

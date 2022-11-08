@@ -693,7 +693,6 @@ export default {
         },
       ],
     },
-    projectUserIdOptions: [],
     // 单独的 用户列表
     projectUserList: {
       endTime: "" /**结束时间*/,
@@ -975,6 +974,7 @@ export default {
           oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
 
           this.addEditFormData.projectUserList.push(oneUser);
+          this.formData.projectUserList[row.index] = oneUser //因为后台对于生成的三级数据没有id
           // console.log(oneUser);
           this.changeChildDateArea(oneUser);
           this.getRecommendUserList(row.index, row);
@@ -1067,6 +1067,15 @@ export default {
           }
         }
       });
+      // 需要更新一下  人选推荐的接口
+        let params = {
+          postId: postId, //职位id
+          projectService: this.formData.projectService, //服务对象
+          workDay: this.addEditFormData.projectUserList[index].workDay, // 总人日
+        };
+        queryUserByPostId(params).then((res) => {
+          this.recommendUserTableData = res.data;
+        });
       // 拿到成本之后，自动计算出 下面的期间负荷
       let dates = this.addEditFormData.projectUserList[index].startEndTime;
       this.constAll(dates, index);
@@ -1079,7 +1088,7 @@ export default {
     },
     // 动态生成 表头样式
     headerUserClassName(row) {
-      // console.log(row.column)
+      // console.log(row.column)                                                                                                                                                                                                                                                          
       // if(row.column.property=='total')
       return "recommendHeader";
     },
@@ -1198,6 +1207,7 @@ export default {
           oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
 
           this.addEditFormData.projectUserList.push(oneUser);
+          this.formData.projectUserList[index] = oneUser //因为后台对于生成的三级数据没有id
           // console.log(oneUser);
           this.changeChildDateArea(oneUser);
           this.getRecommendUserList(index, row);
@@ -1402,8 +1412,10 @@ export default {
       queryProjectAudit(this.checkAuditFormData).then((res) => {
         // 因为现在逻辑控制 导致每次审核记录只存储一条。
         // 如果多条，咱就拼接成一条
+        // 只针对于 待审批
+
         let newArr = [];
-        if (res.data.length > 1) {
+        if (res.data.length > 1&&this.auditStatus==1) {
           let updateContentTemp = ""; //
           // 当前项目的审核记录 大于1  才需要拼接
           res.data.map((item) => {
