@@ -38,7 +38,7 @@
           <span class="text">添加</span>
         </div>
       </div>
-      <el-table :data="data">
+      <el-table :data="data" v-loading="loading">
         <el-table-column align="center" width="100" label="字典ID" prop="postId" />
         <el-table-column align="center" label="区域" prop="regionName" />
         <el-table-column align="center" label="职位" prop="postName" />
@@ -70,6 +70,7 @@ export default {
   data() {
     return {
       dictType: '',
+      loading: false,
       n: -1,
       list: [],
       rawRegion: [],
@@ -117,6 +118,7 @@ export default {
     },
     // 表格数据
     getTableData() {
+      this.loading = true
       let data = {
         postNameId: this.list[this.n].dictCode,
         regionId: this.index === -1 ? null : this.regionItem.dictCode,
@@ -124,6 +126,9 @@ export default {
       }
       queryPost(data).then(res => {
         this.data = res.data
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
       })
     },
     // 选择类型职位
