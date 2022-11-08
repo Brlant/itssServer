@@ -112,7 +112,33 @@ Vue.use(Element, {
 })
 
 Vue.config.productionTip = false
-
+// 路由守卫 
+// var flag; // 首先定义一个开关
+// router.beforeEach((to, from, next) => {
+  
+//     if (to.path == '/projectManager/proDetails/') { // 当进入这个页面进行记录  || to.path == 'projectManager/projectTeam'
+//         flag = true; // 改变信号
+//         next();
+//     } else {
+//         if (flag) { // 如果路由发生变化判断信号
+//             Vue.prototype.$confirm('离开当前页面，您修改的数据将丢失?', '提示', {
+//                 confirmButtonText: '确定离开？',
+//                 cancelButtonText: '取消',
+//                 type: 'warning'
+//             }).then(() => {
+//               // 此处 触发当前页面的 提交审批的方法
+//               // this.goAuditHandel()
+//               Vue.prototype.$message.success("goAuditHandel")
+//                 next()
+//                 flag = false;
+//             }).catch(()=>{
+//               Vue.prototype.$message.success("cancel")
+//             })
+//         } else {
+//             next()
+//         }
+//     }
+// });
 new Vue({
   el: '#app',
   router,

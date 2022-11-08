@@ -487,31 +487,15 @@ export default {
     }
   },
   mounted() {
-    this.init();
     this.getDictList("post_type");  //职位类型
     this.getDictList("skill_type");  // 技能 technique 
     this.getDictList("post_name");   // 职位名称 post_name
     this.getDictList("region");     //区域
     this.getDictList("post_level"); // 职位等级 post_level
+    this.init();
   },
   methods: {
     chageTextColor(listData, refName) {
-      // [
-      //   { cssClass: 'color1', color: 'rgb(0,113,189)' },
-      //   { cssClass: 'color2', color: 'rgb(77,171,119)' },
-      //   { cssClass: 'color3', color: 'rgb(21,206,190)' },
-      //   { cssClass: 'color4', color: 'rgb(147,106,184)' },
-      //   { cssClass: 'color5', color: 'rgb(254,213,27)' },
-      //   { cssClass: 'color6', color: 'rgb(246,147,28)' },
-      //   { cssClass: 'color7', color: 'rgb(255,67,89)' },
-      // ]
-    // // 改变下拉框颜色值
-        // console.log(listData);
-          // console.log(this.$refs[refName][0]);
-          // console.log(this.$refs[refName][0].$el.children[0].children[0]);
-          // console.log(this.$refs[refName][0].$el.children[0].children[0].children[0]);
-
-              
         /**
          * 之前逻辑
          */
@@ -543,7 +527,9 @@ export default {
                 
                 eles.forEach( ( v, i ) => {
                   if( arr[i].dictCode === +listData[i] ){
-                    v.classList && v.classList.add( arr[i]['cssClass'] ) ; // 添加类名
+                    // 'skill' skillcc
+                     v.classList && v.classList.add( 'skillcc' ) ; // 添加类名
+                    v.classList && v.classList.add( 'skill'+arr[i]['cssClass'] ) ; // 添加类名
                   }
                 } ) ;
 
@@ -605,7 +591,6 @@ export default {
     // 判断当前这个值是否选中了
     editNext(who,data,index){
       // console.log(who,data,index);
-      console.log(who);
       if(who=='region'){
         this.formData.chanceConfigList[index].postTypeActive = false
       }
@@ -784,15 +769,37 @@ export default {
 
 
 </style>
-
-<style >
-.color4 {
-  background: #409eff!important; color:white!important;
-}
-.color2 {
-  background: #e6a23c!important; color:white!important;
-}
-.color1 {
-  background: #f56c6c!important; color:white!important;
-}
+ 
+<style>
+    .skillcolor1 {
+      background: rgb(0,113,189) !important; color:white!important;
+    }
+    .skillcolor2 {
+      background: rgb(77,171,119) !important; color:white!important;
+    }
+    .skillcolor3 {
+      background: rgb(21,206,190) !important; color:white!important;
+    }
+    .skillcolor4 {
+      background: rgb(147,106,184) !important; color:white!important;
+    }
+    .skillcolor5 {
+      background: rgb(254,213,27) !important; color:white!important;
+    }
+    .skillcolor6 {
+      background: rgb(246,147,28) !important; color:white!important;
+    }
+    .skillcolor7 {
+      background: rgb(255,67,89) !important; color:white!important;
+    }
+          /* //   { cssClass: 'color1', color: 'rgb(0,113,189)' },
+          //   { cssClass: 'color2', color: 'rgb(77,171,119)' },
+          //   { cssClass: 'color3', color: 'rgb(21,206,190)' },
+          //   { cssClass: 'color4', color: 'rgb(147,106,184)' },
+          //   { cssClass: 'color5', color: 'rgb(254,213,27)' },
+          //   { cssClass: 'color6', color: 'rgb(246,147,28)' },
+          //   { cssClass: 'color7', color: 'rgb(255,67,89)' }, */
+  .skillcc .el-tag__close{
+    background-color: transparent !important;
+  }
 </style>

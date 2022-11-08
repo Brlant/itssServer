@@ -121,16 +121,15 @@ export function queryUserlistByRole(data) {
   })
 }
 
-
-//----------------demo------------------------------------
-// 查询用户列表
-export function listUser(query) {
+// 获取所有职位
+// 
+export function getPostOptions() {
   return request({
-    url: '/system/user/list',
+    url: '/system/post_manage/optionselect',
     method: 'get',
-    params: query
   })
 }
+ 
 // 项目组查询
 export function teamQuery() {
   return request({
@@ -138,37 +137,12 @@ export function teamQuery() {
     method: 'get',
   })
 }
-// 查询用户详细
-export function getUser(userId) {
+// 人员推荐  点击修改 or other
+// 
+export function queryUserByPostId(data) {
   return request({
-    url: `/system/user/` + parseStrEmpty(userId),
-    method: 'get'
-  })
-}
-
-// 新增用户
-export function addUser(data) {
-  return request({
-    url: '/system/user',
+    url: '/projectManage/project/queryUserByPostId',
     method: 'post',
     data: data
   })
 }
-
-// 修改用户
-export function updateUser(data) {
-  return request({
-    url: '/system/user',
-    method: 'put',
-    data: data
-  })
-}
-
-// 删除用户
-export function delUser(userId) {
-  return request({
-    url: '/system/user/' + userId,
-    method: 'delete'
-  })
-}
- 
