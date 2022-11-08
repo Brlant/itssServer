@@ -27,3 +27,22 @@ export function addAndEdit(data, method = 'put') {
       data
   })
 }
+
+// 以下为职位管理字典接口
+// 查询
+export function queryPost(data) {
+  return request({
+    url: `/system/post_dict/list`,
+    method: 'post',
+    data
+  })
+}
+
+// 添加与编辑
+export function updatePost(data, method = 'put') {
+  return request({
+      url: '/system/post_dict',
+      method,
+      data
+  })
+}
