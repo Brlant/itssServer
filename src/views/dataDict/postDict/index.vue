@@ -120,7 +120,7 @@ export default {
     getTableData() {
       this.loading = true
       let data = {
-        postNameId: this.list[this.n].dictCode,
+        postTypeId: this.list[this.n].dictCode,
         regionId: this.index === -1 ? null : this.regionItem.dictCode,
         status: '0'
       }
