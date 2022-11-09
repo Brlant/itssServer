@@ -17,6 +17,7 @@
           v-show="isProjectByUser(formData) || isJurisdiction('admin')"
         >
           <span
+            v-hasPermi="['projectManager:proManager:handle']"
             @click="goEditPage"
             style="cursor: pointer"
             v-show="isShowActive == 0 && !isUpdateActive"
@@ -26,6 +27,7 @@
           >
 
           <span
+            v-hasPermi="['projectManager:proManager:handle']"
             @click="stopProject"
             style="cursor: pointer"
             v-show="isShowActive == 0 && !isUpdateActive"
@@ -663,7 +665,7 @@
             {{ scope.row.status | toStatus }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120">
+        <el-table-column label="操作" width="120" v-hasPermi="['projectManager:proManager:handle']">
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <!-- 他必须是项目主管和项目负责人 才可以点击取消 -->

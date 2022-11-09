@@ -3,9 +3,9 @@
     <div class="pageTitle cls">
       <div class="leftTitle">
         项目管理
-        <div class="rightBtns">
+        <div class="rightBtns" >
           <!-- 必须是项目主管的角色 -->
-          <el-button size="mini" type="primary" v-if="isJurisdiction('projectdirector','admin')">
+          <el-button size="mini" type="primary" v-hasPermi="['projectManager:proManager:create']">
             <router-link :replace="true"  :to="'/projectManager/proManager-auth/addProject'"
               >新建项目</router-link
             >
@@ -41,7 +41,7 @@
                   @change="init()"
                 >
                   <el-option
-                    v-for="item in countScopeOptions"
+                    v-for="item in scopeOptions"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -232,7 +232,7 @@
               详情
             </el-button>
             <el-button
-              v-show="isProjectByUser(scope.row)||isJurisdiction('admin')"
+              v-hasPermi="['projectManager:proManager:handle']"
               @click.native.prevent="toggleActive(scope.$index, scope.row)"
               type="text"
               size="small"
@@ -303,6 +303,7 @@ export default {
       // 弹出层 以上
       tableData: [],
       countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
+      scopeOptions: [],
       countScopeInit:'',
       projectStatusOptions: [
         {
@@ -363,6 +364,23 @@ export default {
     };
   },
   mounted() {
+    let scopeOptions = []
+    const options = [
+      { permi: 'projectManager:proManager:viewAllPro', label: '全部', value: 1 },
+      { permi: 'projectManager:proManager:viewMyPro', label: '仅我负责', value: 2 },
+      { permi: 'projectManager:proManager:viewMemberPro', label: '仅部门成员', value: 3 }
+    ]
+    options.forEach(v1 => {
+      this.$store.getters.permissions.forEach(v2 => {
+        if (v1.permi === v2) {
+          scopeOptions.push(v1)
+        }
+      })
+    })
+    this.scopeOptions = scopeOptions
+    if (scopeOptions.length) {
+      this.searchForm.countScope = scopeOptions[0].value
+    }
     // 额外的判断 页面初始化 判断用户的角色  isJurisdiction 判断当前的值是否存在 返回true or false
     // 部门主管 deptdirector  3
     // 项目主管 projectdirector 2
@@ -400,9 +418,13 @@ export default {
         value: 1,
       });
     }
+    countScopeOptionsTemp.push({
+        label: "全部",
+        value: 1,
+      });
     this.countScopeOptions = countScopeOptionsTemp;
 
-    this.searchForm.countScope = this.countScopeInit
+    // this.searchForm.countScope = 1//this.countScopeInit
     /*------------------额外的初始化查询的判断------------------------------*/
     this.init();
     // console.log(getToday()+"--------");
