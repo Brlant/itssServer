@@ -202,3 +202,19 @@ export function setuser(data) {
     data: data
   })
 }
+//修改人员技能
+export function editSkill(data) {
+  return request({
+    url: '/system/user/updateUserSkill',
+    method: 'put',
+    data: data
+  })
+}
+//修改人员技能
+export function queryUserlistByRole(query) {
+  return request({
+    url: '/system/user/userListByDeptId',
+    method: 'get',
+    params: query
+  })
+}

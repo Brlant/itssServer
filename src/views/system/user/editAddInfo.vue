@@ -85,7 +85,7 @@
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="区域">
+              <el-form-item label="区域" prop='regionId'>
                 <el-select
                   v-model="formData.regionId"
                   placeholder="请选择区域"
@@ -105,7 +105,7 @@
 
           <el-row>
             <el-col :span="8">
-              <el-form-item label="职位类型">
+              <el-form-item label="职位类型" prop='postTypeId'>
                 <el-select
                   v-model="formData.postTypeId"
                   placeholder="请选择职位类型"
@@ -122,7 +122,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="职位名称">
+              <el-form-item label="职位名称" prop='postNameId'>
                 <el-select
                   clearable
                   v-model="formData.postNameId"
@@ -140,7 +140,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="等级">
+              <el-form-item label="等级" prop='postLevelId'>
                 <el-select
                   v-model="formData.postLevelId"
                   placeholder="请选择等级"
@@ -169,7 +169,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="离职时间">
+              <el-form-item label="离职时间" prop="outTime">
                 <el-date-picker
                   type="date"
                   placeholder="选择日期"
@@ -267,6 +267,20 @@ export default {
     return {
       skillData: [],
       formData: {
+        nickName:'',
+        sex:'',
+        phonenumber:'',
+        userName:'',
+        employeeNo:'',
+        regionId:'',
+        email:'',
+        postTypeId:'',
+        postNameId:'',
+        postLevelId:'',
+        inTime:'',
+        outTime:'',
+        roleIds:[],
+        deptId:'',
         skillIds: [],
       },
       areas: [],
@@ -295,7 +309,7 @@ export default {
       },
     };
   },
-  mounted() {
+  created() {
     if (this.$route.query.isEdit == 1) {
       this.userId = this.$route.query.userInfo.userId;
       // this.formData = this.$route.query.userInfo;
@@ -409,8 +423,33 @@ export default {
         });
       }
     },
+    //取消
     cancle() {
-      this.$refs["elForm"].resetFields();
+     
+      if(this.$route.query.isEdit == 1){
+         this.detailInfo()
+      }else{
+        console.log(11111)
+        // this.$refs["elForm"].resetFields();
+        this.formData={
+        nickName:'',
+        sex:'',
+        phonenumber:'',
+        userName:'',
+        employeeNo:'',
+        regionId:'',
+        email:'',
+        postTypeId:'',
+        postNameId:'',
+        postLevelId:'',
+        inTime:'',
+        outTime:'',
+        roleIds:[],
+        deptId:'',
+        skillIds: [],
+        }
+      }
+     
     },
     /*查询字典的接口*/
     positinType(val) {

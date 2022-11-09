@@ -336,8 +336,22 @@ export const dynamicRoutes = [
       {
         path: 'search',
         component: () => import('@/views/system/user/search'),
-        name: 'EditAddInfo',
+        name: 'search',
         meta: { title: '人员搜索', activeMenu: '/system/user' }
+      }
+    ]
+  },
+  {
+    path: '/system/user-auth/profile',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:user:userEdit'],
+    children: [
+      {
+        path: 'userEdit',
+        component: () => import('@/views/system/user/profile/userEdit'),
+        name: 'userEdit',
+        meta: { title: '个人资料修改', activeMenu: '/system/user' }
       }
     ]
   },

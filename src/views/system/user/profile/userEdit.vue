@@ -2,11 +2,13 @@
   <div class="app-container">
     <div class="icon">
       <div class="editTitle">
-        <span>个人中心</span>
+        <i class="el-icon-arrow-left" @click='goBack'></i>
+        <span>个人资料修改</span>
       </div>
       <div style="cursor: pointer" class="ope">
         <!-- <span @click='changeAccount'>账号更改 |</span> -->
-        <span @click='edit' v-if='info.skillLock==0'> 编辑 </span>
+        <el-button type='primary' @click='save'>保存</el-button>
+         <el-button>取消</el-button>
       </div>
     </div>
      <div>
@@ -63,11 +65,11 @@
                     <span>{{info.outTime}}</span>
                   
                 </div>
-                 <div style="margin:20px;font-size:18px;">
-                  <i class='el-icon-unlock' v-if='info.skillLock==0'></i>
-                   <i class='el-icon-lock' v-if='info.skillLock==1'></i>
-                    <span class='title'>工作技能:</span>
-                    <span class='work' v-for='(item,index) in info.userSkills' :key='index' :style="{background: matchColor(item.cssClass)}">{{item.skillName}}</span>
+                 <div style="margin:20px;font-size:18px;display:flex;">
+                  
+                   <div slot="label"><i class='el-icon-unlock' v-if='info.skillLock==0'></i>
+                   <i class='el-icon-lock' v-if='info.skillLock==1'></i> 工作技能：</div>
+                <skill-select v-model="skillIds" />
                     
                 </div>
             </div>
@@ -122,10 +124,14 @@
 </template>
 <script>
 import {
-userDetail,stopUse,skillLocking,delUser
+userDetail,stopUse,skillLocking,delUser,editSkill
 } from "@/api/system/user";
 import { color } from '@/components/ColorSelect/options'
+import SkillSelect from "@/components/SkillSelect/index";
 export default {
+     components: {
+    SkillSelect
+  },
   data() {
     return {
       dialogFormVisible: false,
@@ -134,6 +140,7 @@ export default {
         tel: "",
         verification: "",
       },
+      skillIds:[],
        rules: {
           tel: [
             { required: true, message: '请输入新手机号', trigger: 'blur' }, 
@@ -149,27 +156,39 @@ export default {
   },
   methods: {
     //编辑个人信息
-    edit() {
-           const obj = {
-        path: "/system/user-auth/profile/userEdit",
-      };
-      // getToday()
-      this.$tab.closeOpenPage(obj);
+    save() {
+        let data = {
+            userId:this.$store.state.user.user.userId,
+            skillIds:this.skillIds
+        }
+        console.log(data)
+       editSkill(data).then(res=>{
+            if(res.code==200){
+                this.$message.success(res.msg)
+                 const obj = {
+                path: "/user/profile",
+            };
+            // getToday()
+            this.$tab.closeOpenPage(obj);
+            }
+       })
     },
     detail() {
       let id=this.$store.state.user.user.userId
       
         userDetail(id).then(res=>{
             this.info=res.data
+             this.skillIds = res.data.userSkills.map((v) => v.skillId);
             
         })
     
     },
-    // 匹配颜色
-    matchColor(cssClass) {
-      if (cssClass) {
-        return color.find(v => v.cssClass === cssClass).color
-      }
+    goBack(){
+        const obj = {
+        path: "/user/profile",
+      };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
     },
     //更改账号
     changeAccount(){},

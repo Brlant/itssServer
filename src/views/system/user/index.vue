@@ -31,19 +31,11 @@
         <div class="right-header">
           <div>{{ deptTitle }}</div>
           <div>
-             <el-button
-              type="text"
-              v-hasPermi="['system:user:query']"
-              @click="setCommander"
-              >设置负责人</el-button
-            >
-            <span>|</span>
-            <el-button
-              type="text"
-              v-hasPermi="['system:user:query']"
-              @click="add"
-              >添加</el-button
-            >
+            <el-button type="text" @click="setCommander">设置负责人</el-button>
+            <span v-hasPermi="['system:user:add']">
+              <span>|</span>
+              <el-button type="text" @click="add">添加</el-button>
+            </span>
           </div>
         </div>
         <el-table :data="user">
@@ -73,7 +65,7 @@
             class-name="small-padding fixed-width"
           >
             <template slot-scope="scope">
-              <el-button size="mini" type="text">邀请</el-button>
+              <!-- <el-button size="mini" type="text">邀请</el-button> -->
               <el-button
                 size="mini"
                 type="text"
@@ -81,28 +73,32 @@
                 @click="detail(scope.row.userId)"
                 >详情</el-button
               >
-              <el-button
-                size="mini"
-                type="text"
-                style="color: red"
-                @click="stopOrUse(scope.row.userId, 1)"
-                v-if="scope.row.status == 0"
-                >停用</el-button
-              >
-              <el-button
-                size="mini"
-                type="text"
-                @click="stopOrUse(scope.row.userId, 0)"
-                v-if="scope.row.status == 1"
-                >启用</el-button
-              >
+              <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+                <el-button
+                  size="mini"
+                  type="text"
+                  style="color: red"
+                  @click="stopOrUse(scope.row.userId, 1)"
+                  v-if="scope.row.status == 0"
+                  >停用</el-button
+                >
+              </span>
+              <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+                <el-button
+                  size="mini"
+                  type="text"
+                  @click="stopOrUse(scope.row.userId, 0)"
+                  v-if="scope.row.status == 1"
+                  >启用</el-button
+                >
+              </span>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </div>
     <!-- 添加或修改部门对话框 -->
-   
+
     <el-dialog
       title="新增部门"
       class="dialogForm"
@@ -244,11 +240,13 @@
       </div>
     </el-dialog>
     <!--用户数据-->
-    <el-dialog  title="设置负责人"
+    <el-dialog
+      title="设置负责人"
       class="dialogForm"
       width="30%"
-      :visible.sync="editShow">
-        <el-form
+      :visible.sync="editShow"
+    >
+      <el-form
         :model="diaForm"
         ref="diaForm"
         :rules="dialogRules"
@@ -256,12 +254,11 @@
         label-width="120px"
         class="dialogFormInfo"
       >
-      <el-row>
-        <el-col>
-          <el-form-item label="设置部门负责人" prop="commander">
+        <el-row>
+          <el-col>
+            <el-form-item label="设置部门负责人" prop="commander">
               <el-select
                 v-model="diaForm.commander"
-              
                 :collapse-tags="true"
                 filterable
                 clearable
@@ -277,11 +274,11 @@
                 </el-option>
               </el-select>
             </el-form-item>
-        </el-col>
-      </el-row>
+          </el-col>
+        </el-row>
       </el-form>
-       <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary" @click='sureEdit'>确定</el-button>
+      <div class="txtAlignC dialogBtnInfo">
+        <el-button type="primary" @click="sureEdit">确定</el-button>
         <!-- <el-button @click="cancelFn">取消</el-button> -->
       </div>
     </el-dialog>
@@ -300,13 +297,9 @@ import {
   changeStatus,
   queryUserList,
   stopUse,
-  setuser
+  setuser,
+  queryUserlistByRole
 } from "@/api/system/user";
-import {
-
-  queryUserlistByRole,
-
-} from "@/api/proManager/proManager";
 import { getToken } from "@/utils/auth";
 import { treeselect, listDept, addDept } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -349,7 +342,7 @@ export default {
       deptOption: [],
       // 是否显示弹出层
       open: false,
-      editShow:false,
+      editShow: false,
       // 部门名称
       deptName: undefined,
       // 默认密码
@@ -362,8 +355,8 @@ export default {
       roleOptions: [],
       // 表单参数
       form: {},
-      diaForm:{
-        commander:''
+      diaForm: {
+        commander: "",
       },
       stop: false,
       // 表单校验
@@ -416,7 +409,7 @@ export default {
       statusList: [],
       postList: [],
       parentDeptData: [],
-      projectUserIdOptions:[],
+      projectUserIdOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -464,8 +457,10 @@ export default {
         checkStrictly: true,
         emitPath: false,
       },
-      dialogRules:{
-        commander:[{required: true, message: "请选择负责人", trigger: "blur"}]
+      dialogRules: {
+        commander: [
+          { required: true, message: "请选择负责人", trigger: "blur" },
+        ],
       },
       deptRules: {
         name: [{ required: true, message: "请输入部门名称", trigger: "blur" }],
@@ -492,37 +487,38 @@ export default {
     this.reqAllListFn();
     this.reqOrgListFn();
     this.reqParentDeptFn();
-    this.queryUserlistByRole()
+    this.queryUserlistByRole();
     // this.getConfigKey("sys.user.initPassword").then((response) => {
     //   this.initPassword = response.msg;
     // });
   },
   methods: {
-    sureEdit(){
-        this.$refs["diaForm"].validate((valid) => {
-          let data={
-            deptId: this.queryParams.deptId ,
-            leader:this.diaForm.commander
+    sureEdit() {
+      this.$refs["diaForm"].validate((valid) => {
+        let data = {
+          deptId: this.queryParams.deptId,
+          leader: this.diaForm.commander,
+        };
+        setuser(data).then((res) => {
+          if (res.code == 200) {
+            this.$message.success(res.msg);
+            this.editShow = false;
+            this.getList();
           }
-          setuser(data).then(res=>{
-            if(res.code==200){
-              this.$message.success(res.msg)
-               this.editShow=false
-               this.getList();
-            }
-          })
-        })
-    },
-    setCommander(){
-      this.editShow=true
-    },
-      /* 查询是项目主管的用户列表 */
-    queryUserlistByRole() {
-      let data = {};
-      queryUserlistByRole(data).then((res) => {
-        res.data.map((item) => {
-          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
         });
+      });
+    },
+    setCommander() {
+      this.editShow = true;
+    },
+    /* 查询是项目主管的用户列表 */
+    queryUserlistByRole() {
+      let data = {deptId:this.queryParams.deptId};
+      console.log(data,'dd')
+      queryUserlistByRole(data).then((res) => {
+        // res.data.map((item) => {
+        //   item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+        // });
         this.projectUserIdOptions = res.data; // 初始化填充给 项目负责人的 永远是所有用户
       });
     },
@@ -669,10 +665,10 @@ export default {
     getTreeselect() {
       treeselect().then((response) => {
         this.deptOptions = response.data;
-        console.log(this.deptOptions,'sssss')
-         this.queryParams.deptId = this.deptOptions[0].id;
-      this.deptTitle = this.deptOptions[0].label;
-      this.getList();
+        console.log(this.deptOptions, "sssss");
+        this.queryParams.deptId = this.deptOptions[0].id;
+        this.deptTitle = this.deptOptions[0].label;
+        this.getList();
       });
     },
     // 筛选节点
@@ -685,6 +681,7 @@ export default {
       console.log(data);
       this.queryParams.deptId = data.id;
       this.deptTitle = data.label;
+      this.queryUserlistByRole()
       this.getList();
     },
     // 用户状态修改
