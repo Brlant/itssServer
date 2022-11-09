@@ -370,9 +370,10 @@ export default {
             this.formData.inTime = moment(this.formData.inTime).format(
               "YYYY-MM-DD"
             );
-            this.formData.outTime = moment(this.formData.outTime).format(
-              "YYYY-MM-DD"
-            );
+            // this.formData.outTime = moment(this.formData.outTime).format(
+            //   "YYYY-MM-DD"
+            // );
+            this.formData.outTime = this.formData.outTime ? moment(this.formData.outTime).format("YYYY-MM-DD") : null
             let data = {
               ...this.formData,
             };
