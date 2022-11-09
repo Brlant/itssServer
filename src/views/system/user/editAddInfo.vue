@@ -290,7 +290,7 @@ export default {
         ],
         userName: [{ required: true, message: "请输入账号", trigger: "blur" }],
         inTime: [
-          { required: true, message: "请选择入职时间", trigger: "change" },
+          { required: true, message: "请选择入职时间", trigger: "blur" },
         ],
       },
     };

@@ -179,3 +179,26 @@ export function positionName(data) {
     data: data
   })
 }
+//查询用户条件
+export function queryList() {
+  return request({
+    url: '/system/user/queryStr',
+    method: 'get'
+  })
+}
+//模糊查询用户
+export function fuzzyQuery(query) {
+  return request({
+    url: '/system/user/query',
+    method: 'get',
+    params: query
+  })
+}
+//设置负责人
+export function setuser(data) {
+  return request({
+    url: '/system/dept_manage/setLeader',
+    method: 'put',
+    data: data
+  })
+}

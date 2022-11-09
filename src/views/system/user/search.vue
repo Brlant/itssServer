@@ -1,26 +1,64 @@
 <template>
   <div>
-    <el-form ref="form" :model="form" label-width="80px">
+    <div>
+      <i
+        class="el-icon-arrow-left"
+        style='transform: translateY(-22px)'
+        @click="goBack"
+      ></i>
+      <div style='display: inline-block;width:90%;'>
+        <el-form
+        ref="form"
+        :model="form"
+        label-width="50px"
+       
+      >
         <el-row>
-            <el-col>
-               <el-form-item label="搜索">
-                    <el-select v-model="form.query" multiple filterable :reserve-keyword="true">
-                    <el-option label="区域一" value="shanghai"></el-option>
-                    <el-option label="二" value="beijing"></el-option>
-                    </el-select>
-                </el-form-item>
-            </el-col>
-        </el-row> 
-    </el-form>
+          <el-col :span="12">
+            <el-form-item label="搜索">
+              <el-select
+                v-model="form.query"
+                multiple
+                filterable
+                :reserve-keyword="true"
+                ref="reqMsgRef"
+                @focus="onBlur(form.query, 'reqMsgRef')"
+              >
+                <el-option
+                  v-for="(item, index) in condition"
+                  :label="item"
+                  :value="item"
+                  :key="index"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      </div>
+     
+    </div>
+
     <el-table :data="user">
       <!-- <el-table-column type="selection" width="50" align="center" /> -->
       <el-table-column label="姓名" align="center" prop="nickName" />
       <el-table-column label="职位" align="center" prop="postName" />
-      <el-table-column label="部门" align="center" prop="deptName" />
-      <el-table-column label="邮箱" align="center" prop="email" />
+      <el-table-column label="部门" align="center" prop="deptName">
+        <template slot-scope="scope">
+          <span>{{ scope.row.dept.deptName }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="手机号码" align="center" prop="phonenumber" />
       <el-table-column label="工作技能" align="center" prop="skill">
-        <template slot-scope="scope"> </template>
+        <template slot-scope="scope">
+          <span
+            class="work"
+            v-for="(item, index) in scope.row.userSkills"
+            :key="index"
+            :style="{ background: matchColor(item.cssClass) }"
+            >{{ item.skillName }}</span
+          >
+        </template>
       </el-table-column>
       <el-table-column label="系统角色" align="center" prop="roles">
         <template slot-scope="scope">
@@ -40,6 +78,7 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
+          <!-- <el-button size="mini" type="text">邀请</el-button> -->
           <el-button
             size="mini"
             type="text"
@@ -68,12 +107,87 @@
   </div>
 </template>
 <script>
-export default{
-   data(){
+import { queryList, fuzzyQuery, stopUse } from "@/api/system/user";
+import { color } from "@/components/ColorSelect/options";
+export default {
+  data() {
     return {
-        form:{},
-        user:[]
-    }
-   }
-}
+      form: {},
+      user: [],
+      condition: [],
+    };
+  },
+  mounted() {
+    this.query();
+  },
+  methods: {
+    onBlur(flag, ref) {
+      this.$refs[ref].$refs.input.blur = () => {
+        // 这里执行失焦的代码
+        const inp = this.$refs[ref].$refs.input.value;
+        console.log(flag);
+        // if(!inp) return
+        // this[flag].push(inp)
+        let data;
+        if (flag.length > 0) {
+          data = {
+            str: flag.toString(),
+          };
+          fuzzyQuery(data).then((res) => {
+            this.user = res.data;
+          });
+        } else {
+          //  data={
+          //   str:''
+          // }
+          return;
+        }
+      };
+    },
+    query() {
+      queryList().then((res) => {
+        this.condition = res.data;
+      });
+    },
+    // 匹配颜色
+    matchColor(cssClass) {
+      if (cssClass) {
+        return color.find((v) => v.cssClass === cssClass).color;
+      }
+    },
+    //停用启用
+    stopOrUse(id, code) {
+      stopUse({ status: code, userId: id }).then((res) => {
+        if (res.code == 200) {
+          this.$message.success(res.msg);
+          this.getList();
+        }
+      });
+    },
+    goBack(){
+        const obj = {
+            path: "/system/user",
+        };
+      this.$tab.closeOpenPage(obj);
+    },
+    detail(id) {
+      console.log(id, "dddd");
+      const obj = { path: "/system/user-auth/userInfo", query: { userId: id } };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
+    },
+  },
+};
 </script>
+<style lang="scss" scoped>
+.work {
+  display: inline-block;
+  width: 100px;
+  height: 30px;
+  text-align: center;
+  border-radius: 20px;
+  color: #ffffff;
+  line-height: 30px;
+  margin-right: 15px;
+}
+</style>
