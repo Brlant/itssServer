@@ -23,6 +23,7 @@
 
 <script>
 import ColorSelect from '@/components/ColorSelect'
+import { color } from '@/components/ColorSelect/options'
 
 export default {
   components: {
@@ -72,6 +73,7 @@ export default {
           }
         } else {
           this.title = '添加数据字典'
+          this.form.cssClass = color[0].cssClass
         }
       })
     },

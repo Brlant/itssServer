@@ -12,7 +12,7 @@
             style="margin-bottom: 20px"
             @focus="searchTable"
           />
-          <i class="el-icon-plus" @click="handleAdd"></i>
+          <i class="el-icon-plus" @click="handleAdd"  v-hasPermi="['system:user:add']"></i>
         </div>
         <div class="head-container">
           <el-tree
@@ -760,7 +760,9 @@ export default {
       add({ method: "post", data: { ...this.deptForm } })
         .then((d) => {
           if (d.code === 200) {
-            this.reqDeptListFn(); // 刷新列表数据
+            // this.$message.success('新增部门成功')
+            this.open=false
+            this.getTreeselect(); // 刷新列表数据
           }
 
           this.$message({

@@ -220,6 +220,14 @@
                 </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="10" :offset="1">
+             <el-form-item label="TB项目ID" prop="tbProjectId">
+                <el-input
+                  v-model="formData.tbProjectId"
+                  placeholder="请输入TB项目ID"
+                ></el-input>
+              </el-form-item>
+          </el-col>
           </el-row>
       </div>
       <div class="titleBar">
@@ -403,6 +411,7 @@ export default {
       projectTeam:'',
       redShow:false,
       formData: {
+        tbProjectId:'',
         priority: 3 /**优先级（1.最高，2.高，3.普通，4.较低）*/,
         projectChance: "" /**关联机会*/,
         projectCode: "" /**项目编号*/,

@@ -73,6 +73,16 @@
               </el-form-item>
             </el-col>
           </el-row>
+            <el-row>
+            <el-col :span='12'>
+               <el-form-item label="TB用户ID" prop="tbUserId">
+                <el-input
+                  v-model="formData.tbUserId"
+                  placeholder="请输入TB用户ID"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-row>
             <el-col :span="12">
               <el-form-item label="邮箱" prop="email">
@@ -179,6 +189,7 @@
               </el-form-item>
             </el-col>
           </el-row>
+        
           <el-row>
             <el-col>
               <el-form-item>
@@ -187,16 +198,10 @@
               </el-form-item>
             </el-col>
           </el-row>
-        </el-form>
+     
         <div>
           <div class="titleinfo">权限信息</div>
-          <el-form
-            ref="elForm"
-            :model="formData"
-            :rules="rules"
-            size="medium"
-            label-width="110px"
-          >
+         
             <el-row>
               <el-col :span="12">
                 <el-form-item label="系统角色">
@@ -230,8 +235,9 @@
                 </el-form-item>
               </el-col>
             </el-row>
-          </el-form>
+         
         </div>
+         </el-form>
       </div>
     </div>
   </div>
@@ -277,6 +283,7 @@ export default {
         postTypeId:'',
         postNameId:'',
         postLevelId:'',
+        tbUserId:'',
         inTime:'',
         outTime:'',
         roleIds:[],
@@ -380,10 +387,12 @@ export default {
     save() {
       if (this.$route.query.isEdit == 1) {
         this.$refs["elForm"].validate((valid) => {
+          console.log(this.formData.skillIds,'this.formData.skillIds')
           if (valid) {
             this.formData.inTime = moment(this.formData.inTime).format(
               "YYYY-MM-DD"
             );
+             this.formData.outTime = this.formData.outTime ? moment(this.formData.outTime).format("YYYY-MM-DD") : ''
             // this.formData.outTime = moment(this.formData.outTime).format(
             //   "YYYY-MM-DD"
             // );
@@ -396,13 +405,15 @@ export default {
             updateUser(data).then((res) => {
               if (res.code == 200) {
                 this.$message.success(res.msg);
-                 this.detailInfo();
+                //  this.detailInfo();
+                this.$router.go(-1)
               }
             });
           }
         });
       } else {
-        this.$refs["elForm"].validate((valid) => {
+        this.$refs.elForm.validate((valid) => {
+          console.log(valid)
           if (valid) {
             this.formData.inTime = moment(this.formData.inTime).format(
               "YYYY-MM-DD"
@@ -415,6 +426,11 @@ export default {
             addUser(data).then((res) => {
               if (res.code == 200) {
                 this.$message.success(res.msg);
+                  const obj = {
+                  path: "/system/user",
+                };
+                // getToday()
+                this.$tab.closeOpenPage(obj);
               }
             });
           }
@@ -427,25 +443,7 @@ export default {
       if(this.$route.query.isEdit == 1){
          this.detailInfo()
       }else{
-        console.log(11111)
-        // this.$refs["elForm"].resetFields();
-        this.formData={
-        nickName:'',
-        sex:'',
-        phonenumber:'',
-        userName:'',
-        employeeNo:'',
-        regionId:'',
-        email:'',
-        postTypeId:'',
-        postNameId:'',
-        postLevelId:'',
-        inTime:'',
-        outTime:'',
-        roleIds:[],
-        deptId:'',
-        skillIds: [],
-        }
+        this.$refs["elForm"].resetFields();
       }
      
     },
