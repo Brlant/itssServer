@@ -138,8 +138,8 @@
 
         <el-row >
           <el-col :span="5">
-            <el-form-item label="区域：" :prop="`chanceConfigList.${chanceConfigIndex}.areaId`" :rules="rules.chanceConfigItemAreaId">
-              <el-select v-model="chanceConfigItem.areaId" placeholder="请选择区域" 
+            <el-form-item label="区域：" :prop="`chanceConfigList.${chanceConfigIndex}.regionId`" :rules="rules.chanceConfigItemregionId">
+              <el-select v-model="chanceConfigItem.regionId" placeholder="请选择区域" 
                 :style="{width: '100%'}"
               @change="(dates) => editNext('region',dates, chanceConfigIndex)">
                 <el-option v-for="(dict, index) in regionOptions"   
@@ -163,11 +163,11 @@
             </el-form-item>
           </el-col>
            <el-col :span="5">
-            <el-form-item label="职位名称：" :prop="`chanceConfigList.${chanceConfigIndex}.postId`" :rules="rules.chanceConfigItemPostId">
-              <el-select v-model="chanceConfigItem.postId" placeholder="请选择职位名称" 
-              :disabled="chanceConfigItem.postIdActive"   :style="{width: '100%'}"
-              @change="(dates) => editNext('postId',dates, chanceConfigIndex)">
-                <el-option v-for="(dict, index) in postIdOptions"  :key="dict.dictCode"
+            <el-form-item label="职位名称：" :prop="`chanceConfigList.${chanceConfigIndex}.postNameId`" :rules="rules.chanceConfigItempostNameId">
+              <el-select v-model="chanceConfigItem.postNameId" placeholder="请选择职位名称" 
+              :disabled="chanceConfigItem.postNameIdActive"   :style="{width: '100%'}"
+              @change="(dates) => editNext('postNameId',dates, chanceConfigIndex)">
+                <el-option v-for="(dict, index) in postNameIdOptions"  :key="dict.dictCode"
                     :label="dict.dictLabel"
                     :value="dict.dictCode"
                     :disabled="dict.disabled"></el-option>
@@ -175,11 +175,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="5">
-            <el-form-item label="等级：" :prop="`chanceConfigList.${chanceConfigIndex}.gradeId`" :rules="rules.chanceConfigItemGradeId">
-              <el-select v-model="chanceConfigItem.gradeId" placeholder="请选择等级"  
-              :disabled="chanceConfigItem.gradeIdActive"   :style="{width: '100%'}"
-              @change="(dates) => editNext('gradeId',dates, chanceConfigIndex)">
-                <el-option v-for="(dict, index) in gradeIdOptions"  :key="dict.dictCode"
+            <el-form-item label="等级：" :prop="`chanceConfigList.${chanceConfigIndex}.postLevelId`" :rules="rules.chanceConfigItempostLevelId">
+              <el-select v-model="chanceConfigItem.postLevelId" placeholder="请选择等级"  
+              :disabled="chanceConfigItem.postLevelIdActive"   :style="{width: '100%'}"
+              @change="(dates) => editNext('postLevelId',dates, chanceConfigIndex)">
+                <el-option v-for="(dict, index) in postLevelIdOptions"  :key="dict.dictCode"
                     :label="dict.dictLabel"
                     :value="dict.dictCode"
                     :disabled="dict.disabled"></el-option>
@@ -301,8 +301,8 @@ export default {
       techniqueOptions:[], // 技能需求
       regionOptions:[], // 区域
       postTypeOptions:[], // 职位类型
-      postIdOptions:[], // 职位名称
-      gradeIdOptions:[],  // 职位等级  
+      postNameIdOptions:[], // 职位名称
+      postLevelIdOptions:[],  // 职位等级  
       formData: {
         // chanceName: "", //          机会名称
           // chanceStatus: "", //          机会状态：1.新建、2.跟进中、3.已结束、4.已转项目
@@ -346,10 +346,10 @@ export default {
       // 配置的基本信息
       chanceConfigList: 
       {
-        postId: "", //职位id
         postTypeId:"",//职位类型id
-        areaId: "", //区域id
-        gradeId: "", //等级id
+        postNameId: "", //职位id 老字段  postId
+        regionId: "", //区域id  老字段  areaId
+        postLevelId: "", //等级id 老字段  gradeId
         skillIdList: [], //技能id
         startTime: "", //开始时间
         endTime: "", //结束时间
@@ -361,8 +361,8 @@ export default {
         week: "", //周数
         startTime: "", //开始时间
         startEndTime:[],
-        gradeIdActive:true,
-        postIdActive:true,
+        postLevelIdActive:true,
+        postNameIdActive:true,
         postTypeActive:true,
         nextActive:true,
         chanceConfigScheduleList:[]
@@ -416,17 +416,17 @@ export default {
         }],
         remark: [],
         // 配置信息的
-        chanceConfigItemAreaId:[{
+        chanceConfigItemregionId:[{
           required: true,
           message: '请选择区域!',
           trigger: 'change'
         }],
-        chanceConfigItemPostId:[{
+        chanceConfigItempostNameId:[{
           required: true,
           message: '请选择职位!',
           trigger: 'change'
         }],
-        chanceConfigItemGradeId:[{
+        chanceConfigItempostLevelId:[{
           required: true,
           message: '请选择等级!',
           trigger: 'change'
@@ -549,13 +549,13 @@ export default {
           this.regionOptions = res.data;
         }
         if (dictCode == "post_level") { // 职位等级
-          this.gradeIdOptions = res.data;
+          this.postLevelIdOptions = res.data;
         }
         if (dictCode == "skill_type") { // 人员技能
           this.techniqueOptions = res.data;
         }
         if(dictCode =="post_name"){ // 职位名称
-          this.postIdOptions = res.data
+          this.postNameIdOptions = res.data
         }
        
       });
@@ -595,12 +595,12 @@ export default {
         this.formData.chanceConfigList[index].postTypeActive = false
       }
       if(who=='postType'){
-        this.formData.chanceConfigList[index].postIdActive = false
+        this.formData.chanceConfigList[index].postNameIdActive = false
       }
-      if(who=='postId'){
-        this.formData.chanceConfigList[index].gradeIdActive = false
+      if(who=='postNameId'){
+        this.formData.chanceConfigList[index].postLevelIdActive = false
       }
-       if(who=='gradeId'){
+       if(who=='postLevelId'){
          this.formData.chanceConfigList[index].nextActive = false
         // 此处去请求 成本
         this.formData.chanceConfigList[index].costNum =  1000// 写死成本为 1000
@@ -641,7 +641,8 @@ export default {
         res.data.list.map((item) => {
           item.startTime = item.startDate;
           item.endTime = item.endDate;
-          item.workTime = "8";
+          item.workTime = item.weekDay!=0?"8":0; // 内部的每周时长
+          item.workDay = item.weekDay; // 内部的每周人日
           item.planLoad = (((item.day * 8) / (item.day * 8)) * 100 || 0).toFixed(2);
         });
         this.formData.chanceConfigList[index].chanceConfigScheduleList = res.data.list; // 此人的 每周安排
