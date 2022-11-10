@@ -567,7 +567,8 @@ export default {
     };
   },
   mounted() {
-    this.team()
+
+   
     this.queryUserlistByRole(); // 查询是 项目主管的用户集合
     this.getDictList("project_phase"); // 项目阶段 project_phase
     this.getDictList("project_type"); // 项目类型 project_type
@@ -763,6 +764,7 @@ export default {
           });
         });
         this.formData = res.data; // 填充详情的 projectTimeArea
+         this.team()
         this.$set(this.formData, "projectTimeArea", [
           res.data.projectStartTime,
           res.data.projectEndTime,
@@ -843,7 +845,7 @@ export default {
       console.log(dates, "sssssssss");
       this.formData.projectStartTime = dates[0];
       this.formData.projectEndTime = dates[1];
-       
+       this.team()
       if(this.date1  &&  this.date2 ){
         // console.log(this.date1,'sssssssss')
         if(moment(this.date1, 'YYYY-MM-DD').valueOf() <= moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf() &&  moment(this.date2, 'YYYY-MM-DD').valueOf() >= moment( this.formData.projectEndTime, 'YYYY-MM-DD').valueOf()){
