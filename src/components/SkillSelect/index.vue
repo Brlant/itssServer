@@ -59,6 +59,15 @@ export default {
     }
   },
     watch: {
+      list: {
+        handler(value) {
+          const skillId = value.map(v => v.dictCode)
+          console.log(11111,skillId)
+          this.$emit('input', skillId);
+        },
+        immediate: true,
+        deep: true
+      },
     
       // skill(val) {
       //   console.log(this.data,'sss')
@@ -85,7 +94,7 @@ export default {
         },
         immediate: true,
         deep: true
-      }
+      },
     },
   computed: {
    
@@ -125,8 +134,7 @@ export default {
     // 选中技能
     change(index) {
       this.data[index].tick = !this.data[index].tick
-      const skillId = this.list.map(v => v.dictCode)
-      this.$emit('input', skillId);
+     
     },
     // 删除标签
     del(item) {

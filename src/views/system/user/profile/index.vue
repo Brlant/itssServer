@@ -21,14 +21,14 @@
                 </span>
             </div>
             <div>
-                <div style="margin:20px;font-size:18px;">
-                    <span style="color:red">*</span>
-                    <span class='title'>手机号:</span>
+                <div style="margin:20px;font-size:18px;padding-left:12px">
+                   
+                    <span class='title'> <span style="color:red">*</span>手机号:</span>
                     <span>{{info.phonenumber}}</span>
                 </div>
-                 <div style="margin:20px;font-size:18px;">
-                    <span style="color:red">*</span>
-                    <span class='title'>账号:</span>
+                 <div style="margin:20px;font-size:18px;padding-left:12px">
+                  
+                    <span class='title'> <span style="color:red">*</span>账号:</span>
                     <span>{{info.userName}}</span>
                 </div>
                  <div style="margin:20px;font-size:18px;">

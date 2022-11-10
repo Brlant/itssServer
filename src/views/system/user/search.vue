@@ -45,7 +45,7 @@
       <el-table-column label="职位" align="center" prop="postName" />
       <el-table-column label="部门" align="center" prop="deptName">
         <template slot-scope="scope">
-          <span>{{ scope.row.dept.deptName }}</span>
+          <span v-if='scope.row.dept'>{{ scope.row.dept.deptName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="手机号码" align="center" prop="phonenumber" />
@@ -86,6 +86,7 @@
             @click="detail(scope.row.userId)"
             >详情</el-button
           >
+           <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
           <el-button
             size="mini"
             type="text"
@@ -94,6 +95,8 @@
             v-if="scope.row.status == 0"
             >停用</el-button
           >
+           </span>
+            <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
           <el-button
             size="mini"
             type="text"
@@ -101,6 +104,7 @@
             v-if="scope.row.status == 1"
             >启用</el-button
           >
+            </span>
         </template>
       </el-table-column>
     </el-table>
@@ -115,6 +119,7 @@ export default {
       form: {},
       user: [],
       condition: [],
+      data:{}
     };
   },
   mounted() {
@@ -133,6 +138,7 @@ export default {
           data = {
             str: flag.toString(),
           };
+          this.data=data
           fuzzyQuery(data).then((res) => {
             this.user = res.data;
           });
@@ -160,7 +166,9 @@ export default {
       stopUse({ status: code, userId: id }).then((res) => {
         if (res.code == 200) {
           this.$message.success(res.msg);
-          this.getList();
+           fuzzyQuery(this.data).then((res) => {
+            this.user = res.data;
+          });
         }
       });
     },

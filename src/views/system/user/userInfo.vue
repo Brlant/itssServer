@@ -7,11 +7,15 @@
                 <span>返回</span>
             </div>
             <div style='cursor: pointer;'>
-                <span @click='sendInvitation'>发送邀请 |</span>
-                <span @click='skillLock(1)' v-if='info.skillLock==0'> 技能锁定 |</span><span @click='skillLock(0)'  v-if='info.skillLock==1'> 技能解锁 |</span>
-                <span @click='editInfo'  v-hasPermi="['system:user:add']"> 编辑 |</span>
-                <span @click='stop(1)' v-if='info.status==0'> 停用 |</span><span @click='stop(0)' v-if='info.status==1'> 启用 |</span>
-                <span @click='del'> 删除</span>
+                <span @click='sendInvitation' v-hasPermi="['system:user:add']">发送邀请 |</span>
+                <span v-hasPermi="['system:user:add']">
+                    <span @click='skillLock(1)' v-if='info.skillLock==0'> 技能锁定 |</span><span @click='skillLock(0)'  v-if='info.skillLock==1'> 技能解锁 |</span>
+                </span>
+                
+                <span @click='editInfo'  v-hasPermi="['system:user:add']" > 编辑 |</span>
+                <span v-hasPermi="['system:user:add']"><span @click='stop(1)' v-if='info.status==0'> 停用 |</span><span @click='stop(0)' v-if='info.status==1'> 启用 |</span></span>
+                
+                <span @click='del' v-hasPermi="['system:user:add']"> 删除</span>
             </div>
         </div>
         <div>

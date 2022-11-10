@@ -331,7 +331,7 @@ export const dynamicRoutes = [
     path: '/system/user-auth',
     component: Layout,
     hidden: true,
-    permissions: ['system:user:serch'],
+    permissions: ['system:user:query'],
     children: [
       {
         path: 'search',
