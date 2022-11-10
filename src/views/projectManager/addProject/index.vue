@@ -200,9 +200,9 @@
         </el-row>
         <el-row>
           <el-col :span="10" :offset="1">
-            <el-form-item label="归属项目组" prop="projectTeam">
+            <el-form-item label="归属项目组" prop="projectGroupId">
               <el-select
-                v-model="formData.projectTeam"
+                v-model="formData.projectGroupId"
                 placeholder="请选择归属项目组"
                 clearable
                 :style="{ width: '100%' }"
@@ -410,6 +410,7 @@ export default {
       date2: "",
       redShow: false,
       formData: {
+        projectGroupId:'',
         tbProjectId:'',
         priority: 3,/**优先级（1.最高，2.高，3.普通，4.较低）*/
         projectChance: "",/**关联机会*/
@@ -740,7 +741,11 @@ export default {
     },
     // 项目组的下拉菜单
     team() {
-      teamQuery().then((res) => {
+      let data = {
+        startDate:this.formData.projectStartTime ? moment(this.formData.projectStartTime).format("YYYY-MM-DD") : '',
+        endDate:this.formData.projectEndTime ? moment(this.formData.projectEndTime).format("YYYY-MM-DD") : '',
+      }
+      teamQuery(data).then((res) => {
         this.projectTeams = res.data;
       });
     },
@@ -757,9 +762,10 @@ export default {
       // console.log( this.formData.projectStartTime)
       // console.log(moment(this.date1, 'YYYY-MM-DD').valueOf() < moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf())
       if (
-        moment(this.date1, "YYYY-MM-DD").valueOf() <
+        moment(this.date1, "YYYY-MM-DD").valueOf() <=
+
           moment(this.formData.projectStartTime, "YYYY-MM-DD").valueOf() &&
-        moment(this.date2, "YYYY-MM-DD").valueOf() >
+        moment(this.date2, "YYYY-MM-DD").valueOf() >=
           moment(this.formData.projectEndTime, "YYYY-MM-DD").valueOf()
       ) {
         this.redShow = false;
@@ -876,13 +882,14 @@ export default {
     getProjectTimeArea(dates) {
       this.formData.projectStartTime = dates[0];
       this.formData.projectEndTime = dates[1];
+      this.team()
       console.log(this.formData.projectStartTime);
       console.log(this.date1);
       if (this.date1  && this.date2 ) {
         if (
-          moment(this.date1, "YYYY-MM-DD").valueOf() <
+          moment(this.date1, "YYYY-MM-DD").valueOf() <=
             moment(this.formData.projectStartTime, "YYYY-MM-DD").valueOf() &&
-          moment(this.date2, "YYYY-MM-DD").valueOf() >
+          moment(this.date2, "YYYY-MM-DD").valueOf() >=
             moment(this.formData.projectEndTime, "YYYY-MM-DD").valueOf()
         ) {
           this.redShow = false;

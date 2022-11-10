@@ -709,7 +709,11 @@ export default {
       })
     },
     team(){
-      teamQuery().then(res=>{
+       let data = {
+        startDate:this.formData.projectStartTime ? moment(this.formData.projectStartTime).format("YYYY-MM-DD") : '',
+        endDate:this.formData.projectEndTime ? moment(this.formData.projectEndTime).format("YYYY-MM-DD") : '',
+      }
+      teamQuery(data).then(res=>{
         this.projectTeams=res.data
       })
     },
@@ -720,11 +724,7 @@ export default {
       })
       this.date1=aa[0].startDate
       this.date2=aa[0].endDate
-      console.log(aa)
-      console.log(this.date1)
-      console.log( this.formData.projectStartTime)
-      console.log(moment(this.date1, 'YYYY-MM-DD').valueOf() < moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf())
-      if(moment(this.date1, 'YYYY-MM-DD').valueOf() < moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf() &&  moment(this.date2, 'YYYY-MM-DD').valueOf()>moment( this.formData.projectEndTime, 'YYYY-MM-DD').valueOf()){
+      if(moment(this.date1, 'YYYY-MM-DD').valueOf() <= moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf() &&  moment(this.date2, 'YYYY-MM-DD').valueOf()>=moment( this.formData.projectEndTime, 'YYYY-MM-DD').valueOf()){
         this.redShow=false
       }else{
         this.redShow=true
@@ -846,7 +846,7 @@ export default {
        
       if(this.date1  &&  this.date2 ){
         // console.log(this.date1,'sssssssss')
-        if(moment(this.date1, 'YYYY-MM-DD').valueOf() < moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf() &&  moment(this.date2, 'YYYY-MM-DD').valueOf()>moment( this.formData.projectEndTime, 'YYYY-MM-DD').valueOf()){
+        if(moment(this.date1, 'YYYY-MM-DD').valueOf() <= moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf() &&  moment(this.date2, 'YYYY-MM-DD').valueOf() >= moment( this.formData.projectEndTime, 'YYYY-MM-DD').valueOf()){
           this.redShow=false
         }else{
       
@@ -970,7 +970,7 @@ export default {
             if (+code == 200) {
               // this.$router.push("/projectManager/proManager");
               this.$router.push({
-                path: "/projectManager/proDetails/",
+                path: "/projectManager/proManager-auth/proDetails",
                 query: {
                   projectId: this.formData.projectId,
                   projectName: this.formData.projectName,

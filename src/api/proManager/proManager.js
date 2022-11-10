@@ -131,10 +131,11 @@ export function getPostOptions() {
 }
  
 // 项目组查询
-export function teamQuery() {
+export function teamQuery(query) {
   return request({
     url: '/projectManage/projectGroup/listAll',
     method: 'get',
+    params:query
   })
 }
 // 人员推荐  点击修改 or other
