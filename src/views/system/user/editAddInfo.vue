@@ -280,7 +280,7 @@ export default {
         inTime:'',
         outTime:'',
         roleIds:[],
-        deptId:'',
+        deptId:null,
         skillIds: [],
       },
       areas: [],
@@ -387,7 +387,7 @@ export default {
             // this.formData.outTime = moment(this.formData.outTime).format(
             //   "YYYY-MM-DD"
             // );
-            this.formData.outTime = this.formData.outTime ? moment(this.formData.outTime).format("YYYY-MM-DD") : null
+          
             let data = {
               ...this.formData,
             };
@@ -407,9 +407,7 @@ export default {
             this.formData.inTime = moment(this.formData.inTime).format(
               "YYYY-MM-DD"
             );
-            this.formData.outTime = moment(this.formData.outTime).format(
-              "YYYY-MM-DD"
-            );
+            this.formData.outTime = this.formData.outTime ? moment(this.formData.outTime).format("YYYY-MM-DD") : ''
             let data = {
               ...this.formData,
             };
