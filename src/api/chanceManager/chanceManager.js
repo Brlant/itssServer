@@ -17,6 +17,14 @@ export function addChance(data) {
     data: data
   })
 }
+// 机会列表 编辑
+export function updateChance(data) {
+  return request({
+    url: '/opportunityManage/itssChance/updateChance',
+    method: 'put',
+    data: data
+  })
+}
 // 机会管理详情接口
 export function chanceDetail(chanceId) {
   return request({

@@ -183,10 +183,10 @@
               <el-col :span="5">
                 <el-form-item
                   label="区域："
-                  :prop="`chanceConfigList.${chanceConfigIndex}.areaId`"
+                  :prop="`chanceConfigList.${chanceConfigIndex}.regionId`"
                 >
                   <el-select
-                    v-model="chanceConfigItem.areaId"
+                    v-model="chanceConfigItem.regionId"
                     placeholder="请选择区域"
                     :style="{ width: '100%' }"
                     @change="(dates) => editNext('region', dates, chanceConfigIndex)"
@@ -216,11 +216,11 @@
               <el-col :span="5">
                 <el-form-item
                   label="职位："
-                  :prop="`chanceConfigList.${chanceConfigIndex}.postId`"
+                  :prop="`chanceConfigList.${chanceConfigIndex}.postNameId`"
                   :rules="rules.chanceConfigItemPostId"
                 >
                   <el-select
-                    v-model="chanceConfigItem.postId"
+                    v-model="chanceConfigItem.postNameId"
                     placeholder="请选择职位"
                     :disabled="chanceConfigItem.postTypeActive"
                     :style="{ width: '100%' }"
@@ -239,11 +239,11 @@
               <el-col :span="5">
                 <el-form-item
                   label="等级："
-                  :prop="`chanceConfigList.${chanceConfigIndex}.gradeId`"
+                  :prop="`chanceConfigList.${chanceConfigIndex}.postLevelId`"
                   :rules="rules.chanceConfigItemGradeId"
                 >
                   <el-select
-                    v-model="chanceConfigItem.gradeId"
+                    v-model="chanceConfigItem.postLevelId"
                     placeholder="请选择等级"
                     :disabled="chanceConfigItem.gradeIdActive"
                     :style="{ width: '100%' }"
@@ -729,15 +729,15 @@ export default {
     this.followInit(this.$route.query.chanceId);
     this.getDictList("post_type"); //职位类型
     this.getDictList("region"); //区域
-    // this.getDictList("gradeId"); // 等级
-    this.getDictList("technique"); // 技能 technique
+    this.getDictList("post_level"); // 等级
+    this.getDictList("skill_type"); // 技能 technique
   },
   methods: {
     enterChanceEdict() {
       this.$store.commit('setRegionOptions', this.regionOptions)
       this.$store.commit('setPostTypeOptions', this.postTypeOptions)
-      // this.$store.commit('setTechniqueOptions', this.this.techniqueOptions)
-      // this.$store.commit('setGradeIdOptions', this.this.gradeIdOptions)
+      this.$store.commit('setTechniqueOptions', this.techniqueOptions)
+      this.$store.commit('setGradeIdOptions', this.gradeIdOptions)
       this.$store.commit('setChanceDetail', {
         formData: this.formData,
         chanceConfigList: this.tableData
