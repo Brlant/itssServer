@@ -359,7 +359,7 @@ export const dynamicRoutes = [
     path: '/projectManager/proManager-auth',
     component: Layout,
     hidden: true,
-    permissions: ['addProject'],
+    permissions: ['projectManager:proManager:create'],
     children: [
       {
         path: 'addProject',
@@ -373,7 +373,7 @@ export const dynamicRoutes = [
     path: '/projectManager/proManager-auth',
     component: Layout,
     hidden: true,
-    permissions: ['proDetails'],
+    permissions: ['projectManager:proManager:viewMyPro','projectManager:proManager:viewMemberPro','projectManager:proManager:viewAllPro'],
     children: [
       {
         path: 'proDetails',
@@ -387,7 +387,7 @@ export const dynamicRoutes = [
     path: '/projectManager/proManager-auth',
     component: Layout,
     hidden: true,
-    permissions: ['proEdit'],
+    permissions: ['projectManager:proManager:handle'],
     children: [
       {
         path: 'proEdit',
