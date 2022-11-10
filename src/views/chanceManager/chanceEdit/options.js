@@ -17,6 +17,30 @@ export const formData = {
   expectOffer: undefined, //          预计报价
   chanceService: "", //          服务对象(1.对内;2.对外)
   remark: "", //          备注
+  chanceConfigList: [
+    {
+      postId: "", //职位id
+      postTypeId:"",//职位类型id
+      areaId: "", //区域id
+      gradeId: "", //等级id
+      skillIdList: [], //技能id
+      startTime: "", //开始时间
+      endTime: "", //结束时间
+      workTime: "", //总工时
+      workDay: "", //总人日（工作日*工时/8）
+      planLoad: "", //计划负荷
+      expectedCost: "", //预计成本
+      chanceConfigScheduleList: [], //
+      week: "", //周数
+      startTime: "", //开始时间
+      startEndTime: [],
+      gradeIdActive: true,
+      postIdActive: true,
+      postTypeActive: true,
+      nextActive: true,
+      chanceConfigScheduleList: [{}]
+    }
+  ]
 }
 
 export const rules = {
@@ -121,4 +145,12 @@ export const priorityOptions = [{
 }, {
   "label": "较低",
   "value": 4
+}]
+
+export const chanceServiceOptions = [{
+  "label": "对内",
+  "value": 1
+}, {
+  "label": "对外",
+  "value": 2
 }]
