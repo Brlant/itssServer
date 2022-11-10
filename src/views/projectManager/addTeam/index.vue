@@ -5,11 +5,15 @@
       <span @click="goManagerPage" style="cursor: pointer; color: #409eff">
         &lt; 新建项目组
       </span>
-<!-- 
+      <!-- 
       <span> （仅项目负责人可对此项目下列对内进行编辑）</span> -->
       <div class="rightBox">
-        <el-button size="mini" @click="submitForm" type="primary">保存</el-button>
-        <el-button size="mini" @click="backDetail" type="default">取消</el-button>
+        <el-button size="mini" @click="submitForm" type="primary"
+          >保存</el-button
+        >
+        <el-button size="mini" @click="backDetail" type="default"
+          >取消</el-button
+        >
       </div>
     </div>
     <div class="titleBar">项目组信息</div>
@@ -37,7 +41,7 @@
           </el-col>
         </el-row>
         <el-row>
-         <el-col :span="10" :offset="1">
+          <el-col :span="10" :offset="1">
             <el-form-item label="项目组有效期" prop="teamTimeArea">
               <el-date-picker
                 type="daterange"
@@ -52,7 +56,6 @@
               ></el-date-picker>
             </el-form-item>
           </el-col>
-        
         </el-row>
         <el-row>
           <el-col :span="10" :offset="1">
@@ -78,16 +81,12 @@
             </el-form-item>
           </el-col>
         </el-row>
-     
       </div>
     </el-form>
   </div>
 </template>
 <script>
-
-import {
-teamAdd,queryUserlist
-} from "@/api/proManager/teamMange";
+import { teamAdd, queryUserlist } from "@/api/proManager/teamMange";
 
 export default {
   data() {
@@ -95,10 +94,14 @@ export default {
       childDateArea: {
         // 项目成员安排的 可选时间区间
         disabledDate: (time) => {
-          if (this.formData.projectTimeArea && this.formData.projectTimeArea.length > 1) {
+          if (
+            this.formData.projectTimeArea &&
+            this.formData.projectTimeArea.length > 1
+          ) {
             // 设置可以选择的区间 时间为项目的 起始日期和结束日期
             return (
-              time.getTime() > new Date(this.formData.projectTimeArea[1]).getTime() ||
+              time.getTime() >
+                new Date(this.formData.projectTimeArea[1]).getTime() ||
               time.getTime() <
                 new Date(this.formData.projectTimeArea[0]).getTime() - 8.64e7
             );
@@ -106,10 +109,8 @@ export default {
         },
       },
       // 人员 列表
-      teamUserIdOptions: [{nickName:'aa',userId:'1'}],
-      formData: {
-
-      },
+      teamUserIdOptions: [{ nickName: "aa", userId: "1" }],
+      formData: {},
       rules: {
         teamName: [
           {
@@ -132,40 +133,46 @@ export default {
             trigger: "change",
           },
         ],
-
       },
-   
     };
   },
   mounted() {
-    this.userList()
+    this.userList();
   },
   methods: {
-    userList(){
-      queryUserlist({}).then(res=>{
-        this.teamUserIdOptions=res.data
-      })
+    userList() {
+      queryUserlist({}).then((res) => {
+        this.teamUserIdOptions = res.data;
+      });
     },
     // 保存 updateProjectUserAddEdit 新增用户信息的
-     submitForm() {
-      let data={
-        projectGroupName:this.formData.teamName,
-        startDate:this.formData.teamTimeArea[0],
-         endDate:this.formData.teamTimeArea[1],
-         projectGroupUserId:this.formData.teamUserId
-      }
-      teamAdd(data).then(res=>{
-        if(res.code==200){
-          this.$message.success(res.msg)
+    submitForm() {
+      this.$refs["elForm"].validate((valid) => {
+        if (valid) {
+          let data = {
+            projectGroupName: this.formData.teamName,
+            startDate: this.formData.teamTimeArea[0],
+            endDate: this.formData.teamTimeArea[1],
+            projectGroupUserId: this.formData.teamUserId,
+          };
+          teamAdd(data).then((res) => {
+            if (res.code == 200) {
+              this.$message.success(res.msg);
+              const obj = { path: "/projectManager/projectTeam" };
+              this.$tab.closeOpenPage(obj);
+            }
+          });
         }
-      })
-        },
-    backDetail(){},
+      });
+    },
+    backDetail() {
+       this.$refs["elForm"].resetFields();
+    },
     goManagerPage() {
       const obj = { path: "/projectManager/projectTeam" };
       this.$tab.closeOpenPage(obj);
     },
-    }
+  },
 };
 </script>
 <style lang="scss" scoped>
