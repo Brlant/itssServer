@@ -368,9 +368,13 @@ import {
   updateProjectUserAddEdit,
   searchProjectList,
   proDetailBFEdit,
-  queryUserlistByRole,
+
   teamQuery,getPostOptions
 } from "@/api/proManager/proManager";
+import {
+ 
+  queryUserlistByRole
+} from "@/api/system/user";
 import {
  getChanceList, 
 } from "@/api/chanceManager/chanceManager";
@@ -865,9 +869,9 @@ export default {
     queryUserlistByRole() {
       let data = {};
       queryUserlistByRole(data).then((res) => {
-        res.data.map((item) => {
-          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
-        });
+        // res.data.map((item) => {
+        //   item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+        // });
         this.projectUserIdOptions = res.data; // 初始化填充给 项目负责人的 永远是所有用户
       });
     },
