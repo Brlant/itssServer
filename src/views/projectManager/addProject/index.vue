@@ -365,11 +365,15 @@ import {
   queryDict,
   addProjectList,
   searchProjectList,
-  queryUserlistByRole,
+ 
   getPostOptions,
   teamQuery,
 } from "@/api/proManager/proManager";
 import { toProject, getChanceList } from "@/api/chanceManager/chanceManager";
+import {
+ 
+  queryUserlistByRole
+} from "@/api/system/user";
 import moment from "moment";
 import "moment/locale/zh-cn";
 
@@ -923,9 +927,9 @@ export default {
       let data = {};
       queryUserlistByRole(data).then((res) => {
         // 此接口不对
-        res.data.map((item) => {
-          item.userNameAndPost = item.nickName + "（" + item.postName + "）";
-        });
+        // res.data.map((item) => {
+        //   item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+        // });
         this.projectUserIdOptions = res.data; // 初始化填充给 项目负责人的 永远是所有用户
       });
     },
