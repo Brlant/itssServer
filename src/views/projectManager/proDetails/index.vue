@@ -104,6 +104,11 @@
               {{ formData.projectGroupName }}
             </el-form-item>
           </el-col>
+          <el-col :span="7" :offset="1">
+            <el-form-item label="TB项目ID" prop="tbProjectId">
+              {{ formData.tbProjectId }}
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <!--------------------------------------------------------------------------->
@@ -762,6 +767,7 @@ export default {
 
     // 详情页面显示的
     formData: {
+      tbProjectId:'',
       priority: 3 /*优先级（1.最高，2.高，3.普通，4.较低）*/,
       projectChance: "" /* 关联机会*/,
       projectCode: "" /* 项目编号*/,

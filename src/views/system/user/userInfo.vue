@@ -47,6 +47,11 @@
                 </div>
                  <div style="margin:20px;font-size:18px;">
                   
+                    <span class='title'>TB用户ID:</span>
+                    <span>{{info.tbUserId}}</span>
+                </div>
+                 <div style="margin:20px;font-size:18px;">
+                  
                     <span class='title'>邮箱:</span>
                     <span>{{info.email}}</span>
                 </div>
