@@ -180,7 +180,7 @@
             ></i>
           </el-col>
           <el-col :span="10" :offset="1">
-            <!-- <el-form-item label="关联机会" prop="projectChance">
+            <el-form-item label="关联机会" prop="projectChance">
               <el-select
                 v-model="formData.projectChance"
                 placeholder="请选择关联机会"
@@ -195,7 +195,7 @@
                   :disabled="item.disabled"
                 ></el-option>
               </el-select>
-            </el-form-item> -->
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row>
@@ -575,7 +575,7 @@ export default {
   },
   mounted() {
     this.team();
-    // this.getChanceList(); //拿到机会列表
+    this.getChanceList(); //拿到机会列表
     this.queryUserlistByRole(); // 查询是 项目主管的用户集合
     this.getDictList("project_phase"); // 项目阶段 project_phase
     this.getDictList("project_type"); // 项目类型 project_type

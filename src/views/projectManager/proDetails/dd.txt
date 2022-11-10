@@ -1,0 +1,67 @@
+
+
+// 暂存方法  addUserListHandel
+// 暂存旁边的取消  DelUserList
+
+// 添加资源配置  initaddEditUserList recommendUserActive
+
+// 点击单行 显示信息 showRowDetail  
+
+// 修改一个 项目成员的 工作计划  updateProjectOne
+
+//根据起始和结束 生成下面表格    getTimeArea
+// 选择职位 getPostId
+
+ // 顶部的点击提交审核   goAudit()
+
+// 点击添加人员到 资源配置中去  addUserToProject
+
+
+现有问题
+1.点击暂存旁边的 取消 修改为   立即切换为 点击单行的模式，
+下面人员推荐不变
+2.点击修改 直接触发 隐藏 编辑| 终止
+
+3.点击添加资源配置，立即隐藏 编辑和终止按钮，展示提交审核
+点击暂存 
+holdUserList
+// 新增代码块  start 
+      // this.addEditFormData.projectUserList[0].unshift(this.projectTable.projectUserList)
+      console.log(this.addEditFormData.projectUserList[0]);
+      this.projectTable.projectUserList.unshift(this.addEditFormData.projectUserList[0])
+      // 新增代码块  end
+      autoTableBody
+      
+      projectTableEditNum
+
+        init(type) {
+
+
+
+
+
+            this.monthArrTemp = [];
+        // 动态生成 合计天数周数 日期区间
+        if (res.data.projectUserList.length > 0) {
+          res.data.projectUserList[0].projectUserScheduleList.forEach((v, i) => {
+            // console.log(v); //2022年1月 24周  01/01-01/07
+
+            let startTime = moment(v.startTime, "YYYY-MM-DD").format("YYYY/MM/DD");
+            let endTime = moment(v.endTime, "YYYY-MM-DD").format("YYYY/MM/DD");
+
+            let pp = `${v.startTime.substring(0, 4)}年${v.weekMonth}月 ${
+              v.week
+            }周       ${startTime.substring(5) + "-" + endTime.substring(5)}`;
+            this.monthArrTemp.push(pp.toString());
+            //  this.monthArrTemp.push((v.weekMonth +'月- ' +v.week +'周 (' +v.startTime + "-" + v.endTime +')').toString())
+          });
+          res.data.projectUserList.map((item, i) => {
+            item.projectUserScheduleList.map((jtem, j) => {
+              // 最后一条 不处理
+              if (i < res.data.projectUserList.length - 1) {
+                jtem.weekTimeArea =
+                  jtem.startTime.substring(5) + "-" + jtem.endTime.substring(5);
+              }
+            });
+          });
+        }

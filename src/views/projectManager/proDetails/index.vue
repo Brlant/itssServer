@@ -95,9 +95,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="7" :offset="1">
-            <!-- <el-form-item label="关联机会" prop="projectChance">
+            <el-form-item label="关联机会" prop="projectChance">
               {{ formData.projectChanceName }}
-            </el-form-item> -->
+            </el-form-item>
           </el-col>
           <el-col :span="7" :offset="1">
             <el-form-item label="项目组" prop="projectGroupName">

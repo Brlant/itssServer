@@ -181,7 +181,7 @@
           </el-col>
           <el-col :span="10" :offset="1">
             
-             <!-- <el-form-item label="关联机会" prop="projectChance">
+             <el-form-item label="关联机会" prop="projectChance">
                   <el-select
                     v-model="formData.projectChance"
                     placeholder="请选择关联机会"
@@ -196,7 +196,7 @@
                       :disabled="item.disabled"
                     ></el-option>
                   </el-select>
-                </el-form-item>   -->
+                </el-form-item>  
           </el-col>
         </el-row>
 
@@ -561,7 +561,7 @@ export default {
     // this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
     // this.getDictList("project_priority"); // 项目优先级
     this.getPostOptions(); // 职位类型的
-    // this.getChanceList()
+    this.getChanceList()
     this.init();
     // 页面默认点击一下  添加成员
     // this.addUserListHandel()
