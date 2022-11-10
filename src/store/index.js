@@ -19,7 +19,35 @@ const store = new Vuex.Store({
     permission,
     settings
   },
-  getters
+  getters,
+  state: {
+    regionOptions: [],
+    postTypeOptions: [],
+    techniqueOptions: [],
+    gradeIdOptions: [],
+    chanceDetail: {
+      formData: null,
+      chanceConfigList: []
+    }
+  },
+  mutations: {
+    setRegionOptions(state, value) {
+      state.regionOptions = value
+    },
+    setPostTypeOptions(state, value) {
+      state.postTypeOptions = value
+    },
+    setTechniqueOptions(state, value) {
+      state.techniqueOptions = value
+    },
+    setGradeIdOptions(state, value) {
+      state.gradeIdOptions = value
+    },
+    setChanceDetail(state, value) {
+      state.chanceDetail.formData = value.formData
+      state.chanceDetail.chanceConfigList = value.chanceConfigList
+    }
+  }
 })
 
 export default store

@@ -3,9 +3,10 @@
     <div class="routerBar">
       <router-link :to="'/chanceManager/chanceList'" class="priority3"> < 机会详情</router-link>
       <div class="rightBox">
-        <router-link class="priority3 ft13" :to="'/chanceManager/chanceEdit'"
+        <!-- <router-link class="priority3 ft13" :to="'/chanceManager/chanceEdit'"
           >编辑基本信息</router-link
-        >
+        > -->
+        <a href="javascript:;" class="priority3 ft13" @click="enterChanceEdict">编辑基本信息</a>
         <span class="priority3 ft13" @click="addFollow">| 添加跟进记录</span>
         <!-- <router-link class="priority3 ft13" :to="'/chanceManager/addChance'">| 机会详情</router-link> -->
         <span class="priority3 ft13" @click="transformProject">| 转为正式项目</span>
@@ -732,6 +733,22 @@ export default {
     this.getDictList("technique"); // 技能 technique
   },
   methods: {
+    enterChanceEdict() {
+      this.$store.commit('setRegionOptions', this.regionOptions)
+      this.$store.commit('setPostTypeOptions', this.postTypeOptions)
+      // this.$store.commit('setTechniqueOptions', this.this.techniqueOptions)
+      // this.$store.commit('setGradeIdOptions', this.this.gradeIdOptions)
+      this.$store.commit('setChanceDetail', {
+        formData: this.formData,
+        chanceConfigList: this.tableData
+      })
+      this.$router.push({
+        path: '/chanceManager/chanceEdit',
+        query: {
+          chanceId: this.$route.query.chanceId
+        }
+      })
+    },
     // 点击 新增配置的
     addConfigListHandel() {
       this.formData.chanceConfigList = [];

@@ -276,8 +276,8 @@ export default {
       chanceUserIdOptions,
       priorityOptions,
       chanceServiceOptions,
-      regionOptions: [],
-      postTypeOptions: [],
+      regionOptions: this.$store.state.regionOptions,
+      postTypeOptions: this.$store.state.postTypeOptions,
       postIdOptions: [],
       gradeIdOptions: [],
       techniqueOptions: [],
@@ -297,6 +297,7 @@ export default {
     }
   },
   mounted() {
+    
   },
   methods: {
     submitForm() {
