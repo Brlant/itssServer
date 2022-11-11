@@ -303,11 +303,12 @@
                   v-model="addUserList.postNameId"
                   placeholder="请选择职位名称"
                   :disabled="addUserList.postNameIdActive"
+                  :key="addUserListindex"
                   :style="{ width: '100%' }"
                   @change="(dates) => editNext('postNameId', dates, addUserListindex)"
                 >
                   <el-option
-                    v-for="(dict, index) in postNameIdOptions"
+                    v-for="(dict, index) in addUserList.postNameIdOptions"
                     :key="dict.postNameId"
                     :label="dict.postName"
                     :value="dict.postNameId"
@@ -325,12 +326,13 @@
                 <el-select
                   v-model="addUserList.postLevelId"
                   placeholder="请选择等级"
+                  :key="addUserListindex"
                   :disabled="addUserList.postLevelIdActive"
                   :style="{ width: '100%' }"
                   @change="(dates) => editNext('postLevelId', dates, addUserListindex)"
                 >
                   <el-option
-                    v-for="(dict, index) in postLevelIdOptions"
+                    v-for="(dict, index) in  addUserList.postLevelIdOptions"
                     :key="dict.postLevelId"
                     :label="dict.postLevelName"
                     :value="dict.postLevelId"
@@ -344,7 +346,7 @@
                 <el-button
                   type="primary"
                   size="mini"
-                  @click="DelConfigList(addUserListindex)"
+                  @click="DelPostList(addUserListindex)"
                 >
                   删除
                 </el-button>
@@ -419,13 +421,7 @@
                 预计成本：<span>{{ addUserList.expectedCost }}</span> 元
               </div></el-col
             >
-            <el-col :span="3" :offset="3"
-              ><div class="colText2">
-                <el-button size="mini" @click="DelPostList(addUserListindex)" type="error"
-                  >删除</el-button
-                >
-              </div>
-            </el-col>
+           
           </el-row>
           <!----------------------内部-start------------------------------>
           <el-row
@@ -686,6 +682,8 @@ export default {
         postNameIdActive: true,
         postTypeActive: true,
         nextActive: true,
+        postNameIdOptions:[],
+        postLevelIdOptions:[],
       },
       // projectUserScheduleList: {
       //   startTime: "" /**周期*/,
@@ -775,6 +773,21 @@ export default {
         res.data.projectUserList.map((item) => {
           this.changeTextColor(item.skillIdList, "mySkillIdList");
         });
+         // 循环 回显 职位名称和职位等级
+        let index = res.data.projectUserList.map((item, index) => {
+          let parame = {
+            regionId: res.data.projectUserList[index].regionId,
+            postTypeId: res.data.projectUserList[index].postTypeId,
+            postNameId: res.data.projectUserList[index].postNameId,
+          };
+          getLevelCostNum(parame).then((LevelCostres) => {
+            item.postLevelIdOptions = LevelCostres.data;
+          });
+          getPostName(parame).then((PostNameres) => {
+            item.postNameIdOptions = PostNameres.data;
+          });
+        });
+     
         this.formData = res.data; // 填充详情的 projectTimeArea
 
         this.team();
@@ -782,21 +795,7 @@ export default {
           res.data.projectStartTime,
           res.data.projectEndTime,
         ]);
-        // 回显 职位名称和职位等级
-        let index = this.formData.projectUserList.map((item, index) => {
-          let parame = {
-            regionId: this.formData.projectUserList[index].regionId,
-            postTypeId: this.formData.projectUserList[index].postTypeId,
-            postNameId: this.formData.projectUserList[index].postNameId,
-          };
-          getLevelCostNum(parame).then((res) => {
-            this.postLevelIdOptions = res.data;
-          });
-          getPostName(parame).then((res) => {
-            this.postNameIdOptions = res.data;
-          });
         });
-      });
     },
     // 选择技能之后 的变色逻辑
     changeTextColor(listData, refName) {
@@ -816,7 +815,6 @@ export default {
             ".el-select__tags .el-tag"
           ); // 获取节点
 
-            console.log(arr);
           eles.forEach((v, i) => {
             if (arr[i].dictCode === +listData[i]) {
               // 'skill' skillcc
@@ -824,7 +822,7 @@ export default {
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
-        }, 500);
+        }, 800);
       });
     },
     /**
@@ -837,7 +835,6 @@ export default {
      *  切换等级  切换成本 + 预计成本
      */
     editNext(who, data, index) {
-      let parame = {}; // 入参
       switch (who) {
         case "region": // 选择区域
           this.formData.projectUserList[index].postTypeActive = false; // 初始化展示下一个
@@ -846,8 +843,8 @@ export default {
           this.formData.projectUserList[index].postNameId = ""; // 职位名称
           this.formData.projectUserList[index].postLevelId = ""; // 等级
           this.formData.projectUserList[index].expectedCost = "--"; //// 预计成本
-          this.postNameIdOptions = []; // 清空下拉
-          this.postLevelIdOptions = []; // 清空下拉
+          this.formData.projectUserList[index].postNameIdOptions = []; // 清空下拉
+          this.formData.projectUserList[index].postLevelIdOptions = []; // 清空下拉
           break;
         case "postType": // 选择 职位类型
           this.formData.projectUserList[index].postNameIdActive = false; // 初始化展示下一个
@@ -856,15 +853,18 @@ export default {
           this.formData.projectUserList[index].postNameId = ""; // 职位名称
           this.formData.projectUserList[index].postLevelId = ""; // 等级
           this.formData.projectUserList[index].expectedCost = "--"; //// 预计成本
-          this.postNameIdOptions = [];
-          this.postLevelIdOptions = [];
-          parame = {
+          this.formData.projectUserList[index].postNameIdOptions = [];
+          this.formData.projectUserList[index].postLevelIdOptions = [];
+          let parame1 = {
             regionId: this.formData.projectUserList[index].regionId,
             postTypeId: this.formData.projectUserList[index].postTypeId,
           };
-          getPostName(parame).then((res) => {
-            this.postNameIdOptions = res.data;
-          });
+        //  this.formData.projectUserList[index].postNameIdOptions =  this.getPostNameIdOptions(parame1)
+          getPostName(parame1).then((res) => {
+              console.log(res.data,"getPostName");
+              this.formData.projectUserList[index].postNameIdOptions= res.data
+              this.$forceUpdate()
+            });
           break;
         case "postNameId": // 选择职位名称
           this.formData.projectUserList[index].postLevelIdActive = false; // 初始化展示下一个
@@ -873,21 +873,22 @@ export default {
           // this.formData.projectUserList[index].postNameId="" // 职位名称
           this.formData.projectUserList[index].postLevelId = ""; // 等级
           this.formData.projectUserList[index].expectedCost = "--"; //// 预计成本
-          // this.postNameIdOptions= []
-          this.postLevelIdOptions = [];
-          parame = {
+          this.formData.projectUserList[index].postLevelIdOptions = [];
+          let parame2 = {
             regionId: this.formData.projectUserList[index].regionId,
             postTypeId: this.formData.projectUserList[index].postTypeId,
             postNameId: this.formData.projectUserList[index].postNameId,
           };
-          getLevelCostNum(parame).then((res) => {
-            this.postLevelIdOptions = res.data;
-          });
+            getLevelCostNum(parame2).then((LevelCostNumres) => {
+            console.log(LevelCostNumres.data,"getLevelCostNum");
+            this.formData.projectUserList[index].postLevelIdOptions = LevelCostNumres.data;
+            this.$forceUpdate()
+          })
           break;
         case "postLevelId": // 选择职位等级
           this.formData.projectUserList[index].nextActive = false; // 初始化展示下面的所有
           // 选择 等级之后，拿到成本下拉 根据选择的等级id 拿到成本
-          let costNumArry = this.postLevelIdOptions.find((item) => {
+          let costNumArry = this.formData.projectUserList[index].postLevelIdOptions.find((item) => {
             return this.formData.projectUserList[index].postLevelId == item.postLevelId;
           });
           // 2对外      // 1 对内
