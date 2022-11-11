@@ -118,7 +118,7 @@ export default{
         }
     },
    created(){
-     this.projectdirector=this.isJurisdiction('projectdirector')
+     this.projectdirector=this.isJurisdiction('project:approval:leader')
      let a=moment(this.start,'YYYY-MM-DD').format('YYYY/MM/DD')
     let b=moment(this.end,'YYYY-MM-DD').format('YYYY/MM/DD')
      this.dateRange=a+'-'+b
