@@ -751,10 +751,11 @@ export default {
     },
     // 项目组的选择时间
     teamChange() {
-      // console.log(this.formData.projectTeam,'fffff')
+      console.log(this.formData,'fffff')
       let aa = this.projectTeams.filter((v) => {
-        return v.projectGroupId == this.formData.projectTeam;
+        return v.projectGroupId == this.formData.projectGroupId;
       });
+      console.log(aa)
       this.date1 = aa[0].startDate;
       this.date2 = aa[0].endDate;
       // console.log(aa)
