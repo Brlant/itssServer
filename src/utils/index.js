@@ -438,6 +438,12 @@ export function getToday(){
 // parent ("admin"); // 管理员
 // 之前用角色判断权限 ， 改成 用（用户的角色绑定的菜单）菜单的权限标识 判断权限
 export function isJurisdiction(...permissionStrs) {
+  // 先判断是否为管理员
+  const userInfo = JSON.parse(window.localStorage.getItem("user"))?JSON.parse(window.localStorage.getItem("user")):[]
+  if(userInfo.userId == 1){
+    // 是管理员
+    return true;
+  }
   const permissions = JSON.parse(window.localStorage.getItem("permissions"))?JSON.parse(window.localStorage.getItem("permissions")):[]
   let result = false
   permissionStrs.forEach((p) => {
