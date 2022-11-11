@@ -392,37 +392,37 @@ export default {
     let operatemanage = this.isJurisdiction("operatemanage"); // 运营管理
     let admin = this.isJurisdiction("admin"); // 管理员
     // 运营管理        operatemanage
-    // let countScopeOptionsTemp = [];
-    //    if (projectdirector) {
-    //   // 项目主管
-    //   this.countScopeInit = 2
-    //   countScopeOptionsTemp.push({
-    //     label: "仅我负责",
-    //     value: 2,
-    //   });
-    // }
-    // if (deptdirector) {
-    //   // 部门主管
-    //   this.countScopeInit = 3
-    //   countScopeOptionsTemp.push({
-    //     label: "仅部门成员",
-    //     value: 3,
-    //   });
-    // }
+    let countScopeOptionsTemp = [];
+       if (projectdirector) {
+      // 项目主管
+      this.countScopeInit = 2
+      countScopeOptionsTemp.push({
+        label: "仅我负责",
+        value: 2,
+      });
+    }
+    if (deptdirector) {
+      // 部门主管
+      this.countScopeInit = 3
+      countScopeOptionsTemp.push({
+        label: "仅部门成员",
+        value: 3,
+      });
+    }
 
-    // if (projectsupervision || admin|| operatemanage) {
-    //   // 项目监管 超管 运营管理
-    //   this.countScopeInit = 1
-    //   countScopeOptionsTemp.push({
-    //     label: "全部",
-    //     value: 1,
-    //   });
-    // }
-    // countScopeOptionsTemp.push({
-    //     label: "全部",
-    //     value: 1,
-    //   });
-    // this.countScopeOptions = countScopeOptionsTemp;
+    if (projectsupervision || admin|| operatemanage) {
+      // 项目监管 超管 运营管理
+      this.countScopeInit = 1
+      countScopeOptionsTemp.push({
+        label: "全部",
+        value: 1,
+      });
+    }
+    countScopeOptionsTemp.push({
+        label: "全部",
+        value: 1,
+      });
+    this.countScopeOptions = countScopeOptionsTemp;
 
     // this.searchForm.countScope = 1//this.countScopeInit
     /*------------------额外的初始化查询的判断------------------------------*/

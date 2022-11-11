@@ -438,6 +438,12 @@ export function getToday(){
 // parent ("admin"); // 管理员
 // 之前用角色判断权限 ， 改成 用（用户的角色绑定的菜单）菜单的权限标识 判断权限
 export function isJurisdiction(...permissionStrs) {
+  // 先判断是否为管理员
+  const userInfo = JSON.parse(window.localStorage.getItem("user"))?JSON.parse(window.localStorage.getItem("user")):[]
+  if(userInfo.userId == 1){
+    // 是管理员
+    return true;
+  }
   const permissions = JSON.parse(window.localStorage.getItem("permissions"))?JSON.parse(window.localStorage.getItem("permissions")):[]
   let result = false
   permissionStrs.forEach((p) => {
@@ -471,4 +477,39 @@ export function addClassName(ele,str){
    }
   }
   
+}
+/**
+ *  智能处理小数位 使用 就是 this.autoFixed(参数,3)
+ * @param {*} num 要处理的小数
+ * @param {*} digit 要保留的位数 默认2
+ * @returns 指定有效位数小数
+ */
+ export function  autoFixed(num, digit = 2){
+  if (Number(num) === Math.floor(num)) return Math.floor(num);
+  let res = [], addNum = 0;
+  num += '';
+  let [zs, xs] = num.split('.');
+  let [, symbol, zsNum] = /^(\-?)(\d+\.\d+|\d+)$/.exec(zs);
+  for (let i = 0; i < xs.length; i++) {
+      const ele = xs[i];
+      if (ele != 0) {
+          if (xs[i + digit] && xs[i + digit] > 4) {
+              addNum = 1;
+              for (let j = i + (digit - 1); j >= 0; j--) {
+                  if (Number(xs[j]) + addNum == 10) res[j] = '0';
+                  else {
+                      res[j] = Number(xs[j]) + addNum;
+                      addNum = 0;
+                  }
+              }
+          }
+          else {
+              for (let k = i; k <= i + (digit - 1); k++) {
+                  res[k] = xs[k];
+              }
+          }
+          break;
+      } else res[i] = xs[i];
+  }
+  return Number(symbol + (Number(zsNum) + addNum) + '.' + res.join(''));
 }
