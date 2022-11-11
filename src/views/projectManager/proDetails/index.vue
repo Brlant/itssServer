@@ -14,10 +14,10 @@
         </span>
         <div
           class="rightLink"
-          v-show="isProjectByUser(formData) || isJurisdiction('admin')"
         >
+        <!-- v-show="isProjectByUser(formData) || isJurisdiction('admin')" -->
           <span
-            v-hasPermi="['projectManager:proManager:handle']"
+            v-hasPermi="['projectManager:proManager:handle']"  
             @click="goEditPage"
             style="cursor: pointer"
             v-show="isShowActive == 0 && !isUpdateActive"
