@@ -72,6 +72,9 @@
           min-width="120"
           prop="projectGroupName"
         >
+        <template slot-scope="scope">
+          <span @click="detailProject(scope.$index, scope.row)">{{scope.row.projectGroupName}}</span>
+        </template>
         </el-table-column>
         <el-table-column
           fixed

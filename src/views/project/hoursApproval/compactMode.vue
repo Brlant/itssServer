@@ -177,14 +177,18 @@ export default {
                     property: 'approvalPendingWorkTime'
                 }
             ];
-            let tableHead2=this.childData.list[0].memberList[0].timeTrackList
-            let head=[]
-            tableHead2.forEach((item,index) => {
+            if(this.childData.list[0].memberList[0]){
+                let tableHead2=this.childData.list[0].memberList[0].timeTrackList
+                  let head=[]
+                tableHead2.forEach((item,index) => {
                 // console.log(item,index)
-               head.push({label:item.workDate,property:`workDate${index}`})
+                head.push({label:item.workDate,property:`workDate${index}`})
 
             });
             this.tableHead=[...anotherTableHead,...head]
+            }
+            
+          
            
         },
          show(index) {

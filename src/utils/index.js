@@ -436,11 +436,12 @@ export function getToday(){
 // parent ("projectsupervision"); // 项目监管
 // parent ("operatemanage"); // 运营管理
 // parent ("admin"); // 管理员
-export function isJurisdiction(...roleStrs) {
-  const rols = JSON.parse(window.localStorage.getItem("roles"))?JSON.parse(window.localStorage.getItem("roles")):[]
+// 之前用角色判断权限 ， 改成 用（用户的角色绑定的菜单）菜单的权限标识 判断权限
+export function isJurisdiction(...permissionStrs) {
+  const permissions = JSON.parse(window.localStorage.getItem("permissions"))?JSON.parse(window.localStorage.getItem("permissions")):[]
   let result = false
-  roleStrs.forEach((rol) => {
-    if (rols.includes(rol)) result = true
+  permissionStrs.forEach((p) => {
+    if (permissions.includes(p)) result = true
   })
   return result
 }
