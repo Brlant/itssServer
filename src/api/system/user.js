@@ -172,13 +172,22 @@ export function skillLocking(data) {
   })
 }
 //职位名称
-export function positionName(query) {
+export function positionName(data) {
   return request({
-    url: '/system/post_dict/list',
-    method: 'get',
-    params: query
+    url: '/system/post_dict/listByRegionAndPostType',
+    method: 'post',
+    data
   })
 }
+//等级
+export function levelList(data) {
+  return request({
+    url: '/system/post_dict/postDictList',
+    method: 'post',
+    data
+  })
+}
+
 //查询用户条件
 export function queryList() {
   return request({
