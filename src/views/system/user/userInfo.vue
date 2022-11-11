@@ -142,6 +142,7 @@ export default {
     },
     //编辑
     editInfo(){
+         window.localStorage.setItem("userId",this.info.userId)
         const obj = { path:'/system/user-auth/editAddInfo',query:{userInfo:this.info,isEdit:1}};
             // getToday()
         this.$tab.closeOpenPage(obj);

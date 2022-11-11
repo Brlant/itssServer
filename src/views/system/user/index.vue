@@ -12,7 +12,7 @@
             style="margin-bottom: 20px"
             @focus="searchTable"
           />
-          <i class="el-icon-plus" @click="handleAdd"  v-hasPermi="['system:user:add']"></i>
+          <i class="el-icon-plus" @click="handleAdd"  v-hasPermi="['system:user:add']" style='cursor:pointer'></i>
         </div>
         <div class="head-container">
           <el-tree
@@ -40,7 +40,11 @@
         </div>
         <el-table :data="user">
           <!-- <el-table-column type="selection" width="50" align="center" /> -->
-          <el-table-column label="姓名" align="center" prop="nickName" />
+          <el-table-column label="姓名" align="center" prop="nickName">
+            <template slot-scope="scope">
+              <span><i class='el-icon-user-solid' v-if='scope.row.dept.leader==scope.row.userId'></i>{{scope.row.nickName}}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="职位" align="center" prop="postName" />
           <el-table-column label="部门" align="center" prop="deptName" />
           <el-table-column label="邮箱" align="center" prop="email" />
@@ -361,6 +365,7 @@ export default {
       stop: false,
       // 表单校验
       rules: {
+        
         parentId: [
           { required: true, message: "上级部门不能为空", trigger: "blur" },
         ],
@@ -495,7 +500,8 @@ export default {
   methods: {
     sureEdit() {
       this.$refs["diaForm"].validate((valid) => {
-        let data = {
+        if(valid){
+           let data = {
           deptId: this.queryParams.deptId,
           leader: this.diaForm.commander,
         };
@@ -506,9 +512,14 @@ export default {
             this.getList();
           }
         });
+        }
+       
       });
     },
     setCommander() {
+      this.diaForm={
+        commander: ""
+      }
       this.editShow = true;
     },
     /* 查询是项目主管的用户列表 */
@@ -706,20 +717,18 @@ export default {
     },
     // 表单重置
     reset() {
-      this.form = {
-        userId: undefined,
-        deptId: undefined,
-        userName: undefined,
-        nickName: undefined,
-        password: undefined,
-        phonenumber: undefined,
-        email: undefined,
-        sex: undefined,
-        status: "0",
-        remark: undefined,
-        postId: "",
-        roleIds: [],
-      };
+       this.deptForm={
+        name: "",
+        deptNo: "",
+        orgId: "",
+        orgIdNode: null,
+        parentId: "",
+        // parentIdNode : null,
+        posts: "",
+        sort: "",
+        status: "",
+        remark: "",
+      },
       this.resetForm("form");
     },
     // /** 搜索按钮操作 */
