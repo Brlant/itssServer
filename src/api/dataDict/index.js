@@ -41,8 +41,7 @@ export function queryPost(data) {
 // 添加与编辑
 export function updatePost(data, method = 'put') {
   return request({
-      // url: '/system/post_dict',
-      url: method = 'put' ? '/system/post_dict/editPostDict' : '/system/post_dict/addPostDict',
+      url: method === 'put' ? '/system/post_dict/editPostDict' : '/system/post_dict/addPostDict',
       method,
       data
   })
