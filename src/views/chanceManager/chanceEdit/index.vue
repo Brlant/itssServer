@@ -123,15 +123,15 @@
         <div class="titleBar">
           资源配置
           <div class="rightBox">
-            <el-button size="mini" type="primary">添加配置</el-button>
+            <el-button size="mini" type="primary" @click="addConfigListHandel">添加配置</el-button>
           </div>
         </div>
         <div class="whiteBox UserListBox configFont" style="padding-left:70px">
           <div v-for="(chanceConfigItem, chanceConfigIndex) in formData.chanceConfigList" :key="chanceConfigIndex">
             <el-row>
               <el-col :span="5">
-                <el-form-item label="区域：" :prop="`chanceConfigList.${chanceConfigIndex}.areaId`" :rules="rules.chanceConfigItemAreaId">
-                  <el-select v-model="chanceConfigItem.areaId" placeholder="请选择区域" :style="{width: '100%'}" @change="(dates) => editNext('region',dates, chanceConfigIndex)">
+                <el-form-item label="区域：" :prop="`chanceConfigList.${chanceConfigIndex}.regionId`" :rules="rules.chanceConfigItemAreaId">
+                  <el-select v-model="chanceConfigItem.regionId" placeholder="请选择区域" :style="{width: '100%'}" @change="(dates) => editNext('region',dates, chanceConfigIndex)">
                     <el-option v-for="(dict, index) in regionOptions"   
                       :key="index"
                       :label="dict.dictLabel"
@@ -153,9 +153,9 @@
                 </el-form-item>
               </el-col>
               <el-col :span="5">
-                <el-form-item label="职位名称：" :prop="`chanceConfigList.${chanceConfigIndex}.postId`" :rules="rules.chanceConfigItemPostId">
-                  <el-select v-model="chanceConfigItem.postId" placeholder="请选择职位名称" :disabled="chanceConfigItem.postIdActive" :style="{width: '100%'}" @change="(dates) => editNext('postId',dates, chanceConfigIndex)">
-                    <el-option v-for="(dict, index) in postIdOptions"  
+                <el-form-item label="职位名称：" :prop="`chanceConfigList.${chanceConfigIndex}.postNameId`" :rules="rules.chanceConfigItemPostId">
+                  <el-select v-model="chanceConfigItem.postNameId" placeholder="请选择职位名称" :disabled="chanceConfigItem.postNameIdActive" :style="{width: '100%'}" @change="(dates) => editNext('postNameId',dates, chanceConfigIndex)">
+                    <el-option v-for="(dict, index) in postNameIdOptions"  
                       :key="index"
                       :label="dict.dictLabel"
                       :value="dict.dictCode"
@@ -165,8 +165,8 @@
                 </el-form-item>
               </el-col>
               <el-col :span="5">
-                <el-form-item label="等级：" :prop="`chanceConfigList.${chanceConfigIndex}.gradeId`" :rules="rules.chanceConfigItemGradeId">
-                  <el-select v-model="chanceConfigItem.gradeId" placeholder="请选择等级" :disabled="chanceConfigItem.gradeIdActive" :style="{width: '100%'}" @change="(dates) => editNext('gradeId',dates, chanceConfigIndex)">
+                <el-form-item label="等级：" :prop="`chanceConfigList.${chanceConfigIndex}.postLevelId`" :rules="rules.chanceConfigItemGradeId">
+                  <el-select v-model="chanceConfigItem.postLevelId" placeholder="请选择等级" :disabled="chanceConfigItem.postLevelIdActive" :style="{width: '100%'}" @change="(dates) => editNext('postLevelId',dates, chanceConfigIndex)">
                     <el-option v-for="(dict, index) in gradeIdOptions" 
                       :key="index"
                       :label="dict.dictLabel"
@@ -266,7 +266,10 @@
 </template>
 
 <script>
-import { formData, rules, chanceStatusOptions, chanceUserIdOptions, priorityOptions, chanceServiceOptions } from './options'
+import { formData, rules, chanceStatusOptions, chanceUserIdOptions, priorityOptions, chanceServiceOptions, chanceConfigList } from './options'
+import { queryDict, updateChance } from "@/api/chanceManager/chanceManager"
+import { getTimeProcess } from "@/api/proManager/proManager"
+
 export default {
   data() {
     return {
@@ -276,11 +279,12 @@ export default {
       chanceUserIdOptions,
       priorityOptions,
       chanceServiceOptions,
-      regionOptions: [],
-      postTypeOptions: [],
-      postIdOptions: [],
-      gradeIdOptions: [],
-      techniqueOptions: [],
+      chanceConfigList,
+      regionOptions: this.$store.state.regionOptions,
+      postTypeOptions: this.$store.state.postTypeOptions,
+      techniqueOptions: this.$store.state.techniqueOptions,
+      gradeIdOptions: this.$store.state.gradeIdOptions,
+      postNameIdOptions: [],
       childDateArea:{
         // 机会配置安排的的 可选时间区间
         disabledDate: (time) => {
@@ -297,12 +301,53 @@ export default {
     }
   },
   mounted() {
+    let formData = JSON.parse(JSON.stringify(this.$store.state.chanceDetail.formData))
+    formData.chanceConfigList.forEach(v => {
+      v.startEndTime = [v.startTime, v.endTime]
+    })
+    this.formData = formData
+    this.getDictList('post_name')
   },
   methods: {
+    // 职位名称
+    getDictList(dictCode) {
+      queryDict(dictCode).then(res => {
+        this.postNameIdOptions = res.data
+      })
+    },
+    // 添加配置
+    addConfigListHandel() {
+      this.$refs["elForm"].validate((valid) => {
+        if (!valid) return;
+        // TODO 上面基础信息填写好 再填写下面，因为需要用到上面的 服务对象和项目有效期
+        if (valid) {
+          let oneUser = this.deepClone(this.chanceConfigList);
+          oneUser.startTime = this.formData.expectStartTime;
+          oneUser.endTime = this.formData.expectEndTime;
+          oneUser.startEndTime = [this.formData.expectStartTime, this.formData.expectEndTime]
+
+          this.formData.chanceConfigList.push(oneUser);
+          this.$forceUpdate();
+        }
+      })
+    },
     submitForm() {
-      this.$refs.elForm.validate(valid => {
+      this.$refs['elForm'].validate(valid => {
         if (!valid) return
-        console.log(this.formData)
+        let parame = {
+          ...this.formData,
+        };
+        parame.chanceConfigList.forEach(v => {
+          v.startTime = v.startEndTime[0]
+          v.endTime = v.startEndTime[1]
+        })
+        updateChance(parame).then((res) => {
+          let { code, msg } = res;
+          this.$message.success(msg);
+          if (+code == 200) {
+            this.$router.push("/chanceManager/chanceList");
+          }
+        });
       })
     },
     resetForm() {
@@ -311,6 +356,46 @@ export default {
     // 删除单行用户
     DelConfigList(index){
       this.formData.chanceConfigList.splice(index, 1);
+    },
+    chageTextColor(listData, refName) {
+      this.$nextTick( () => {
+        setTimeout( () => {
+          let arr = [] ; // 对应数据对象数组
+          listData.map( ind => {
+            this.techniqueOptions.map( v => {
+              if( v.dictCode === +ind ){
+              arr.push( v )
+              }
+            } )
+          } )
+          let eles = this.$refs[refName][0].$el.querySelectorAll( '.el-select__tags .el-tag' ) ; // 获取节点
+          eles.forEach( ( v, i ) => {
+            if( arr[i].dictCode === +listData[i] ){
+              v.classList && v.classList.add( 'skillcc' ) ; // 添加类名
+              v.classList && v.classList.add( 'skill'+arr[i]['cssClass'] )  // 添加类名
+            }
+          }) ;
+        }, 100) 
+      }) 
+    },
+    // 判断当前这个值是否选中了
+    editNext(who, data, index) {
+      if (who == 'region') {
+        this.formData.chanceConfigList[index].postTypeActive = false
+      }
+      if (who == 'postType') {
+        this.formData.chanceConfigList[index].postNameIdActive = false
+      }
+      if (who == 'postNameId') {
+        this.formData.chanceConfigList[index].postLevelIdActive = false
+      }
+      if (who == 'postLevelId') {
+        this.formData.chanceConfigList[index].nextActive = false
+        // 此处去请求 成本
+        this.formData.chanceConfigList[index].costNum =  1000// 写死成本为 1000
+        // 并计算 下面的周排期
+        this.getTimeArea(this.formData.chanceConfigList[index].startEndTime,index)
+      }
     },
     /*根据起始和结束 生成下面表格*/
     getTimeArea(dates, index) {

@@ -209,10 +209,11 @@ export default {
         // this.drillDowm=this.isJurisdiction('common') ? false : true
         // this.selfJurisdiction=this.isJurisdiction('common')
         // this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')
-         if(this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')){
+        // permissions   是否包含  workloadStatistics:stat:all  或 workloadStatistics:stat:dept
+         if(this.isJurisdiction('workloadStatistics:stat:all') || this.isJurisdiction('workloadStatistics:stat:dept')){
             this.mangerJurisdiction=true
             this.drillDowm=true
-        }else{
+        }else if(this.isJurisdiction('efficiencyStatistics:stat:self')){
             this.drillDowm=false
             this.selfJurisdiction=true
         }
@@ -468,7 +469,7 @@ export default {
         },
         //下钻
         nameClick(val){
-            console.log(val)
+            
             this.form.userId=''
             if(val.username == '总计'){
                 return;

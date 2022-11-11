@@ -465,56 +465,39 @@ export default {
       date2: "",
       redShow: false,
       formData: {
-        // priority: 3,/**优先级（1.最高，2.高，3.普通，4.较低）*/
-        // projectChance: "",/**关联机会*/
-        // projectCode: "",/**项目编号*/
-        // projectEndTime: "",/**项目结束时间*/
-        // projectGitUrl:"",// 项目git 地址
-        // projectGroupId:"", // 项目组
-        // projectName: "",/**项目名称*/
-        // projectService: "",/**服务对象*/
-        // projectStage: "",/**项目阶段*/
-        // projectStartTime: "",/**项目开始时间*/
-        // projectTimeArea: ["",""],
-        // projectType: "",/**项目类型*/
-        // projectUserId: "",/**项目负责人*/
-        // projectUserList: [],/**项目成员列表*/
-        // tbProjectId:'',
+ 
+        priority: 3,/**优先级（1.最高，2.高，3.普通，4.较低）*/
+        projectChance: "",/**关联机会*/
+        projectCode: "",/**项目编号*/
+        projectEndTime: "",/**项目结束时间*/
+        projectGitUrl:"",// 项目git 地址
+        projectGroupId:"", // 项目组
+        projectName: "",/**项目名称*/
+        projectService: "",/**服务对象*/
+        projectStage: "",/**项目阶段*/
+        projectStartTime: "",/**项目开始时间*/
+        projectTimeArea: ["",""],
+        projectType: "",/**项目类型*/
+        projectUserId: "",/**项目负责人*/
+        projectUserList: [],/**项目成员列表*/
+        tbProjectId:'',
         //快速调试
-        priority:3,
-        projectChance:2,
-        projectCode:"测试数据1110",
-        projectEndTime:"2022-10-30",
-        projectGitUrl:"测试数据1110",
-        projectGroupId:8,
-        projectName:"测试数据1110",
-        projectService:1,
-        projectStage:32,
-        projectStartTime:"2022-10-01",
-        projectTimeArea: ["2022-10-01", "2022-10-30"],
-        projectType:31,
-        projectUserId:5,
-        projectUserList: [
-          // { 
-            // postNameId:"",//职位id
-            // regionId:"",//区域id
-            // postTypeId:"",//职位类型id
-            // postLevelId:"",//职位等级id
-            // skillIdList:[],//技能id
-            // startTime:"",//开始时间
-            // endTime:"",//结束时间
-            // workTime:"",//总工时
-            // workDay:"",//总人日
-            // planLoad:"",//计划负荷
-            // expectedCost:"",//预计成本
-            // projectUserScheduleList:[],//项目成员排期
-            // postLevelIdActive:true,
-            // postNameIdActive:true,
-            // postTypeActive:true,
-            // nextActive:true,
-        // }
-        ],/**项目成员列表*/
-        tbProjectId:"123ABCDE",
+        // priority:3,
+        // projectChance:2,
+        // projectCode:"测试数据1110",
+        // projectEndTime:"2022-10-30",
+        // projectGitUrl:"测试数据1110",
+        // projectGroupId:8,
+        // projectName:"测试数据1110",
+        // projectService:1,
+        // projectStage:32,
+        // projectStartTime:"2022-10-01",
+        // projectTimeArea: ["2022-10-01", "2022-10-30"],
+        // projectType:31,
+        // projectUserId:5,
+        // projectUserList: [],/**项目成员列表*/
+        // tbProjectId:"123ABCDE",
+  
       },
       rules: {
          // 配置信息的
@@ -709,15 +692,13 @@ export default {
     // this.getDictList("post_name");   // 职位名称 post_name
     // this.getDictList("post_level"); // 职位等级 post_level
 
-    // this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
-    // this.getDictList("project_priority"); // 项目优先级
     // 额外的判断  需要判断这个页面是不是从 机会跳转过来的
     if (this.$route.query.chanceId) {
       toProject(this.$route.query.chanceId).then((res) => {
         this.formData = res.data;
       });
     }
-    this.addUserListHandel() // 自测用
+    // this.addUserListHandel() // 自测用
    },
   methods: {
     // 选择技能之后 的变色逻辑
@@ -747,8 +728,7 @@ export default {
               }, 100 ) ;
 
             } ) ;
-    },
-     
+    },     
     /**
       *  切换任一 下拉，清空以及重新计算的逻辑 非常复杂
       *  初始化的新增也使用了此方法
@@ -966,30 +946,27 @@ export default {
     // 项目组的下拉菜单
     team() {
       let data = {
-      startDate:this.formData.projectStartTime ? moment(this.formData.projectStartTime).format("YYYY-MM-DD") : '',
-      endDate:this.formData.projectEndTime ? moment(this.formData.projectEndTime).format("YYYY-MM-DD") : '',
-    }
+ 
+        startDate:this.formData.projectStartTime ? moment(this.formData.projectStartTime).format("YYYY-MM-DD") : '',
+        endDate:this.formData.projectEndTime ? moment(this.formData.projectEndTime).format("YYYY-MM-DD") : '',
+      }
       teamQuery(data).then((res) => {
         this.projectTeams = res.data;
       });
     },
     // 项目组的选择时间
     teamChange() {
-      // console.log(this.formData.projectTeam,'fffff')
+      console.log(this.formData,'fffff')
       let aa = this.projectTeams.filter((v) => {
-        return v.projectGroupId == this.formData.projectTeam;
+        return v.projectGroupId == this.formData.projectGroupId;
       });
       this.date1 = aa[0].startDate;
       this.date2 = aa[0].endDate;
-      // console.log(aa)
-      // console.log(this.date1)
-      // console.log( this.formData.projectStartTime)
-      // console.log(moment(this.date1, 'YYYY-MM-DD').valueOf() < moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf())
       if (
         moment(this.date1, "YYYY-MM-DD").valueOf() <=
-          moment(this.formData.projectStartTime, "YYYY-MM-DD").valueOf() &&
+        moment(this.formData.projectStartTime, "YYYY-MM-DD").valueOf() &&
         moment(this.date2, "YYYY-MM-DD").valueOf() >=
-          moment(this.formData.projectEndTime, "YYYY-MM-DD").valueOf()
+        moment(this.formData.projectEndTime, "YYYY-MM-DD").valueOf()
       ) {
         this.redShow = false;
       } else {

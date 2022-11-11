@@ -4,7 +4,7 @@ import request from '@/utils/request'
 // 字典组列表
 export function dictList(params) {
   return request({
-    url: `/system/dict/type/getDictList`,
+    url: `/system/post_dict/getDictList`,
     method: 'get',
     params
   })
@@ -13,7 +13,7 @@ export function dictList(params) {
 // 字典数据
 export function dictData(params) {
   return request({
-    url: `/system/dict/data/list`,
+    url: `/system/post_dict/list`,
     method: 'get',
     params
   })
@@ -32,7 +32,7 @@ export function addAndEdit(data, method = 'put') {
 // 查询
 export function queryPost(data) {
   return request({
-    url: `/system/post_dict/list`,
+    url: `/system/post_dict/postDictList`,
     method: 'post',
     data
   })
@@ -41,7 +41,8 @@ export function queryPost(data) {
 // 添加与编辑
 export function updatePost(data, method = 'put') {
   return request({
-      url: '/system/post_dict',
+      // url: '/system/post_dict',
+      url: method = 'put' ? '/system/post_dict/editPostDict' : '/system/post_dict/addPostDict',
       method,
       data
   })

@@ -423,7 +423,7 @@ import {
   updateProjectUserAddEdit,
   searchProjectList,
   proDetailBFEdit,
-getPostNameLevelCostNum,
+  getLevelCostNum,getPostName,
   teamQuery,getPostOptions
 } from "@/api/proManager/proManager";
 import {
@@ -654,6 +654,7 @@ export default {
       DelUserListTemp: [], //存储删除用户的
     };
   },
+ 
   mounted() {  
     this.team();
     this.getChanceList()//拿到机会列表
@@ -709,7 +710,6 @@ export default {
         
       });
     },
- 
     // 选择技能之后 的变色逻辑
     changeTextColor(listData, refName) {
             this.$nextTick( () => {
@@ -964,21 +964,18 @@ export default {
       })
       this.date1=aa[0].startDate
       this.date2=aa[0].endDate
-      if(moment(this.date1, 'YYYY-MM-DD').valueOf() <= moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf() &&  moment(this.date2, 'YYYY-MM-DD').valueOf()>=moment( this.formData.projectEndTime, 'YYYY-MM-DD').valueOf()){
+      if(
+      moment(this.date1, 'YYYY-MM-DD').valueOf() <= 
+      moment( this.formData.projectStartTime, 'YYYY-MM-DD').valueOf() &&  
+      moment(this.date2, 'YYYY-MM-DD').valueOf()>=
+      moment( this.formData.projectEndTime, 'YYYY-MM-DD').valueOf()
+      ) {
         this.redShow=false
       }else{
         this.redShow=true
       }
-     
-      
-    },
-    changeInput(e) {
-          if (e.target.value.indexOf('.') >= 0) {
-              e.target.value = e.target.value.substring(0, e.target.value.indexOf('.') + 2);
-              console.log( e.target.value,'ssssssss')
-          }
-      },
-          // 动态修改 时间选择器的区间值
+    },     
+    // 动态修改 时间选择器的区间值
     changeChildDateArea(userInfo, index) {
       // 项目成员安排的 可选时间区间
       this.childDateArea = {
@@ -1056,43 +1053,22 @@ export default {
     },      
     /*查询字典的接口*/
     getDictList(dictCode) {
-       queryDict(dictCode).then((res) => {
+      queryDict(dictCode).then((res) => {
         if (dictCode == "post_type") { // 职位类型
           this.postTypeOptions = res.data;
         }
         if (dictCode == "region") { // 人员区域
           this.regionOptions = res.data;
         }
-        // if (dictCode == "post_level") { // 职位等级
-        //   this.postLevelIdOptions = res.data;
-        // }
         if (dictCode == "skill_type") { // 人员技能
           this.techniqueOptions = res.data;
         }
-        // if(dictCode =="post_name"){ // 职位名称
-        //   this.postNameIdOptions = res.data
-        // }
         if (dictCode == "project_phase") {
           this.projectStageOptions = res.data;
         }
         if (dictCode == "project_type") {
           this.projectTypeOptions = res.data;
         }
-        // if (dictCode == "post_type") {
-        //   res.data.map((item) => {
-        //     // regionName
-        //     item.postIdOptions = `${item.areaName}-${item.postName}-${item.postLevel}`;
-        //     // item.disabled = false;
-        //   });
-        //   this.postIdOptions = res.data;
-        // }
-
-        // if (dictCode == "serivce_obj_type") {
-        //   this.projectServiceOptions = res.data;
-        // }
-        // if(dictCode=="project_priority"){
-        //   this.priorityOptions= res.data
-        // }
       });
     },
     /* 查询是项目主管的用户列表 */

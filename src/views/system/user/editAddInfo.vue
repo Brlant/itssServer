@@ -255,6 +255,7 @@ import {
   getUser,
   addUser,
   positionName,
+  levelList,
   updateUser,
   userDetail,
 } from "@/api/system/user";
@@ -330,6 +331,8 @@ export default {
       //   this.level();
       // }
       this.detailInfo();
+      this.position();
+      this.level()
     }
     
     this.positinType("region");
@@ -378,7 +381,7 @@ export default {
           postTypeId: this.formData.postTypeId,
           postNameId: this.formData.postNameId,
         };
-        positionName(data).then((res) => {
+        levelList(data).then((res) => {
           this.levelList = res.data;
         });
       }

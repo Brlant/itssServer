@@ -203,10 +203,10 @@ export default {
         // this.drillDowm=this.isJurisdiction('common') ? false : true      
         // this.selfJurisdiction=this.isJurisdiction('common')
         // this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')
-        if(this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')){
+        if(this.isJurisdiction('workloadStatistics:stat:dept') || this.isJurisdiction('workloadStatistics:stat:all')){
             this.mangerJurisdiction=true
             this.drillDowm=true
-        }else{
+        }else if(this.isJurisdiction('workloadStatistics:stat:self')){
             this.drillDowm=false
             this.selfJurisdiction=true
         }

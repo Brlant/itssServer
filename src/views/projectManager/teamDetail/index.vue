@@ -395,7 +395,8 @@ export default {
       // countScope://统计范围 1.全部，2.仅我负责，3.仅部门成员
       // this.$router.push({ path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
       // startTime:row.projectStartTime,endTime:getToday()}})
-       const obj = { path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:'1',
+    
+       const obj = { path:'/projectManager/proManager-auth/proDetails', query:{ projectId:row.projectId,projectName:row.projectName,countScope:'1',
             startTime:row.projectStartTime,endTime:row.projectEndTime}};
             // getToday()
       this.$tab.closeOpenPage(obj);

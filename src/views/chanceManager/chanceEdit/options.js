@@ -19,10 +19,10 @@ export const formData = {
   remark: "", //          备注
   chanceConfigList: [
     {
-      postId: "", //职位id
+      postNameId: "", //职位id
       postTypeId:"",//职位类型id
-      areaId: "", //区域id
-      gradeId: "", //等级id
+      regionId: "", //区域id
+      postLevelId: "", //等级id
       skillIdList: [], //技能id
       startTime: "", //开始时间
       endTime: "", //结束时间
@@ -38,7 +38,7 @@ export const formData = {
       postIdActive: true,
       postTypeActive: true,
       nextActive: true,
-      chanceConfigScheduleList: [{}]
+      chanceConfigScheduleList: []
     }
   ]
 }
@@ -154,3 +154,26 @@ export const chanceServiceOptions = [{
   "label": "对外",
   "value": 2
 }]
+
+export const chanceConfigList = {
+  postTypeId:"",//职位类型id
+  postNameId: "", //职位id 老字段  postId
+  regionId: "", //区域id  老字段  areaId
+  postLevelId: "", //等级id 老字段  gradeId
+  skillIdList: [], //技能id
+  startTime: "", //开始时间
+  endTime: "", //结束时间
+  workTime: "", //总工时
+  workDay: "", //总人日（工作日*工时/8）
+  planLoad: "", //计划负荷
+  expectedCost: "", //预计成本
+  chanceConfigScheduleList: [], //
+  week: "", //周数
+  startTime: "", //开始时间
+  startEndTime:[],
+  postLevelIdActive:true,
+  postNameIdActive:true,
+  postTypeActive:true,
+  nextActive:true,
+  chanceConfigScheduleList:[]
+}
