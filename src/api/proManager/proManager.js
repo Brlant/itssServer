@@ -146,3 +146,25 @@ export function queryUserByPostId(data) {
     data: data
   })
 }
+
+
+// 根据 区域和 职位类型 查询  等级  以及成本的
+// regionId:区域id
+// postTypeId:职位类型id
+// postNameId:职位名称id
+export function getLevelCostNum(data) {
+  return request({
+    url: '/system/post_dict/postDictList',
+    method: 'post',
+    data: data
+  })
+}
+
+// 通过区域id和职位类型查询职位名称
+export function getPostName(data) {
+  return request({
+    url: '/system/post_dict/listByRegionAndPostType',
+    method: 'post',
+    data: data
+  })
+}

@@ -20,7 +20,8 @@ import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
 import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, handleTree,handleTree2 } from "@/utils/ruoyi";
 
-import { deepClone,clearNullParam,isJurisdiction ,isProjectByUser,date2Number,addClass,addClassName} from "@/utils/index";
+import { deepClone,clearNullParam,isJurisdiction ,isProjectByUser,date2Number,addClass,addClassName,autoFixed} from "@/utils/index";
+
 // 分页组件
 import Pagination from "@/components/Pagination";
 // 自定义表格工具组件
@@ -55,6 +56,7 @@ Vue.use( sinopharm ) ;
 
 // 全局方法挂载
 
+Vue.prototype.autoFixed = autoFixed
 Vue.prototype.addClassName = addClassName
 Vue.prototype.addClass = addClass
 Vue.prototype.date2Number = date2Number

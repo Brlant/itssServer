@@ -471,3 +471,38 @@ export function addClassName(ele,str){
   }
   
 }
+/**
+ *  智能处理小数位 使用 就是 this.autoFixed(参数,3)
+ * @param {*} num 要处理的小数
+ * @param {*} digit 要保留的位数 默认2
+ * @returns 指定有效位数小数
+ */
+ export function  autoFixed(num, digit = 2){
+  if (Number(num) === Math.floor(num)) return Math.floor(num);
+  let res = [], addNum = 0;
+  num += '';
+  let [zs, xs] = num.split('.');
+  let [, symbol, zsNum] = /^(\-?)(\d+\.\d+|\d+)$/.exec(zs);
+  for (let i = 0; i < xs.length; i++) {
+      const ele = xs[i];
+      if (ele != 0) {
+          if (xs[i + digit] && xs[i + digit] > 4) {
+              addNum = 1;
+              for (let j = i + (digit - 1); j >= 0; j--) {
+                  if (Number(xs[j]) + addNum == 10) res[j] = '0';
+                  else {
+                      res[j] = Number(xs[j]) + addNum;
+                      addNum = 0;
+                  }
+              }
+          }
+          else {
+              for (let k = i; k <= i + (digit - 1); k++) {
+                  res[k] = xs[k];
+              }
+          }
+          break;
+      } else res[i] = xs[i];
+  }
+  return Number(symbol + (Number(zsNum) + addNum) + '.' + res.join(''));
+}
