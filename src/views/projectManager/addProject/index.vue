@@ -853,17 +853,13 @@ export default {
           if (costNumArry) {
             console.log(this.formData.projectUserList[index]);
             if( this.formData.projectService == 2){
-              console.log(112);
               this.formData.projectUserList[index].costNum = costNumArry.costOut
             }else{
-              console.log(113);
                 this.formData.projectUserList[index].costNum =costNumArry.costIn;
             }
 
           } else {
             // 没有拿到成本 查找出来的数据返回的是undefined
-            console.log(222);
-
             console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.formData.projectUserList[index].costNum}`);

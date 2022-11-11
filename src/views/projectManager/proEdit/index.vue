@@ -816,6 +816,7 @@ export default {
             ".el-select__tags .el-tag"
           ); // 获取节点
 
+            console.log(arr);
           eles.forEach((v, i) => {
             if (arr[i].dictCode === +listData[i]) {
               // 'skill' skillcc
@@ -891,20 +892,18 @@ export default {
           });
           // 2对外      // 1 对内
           if (costNumArry) {
-            this.formData.projectUserList[index].costNum =
-              this.formData.projectService == 2
-                ? costNumArry.costOut
-                : costNumArry.costIn;
+            console.log(this.formData.projectUserList[index]);
+            if( this.formData.projectService == 2){
+              this.formData.projectUserList[index].costNum = costNumArry.costOut
+            }else{
+                this.formData.projectUserList[index].costNum =costNumArry.costIn;
+            }
+
           } else {
             // 没有拿到成本 查找出来的数据返回的是undefined
             console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
           }
-          console.log(
-            "你好，我是第" +
-              index++ +
-              "条资源配置，我的成本是" +
-              this.formData.projectUserList[index].costNum
-          );
+          console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.formData.projectUserList[index].costNum}`);
           this.constAll(this.formData.projectUserList[index].startEndTime, index);
 
           break;
@@ -1195,13 +1194,6 @@ export default {
           if (!valid) return;
           // TODO 提交表单
           if (valid) {
-            this.formData.projectUserList.map((item, i) => {
-              // 存储的字段被架构师修改掉 导致 提交的时候 需要修改一下
-              item.projectUserScheduleList.map((jtem) => {
-                jtem.weekDay = jtem.day;
-                // jtem.week = jtem?.weekOfYear;
-              });
-            });
             // 把删除的用户也添加进去
             let parame = {
               ...this.formData,
