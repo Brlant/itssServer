@@ -93,6 +93,9 @@ export default {
         postNameId: [
           { required: true, trigger: 'blur', message: '请选择职位名称' }
         ],
+        postLevelId: [
+          { required: true, trigger: 'blur', message: '请选择等级' }
+        ],
         costIn: [
           { validator: check, trigger: 'blur' }
         ],

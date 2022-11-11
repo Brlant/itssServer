@@ -42,7 +42,7 @@ export function queryPost(data) {
 export function updatePost(data, method = 'put') {
   return request({
       // url: '/system/post_dict',
-      url: method = 'put' ? '/system/post_dict/editPostDict' : '/system/post_dict/addPostDict',
+      url: method === 'put' ? '/system/post_dict/editPostDict' : '/system/post_dict/addPostDict',
       method,
       data
   })
