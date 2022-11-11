@@ -471,7 +471,7 @@
             </el-col>
           </el-row>
           <!----------------------内部-end------------------------------>
-          <div class="hr"></div>
+            <div class="jiange"></div>
         </div>
       </div>
     </el-form>
@@ -774,7 +774,9 @@ export default {
           this.changeTextColor(item.skillIdList, "mySkillIdList");
         });
          // 循环 回显 职位名称和职位等级
-        let index = res.data.projectUserList.map((item, index) => {
+         res.data.projectUserList.map((item, index) => {
+          // let xiabiao = this.formData.projectUserList.length - 1;
+          this.constAll(item.startEndTime, index);
           let parame = {
             regionId: res.data.projectUserList[index].regionId,
             postTypeId: res.data.projectUserList[index].postTypeId,
