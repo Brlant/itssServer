@@ -74,6 +74,7 @@
         >
         <template slot-scope="scope">
           <span @click="detailProject(scope.$index, scope.row)">{{scope.row.projectGroupName}}</span>
+
         </template>
         </el-table-column>
         <el-table-column
@@ -316,17 +317,20 @@ export default {
     },
     detailProject(index, row) {
       console.log(index, row);
-      // startTime:row.projectStartTime,endTime:getToday()}})
-      const obj = {
-        path: "/projectManager/teamDetail",
-        query: {
-          project: row,
-          startDate: this.startDate,
-          endDate: this.endDate,
+      if(this.isJurisdiction('projectManager:teamDtail:query')){
+         const obj = {
+          path: "/projectManager/teamDetail",
+          query: {
+            project: row,
+            startDate: this.startDate,
+            endDate: this.endDate,
         },
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
+      }
+      // startTime:row.projectStartTime,endTime:getToday()}})
+     
       //  this.$router.push('/projectManager/team/teamDetail')
     },
     add() {

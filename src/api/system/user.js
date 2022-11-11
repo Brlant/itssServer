@@ -172,11 +172,11 @@ export function skillLocking(data) {
   })
 }
 //职位名称
-export function positionName(data) {
+export function positionName(query) {
   return request({
     url: '/system/post_dict/list',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: query
   })
 }
 //查询用户条件
