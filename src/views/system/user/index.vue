@@ -481,7 +481,7 @@ export default {
     },
   },
   created() {
-    this.getList();
+    // this.getList();
     this.getTreeselect();
     this.reqStatusFn();
     this.reqAllListFn();
@@ -722,10 +722,10 @@ export default {
       };
       this.resetForm("form");
     },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.getList();
-    },
+    // /** 搜索按钮操作 */
+    // handleQuery() {
+    //   this.getList();
+    // },
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
