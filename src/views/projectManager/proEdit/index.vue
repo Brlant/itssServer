@@ -19,7 +19,7 @@
       :model="formData"
       :rules="rules"
       size="medium"
-      label-width="100px"
+      label-width="130px"
     >
       <div class="whiteBox">
         <el-row>
@@ -744,6 +744,18 @@ export default {
     this.init();
     // 页面默认点击一下  添加成员
     // this.addUserListHandel()
+     this.childDateArea = {
+      // 项目成员安排的 可选时间区间
+      disabledDate: (time) => {
+        if (this.formData.projectEndTime != "" && this.formData.projectStartTime != "") {
+          // 设置可以选择的区间 时间为项目的 起始日期和结束日期
+          return (
+            time.getTime() > new Date(this.formData.projectEndTime).getTime() ||
+            time.getTime() < new Date(this.formData.projectStartTime).getTime() - 8.64e7
+          );
+        }
+      },
+    };
   },
   methods: {
     init() {
@@ -775,7 +787,6 @@ export default {
         });
          // 循环 回显 职位名称和职位等级
          res.data.projectUserList.map((item, index) => {
-          // let xiabiao = this.formData.projectUserList.length - 1;
           this.constAll(item.startEndTime, index);
           let parame = {
             regionId: res.data.projectUserList[index].regionId,

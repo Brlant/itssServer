@@ -15,7 +15,7 @@
       :model="formData"
       :rules="rules"
       size="medium"
-      label-width="100px"
+      label-width="130px"
     >
       <div class="whiteBox">
         <el-row>
@@ -470,7 +470,7 @@
             </el-col>
           </el-row>
           <!----------------------内部-end------------------------------>
-          <div class="hr"></div>
+          <div class="jiange"></div>
         </div>
       </div>
     </el-form>
@@ -755,6 +755,18 @@ export default {
         this.formData = res.data;
       });
     }
+     this.childDateArea = {
+      // 项目成员安排的 可选时间区间
+      disabledDate: (time) => {
+        if (this.formData.projectEndTime != "" && this.formData.projectStartTime != "") {
+          // 设置可以选择的区间 时间为项目的 起始日期和结束日期
+          return (
+            time.getTime() > new Date(this.formData.projectEndTime).getTime() ||
+            time.getTime() < new Date(this.formData.projectStartTime).getTime() - 8.64e7
+          );
+        }
+      },
+    };
     // this.addUserListHandel() // 自测用
   },
   methods: {

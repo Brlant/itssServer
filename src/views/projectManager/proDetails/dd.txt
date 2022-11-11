@@ -1,13 +1,13 @@
 
 
-// 暂存方法  addUserListHandel
+// 暂存方法  addUserListHandel  点击暂存 需要立即禁用【新增操作】 ！！！ 
 // 暂存旁边的取消  DelUserList
 
-// 添加资源配置  initaddEditUserList recommendUserActive
+// 添加资源配置  initaddEditUserList recommendUserActive  新增的时间传递的有问题 ok
 
 // 点击单行 显示信息 showRowDetail  
 
-// 修改一个 项目成员的 工作计划  updateProjectOne
+// 修改一个 项目成员的 工作计划  updateProjectOne 没拿到成本 ！！！未发现
 
 //根据起始和结束 生成下面表格    getTimeArea
 // 选择职位 getPostId
@@ -15,8 +15,9 @@
  // 顶部的点击提交审核   goAudit()
 
 // 点击添加人员到 资源配置中去  addUserToProject
+          // this.formData.projectUserList[index] = oneUser; //因为后台对于生成的三级数据没有id
 
-
+时间控制有问题
 现有问题
 1.点击暂存旁边的 取消 修改为   立即切换为 点击单行的模式，
 下面人员推荐不变
@@ -65,3 +66,105 @@ holdUserList
             });
           });
         }
+
+
+            <el-row>
+            <el-col :span="4">
+              <el-form-item label-width="130px" label="区域-职位-级别：">
+                <div class="colText">
+                  <span>
+                    {{ addUserList.postName }}
+                  </span>
+                </div>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" :offset="2">
+              <el-form-item label-width="130px" label="执行人员：">
+                <div class="checkUser">
+                  {{ addUserList.userName ? addUserList.userName : "无" }}
+                </div>
+              </el-form-item>
+            </el-col>
+            <!-- <el-col :span="3" :offset="12">
+              <el-button size="mini" type="primary">提交审核</el-button>
+              <el-button size="mini" type="default">取消</el-button>
+            </el-col> -->
+          </el-row>
+
+
+--------------------------------------------------
+            <el-row>
+            <el-col :span="6">
+              <el-form-item
+                :prop="`projectUserList.${addUserListindex}.postId`"
+                :rules="rules.projectUserListAllPostId"
+                label-width="130px"
+                label="区域-职位-级别："
+              >
+                <el-select
+                  v-model="addUserList.postId"
+                  placeholder="请选择职位"
+                  filterable
+                  :style="{ width: '100%' }"
+                  @change="
+                    (postId) => {
+                      getPostId(postId, addUserListindex);
+                    }
+                  "
+                >
+                  <el-option
+                    v-for="user in postIdOptions"
+                    :key="user.postId"
+                    :label="user.postIdOptions"
+                    :value="user.postId"
+                    :disabled="user.disabled"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" :offset="2">
+              <el-form-item label-width="130px" label="执行人员：">
+                <div class="checkUser">
+                  {{ addUserList.userName ? addUserList.userName : "无" }}
+                </div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+
+
+          ------------
+          <el-row>
+            <el-col :span="4">
+              <el-form-item label-width="130px" label="区域-职位-级别：">
+                <div class="colText">
+                  <span>
+                    {{ addUserList.postName }}
+                  </span>
+                </div>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6" :offset="2">
+              <el-form-item label-width="130px" label="执行人员：">
+                <div class="checkUser">
+                  {{ addUserList.userName ? addUserList.userName : "无" }}
+                </div>
+              </el-form-item>
+            </el-col>
+            <!-- <el-col :span="3" :offset="12">
+              <el-button size="mini" type="primary">提交审核</el-button>
+              <el-button size="mini" type="default">取消</el-button>
+            </el-col> -->
+          </el-row>
+
+
+
+遗留的问题
+人选推荐 没法调试
+
+projectManage/project-user/queryUserById
+缺少技能的返回
+缺少职位名称 区域名称 职位等级 职位类型的返回
+postLevelName 。。。
+
+ 

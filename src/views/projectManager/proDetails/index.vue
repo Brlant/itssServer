@@ -332,33 +332,85 @@
         :model="addEditFormData"
         :rules="rules"
         size="medium"
-        label-width="30px"
+        label-width="130px"
       >
         <div
           class="UserLine"
           v-for="(addUserList, addUserListindex) in addEditFormData.projectUserList"
         >
-          <el-row>
-            <el-col :span="4">
-              <el-form-item label-width="130px" label="区域-职位-级别：">
-                <div class="colText">
+                <el-row>
+            <el-col :span="5">
+              <el-form-item
+                label="区域："
+              >
+               <div class="colText2">
+                  <span>
+                    {{ addUserList.regionName }}
+                  </span>
+                </div>
+               
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item
+                label="职位类型："
+              >
+              <div class="colText2">
+                  <span>
+                    {{ addUserList.postTypeName }}
+                  </span>
+                </div>
+               
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item
+                label="职位名称："
+              >
+               <div class="colText2">
                   <span>
                     {{ addUserList.postName }}
                   </span>
                 </div>
+              
               </el-form-item>
             </el-col>
-            <el-col :span="6" :offset="2">
-              <el-form-item label-width="130px" label="执行人员：">
-                <div class="checkUser">
-                  {{ addUserList.userName ? addUserList.userName : "无" }}
+            <el-col :span="5">
+              <el-form-item
+                label="等级："
+              >
+               <div class="colText2">
+                  <span>
+                    {{ addUserList.postLevelName }}
+                  </span>
+                </div>
+              
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <!-- <el-form-item label="">
+                <el-button
+                  type="primary"
+                  size="mini"
+                  @click="DelConfigList(addUserListindex)"
+                >
+                  删除
+                </el-button>
+              </el-form-item> -->
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="18">
+              <el-form-item
+                label="技能需求："
+              >
+               <div class="colText2">
+                  <span v-for="skill in skillList" :class="['skillBox','skill'+skill.cssClass]">
+                    {{ skill.skillName }}
+                  </span>
                 </div>
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="3" :offset="12">
-              <el-button size="mini" type="primary">提交审核</el-button>
-              <el-button size="mini" type="default">取消</el-button>
-            </el-col> -->
           </el-row>
           <el-row>
             <el-col :span="5">
@@ -427,47 +479,143 @@
         :model="addEditFormData"
         :rules="rules"
         size="medium"
-        label-width="30px"
+        label-width="130px"
       >
         <div
           v-for="(addUserList, addUserListindex) in addEditFormData.projectUserList"
           :key="addUserListindex"
           style="padding: 10px 20px"
         >
-          <el-row>
-            <el-col :span="6">
+               <el-row>
+            <el-col :span="5">
               <el-form-item
-                :prop="`projectUserList.${addUserListindex}.postId`"
-                :rules="rules.projectUserListAllPostId"
-                label-width="130px"
-                label="区域-职位-级别："
+                label="区域："
+                :prop="`projectUserList.${addUserListindex}.regionId`"
+                :rules="rules.addUserListregionId"
               >
                 <el-select
-                  v-model="addUserList.postId"
-                  placeholder="请选择职位"
-                  filterable
+                  v-model="addUserList.regionId"
+                  placeholder="请选择区域"
                   :style="{ width: '100%' }"
-                  @change="
-                    (postId) => {
-                      getPostId(postId, addUserListindex);
-                    }
-                  "
+                  @change="(dates) => editNext('region', dates, addUserListindex)"
                 >
                   <el-option
-                    v-for="user in postIdOptions"
-                    :key="user.postId"
-                    :label="user.postIdOptions"
-                    :value="user.postId"
-                    :disabled="user.disabled"
+                    v-for="(dict, index) in regionOptions"
+                    :key="dict.dictCode"
+                    :label="dict.dictLabel"
+                    :value="dict.dictCode"
+                    :disabled="dict.disabled"
                   ></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6" :offset="2">
-              <el-form-item label-width="130px" label="执行人员：">
-                <div class="checkUser">
-                  {{ addUserList.userName ? addUserList.userName : "无" }}
-                </div>
+            <el-col :span="5">
+              <el-form-item
+                label="职位类型："
+                :prop="`projectUserList.${addUserListindex}.postTypeId`"
+                :rules="rules.addUserListPostTypeId"
+              >
+                <el-select
+                  v-model="addUserList.postTypeId"
+                  placeholder="请选择职位类型"
+                  :disabled="addUserList.postTypeActive"
+                  :style="{ width: '100%' }"
+                  @change="(dates) => editNext('postType', dates, addUserListindex)"
+                >
+                  <el-option
+                    v-for="(dict, index) in postTypeOptions"
+                    :key="dict.dictCode"
+                    :label="dict.dictLabel"
+                    :value="dict.dictCode"
+                    :disabled="dict.disabled"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item
+                label="职位名称："
+                :prop="`projectUserList.${addUserListindex}.postNameId`"
+                :rules="rules.addUserListpostNameId"
+              >
+                <el-select
+                  v-model="addUserList.postNameId"
+                  placeholder="请选择职位名称"
+                  :disabled="addUserList.postNameIdActive"
+                  :style="{ width: '100%' }"
+                  @change="(dates) => editNext('postNameId', dates, addUserListindex)"
+                >
+                  <el-option
+                    v-for="(dict, index) in postNameIdOptions"
+                    :key="dict.postNameId"
+                    :label="dict.postName"
+                    :value="dict.postNameId"
+                    :disabled="dict.disabled"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item
+                label="等级："
+                :prop="`projectUserList.${addUserListindex}.postLevelId`"
+                :rules="rules.addUserListpostLevelId"
+              >
+                <el-select
+                  v-model="addUserList.postLevelId"
+                  placeholder="请选择等级"
+                  :disabled="addUserList.postLevelIdActive"
+                  :style="{ width: '100%' }"
+                  @change="(dates) => editNext('postLevelId', dates, addUserListindex)"
+                >
+                  <el-option
+                    v-for="(dict, index) in postLevelIdOptions"
+                    :key="dict.postLevelId"
+                    :label="dict.postLevelName"
+                    :value="dict.postLevelId"
+                    :disabled="dict.disabled"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <!-- <el-form-item label="">
+                <el-button
+                  type="primary"
+                  size="mini"
+                  @click="DelConfigList(addUserListindex)"
+                >
+                  删除
+                </el-button>
+              </el-form-item> -->
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="18">
+              <el-form-item
+                label="技能需求："
+                :prop="`projectUserList.${addUserListindex}.skillIdList`"
+                :rules="rules.addUserListSkillIdList"
+              >
+                <el-select
+                  v-model="addUserList.skillIdList"
+                  multiple
+                  placeholder="请选择技能需求"
+                  @change="changeTextColor($event, 'mySkillIdList')"
+                  ref="mySkillIdList"
+                  :disabled="addUserList.nextActive"
+                  :style="{ width: '100%' }"
+                >
+                  <el-option
+                    v-for="(dict, index) in techniqueOptions"
+                    :key="dict.dictCode"
+                    :label="dict.dictLabel"
+                    :value="dict.dictCode"
+                    :disabled="dict.disabled"
+                  >
+                    <span>{{ dict.dictLabel }}</span>
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -489,7 +637,7 @@
                   end-placeholder="结束日期"
                   range-separator="至"
                   :picker-options="childDateArea"
-                  @change="(dates) => getTimeArea(dates, addUserListindex)"
+                  @change="(dates) => constAll(dates, addUserListindex)"
                 ></el-date-picker>
               </el-form-item>
             </el-col>
@@ -511,8 +659,8 @@
             >
             <el-col :span="3" :offset="3">
             
-                  <div class="colText2" v-show="resouceBtnActive">
-                    <el-button size="mini"  @click="addUserListHandel(addUserListindex)" type="primary" >暂存</el-button>
+                  <div class="colText3" v-show="resouceBtnActive">
+                    <el-button size="mini"  @click="addUserListHandel(addUserListindex)" :disabled="addUserActive" type="primary" >暂存</el-button>
                     <el-button size="mini" @click="DelUserList(addUserList, addUserListindex)" type="error" >取消</el-button>
                   </div>
             </el-col>
@@ -722,6 +870,8 @@ import {
   updateProjectUserAddEdit,
   updateQueryUserById,
   queryUserByPostId,
+  getLevelCostNum,
+  getPostName,
   getPostOptions,
 } from "@/api/proManager/proManager";
 import Vue from "vue";
@@ -730,10 +880,17 @@ export default {
   components: {},
   props: {},
   data: () => ({
+    addUserActive:false, // 新增情况下，点击暂存禁用
     id: "",
     monthArrTemp: [],
+     /*------------------------*/
+      techniqueOptions: [], // 技能需求
+      regionOptions: [], // 区域
+      postTypeOptions: [], // 职位类型
+      postNameIdOptions: [], // 职位名称
+      postLevelIdOptions: [], // 职位等级
+      /*------------------------*/
     userOptions: [],
-    postIdOptions: [],
     addEditUserActive: false, // 添加的资源配置 编辑的资源配置
     detailUserActive: false, //  默认是详情页 不可以编辑
     delBtn: true,
@@ -745,45 +902,105 @@ export default {
           trigger: "change",
         },
       ],
-      projectUserListAllPostId: [
-        {
-          required: true,
-          message: "请选择职位",
-          trigger: "change",
-        },
-      ],
+      // 配置信息的
+        addUserListPostTypeId: [
+          {
+            required: true,
+            message: "请选择职位类型!",
+            trigger: "change",
+          },
+        ],
+        addUserListregionId: [
+          {
+            required: true,
+            message: "请选择区域!",
+            trigger: "change",
+          },
+        ],
+        addUserListpostNameId: [
+          {
+            required: true,
+            message: "请选择职位!",
+            trigger: "change",
+          },
+        ],
+        addUserListpostLevelId: [
+          {
+            required: true,
+            message: "请选择等级!",
+            trigger: "change",
+          },
+        ],
+        addUserListSkillIdList: [
+          {
+            required: true,
+            message: "请选择技能需求!",
+            trigger: "change",
+          },
+        ],
     },
     // 单独的 用户列表
     projectUserList: {
-      endTime: "" /**结束时间*/,
-      expectedCost: "" /**预计成本*/,
-      planLoad: "" /**计划负荷*/,
-      startTime: "" /**开始时间*/,
-      userId: "" /**用户id*/,
-      workDay: "" /**总天数*/,
-      workTime: "" /**总工时*/,
-      projectUserScheduleList: [] /**项目成员排期*/,
-      day: "", // 同 workDay
+       postNameId: "", //职位id
+        regionId: "", //区域id
+        postTypeId: "", //职位类型id
+        postLevelId: "", //职位等级id
+        skillIdList: [], //技能id
+        startTime: "", //开始时间
+        endTime: "", //结束时间
+        workTime: "", //总工时
+        workDay: "", //总人日
+        planLoad: "", //计划负荷
+        expectedCost: "", //预计成本
+        projectUserScheduleList: "", //项目成员排期
+        postLevelIdActive: true,
+        postNameIdActive: true,
+        postTypeActive: true,
+        nextActive: true,
+        postNameIdOptions:[],
+        postLevelIdOptions:[],
     },
+    skillList:[{
+    "cssClass": "color1",
+    "skillId": 48,
+    "skillName": "web前端1"
+},
+{
+    "cssClass": "color2",
+    "skillId": 48,
+    "skillName": "web前端2"
+},
+{
+    "cssClass": "color3",
+    "skillId": 48,
+    "skillName": "web前端3"
+},
+{
+    "cssClass": "color4",
+    "skillId": 48,
+    "skillName": "web前端4"
+}],
     // 新增编辑的初始化 数据结构集合
     addEditFormData: {},
     resouceBtnActive: true, // 是否展示 暂存和取消
 
     // 详情页面显示的
     formData: {
-      tbProjectId:'',
       priority: 3 /*优先级（1.最高，2.高，3.普通，4.较低）*/,
       projectChance: "" /* 关联机会*/,
       projectCode: "" /* 项目编号*/,
       projectEndTime: "" /* 项目结束时间*/,
+      projectGitUrl: "", // 项目git 地址
+      projectGroupId: "", // 项目组
       projectName: "" /* 项目名称*/,
       projectService: "" /* 服务对象*/,
       projectStage: "" /* 项目阶段*/,
       projectStartTime: "" /* 项目开始时间*/,
+      projectTimeArea: ["", ""],
       projectType: "" /* 项目类型*/,
       projectUserId: "" /* 项目负责人*/,
       projectUserList: [] /* 项目成员列表*/,
-      projectGitUrl: "", // 项目git 地址
+      tbProjectId:'',
     },
     recommendUserActive: false, // 是否展示人选推荐
     recommendUserTableData: [
@@ -834,7 +1051,7 @@ export default {
     isShowActive: 1, //isShow;  //是否显示按钮 1 不显示，0显示 标识是否有审核记录在
     isUpdateActive: false, //是否点击了 添加  和暂存 的内容
     nowAction: "", // 存储他是新增还是编辑
-    holdUserList:[]// 解决 添加资源的时候，影响到项目资源配置
+    holdUserList:[],// 解决 添加资源的时候，影响到项目资源配置
   }),
   computed: {},
   watch: {},
@@ -896,14 +1113,124 @@ export default {
   },
   mounted() {
     this.proAuditInit();
-    // this.getDictList("project_phase"); // 项目阶段 project_phase
-    // this.getDictList("project_type"); // 项目类型 project_type
-    // this.getDictList("serivce_obj_type"); // 服务对象 serivce_obj_type
-    this.getPostOptions(); // 职位类型的
-    // Vue.prototype.goAuditHandel = this.goAudit()
+    this.getDictList("project_phase"); // 项目阶段 project_phase
+    this.getDictList("project_type"); // 项目类型 project_type
+    // 二期的
+    this.getDictList("region"); //区域
+    this.getDictList("post_type"); //职位类型
+    this.getDictList("skill_type"); // 技能 technique
   },
 
   methods: {
+      /**
+     *  切换任一 下拉，清空以及重新计算的逻辑 非常复杂
+     *  初始化的新增也使用了此方法
+     *  区域 职位类型 职位名称 等级 的任一选项  切换选择
+     *  切换区域  清空  职位类型 职位名称 等级 的值以及 清空  成本  + 预计成本  职位类型的下拉内容不清空，因为无级联关系
+     *  切换职位类型  清空   职位名称 等级 的值以及下拉内容 清空成本+ 预计成本
+     *  切换职位名称  清空   等级 的值以及下拉内容 清空成本+ 预计成本
+     *  切换等级  切换成本 + 预计成本
+     */
+    editNext(who, data, index) {
+      let parame = {}; // 入参
+      switch (who) {
+        case "region": // 选择区域
+          this.addEditFormData.projectUserList[index].postTypeActive = false; // 初始化展示下一个
+          // this.formData.projectUserList[index].regionId=undefined // 区域
+          this.addEditFormData.projectUserList[index].postTypeId = ""; // 职位类型
+          this.addEditFormData.projectUserList[index].postNameId = ""; // 职位名称
+          this.addEditFormData.projectUserList[index].postLevelId = ""; // 等级
+          this.addEditFormData.projectUserList[index].expectedCost = "--"; //// 预计成本
+          this.postNameIdOptions = []; // 清空下拉
+          this.postLevelIdOptions = []; // 清空下拉
+          break;
+        case "postType": // 选择 职位类型
+          this.addEditFormData.projectUserList[index].postNameIdActive = false; // 初始化展示下一个
+          // this.addEditFormData.projectUserList[index].regionId="" // 区域
+          // this.addEditFormData.projectUserList[index].postTypeId="" // 职位类型
+          this.addEditFormData.projectUserList[index].postNameId = ""; // 职位名称
+          this.addEditFormData.projectUserList[index].postLevelId = ""; // 等级
+          this.addEditFormData.projectUserList[index].expectedCost = "--"; //// 预计成本
+          this.postNameIdOptions = [];
+          this.postLevelIdOptions = [];
+          parame = {
+            regionId: this.addEditFormData.projectUserList[index].regionId,
+            postTypeId: this.addEditFormData.projectUserList[index].postTypeId,
+          };
+          getPostName(parame).then((res) => {
+            this.postNameIdOptions = res.data;
+          });
+          break;
+        case "postNameId": // 选择职位名称
+          this.addEditFormData.projectUserList[index].postLevelIdActive = false; // 初始化展示下一个
+          // this.addEditFormData.projectUserList[index].regionId="" // 区域
+          // this.addEditFormData.projectUserList[index].postTypeId="" // 职位类型
+          // this.addEditFormData.projectUserList[index].postNameId="" // 职位名称
+          this.addEditFormData.projectUserList[index].postLevelId = ""; // 等级
+          this.addEditFormData.projectUserList[index].expectedCost = "--"; //// 预计成本
+          // this.postNameIdOptions= []
+          this.postLevelIdOptions = [];
+          parame = {
+            regionId: this.addEditFormData.projectUserList[index].regionId,
+            postTypeId: this.addEditFormData.projectUserList[index].postTypeId,
+            postNameId: this.addEditFormData.projectUserList[index].postNameId,
+          };
+          getLevelCostNum(parame).then((res) => {
+            this.postLevelIdOptions = res.data;
+          });
+          break;
+        case "postLevelId": // 选择职位等级
+          this.addEditFormData.projectUserList[index].nextActive = false; // 初始化展示下面的所有
+          // 选择 等级之后，拿到成本下拉 根据选择的等级id 拿到成本
+          let costNumArry = this.postLevelIdOptions.find((item) => {
+            return this.addEditFormData.projectUserList[index].postLevelId == item.postLevelId;
+          });
+          // 2对外      // 1 对内
+          if (costNumArry) {
+            if( this.addEditFormData.projectService == 2){
+              this.addEditFormData.projectUserList[index].costNum = costNumArry.costOut
+            }else{
+                this.addEditFormData.projectUserList[index].costNum =costNumArry.costIn;
+            }
+
+          } else {
+            // 没有拿到成本 查找出来的数据返回的是undefined
+            console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
+          }
+          console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.addEditFormData.projectUserList[index].costNum}`);
+          this.constAll(this.addEditFormData.projectUserList[index].startEndTime, index);
+
+          break;
+      }
+    },
+    // 选择技能之后 的变色逻辑
+    changeTextColor(listData, refName) {
+      this.$nextTick(() => {
+        setTimeout(() => {
+          let arr = []; // 对应数据对象数组
+
+          listData.map((ind) => {
+            this.techniqueOptions.map((v) => {
+              if (v.dictCode === +ind) {
+                arr.push(v);
+              }
+            });
+          });
+
+          let eles = this.$refs[refName][0].$el.querySelectorAll(
+            ".el-select__tags .el-tag"
+          ); // 获取节点
+
+          eles.forEach((v, i) => {
+            if (arr[i].dictCode === +listData[i]) {
+              // 'skill' skillcc
+              v.classList && v.classList.add("skillcc"); // 添加类名
+              v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
+            }
+          });
+        }, 300);
+      });
+    },
     // 顶部的点击提交审核
     goAudit() {
       // 此处提交的是 全量数据
@@ -915,11 +1242,17 @@ export default {
         this.nowIndex
       ].userName = this.projectTable.projectUserList[this.nowIndex].userName;
       // 提交审核之前 ，处理一下 刚刚添加的资源
-      console.log(this.holdUserList);
       this.formData.projectUserList.unshift(...this.holdUserList)
-      let parame = {
-        ...this.formData,
-      };
+      let parame = this.deepClone(this.formData)
+      let projectUserListTemp =[]
+      parame.projectUserList.map((item,i)=>{
+        // 删除没有修改过的 没有新增的 updateType为空的
+        if(item.updateType!=null){
+          projectUserListTemp.push(item)
+        }
+      })
+      parame.projectUserList=projectUserListTemp
+      console.log(parame.projectUserList.length);
       updateProjectUserAddEdit(parame).then((res) => {
         let { code, msg } = res;
         this.$message.success(msg);
@@ -1000,7 +1333,7 @@ export default {
       this.formData.projectUserList[this.nowIndex].userId = row.userId;
       this.formData.projectUserList[this.nowIndex].userName = row.nickName;
       this.$forceUpdate();
-      this.isUpdateActive = true; // 我添加了用户
+      this.isUpdateActive = true; // 我添加了用户 
       // 点击添加成功后 显示取消按钮
       this.recommendUserTableData.map((item) => {
         item.showOrCancel = 1; // 全部 显示添加
@@ -1070,8 +1403,7 @@ export default {
 
           this.addEditFormData.projectUserList.push(oneUser);
           this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
-          // console.log(oneUser);
-          this.changeChildDateArea(oneUser);
+          console.log(JSON.stringify(oneUser));
           this.getRecommendUserList(row.index, row);
           // }
           // // 删除成功 只会去查询 审核的方法
@@ -1080,18 +1412,30 @@ export default {
         }
       });
     },
-    /* 查询所有职位下拉*/
-    getPostOptions() {
-      getPostOptions().then((res) => {
-        res.data.map((item) => {
-          // regionName
-          item.postIdOptions = `${item.regionName}-${item.postName}-${item.postLevel}`;
-
-          // item.disabled = false;
-        });
-        this.postIdOptions = res.data; // 需要根据已经选择的人 来过滤
+    /*查询字典的接口*/
+    getDictList(dictCode) {
+      queryDict(dictCode).then((res) => {
+        if (dictCode == "post_type") {
+          // 职位类型
+          this.postTypeOptions = res.data;
+        }
+        if (dictCode == "region") {
+          // 人员区域
+          this.regionOptions = res.data;
+        }
+        if (dictCode == "skill_type") {
+          // 人员技能
+          this.techniqueOptions = res.data;
+        }
+        if (dictCode == "project_phase") {
+          this.projectStageOptions = res.data;
+        }
+        if (dictCode == "project_type") {
+          this.projectTypeOptions = res.data;
+        }
       });
     },
+     
     /*修改每周计划负荷*/
     /*
      * number 计划负荷的百分比 总天数 父级的下标 和自己的下标
@@ -1224,6 +1568,7 @@ export default {
       ];
       oneUser.updateType = 1;
       this.addEditFormData.projectUserList.push(oneUser);
+      // this.changeChildDateArea(oneUser,index);// 新增的时候 是否控制
       this.$forceUpdate();
     },
     // 动态修改 时间选择器的区间值
@@ -1287,7 +1632,8 @@ export default {
     },
     // 修改一个 项目成员的 工作计划
     updateProjectOne(index, row) {
-      if (this.id === row.id) return;
+      this.addUserActive =false;
+      if (this.id === row.id) return; // 此行先点击详情 再点击修改无作用
       this.id = row.id;
       this.delBtn = false;
 
@@ -1295,7 +1641,7 @@ export default {
       this.addEditUserActive = true;
       this.resouceBtnActive = true; // 隐藏按钮的逻辑
       this.nowIndex = index; // 存储刚刚点击是那一条
-      this.isUpdateActive = true; // 我修改了 并且暂存了
+     
       this.nowAction = "update"; // 记录我是修改操作
       // 我是修改
       this.addEditFormData = {};
@@ -1318,18 +1664,47 @@ export default {
           //  2:'对外' costOut
           res.data.costNum =
             this.formData.projectService == 1 ? res.data.costIn : res.data.costOut;
-          res.data.projectUserScheduleList.map((item) => {
-            item.day = item.weekDay;
-          });
+          // res.data.projectUserScheduleList.map((item) => {
+          //   item.day = item.weekDay;
+          // });
           let oneUser = this.deepClone(res.data);
           // 修改类型（1.新增,2.删除,3.修改原数据）
           oneUser.updateType = 3;
           oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
+          // 填充 职位名称 和 等级的下拉菜单
+          let parame = {
+            regionId: oneUser.regionId,
+            postTypeId: oneUser.postTypeId,
+            postNameId: oneUser.postNameId,
+          };
+          getLevelCostNum(parame).then((res) => {
+            this.postLevelIdOptions = res.data;
+          });
+          getPostName(parame).then((res) => {
+            this.postNameIdOptions = res.data;
+          });
+          // 拿到成本
+            let costNumArry = this.postLevelIdOptions.find((item) => {
+            return oneUser.postLevelId == item.postLevelId;
+          });
+          // 2对外      // 1 对内
+          if (costNumArry) {
+            // console.log(oneUser);
+            if( this.formData.projectService == 2){
+              oneUser.costNum = costNumArry.costOut
+            }else{
+                oneUser.costNum =costNumArry.costIn;
+            }
 
+          } else {
+            // 没有拿到成本 查找出来的数据返回的是undefined
+            console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
+          }
+          console.log(`你好，我是第（${index})条资源配置，我的成本是 +${oneUser.costNum}`);
           this.addEditFormData.projectUserList.push(oneUser);
-          this.formData.projectUserList[index] = oneUser; //因为后台对于生成的三级数据没有id
-          // console.log(oneUser);
-          this.changeChildDateArea(oneUser);
+          // this.formData.projectUserList[index] = oneUser; //因为后台对于生成的三级数据没有id
+          console.log(JSON.stringify(oneUser));
+          this.changeChildDateArea(oneUser,index);
           this.getRecommendUserList(index, row);
           // }
           // // 删除成功 只会去查询 审核的方法
@@ -1342,9 +1717,16 @@ export default {
     getRecommendUserList(index, row) {
       this.recommendUserActive = true;
       let params = {
-        postId: row.postId, //职位id
-        projectService: this.formData.projectService, //服务对象
-        workDay: row.workDay, // 总人日
+        id:row.id, //项目配置表主键第二级的主键
+        postNameId:row.postNameId,//职位id
+        regionId:row.regionId,//区域id
+        postTypeId:row.postTypeId,//职位类型id
+        postLevelId:row.postLevelId,//职位等级id
+        skillIdList:row.skillIdList,//技能id
+        startTime:row.startTime,//开始时间
+        endTime:row.endTime,//结束时间
+        projectService:this.formData.projectService,//服务对象
+        workDay:row.workDay,//总人日
       };
       queryUserByPostId(params).then((res) => {
         res.data.map((item) => {
@@ -1393,13 +1775,16 @@ export default {
         if (!valid) return;
         // TODO 提交表单
         if (valid) {
+           this.isUpdateActive = true; // 点击了暂存了 立即隐藏编辑 终止 和展示提交审核
           // 需要额外的判断他是 新增的暂存还是修改的暂存
           if (this.nowAction == "add") {
+            // 点击暂存 需要立即禁用按钮
+            this.addUserActive = true;
             // 此处修改为 暂存 , 数据丢进去即可
             let oneUser = this.deepClone(this.addEditFormData.projectUserList[0]);
-            oneUser.startTime = this.formData.projectStartTime;
-            oneUser.endTime = this.formData.projectEndTime;
-            oneUser.startEndTime = this.formData.projectTimeArea;
+            oneUser.startTime = this.addEditFormData.projectUserList[index].startTime;
+            oneUser.endTime = this.addEditFormData.projectUserList[index].endTime;
+            oneUser.startEndTime = this.addEditFormData.projectUserList[index].startEndTime;
             oneUser.userName =""
             // 修改类型（1.新增,2.删除,3.修改原数据）
             oneUser.updateType = 1;
@@ -1417,7 +1802,6 @@ export default {
           }
           if (this.nowAction == "update") {
             console.log("update");
-
             // 此处修改为 暂存 , 数据丢进去即可
             this.formData.projectUserList[
               this.nowIndex
@@ -1425,6 +1809,8 @@ export default {
             this.formData.projectUserList[
               this.nowIndex
             ].userName = this.addEditFormData.projectUserList[0].userName;
+              // 修改类型（1.新增,2.删除,3.修改原数据）
+            this.formData.projectUserList[this.nowIndex].updateType = 3;
             this.formData.projectUserList[this.nowIndex] = this.deepClone(
               this.addEditFormData.projectUserList[0]
             );
@@ -1451,9 +1837,6 @@ export default {
     },
 
     /*根据起始和结束 生成下面表格*/
-    getTimeArea(dates, index) {
-      this.constAll(dates, index);
-    },
     // 公共计算方法
     constAll(dates, index) {
       let params = {
@@ -1470,10 +1853,17 @@ export default {
             ((8 * res.data.day) / (res.data.day * 8)) * 100
           ); // 计划负荷
         }
-        this.addEditFormData.projectUserList[index].expectedCost = this.autoFixed(
-          // 预计成本
-          res.data.day * this.addEditFormData.projectUserList[index].costNum
-        );
+        if (
+          this.addEditFormData.projectUserList[index].costNum == null ||
+          this.addEditFormData.projectUserList[index].costNum == undefined
+        ) {
+          this.addEditFormData.projectUserList[index].expectedCost = "--";
+        } else {
+          this.addEditFormData.projectUserList[index].expectedCost = this.autoFixed(
+            // 预计成本
+            res.data.day * this.addEditFormData.projectUserList[index].costNum
+          );
+        }
         /*---------第一行的数据-----------------*/
 
         this.addEditFormData.projectUserList[index].workDayTemp = res.data.day; // 临时存一下后面有用
@@ -1488,8 +1878,7 @@ export default {
             ((item.weekDay * 8) / (item.weekDay * 8)) * 100 || 0
           );
         });
-        this.addEditFormData.projectUserList[index].projectUserScheduleList =
-          res.data.list; // 此人的 每周安排
+        this.addEditFormData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
       });
     },
 
@@ -1645,19 +2034,24 @@ export default {
         // 拼接列名
         this.monthArrTemp = [];
         // 动态生成 合计天数周数 日期区间
-        if (res.data.projectUserList.length > 0) {
-          res.data.projectUserList[0].projectUserScheduleList.forEach((v, i) => {
-            // console.log(v); //2022年1月 24周  01/01-01/07
-
-            let startTime = moment(v.startTime, "YYYY-MM-DD").format("YYYY/MM/DD");
-            let endTime = moment(v.endTime, "YYYY-MM-DD").format("YYYY/MM/DD");
-
-            let pp = `${v.startTime.substring(0, 4)}年${v.weekMonth}月 ${
-              v.week
-            }周       ${startTime.substring(5) + "-" + endTime.substring(5)}`;
+         let params = {
+        startDate: res.data.projectStartTime,
+        endDate: res.data.projectEndTime,
+      };
+      /**
+       * 生成 动态表头
+       */
+      getTimeProcess(params).then((res) => {
+        res.data.list.map((item,i)=>{
+            let pp = `${item.startDate.substring(0, 4)}年
+                    ${item.startDate.substring(5, 7)}月 
+                    ${item.week}周
+                    ${item.startDate.substring(5, 7)}/${item.startDate.substring(8)}-
+                    ${item.startDate.substring(5, 7)}/${item.endDate.substring(8)}`;
             this.monthArrTemp.push(pp.toString());
-            //  this.monthArrTemp.push((v.weekMonth +'月- ' +v.week +'周 (' +v.startTime + "-" + v.endTime +')').toString())
-          });
+        })
+      })
+        if (res.data.projectUserList.length > 0) {
           res.data.projectUserList.map((item, i) => {
             item.projectUserScheduleList.map((jtem, j) => {
               // 最后一条 不处理
@@ -1668,16 +2062,10 @@ export default {
             });
           });
         }
-
+      //------------------------------
         this.formData = res.data; // 填充详情的
         this.formData.projectTimeArea =
           res.data.projectStartTime + "-" + res.data.projectEndTime;
-        // 之前的做法 动态生成 表格列
-        // if (res.data.projectUserList[0].projectUserScheduleList.length != 0) {
-        //   this.labelArr = this.createLabel(
-        //     res.data.projectUserList[0].projectUserScheduleList.length
-        //   );
-        // }
       });
     },
     // 设置生成 列的背景色
@@ -1897,8 +2285,67 @@ export default {
  .myTable /deep/ .el-table__body tr.hover-row.el-table__row--striped.current-row > td.el-table__cell{
   background-color: #f7f4d3;
 }
+
 </style>
 <style lang="scss">
+.skillcolor1 {
+  background: rgb(0, 113, 189) !important;
+  color: white !important;
+}
+.skillcolor2 {
+  background: rgb(77, 171, 119) !important;
+  color: white !important;
+}
+.skillcolor3 {
+  background: rgb(21, 206, 190) !important;
+  color: white !important;
+}
+.skillcolor4 {
+  background: rgb(147, 106, 184) !important;
+  color: white !important;
+}
+.skillcolor5 {
+  background: rgb(254, 213, 27) !important;
+  color: white !important;
+}
+.skillcolor6 {
+  background: rgb(246, 147, 28) !important;
+  color: white !important;
+}
+.skillcolor7 {
+  background: rgb(255, 67, 89) !important;
+  color: white !important;
+}
+/* //   { cssClass: 'color1', color: 'rgb(0,113,189)' },
+          //   { cssClass: 'color2', color: 'rgb(77,171,119)' },
+          //   { cssClass: 'color3', color: 'rgb(21,206,190)' },
+          //   { cssClass: 'color4', color: 'rgb(147,106,184)' },
+          //   { cssClass: 'color5', color: 'rgb(254,213,27)' },
+          //   { cssClass: 'color6', color: 'rgb(246,147,28)' },
+          //   { cssClass: 'color7', color: 'rgb(255,67,89)' }, */
+.skillcc .el-tag__close {
+  background-color: transparent !important;
+}
+.skillBox{
+padding: 4px 8px;
+    border: 1px white solid;
+    border-radius: 5px;
+    margin-left: 4px;
+}
+.colText2{
+   height: inherit;
+  line-height: 150%;
+  // background-color: beige;
+  // border: 1px red solid;
+  margin-top: 8.5px;
+  font-size: 13px;
+  color: #999;
+  text-align: left;
+  span {
+    color: #333;
+    font-weight: bold;
+  }
+}
 .colText {
   height: inherit;
   line-height: 150%;
