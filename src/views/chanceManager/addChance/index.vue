@@ -167,9 +167,9 @@
               <el-select v-model="chanceConfigItem.postNameId" placeholder="请选择职位名称" 
               :disabled="chanceConfigItem.postNameIdActive"   :style="{width: '100%'}"
               @change="(dates) => editNext('postNameId',dates, chanceConfigIndex)">
-                <el-option v-for="(dict, index) in postNameIdOptions"  :key="dict.dictCode"
-                    :label="dict.dictLabel"
-                    :value="dict.dictCode"
+                <el-option v-for="(dict, index) in postNameIdOptions"  :key="dict.postNameId"
+                    :label="dict.postName"
+                    :value="dict.postNameId"
                     :disabled="dict.disabled"></el-option>
               </el-select>
             </el-form-item>
@@ -179,9 +179,9 @@
               <el-select v-model="chanceConfigItem.postLevelId" placeholder="请选择等级"  
               :disabled="chanceConfigItem.postLevelIdActive"   :style="{width: '100%'}"
               @change="(dates) => editNext('postLevelId',dates, chanceConfigIndex)">
-                <el-option v-for="(dict, index) in postLevelIdOptions"  :key="dict.dictCode"
-                    :label="dict.dictLabel"
-                    :value="dict.dictCode"
+                <el-option v-for="(dict, index) in postLevelIdOptions"  :key="dict.postLevelId"
+                    :label="dict.postLevelName"
+                    :value="dict.postLevelId"
                     :disabled="dict.disabled"></el-option>
               </el-select>
             </el-form-item>
@@ -220,8 +220,12 @@
           </el-form-item>
         </el-col>
         <el-col :span="3" :offset="1" class="lineTT">
-          共<span class="priority3">{{chanceConfigItem.workTime}}</span>小时(
-            <span class="priority3">{{chanceConfigItem.workDay}}</span>)天
+          <!-- 共<span class="priority3">{{chanceConfigItem.workTime}}</span>小时(
+            <span class="priority3">{{chanceConfigItem.workDay}}</span>)天 -->
+            <div class="colText">
+                共 <span>{{ chanceConfigItem.workTime }}</span> 小时（
+                <span>{{ chanceConfigItem.workDay }}</span> 人日）
+              </div>
         </el-col>
          <el-col :span="3"   class="lineTT">
           计划负荷：<span class="priority3">{{chanceConfigItem.planLoad}}%</span>
@@ -231,7 +235,7 @@
         </el-col>
         </el-row>
         <!-- 动态生成的内部 strat  -->
-        <el-row v-for="(chanceConfigScheduleItem,chanceConfigScheduleIndex) in chanceConfigItem.chanceConfigScheduleList">
+        <!-- <el-row v-for="(chanceConfigScheduleItem,chanceConfigScheduleIndex) in chanceConfigItem.chanceConfigScheduleList">
          <el-col :span="3" :offset="2"  class="lineTT">
           {{chanceConfigScheduleItem.startTime}} -- {{chanceConfigScheduleItem.endTime}}
          </el-col>
@@ -255,17 +259,60 @@
                       );
                     }
                   " 
-                ></el-input-number>
+                ></el-input-number> -->
                   <!-- 
                   @input.native="changeInput($event)"
                  -->
-                 小时 
-              </div>
+                 <!-- 小时  -->
+              <!-- </div>
         </el-col>
         <el-col :span="3" class="lineTT">
           期间计划负荷：<span class="priority3">{{chanceConfigScheduleItem.planLoad}}%</span>
         </el-col>
-        </el-row>
+        </el-row> -->
+           <el-row
+           v-for="(chanceConfigScheduleItem,chanceConfigScheduleIndex) in chanceConfigItem.chanceConfigScheduleList"
+            :key="chanceConfigScheduleIndex"
+          >
+            <el-col :span="3" :offset="2"  class="lineTT">
+             
+                {{chanceConfigScheduleItem.startTime}} -- {{chanceConfigScheduleItem.endTime}}
+             
+            </el-col>
+            <el-col :span="4" :offset="1" class="lineTT">
+              <div>
+                期间计划负荷
+                <el-input-number
+                  size="mini"
+                  :style="{ width: '120px' }"
+                  v-model="chanceConfigScheduleItem.planLoad"
+                  :min="0"
+                  :max="100" :precision='0'
+                  @change="
+                    (number) => {
+                      changePlanLoad(
+                       number,
+                        chanceConfigScheduleItem.weekDay,
+                        chanceConfigIndex,
+                        chanceConfigScheduleIndex
+                      );
+                    }
+                  "
+                ></el-input-number>
+                %
+              </div>
+            </el-col>
+            <el-col :span="5" class="lineTT">
+              <div>
+                <span>{{ chanceConfigScheduleItem.workDay }}</span> 人日
+              </div>
+            </el-col>
+            <el-col :span="3" class="lineTT">
+              <div>
+                平均每日工作<span> {{ chanceConfigScheduleItem.workTime }} </span>小时
+              </div>
+            </el-col>
+          </el-row>
       <!-- 动态生成的内部 end  -->
          </div>
         </div>
@@ -282,6 +329,10 @@ import {
 import {
   getTimeProcess,
 } from "@/api/proManager/proManager";
+import {
+  positionName,
+  levelList
+} from "@/api/system/user";
 export default {
   data() {
     return {
@@ -415,6 +466,9 @@ export default {
           trigger: 'change'
         }],
         remark: [],
+        postTypeId:'',//职位类型id
+        regionId:'',//区域id
+        postNameId:'',//职位名称ID
         // 配置信息的
         chanceConfigItemregionId:[{
           required: true,
@@ -489,12 +543,38 @@ export default {
   mounted() {
     this.getDictList("post_type");  //职位类型
     this.getDictList("skill_type");  // 技能 technique 
-    this.getDictList("post_name");   // 职位名称 post_name
+    // this.getDictList("post_name");   // 职位名称 post_name
     this.getDictList("region");     //区域
-    this.getDictList("post_level"); // 职位等级 post_level
+    // this.getDictList("post_level"); // 职位等级 post_level
     this.init();
   },
   methods: {
+    //职位名称
+     position() {
+    
+        let data = {
+          regionId: this.regionId,
+          postTypeId: this.postTypeId,
+        };
+        positionName(data).then((res) => {
+         this.postNameIdOptions = res.data;
+        });
+      
+    },
+    //等级
+    level() {
+   
+        let data = {
+          regionId: this.regionId,
+          postTypeId: this.postTypeId,
+          postNameId: this.postNameId,
+        };
+        levelList(data).then((res) => {
+          this.postLevelIdOptions = res.data;
+        });
+      
+    },
+ 
     chageTextColor(listData, refName) {
         /**
          * 之前逻辑
@@ -593,17 +673,50 @@ export default {
       // console.log(who,data,index);
       if(who=='region'){
         this.formData.chanceConfigList[index].postTypeActive = false
+         this.formData.chanceConfigList[index].postTypeId="" // 职位类型
+          this.formData.chanceConfigList[index].postNameId="" // 职位名称
+          this.formData.chanceConfigList[index].postLevelId="" // 等级
+          this.formData.chanceConfigList[index].expectedCost="--" //// 预计成本
+          this.postNameIdOptions= []  // 清空下拉
+          this.postLevelIdOptions =[]
+        this.regionId=data
       }
       if(who=='postType'){
         this.formData.chanceConfigList[index].postNameIdActive = false
+         this.formData.chanceConfigList[index].postNameId="" // 职位名称
+          this.formData.chanceConfigList[index].postLevelId="" // 等级
+          this.formData.chanceConfigList[index].expectedCost="--" //// 预计成本
+          this.postNameIdOptions= []
+          this.postLevelIdOptions =[]
+        console.log(data,'data')
+        this.postTypeId=data
+        this.position()
+        
       }
       if(who=='postNameId'){
         this.formData.chanceConfigList[index].postLevelIdActive = false
+         this.formData.chanceConfigList[index].postLevelId="" // 等级
+          this.formData.chanceConfigList[index].expectedCost="--" //// 预计成本
+        this.postNameId=data
+        this.level()
       }
        if(who=='postLevelId'){
          this.formData.chanceConfigList[index].nextActive = false
+         console.log(this.postLevelIdOptions,'this.postLevelIdOptions')
+         this.postLevelIdOptions.map(item=>{
+        if(data == item.postLevelId){
+           // 选择 职位之后，拿到成本
+              if(this.formData.chanceService == 2) {
+                //对外
+                this.formData.chanceConfigList[index].costNum = item.costOut;
+              } else {
+                // 对内
+                this.formData.chanceConfigList[index].costNum = item.costIn;
+              }
+        }
+         })
         // 此处去请求 成本
-        this.formData.chanceConfigList[index].costNum =  1000// 写死成本为 1000
+        // this.formData.chanceConfigList[index].costNum =  1000// 写死成本为 1000
         // 并计算 下面的周排期
         this.getTimeArea(this.formData.chanceConfigList[index].startEndTime,index)
       }
@@ -622,32 +735,93 @@ export default {
         endDate: dates[1],
       };
       getTimeProcess(params).then((res) => {
-        this.formData.chanceConfigList[index].workDay = res.data.day;
-        this.formData.chanceConfigList[index].workDayTemp = res.data.day;
-        this.formData.chanceConfigList[index].workTime = res.data.day * 8;
-        this.formData.chanceConfigList[index].startTime = dates[0];
-        this.formData.chanceConfigList[index].endTime = dates[1];
-        this.formData.chanceConfigList[index].expectedCost = (
-          res.data.day * this.formData.chanceConfigList[index].costNum
-        ).toFixed(2);
-        if (res.data.day === 0) {
+        // this.formData.chanceConfigList[index].workDay = res.data.day;
+        // this.formData.chanceConfigList[index].workDayTemp = res.data.day;
+        // this.formData.chanceConfigList[index].workTime = (res.data.day * 8).toFixed(2);
+        // this.formData.chanceConfigList[index].startTime = dates[0];
+        // this.formData.chanceConfigList[index].endTime = dates[1];
+        // this.formData.chanceConfigList[index].expectedCost = (
+        //   res.data.day * this.formData.chanceConfigList[index].costNum
+        // ).toFixed(2);
+        // if (res.data.day === 0) {
+        //   this.formData.chanceConfigList[index].planLoad = 0;
+        // } else {
+        //   this.formData.chanceConfigList[index].planLoad = (
+        //     ((8 * res.data.day) / (res.data.day * 8)) *
+        //     100
+        //   ).toFixed(2); // 计划负荷
+        // }
+        // res.data.list.map((item) => {
+        //   item.startTime = item.startDate;
+        //   item.endTime = item.endDate;
+        //   item.workTime = item.weekDay!=0?"8":0; // 内部的每周时长
+        //   item.workDay = item.weekDay; // 内部的每周人日
+        //   item.planLoad = (((item.day * 8) / (item.day * 8)) * 100 || 0).toFixed(2);
+        // });
+        // this.formData.chanceConfigList[index].chanceConfigScheduleList = res.data.list; // 此人的 每周安排
+         this.formData.chanceConfigList[index].workDay = (res.data.day).toFixed(2); // 总共多少人日
+        this.formData.chanceConfigList[index].workTime = (res.data.day * 8).toFixed(2); // 总共多少工时
+         if (res.data.day === 0) {
           this.formData.chanceConfigList[index].planLoad = 0;
         } else {
-          this.formData.chanceConfigList[index].planLoad = (
+         this.formData.chanceConfigList[index].planLoad = (
             ((8 * res.data.day) / (res.data.day * 8)) *
             100
           ).toFixed(2); // 计划负荷
         }
+        this.formData.chanceConfigList[index].expectedCost = ( // 预计成本
+          res.data.day * this.formData.chanceConfigList[index].costNum
+        ).toFixed(2);
+        /*---------第一行的数据-----------------*/
+
+        this.formData.chanceConfigList[index].workDayTemp = res.data.day; // 临时存一下后面有用
+        this.formData.chanceConfigList[index].startTime = dates[0]; // 开始时间 留给后面的传值
+        this.formData.chanceConfigList[index].endTime = dates[1]; // 结束时间 留给后面的传值
         res.data.list.map((item) => {
           item.startTime = item.startDate;
           item.endTime = item.endDate;
           item.workTime = item.weekDay!=0?"8":0; // 内部的每周时长
           item.workDay = item.weekDay; // 内部的每周人日
-          item.planLoad = (((item.day * 8) / (item.day * 8)) * 100 || 0).toFixed(2);
+          item.planLoad = (((item.weekDay * 8) / (item.weekDay * 8)) * 100 || 0).toFixed(2);
         });
         this.formData.chanceConfigList[index].chanceConfigScheduleList = res.data.list; // 此人的 每周安排
+       
       });
       this.$forceUpdate()
+    },
+       changePlanLoad(number, weekDay, fatherIndex, myIndex){
+      // 修改每周期间 计划负荷
+      // 工作时间为固定的8  
+      if(number!=0){// 不等于0  就拿修改之后的百分比 除以 100 拿到比例  
+        this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workDay = ((number/100)*weekDay).toFixed(2) //人日==> 现有百分比除以100 乘以天数
+        this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workTime = ((number/100)*8).toFixed(2)      //每日工时==> 现有百分比除以100 乘以 8
+      }else{
+       this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workDay = 0
+        this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workTime = 0
+      }
+      /*----------------以上是 配置安排的具体计算-------------------*/
+      // 循环 取出每周的工作时长
+      let totalTime = 0,
+        totalDay = 0;
+     this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList.map(
+        (item, i) => {
+            // 其他的没有修改的 直接 拿天数累加
+            totalDay += parseFloat(item.workDay); // 总天数 == 每周人日累计
+            totalTime += parseFloat(item.workDay*8);// 总时长 == 每周人日*8
+          })
+          this.formData.chanceConfigList[fatherIndex].workTime = totalTime.toFixed(2) 
+          this.formData.chanceConfigList[fatherIndex].workDay = totalDay.toFixed(2)    
+          const tempWorkDay = this.formData.chanceConfigList[fatherIndex].workDayTemp; // 之前的总天数
+          console.log(tempWorkDay);
+           if (totalDay === 0) { // 防止憨批选到 节假日
+            this.formData.chanceConfigList[fatherIndex].planLoad = 0;
+          } else {
+            this.formData.chanceConfigList[fatherIndex].planLoad = ((totalDay/tempWorkDay)*100).toFixed(2) //计划负荷 == 实际人日/计划的人日 *100%
+          }
+          this.formData.chanceConfigList[fatherIndex].expectedCost = (totalDay*this.formData.chanceConfigList[fatherIndex].costNum).toFixed(2) /**预计成本*/
+           
+      /*----------------以上是 总计的安排的具体计算-------------------*/
+
     },
     /*修改每日工时*/
     changeDayTime(number, weekDay, fatherIndex, myIndex) {
