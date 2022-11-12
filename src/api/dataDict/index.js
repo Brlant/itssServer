@@ -29,7 +29,16 @@ export function addAndEdit(data, method = 'put') {
 }
 
 // 以下为职位管理字典接口
-// 查询
+// 职位类型
+export function queryType(params) {
+  return request({
+    url: `system/post_dict/list`,
+    method: 'get',
+    params
+  })
+}
+
+// 职位名称
 export function queryPost(data) {
   return request({
     url: `/system/post_dict/postDictList`,
@@ -41,8 +50,8 @@ export function queryPost(data) {
 // 添加与编辑
 export function updatePost(data, method = 'put') {
   return request({
-      url: method === 'put' ? '/system/post_dict/editPostDict' : '/system/post_dict/addPostDict',
-      method,
-      data
+    url: method === 'put' ? '/system/post_dict/editPostDict' : '/system/post_dict/addPostDict',
+    method,
+    data
   })
 }
