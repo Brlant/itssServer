@@ -1299,6 +1299,7 @@ export default {
       // 下面是塞入数据
       this.formData.projectUserList[this.nowIndex].userId = "";
       this.formData.projectUserList[this.nowIndex].userName = "";
+      this.formData.projectUserList[this.nowIndex].updateType = 3;
       this.$forceUpdate();
       this.isUpdateActive = true; // 我删除了用户
       // 点击添加成功后 显示取消按钮
@@ -1312,7 +1313,6 @@ export default {
     addUserToProject(row, index) {
       //点击添加人员到 资源配置中 去
       // projectTable.projectUserList projectTable.projectUserList
-      console.log(row);
       this.addEditFormData.projectUserList[0].userId = row.userId;
       this.addEditFormData.projectUserList[0].userName = row.nickName;
       this.projectTable.projectUserList[this.nowIndex].userId = row.userId;
@@ -1325,11 +1325,12 @@ export default {
         this.$set(this.projectTable.projectUserList[this.nowIndex], "userId", row.userId);
         this.$set(this.projectTable.projectUserList[this.nowIndex],"userName",row.nickName);
       });
-      
-      
+
 
       //  以上是展示
       // 下面是塞入数据 对已有的那条数据进行了操作
+      // 修改类型（1.新增,2.删除,3.修改原数据）
+      this.formData.projectUserList[this.nowIndex].updateType = 3;
       this.formData.projectUserList[this.nowIndex].userId = row.userId;
       this.formData.projectUserList[this.nowIndex].userName = row.nickName;
       this.$forceUpdate();
@@ -1402,8 +1403,7 @@ export default {
           oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
 
           this.addEditFormData.projectUserList.push(oneUser);
-          this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
-          console.log(JSON.stringify(oneUser));
+          // this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
           this.getRecommendUserList(row.index, row);
           // }
           // // 删除成功 只会去查询 审核的方法
@@ -1703,7 +1703,7 @@ export default {
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${oneUser.costNum}`);
           this.addEditFormData.projectUserList.push(oneUser);
           // this.formData.projectUserList[index] = oneUser; //因为后台对于生成的三级数据没有id
-          console.log(JSON.stringify(oneUser));
+          // console.log(JSON.stringify(oneUser));
           this.changeChildDateArea(oneUser,index);
           this.getRecommendUserList(index, row);
           // }
@@ -2029,8 +2029,9 @@ export default {
       queryInfoById(this.checkFormData).then((res) => {
         //isShow;  //是否显示按钮 1 不显示，0显示
         this.isShowActive = res.data.isShow;
-        this.projectTable = res.data;
+        // this.projectTable = res.data;
         this.projectTable.projectUserList = res.data.projectUserList;
+ 
         // 拼接列名
         this.monthArrTemp = [];
         // 动态生成 合计天数周数 日期区间

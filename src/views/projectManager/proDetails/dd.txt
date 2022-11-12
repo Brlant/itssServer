@@ -35,136 +35,24 @@ holdUserList
       
       projectTableEditNum
 
-        init(type) {
-
-
-
-
-
-            this.monthArrTemp = [];
-        // 动态生成 合计天数周数 日期区间
-        if (res.data.projectUserList.length > 0) {
-          res.data.projectUserList[0].projectUserScheduleList.forEach((v, i) => {
-            // console.log(v); //2022年1月 24周  01/01-01/07
-
-            let startTime = moment(v.startTime, "YYYY-MM-DD").format("YYYY/MM/DD");
-            let endTime = moment(v.endTime, "YYYY-MM-DD").format("YYYY/MM/DD");
-
-            let pp = `${v.startTime.substring(0, 4)}年${v.weekMonth}月 ${
-              v.week
-            }周       ${startTime.substring(5) + "-" + endTime.substring(5)}`;
-            this.monthArrTemp.push(pp.toString());
-            //  this.monthArrTemp.push((v.weekMonth +'月- ' +v.week +'周 (' +v.startTime + "-" + v.endTime +')').toString())
-          });
-          res.data.projectUserList.map((item, i) => {
-            item.projectUserScheduleList.map((jtem, j) => {
-              // 最后一条 不处理
-              if (i < res.data.projectUserList.length - 1) {
-                jtem.weekTimeArea =
-                  jtem.startTime.substring(5) + "-" + jtem.endTime.substring(5);
-              }
-            });
-          });
-        }
-
-
-            <el-row>
-            <el-col :span="4">
-              <el-form-item label-width="130px" label="区域-职位-级别：">
-                <div class="colText">
-                  <span>
-                    {{ addUserList.postName }}
-                  </span>
-                </div>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6" :offset="2">
-              <el-form-item label-width="130px" label="执行人员：">
-                <div class="checkUser">
-                  {{ addUserList.userName ? addUserList.userName : "无" }}
-                </div>
-              </el-form-item>
-            </el-col>
-            <!-- <el-col :span="3" :offset="12">
-              <el-button size="mini" type="primary">提交审核</el-button>
-              <el-button size="mini" type="default">取消</el-button>
-            </el-col> -->
-          </el-row>
-
-
---------------------------------------------------
-            <el-row>
-            <el-col :span="6">
-              <el-form-item
-                :prop="`projectUserList.${addUserListindex}.postId`"
-                :rules="rules.projectUserListAllPostId"
-                label-width="130px"
-                label="区域-职位-级别："
-              >
-                <el-select
-                  v-model="addUserList.postId"
-                  placeholder="请选择职位"
-                  filterable
-                  :style="{ width: '100%' }"
-                  @change="
-                    (postId) => {
-                      getPostId(postId, addUserListindex);
-                    }
-                  "
-                >
-                  <el-option
-                    v-for="user in postIdOptions"
-                    :key="user.postId"
-                    :label="user.postIdOptions"
-                    :value="user.postId"
-                    :disabled="user.disabled"
-                  ></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6" :offset="2">
-              <el-form-item label-width="130px" label="执行人员：">
-                <div class="checkUser">
-                  {{ addUserList.userName ? addUserList.userName : "无" }}
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-
-
-
-          ------------
-          <el-row>
-            <el-col :span="4">
-              <el-form-item label-width="130px" label="区域-职位-级别：">
-                <div class="colText">
-                  <span>
-                    {{ addUserList.postName }}
-                  </span>
-                </div>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6" :offset="2">
-              <el-form-item label-width="130px" label="执行人员：">
-                <div class="checkUser">
-                  {{ addUserList.userName ? addUserList.userName : "无" }}
-                </div>
-              </el-form-item>
-            </el-col>
-            <!-- <el-col :span="3" :offset="12">
-              <el-button size="mini" type="primary">提交审核</el-button>
-              <el-button size="mini" type="default">取消</el-button>
-            </el-col> -->
-          </el-row>
-
-
+        
 
 遗留的问题
-人选推荐 没法调试
-
-projectManage/project-user/queryUserById
-缺少技能的返回
-缺少职位名称 区域名称 职位等级 职位类型的返回
-postLevelName 。。。
-
  
+
+新增资源 增加了 暂存一次 点击 马上禁用，不然会添加同样的数据多条
+
+我点了提交审核后，页面刷新，之后点击修改按钮无反应，但是可以点删除按钮
+
+统计范围 因为admin 没配置 导致显示NaN
+
+详情页面 我点击增加【+资源配置】，设置后点击暂存，再点提交审核 无反应
+
+
+注释了2行 重要的代码 
+init(type) {
+  // this.projectTable.projectUserList = res.data.projectUserList;
+
+showRowDetail
+  // this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
+

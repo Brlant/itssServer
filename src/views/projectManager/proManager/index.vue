@@ -370,6 +370,7 @@ export default {
       { permi: 'projectManager:proManager:viewMyPro', label: '仅我负责', value: 2 },
       { permi: 'projectManager:proManager:viewMemberPro', label: '仅部门成员', value: 3 }
     ]
+    console.log( this.$store.getters.permissions);
     options.forEach(v1 => {
       this.$store.getters.permissions.forEach(v2 => {
         if (v1.permi === v2) {
@@ -476,7 +477,8 @@ export default {
       // countScope://统计范围 1.全部，2.仅我负责，3.仅部门成员
       // this.$router.push({ path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
       // startTime:row.projectStartTime,endTime:getToday()}})
-       const obj = { path:'/projectManager/proManager-auth/proDetails', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
+       const obj = { path:'/projectManager/proManager-auth/proDetails', query:{ projectId:row.projectId,
+       projectName:row.projectName,countScope:this.searchForm.countScope,
             startTime:row.projectStartTime,endTime:row.projectEndTime}};
             // getToday()
       this.$tab.closeOpenPage(obj);
