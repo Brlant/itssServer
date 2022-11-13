@@ -5,14 +5,14 @@
       <div class="wrap">
         <div class="input">
           <el-input
-            v-model.trim="dictType"
+            v-model.trim="dictLabel"
             placeholder="搜索职位类型"
-            suffix-icon="el-icon-search"
+            prefix-icon="el-icon-search"
             clearable
             @input="search"
           />
         </div>
-        <i class="el-icon-plus" @click="showDialogForm"></i>
+        <i class="el-icon-plus" @click="handlePost(null, undefined)"></i>
       </div>
       <div class="tab">
         <div
@@ -21,7 +21,11 @@
           :class="{current: index === n}"
           @click.self="change(index)"
         >
-          {{ item.dictLabel }}
+          <span>{{ item.dictLabel }}</span>
+          <div class="action">
+            <i class="el-icon-edit-outline" @click="handlePost(item, index)"></i>
+            <i class="el-icon-delete" @click="delPost(item, index)"></i>
+          </div>
         </div>
       </div>
     </section>
@@ -58,41 +62,27 @@
         </el-table-column>
       </el-table>
     </section>
-    <!-- 添加/编辑 -->
+    <!-- 职位类型 -->
+    <post-dialog ref="postDialog" @action="action" />
+    <!-- 职位名称 -->
     <add-edit :data="rawRegion" ref="dialog" @confirm="confirm" />
-    <!-- 添加职位类型 -->
-    <el-dialog 
-      :visible.sync="show" 
-      title="添加职位类型"
-      width="30%"
-      center
-      destroy-on-close
-    >
-      <el-form :model="form" :rules="rules" ref="form" label-width="80px">
-        <el-form-item label="名称:" prop="dictLabel">
-          <el-input v-model.trim="form.dictLabel" placeholder="请输入名称" maxlength="10" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="footer">
-        <el-button type="primary" @click="add">确定</el-button>
-        <el-button @click="close">取消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { dictData, addAndEdit, queryPost, updatePost } from '@/api/dataDict'
+import { queryType, dictData, addAndEdit, queryPost, updatePost } from '@/api/dataDict'
 import debounce from '@/utils/debounce'
 import AddEdit from './AddEdit'
+import PostDialog from './PostDialog'
 
 export default {
   components: {
-    AddEdit
+    AddEdit,
+    PostDialog
   },
   data() {
     return {
-      dictType: '',
+      dictLabel: '',
       loading: false,
       n: -1,
       list: [],
@@ -103,23 +93,7 @@ export default {
       ],
       regionItem: {},
       index: -1,
-      data: [],
-      show: false,
-      form: {
-        dictLabel: ''
-      },
-      rules: {
-        dictLabel: [
-          { required: true, trigger: 'blur', message: '请输入名称' }
-        ]
-      },
-    }
-  },
-  watch: {
-    show(value) {
-      if (!value) {
-        this.$refs.form.resetFields()
-      }
+      data: []
     }
   },
   created() {
@@ -131,13 +105,17 @@ export default {
     getPost() {
       const params = {
         dictType: 'post_type',
-        status: '0'
+        dictLabel: this.dictLabel
       }
-      dictData(params).then(res => {
+      queryType(params).then(res => {
         this.list = res.rows
         if (this.list.length) {
-          this.n = 0
-          this.getTableData()
+          if (!this.dictLabel) {
+            this.n = 0
+            this.getTableData()
+          } else {
+            this.n = -1
+          }
         }
       })
     },
@@ -170,27 +148,44 @@ export default {
         this.loading = false
       })
     },
-    showDialogForm() {
-      this.show = true
+    handlePost(item, index) {
+      this.$refs.postDialog.open(item, index)
     },
-    close() {
-      this.show = false
-    },
-    // 添加职位类型
-    add() {
-      this.$refs.form.validate(valid => {
-        if (!valid) return
+    delPost(item, index) {
+      this.$confirm(`确认删除${item.dictLabel}？`, '提示', {
+        type: 'warning'
+      }).then(() => {
         const data = {
-          dictLabel: this.form.dictLabel,
-          dictType: 'post_type'
+          delFlag: 1,
+          dictType: 'post_type',
+          dictLabel: item.dictLabel,
+          dictCode: item.dictCode
         }
-        addAndEdit(data, 'post').then(res => {
-          this.show = false
+        addAndEdit(data).then(res => {
           if (res.code === 200) {
             this.$message.success(res.msg)
-            this.getPost()
+            if (this.n !== index) {
+              this.list.splice(index, 1)
+            } else {
+              this.getPost()
+            }
           }
         })
+      }).catch(() => {})
+    },
+    // 职位类型弹窗
+    action(data, method, index) {
+      addAndEdit(data, method).then(res => {
+        this.$refs.postDialog.close()
+        if (res.code === 200) {
+          this.$message.success(res.msg)
+          if (method === 'post') {
+            // post -> 添加；put -> 编辑
+            this.getPost()
+          } else {
+            this.list[index].dictLabel = data.dictLabel
+          }
+        }
       })
     },
     // 选择类型职位
@@ -210,7 +205,7 @@ export default {
     handleDialog(row) {
       this.$refs.dialog.open(row, this.list[this.n].dictCode)
     },
-    // 弹窗确认
+    // 职位名称弹窗
     confirm(data, method) {
       updatePost(data, method).then(res => {
         this.$refs.dialog.close()
@@ -238,7 +233,7 @@ export default {
     },
     // 搜索
     search() {
-      debounce(this.getList)
+      debounce(this.getPost)
     },
   }
 }
@@ -270,9 +265,26 @@ export default {
       >div {
         padding: 12px;
         cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        position: relative;
+        .action {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          visibility: hidden;
+          >i {
+            font-size: 16px;
+            &:first-child {
+              margin-right: 10px;
+            }
+          }
+        }
+        &:hover {
+          background: rgba(221,229,240,.7);
+          .action {
+            visibility: visible;
+          }
+        }
       }
       .current {
         background: rgb(221,229,240);
