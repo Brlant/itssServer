@@ -113,13 +113,13 @@
         </span>
       </template>
       <div class="rightBox">
-        <el-button size="mini" v-show="nowActive == 0"  @click="addConfigListHandel" type="primary"
+        <el-button size="mini" @click="addConfigListHandel" type="primary"
           >+ 添加配置</el-button
         >
       </div>
     </div>
     <!-- 资源配置表格  nowActive 0 => 显示资源配置-->
-    <div class="whiteBox mmTable gaoliang" v-show="nowActive == 0"  style="padding: 1%">
+    <div class="whiteBox mmTable" v-show="nowActive == 0"  style="padding: 1%">
       <el-table
         :data="tableData"
         class="myTable"
@@ -128,7 +128,6 @@
         max-height="650"
         :row-class-name="tableRowClassName"
         @row-click="showRowDetail"
-        :row-style="rowStyle"
       >
         <el-table-column prop="postName" label="职位" width="120"></el-table-column>
         <el-table-column prop="regionName" label="区域" width="120"></el-table-column>
@@ -176,8 +175,8 @@
       </el-table>
       <!-- 资源配置单行的信息 纯展示 没有编辑-->
       <div class="resourceLineDetail" v-show="resourceDetailActive">
-                 <div class="jiange"></div>
-
+        <br />
+        <br />
         <el-form
           ref="elFormChanceConfig"
           :model="formData"
@@ -198,7 +197,7 @@
               </el-col>
               <el-col :span="5">
                 <el-form-item label="职位：">
-                  {{ chanceConfigItem.postName }}
+                  {{ chanceConfigItem.postNameName }}
                 </el-form-item>
               </el-col>
               <el-col :span="5">
@@ -279,8 +278,8 @@
       </div>
       <!-- 我是编辑的 和新增的  单行 -->
       <div class="resourceEdit" v-show="resourceEditActive">
-                <div class="jiange"></div>
-
+        <br />
+        <br />
         <el-form
           ref="elFormChanceConfig"
           :model="formData"
@@ -937,8 +936,6 @@ export default {
         chanceConfigScheduleList: [],
       },
       nowIndex: "", // 点击修改和点击单行的时候 记录当前选择的是哪一行，不然无法添加人选
-      id: "",
-
     };
   },
   mounted() {
@@ -950,13 +947,6 @@ export default {
     this.getDictList("skill_type"); // 技能 technique
   },
   methods: {
-    rowStyle({ row }) {
-      if (this.id === row.id) {
-        return {
-          background: "#f7f4d3",
-        };
-      }
-    },
     // 动态生成 表头样式
     headerUserClassName(row) {
       // console.log(row.column)
@@ -982,7 +972,7 @@ export default {
     // 点击 新增配置的
     addConfigListHandel() {
       this.formData.chanceConfigList = [];
-      this.resourceDetailActive = false;
+
       this.resourceEditActive = true;
       this.editOrAdd = 2; // 1是修改 2 是新增
       //  if(this.formData.chanceService==""){
@@ -1035,7 +1025,6 @@ export default {
       });
       this.$forceUpdate();
     },
-    // 单行信息的保存
     saveConfigList(index) {
       this.$refs["elFormChanceConfig"].validate((valid) => {
         if (!valid) return;
@@ -1071,6 +1060,7 @@ export default {
     },
     // 点击删除 单行数据
     delResourceRow(row) {
+      console.log(row);
       this.$confirm(`确定删除当前配置吗？`, "温馨提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -1081,14 +1071,15 @@ export default {
           delChanceConfigLine(row.id).then((res) => {
             let { code, msg } = res;
             this.$message.success(msg);
-            this.recommendUserActive = false // 隐藏人选推荐
             this.init(this.$route.query.chanceId);
-            //  this.formData.chanceConfigList =[]
-            //   setTimeout(() => {
-            //     this.formData.chanceConfigList = this.formData.chanceConfigList.slice(this.nowIndex,this.nowIndex+1);
-            //   console.log(this.formData.chanceConfigList);
-            //   this.$forceUpdate()
-            // },800)
+             this.formData.chanceConfigList =[]
+        setTimeout(() => {
+          this.formData.chanceConfigList = this.formData.chanceConfigList.slice(this.nowIndex,this.nowIndex+1);
+        console.log(this.formData.chanceConfigList);
+        this.$forceUpdate()
+
+        this.getRecommendUserHandel(0, this.formData.chanceConfigList[0]);
+        },800)
           });
         })
         .catch(() => {});
@@ -1105,9 +1096,8 @@ export default {
         })
         .catch(() => {});
     },
-    // delConfigList(index) {},
+    delConfigList(index) {},
       // 选择技能之后 的变色逻辑
-      // listData
     changeTextColor(listData, refName) {
       this.$nextTick(() => {
         setTimeout(() => {
@@ -1120,6 +1110,7 @@ export default {
               }
             });
           });
+
           let eles = this.$refs[refName][0].$el.querySelectorAll(
             ".el-select__tags .el-tag"
           ); // 获取节点
@@ -1131,7 +1122,7 @@ export default {
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
-        }, 800);
+        }, 300);
       });
     },
     // 判断当前这个值是否选中了
@@ -1283,7 +1274,7 @@ export default {
     },
     // 用于对资源配置的 单条记录的回显
     // 无论从 修改  删除 添加 人选和取消人选
-    refreshOneUser(row){
+    refreshOneUser(){
         this.formData.chanceConfigList =[]
         getResourceLineDetail(row.id).then((res) => {
           res.data.postLevelIdActive =false
@@ -1293,19 +1284,30 @@ export default {
           res.data.startEndTime = [res.data.startTime, res.data.endTime];
           this.formData.chanceConfigList = [res.data];
           res.data.costNum = res.data.expectedCost / res.data.workDay;
-          this.constAll([res.data.startTime, res.data.endTime], 0);
           this.getRecommendUserHandel(0, res.data); // 因为无论是 查看详情的单行 还是 点击修改的单行 始终都是0 第一条
+          this.constAll([res.data.startTime, res.data.endTime], 0);
         // 请求人选推荐
       });
     },
     // 点击修改
     editResourceRow(row, index) {
-      this.id = row.id;
       this.nowIndex = index;
-      this.refreshOneUser(row)
+        this.formData.chanceConfigList =[]
+      getResourceLineDetail(row.id).then((res) => {
+        res.data.postLevelIdActive =false
+        res.data.postNameIdActive =false
+        res.data.postTypeActive =false
+        res.data.nextActive =false
+        res.data.startEndTime = [res.data.startTime, res.data.endTime];
+        this.formData.chanceConfigList = [res.data];
+        res.data.costNum = res.data.expectedCost / res.data.workDay;
+        this.constAll([res.data.startTime, res.data.endTime], 0);
+      });
       this.resourceDetailActive = false; //
       this.resourceEditActive = true;
       this.editOrAdd = 1; // 1是修改 2 是新增
+      // 请求人选推荐
+      this.getRecommendUserHandel(0, row);
     
    // 填充 职位名称 和 等级的下拉菜单
           let parame = {
@@ -1337,23 +1339,30 @@ export default {
             console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${row.costNum}`);
-          console.log(row);
-          // row.skillIdList.map((item) => {
-          this.changeTextColor(row.skillIdList, "mySkillIdList");
-        // });
+
     },
-      // 存储下标 单击行的下标
     tableRowClassName({ row, rowIndex }) {
+      // 存储下标 单击行的下标
       row.index = rowIndex;
     },
     // 单机行 查看详情
     showRowDetail(row) {
-      this.id = row.id;
       this.nowIndex = row.index;
       this.resourceEditActive = false;
       this.resourceDetailActive = true;
-      this.refreshOneUser(row)
-         
+        this.formData.chanceConfigList =[]
+      getResourceLineDetail(row.id).then((res) => {
+        res.data.postLevelIdActive =false
+        res.data.postNameIdActive =false
+        res.data.postTypeActive =false
+        res.data.nextActive =false
+        res.data.startEndTime = [res.data.startTime, res.data.endTime];
+        this.formData.chanceConfigList = [res.data];
+        res.data.costNum = res.data.expectedCost / res.data.workDay;
+        this.constAll([res.data.startTime, res.data.endTime], 0);
+       // 请求人选推荐
+      this.getRecommendUserHandel(0, row); // 因为无论是 查看详情的单行 还是 点击修改的单行 始终都是0 第一条
+      });
     },
     // 获取推荐人选的
     getRecommendUserHandel(index, row) {
@@ -1390,7 +1399,6 @@ export default {
     // tab 切换
     toggleWho(i) {
       this.nowActive = i;
-       
     },
     //跟进记录的初始化方法
     followInit(chanceId) {
@@ -1567,13 +1575,8 @@ export default {
 }
 .left-lineBox /deep/ .el-timeline-item__tail {
   border-left: 2px solid #ced7e9;
+
   top: 4px;
-}
-.gaoliang /deep/ .el-table__body tr.hover-row > td.el-table__cell, 
-.gaoliang /deep/ .el-table__body tr.hover-row.current-row > td.el-table__cell,
- .gaoliang /deep/ .el-table__body tr.hover-row.el-table__row--striped > td.el-table__cell, 
- .gaoliang /deep/ .el-table__body tr.hover-row.el-table__row--striped.current-row > td.el-table__cell{
-  background-color: #f7f4d3;
 }
 </style>
 <style>
@@ -1636,14 +1639,4 @@ export default {
 .resourceEdit {
   min-height: 120px;
 }
-
-
-  /* //高亮点击的行 */
-/* .gaoliang .el-table__body tr.current-row>td {
-  background: rgb(77, 195, 255, 0.5) !important;
-}
-.gaoliang .el-table__body tr:hover>td{
-  background: rgb(77, 195, 255, 0.2);
-} */
-  /* //鼠标滑过时高亮行 */
 </style>

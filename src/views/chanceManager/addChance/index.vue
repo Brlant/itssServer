@@ -215,7 +215,7 @@
             <el-date-picker type="daterange" v-model="chanceConfigItem.startEndTime" format="yyyy-MM-dd"
               value-format="yyyy-MM-dd" :style="{width: '100%'}" start-placeholder="开始日期"
               end-placeholder="结束日期" range-separator="至" :disabled="chanceConfigItem.nextActive" 
-              @change="(dates) => getTimeArea(dates, chanceConfigIndex)"
+              @change="(dates) => constAll(dates, chanceConfigIndex)"
               :picker-options="childDateArea"></el-date-picker>
           </el-form-item>
         </el-col>
@@ -718,17 +718,10 @@ export default {
         // 此处去请求 成本
         // this.formData.chanceConfigList[index].costNum =  1000// 写死成本为 1000
         // 并计算 下面的周排期
-        this.getTimeArea(this.formData.chanceConfigList[index].startEndTime,index)
+        this.constAll(this.formData.chanceConfigList[index].startEndTime,index)
       }
     },
      /*根据起始和结束 生成下面表格*/
-    getTimeArea(dates, index) {
-      //  if(this.formData.projectUserList[index].userId==""){
-      //   this.$message.error("请先选择项目成员！");
-      //   return false
-      // }
-      this.constAll(dates, index);
-    },
     constAll(dates, index) {
       let params = {
         startDate: dates[0],

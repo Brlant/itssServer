@@ -82,9 +82,6 @@ export function addChanceConfig(data) {
     data: data
   })
 }
-
-
-
 // 跟进记录的列表
 export function getFollowList(data) {
   return request({
@@ -101,4 +98,41 @@ export function addChanceRecord(data) {
   })
 }
 
+// 人选推荐的接口
+export function getRecommendUserList(data) {
+  return request({
+    url: '/opportunityManage/itssChanceConfig/querySellUser',
+    method: 'post',
+    data: data
+  })
+}
 
+// 根据 区域和 职位类型 查询  等级  以及成本的
+// regionId:区域id
+// postTypeId:职位类型id
+// postNameId:职位名称id
+export function getLevelCostNum(data) {
+  return request({
+    url: '/system/post_dict/postDictList',
+    method: 'post',
+    data: data
+  })
+}
+
+// 通过区域id和职位类型查询职位名称
+export function getPostName(data) {
+  return request({
+    url: '/system/post_dict/listByRegionAndPostType',
+    method: 'post',
+    data: data
+  })
+}
+
+// 人选的推荐和 取消
+export function updateConfigUser(data) {
+  return request({
+    url: '/opportunityManage/itssChanceConfig/updateConfigUser',
+    method: 'post',
+    data: data
+  })
+}

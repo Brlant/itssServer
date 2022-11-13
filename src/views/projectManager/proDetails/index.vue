@@ -732,8 +732,16 @@
       >
         <el-table-column prop="nickName" label="姓名"></el-table-column>
         <el-table-column prop="regionName" label="区域"></el-table-column>
-        <el-table-column prop="postName" label="职位名称"></el-table-column>
-        <el-table-column prop="postLevel" label="等级"></el-table-column>
+        <el-table-column prop="postName" label="职位"></el-table-column>
+        <el-table-column prop="postLevelName" label="等级"></el-table-column>
+        <el-table-column prop="skillList" label="工作技能">
+            <template slot-scope="scope">
+            <div v-for="(item, i) in scope.row.skillList">
+              <span :class="['skillBox','skill' + item.cssClass]">{{ item.skillName }}</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="freeLoad" label="空闲负荷"></el-table-column>
         <el-table-column prop="price" label="单价"></el-table-column>
         <el-table-column prop="allPrice" label="总价"></el-table-column>
         <el-table-column label="操作">
@@ -1228,7 +1236,7 @@ export default {
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
-        }, 300);
+        }, 800);
       });
     },
     // 顶部的点击提交审核
@@ -1360,7 +1368,7 @@ export default {
     },
     showRowDetail(row) {
       // this.delBtn = false;
-      if (this.id === row.id) return;
+      // if (this.id === row.id) return;
       this.id = row.id;
 
       // 点击单行 显示信息
@@ -1633,10 +1641,10 @@ export default {
     // 修改一个 项目成员的 工作计划
     updateProjectOne(index, row) {
       this.addUserActive =false;
-      if (this.id === row.id) return; // 此行先点击详情 再点击修改无作用
+      // if (this.id === row.id) return; // 此行先点击详情 再点击修改无作用
       this.id = row.id;
       this.delBtn = false;
-
+      
       this.detailUserActive = false;
       this.addEditUserActive = true;
       this.resouceBtnActive = true; // 隐藏按钮的逻辑
@@ -1706,10 +1714,12 @@ export default {
           // console.log(JSON.stringify(oneUser));
           this.changeChildDateArea(oneUser,index);
           this.getRecommendUserList(index, row);
+
           // }
           // // 删除成功 只会去查询 审核的方法
           // this.auditStatus = "1"; // 初始化 显示 待审核
           // this.proAuditInit();
+        this.changeTextColor(row.skillIdList, "mySkillIdList");
         }
       });
     },
@@ -1831,6 +1841,9 @@ export default {
       if( this.delBtn){
         this.addEditUserActive=false
       }else{
+          this.detailUserActive = true;
+          this.addEditUserActive = false;
+          this.recommendUserActive = false;// 先给人选给隐藏
           this.showRowDetail(row);
       }
     
