@@ -11,9 +11,9 @@
         <a href="javascript:;" class="priority3 ft13" @click="enterChanceEdict"  v-hasPermi="['chanceManage:chance:duty']"
           >编辑基本信息</a
         >
-        <span class="priority3 ft13" @click="addFollow"  v-hasPermi="['chanceManage:chance:duty']">| 添加跟进记录</span>
+        <span class="priority3 ft13" style="cursor: pointer;" @click="addFollow"  v-hasPermi="['chanceManage:chance:duty']">| 添加跟进记录</span>
         <!-- <router-link class="priority3 ft13" :to="'/chanceManager/addChance'">| 机会详情</router-link> -->
-        <span class="priority3 ft13" @click="transformProject"  v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
+        <span class="priority3 ft13"  style="cursor: pointer;" @click="transformProject"  v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
       </div>
     </div>
     <div class="titleBar">机会基础信息</div>
@@ -1512,12 +1512,16 @@ export default {
     addFollow() {
       this.nowActive = 1;
       this.followActive = true;
-      // this.$refs['followElForm'].resetFields()
+      if (this.$refs.followElForm !== undefined) {
+        this.$refs['followElForm'].resetFields()
+      }
     },
     onClose() {},
     close() {
       this.followActive = false;
-      // this.followFormData ={}
+      if (this.$refs.followElForm !== undefined) {
+        this.$refs['followElForm'].resetFields()
+      }
     },
     // 保存 跟进记录的
     handleConfirm() {
