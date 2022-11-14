@@ -587,18 +587,19 @@
     <!-- 人选推荐 表格 0 => 显示资源配置 -->
     <div class="titleBar" v-show="recommendUserActive">人选推荐</div>
     <div
-      class="whiteBox"
+      class="whiteBox myUserTable"
       v-show="nowActive == 0 && recommendUserActive"
       style="padding: 1%"
     >
       <el-table
         :data="recommendUserTableData"
         border
-        class="myTable"
+        class="myTable "
         :header-row-style="{ height: '14px', 'line-height': '14px' }"
         :header-cell-class-name="headerUserClassName"
         style="width: 100%"
         max-height="650"
+        :row-style="rowUserStyle"
       >
         <el-table-column prop="nickName" label="姓名"></el-table-column>
         <el-table-column prop="regionName" label="区域"></el-table-column>
@@ -621,6 +622,11 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <div>
+               <el-button type="text" size="mini" >
+                <span class="priority3" @click="detail(scope.row.userId)"  v-hasPermi="['chanceManage:chance:duty']"
+                  >详情
+                </span>
+              </el-button>
               <!-- 1 不显示 有审核记录，0显示  没有审核记录 -->
               <el-button type="text" size="mini" v-if="scope.row.showOrCancel == 1">
                 <span class="priority3" @click="addUserToProject(scope.row, scope.$index)"  v-hasPermi="['chanceManage:chance:duty']"
@@ -948,6 +954,7 @@ export default {
       },
       nowIndex: "", // 点击修改和点击单行的时候 记录当前选择的是哪一行，不然无法添加人选
       id: "",
+      userId:""
     };
   },
   mounted() {
@@ -970,7 +977,24 @@ export default {
             this.chanceUserIdOptions = res.data
       })
     },
+     detail(id) {
+    // window.localStorage.setItem('depttId',this.queryParams.deptId)
+    // window.localStorage.setItem('deptTitle',this.deptTitle) 
+      // const obj = { path: "/system/user-auth/userInfo", query: { userId: id , deptId:this.queryParams.deptId,deptTitle:this.deptTitle} };
+      const obj = { path: "/system/user-auth/userInfo", query: { userId: id  } };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
+    },
+    rowUserStyle({row}){
+      // 人选推荐的 高亮行
+       if (this.userId === row.userId) {
+        return {
+          background: "#f7f4d3",
+        };
+      }
+    },
     rowStyle({ row }) {
+      // 资源配置的高亮行
       if (this.id === row.id) {
         return {
           background: "#f7f4d3",
@@ -1004,6 +1028,7 @@ export default {
       this.formData.chanceConfigList = [];
       this.resourceDetailActive = false;
       this.resourceEditActive = true;
+      this.recommendUserActive = false;
       this.editOrAdd = 2; // 1是修改 2 是新增
       //  if(this.formData.chanceService==""){
       //         this.$message.error("请您先完整填写项目基础信息！");
@@ -1319,6 +1344,7 @@ export default {
     },
     //点击添加人员到 资源配置中 去
     addUserToProject(row, index) {
+      this.userId = row.userId
       // 下面是塞入数据 对已有的那条数据进行了操作
       // 修改类型（1.新增,2.删除,3.修改原数据）
 
@@ -1642,6 +1668,9 @@ export default {
   .el-table__body
   tr.hover-row.el-table__row--striped.current-row
   > td.el-table__cell {
+  background-color: #f7f4d3;
+}
+.myUserTable /deep/ .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
   background-color: #f7f4d3;
 }
 </style>

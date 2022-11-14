@@ -556,7 +556,7 @@ export default {
           item.workDayTemp = item.workDay;
           item.costNum = res.data.projectService == 1 ? item.costIn : item.costOut;
          // 循环 回显 职位名称和职位等级
-          this.constAll(item.startEndTime, index);
+          // this.constAll(item.startEndTime, index);
           let parame = {
             regionId: res.data.chanceConfigList[index].regionId,
             postTypeId: res.data.chanceConfigList[index].postTypeId,
