@@ -3,7 +3,7 @@
     <div>
       <i
         class="el-icon-arrow-left"
-        style='transform: translateY(-px)'
+        style='transform: translateY(-33px)'
         @click="goBack"
       ></i>
       <div style='display: inline-block;width:90%;'>
