@@ -33,7 +33,7 @@
           </el-col>
           <el-col :span="7" :offset="1">
             <el-form-item label="负责人" prop="chanceUserId">
-              {{ formData.chanceUserIdName }}
+              {{ formData.chanceUserName }}
             </el-form-item>
           </el-col>
           <el-col :span="7" :offset="1">
@@ -663,6 +663,8 @@ import {
   toProject,
 } from "@/api/chanceManager/chanceManager";
 import { getTimeProcess } from "@/api/proManager/proManager";
+import { queryUserlist } from "@/api/system/user";
+
 import followIcon from "@/assets/images/followIcon.png";
 export default {
   data() {
@@ -788,16 +790,7 @@ export default {
           value: 4,
         },
       ],
-      chanceUserIdOptions: [
-        // {
-        //   label: "周佩煌",
-        //   value: 1,
-        // },
-        // {
-        //   label: "张帆",
-        //   value: 2,
-        // },
-      ],
+      chanceUserIdOptions: [],
       priorityOptions: [
         {
           label: "最高",
@@ -964,8 +957,19 @@ export default {
     this.getDictList("region"); //区域
     this.getDictList("post_level"); // 等级
     this.getDictList("skill_type"); // 技能 technique
+   this.queryAllUser()
   },
   methods: {
+    queryAllUser(){
+      let data = {status:0};
+      queryUserlist(data).then((res) => {
+            res.data.map(item=>{
+              item.label=item.nickName
+              item.value=item.userId
+            })
+            this.chanceUserIdOptions = res.data
+      })
+    },
     rowStyle({ row }) {
       if (this.id === row.id) {
         return {

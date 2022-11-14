@@ -332,7 +332,8 @@ import {
 } from "@/api/proManager/proManager";
 import {
   positionName,
-  levelList
+  levelList,
+  queryUserlist
 } from "@/api/system/user";
 export default {
   data() {
@@ -521,13 +522,7 @@ export default {
         "label": "已转项目",
         "value": 4
       }],
-      chanceUserIdOptions: [{
-        "label": "周佩煌",
-        "value": 1
-      }, {
-        "label": "张帆",
-        "value": 2
-      }],
+      chanceUserIdOptions: [],
       priorityOptions: [{
         "label": "最高",
         "value": 1
@@ -558,8 +553,19 @@ export default {
     this.getDictList("region");     //区域
     // this.getDictList("post_level"); // 职位等级 post_level
     this.init();
+    this.queryAllUser()
   },
   methods: {
+    queryAllUser(){
+      let data = {status:0};
+      queryUserlist(data).then((res) => {
+            res.data.map(item=>{
+              item.label=item.nickName
+              item.value=item.userId
+            })
+            this.chanceUserIdOptions = res.data
+      })
+    },
     //职位名称
      position() {
     

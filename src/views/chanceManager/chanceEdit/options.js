@@ -133,13 +133,7 @@ export const chanceStatusOptions = [{
   "value": 4
 }]
 
-export const chanceUserIdOptions = [{
-  "label": "周佩煌",
-  "value": 1
-}, {
-  "label": "张帆",
-  "value": 2
-}]
+export const chanceUserIdOptions = []
 
 export const priorityOptions = [{
   "label": "最高",

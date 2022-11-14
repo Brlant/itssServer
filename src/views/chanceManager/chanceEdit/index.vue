@@ -269,6 +269,7 @@
 import { formData, rules, chanceStatusOptions, chanceUserIdOptions, priorityOptions, chanceServiceOptions, chanceConfigList } from './options'
 import { queryDict, updateChance } from "@/api/chanceManager/chanceManager"
 import { getTimeProcess } from "@/api/proManager/proManager"
+import {  queryUserlist } from "@/api/system/user";
 
 export default {
   data() {
@@ -307,8 +308,19 @@ export default {
     })
     this.formData = formData
     this.getDictList('post_name')
+   this.queryAllUser()
   },
   methods: {
+    queryAllUser(){
+      let data = {status:0};
+      queryUserlist(data).then((res) => {
+            res.data.map(item=>{
+              item.label=item.nickName
+              item.value=item.userId
+            })
+            this.chanceUserIdOptions = res.data
+      })
+    },
     // 职位名称
     getDictList(dictCode) {
       queryDict(dictCode).then(res => {

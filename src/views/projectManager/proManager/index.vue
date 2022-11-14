@@ -365,20 +365,24 @@ export default {
   },
   mounted() {
     let scopeOptions = []
+    const all_permission = "*:*:*"; // 我是超管
     const options = [
       { permi: 'projectManager:proManager:viewAllPro', label: '全部', value: 1 },
       { permi: 'projectManager:proManager:viewMyPro', label: '仅我负责', value: 2 },
-      { permi: 'projectManager:proManager:viewMemberPro', label: '仅部门成员', value: 3 }
+      { permi: 'projectManager:proManager:viewMemberPro', label: '仅部门成员', value: 3 },
+      { permi: '*:*:*', label: '全部', value: 1 }
     ]
-    console.log( this.$store.getters.permissions);
     options.forEach(v1 => {
       this.$store.getters.permissions.forEach(v2 => {
+        console.log(v1.permi,v2);
+
         if (v1.permi === v2) {
           scopeOptions.push(v1)
         }
       })
     })
     this.scopeOptions = scopeOptions
+    console.log(scopeOptions);
     if (scopeOptions.length) {
       this.searchForm.countScope = scopeOptions[0].value
     }
