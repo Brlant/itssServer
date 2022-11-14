@@ -503,6 +503,7 @@ export default {
       if(this.$route.query.isEdit == 1){
          this.detailInfo()
       }else{
+        this.$message.success('取消成功')
         this.$refs["elForm"].resetFields();
       }
      

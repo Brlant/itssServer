@@ -3,7 +3,7 @@
     <div>
       <i
         class="el-icon-arrow-left"
-        style='transform: translateY(-22px)'
+        style='transform: translateY(-px)'
         @click="goBack"
       ></i>
       <div style='display: inline-block;width:90%;'>
@@ -16,13 +16,20 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="搜索">
-              <el-select
+              <!-- <el-select
                 v-model="form.query"
                 multiple
                 filterable
                 :reserve-keyword="true"
                 ref="reqMsgRef"
                 @focus="onBlur(form.query, 'reqMsgRef')"
+              > -->
+               <el-select
+                v-model="form.query"
+                multiple
+                filterable
+                ref="reqMsgRef"
+                @change="change()"
               >
                 <el-option
                   v-for="(item, index) in condition"
@@ -126,6 +133,15 @@ export default {
     this.query();
   },
   methods: {
+    change(){
+      
+      let  data = {
+            str: this.form.query.toString(),
+          };
+          fuzzyQuery(data).then((res) => {
+            this.user = res.data;
+          });
+    },
     onBlur(flag, ref) {
       this.$refs[ref].$refs.input.blur = () => {
         // 这里执行失焦的代码
