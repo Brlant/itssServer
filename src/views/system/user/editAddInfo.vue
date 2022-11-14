@@ -100,7 +100,7 @@
                   v-model="formData.regionId"
                   placeholder="请选择区域"
                   clearable
-                  @change="position"
+                  @change="changePosition('area')"
                 >
                   <el-option
                     v-for="(dict, index) in areas"
@@ -120,7 +120,7 @@
                   v-model="formData.postTypeId"
                   placeholder="请选择职位类型"
                   clearable
-                  @change="position"
+                  @change="changePosition('postType')"
                 >
                   <el-option
                     v-for="(dict, index) in typeList"
@@ -137,7 +137,7 @@
                   clearable
                   v-model="formData.postNameId"
                   placeholder="请选择职位名称"
-                  @change="level"
+                  @change="changePosition('postName')"
                   :disabled="!formData.postTypeId || !formData.regionId"
                 >
                   <el-option
@@ -156,6 +156,7 @@
                   placeholder="请选择等级"
                   clearable
                   :disabled="!formData.postNameId"
+                  @change='dd'
                 >
                   <el-option
                     v-for="(dict, index) in levelList"
@@ -283,6 +284,7 @@ export default {
   data() {
     return {
       skillData: [],
+      postId:'',
       saveShow:false,
       formData: {
         nickName:'',
@@ -410,25 +412,55 @@ export default {
         });
       }
     },
+    changePosition(index){
+      if(index == 'area'){
+        this.position()
+         this.formData.postNameId=''
+      }else if(index == 'postType'){
+        this.position()
+       this.formData.postNameId=''
+         
+       
+      }else if(index == 'postName'){
+        this.level()
+         this.formData.postLevelId=''
+      }
+
+    },
+    dd(){
+      if(this.levelList){
+        console.log('aaaa',this.formData.postLevelId)
+        this.levelList.forEach(item=>{
+          if(item.postLevelId==this.formData.postLevelId){
+            console.log(item.postId)
+            this.postId=item.postId
+          }
+        })
+      }
+    },
     //保存
     save() {
       if (this.$route.query.isEdit == 1) {
+      
         this.$refs["elForm"].validate((valid) => {
-          console.log(this.formData.skillIds,'this.formData.skillIds')
+          // console.log(this.formData.skillIds,'this.formData.skillIds')
           if (valid) {
             this.formData.inTime = moment(this.formData.inTime).format(
               "YYYY-MM-DD"
             );
+            // this.formData.userId = this.userId
              this.formData.outTime = this.formData.outTime ? moment(this.formData.outTime).format("YYYY-MM-DD") : ''
+           this.formData.postId = this.postId ? this.postId : ''
+           // this.formData.postId=
             // this.formData.outTime = moment(this.formData.outTime).format(
             //   "YYYY-MM-DD"
             // );
-          
-            let data = {
+           let data = {
               ...this.formData,
             };
+          
             console.log(data, "ssssssssss");
-           
+          
             updateUser(data).then((res) => {
               if (res.code == 200) {
                 this.$message.success(res.msg);
@@ -446,6 +478,7 @@ export default {
               "YYYY-MM-DD"
             );
             this.formData.outTime = this.formData.outTime ? moment(this.formData.outTime).format("YYYY-MM-DD") : ''
+             this.formData.postId = this.postId ? this.postId : ''
             let data = {
               ...this.formData,
             };
