@@ -782,11 +782,10 @@ export default {
             jtem.day = jtem.weekDay;
           });
         });
-        res.data.projectUserList.map((item) => {
+          res.data.projectUserList.map((item, index) => {
           this.changeTextColor(item.skillIdList, "mySkillIdList");
-        });
+        
          // 循环 回显 职位名称和职位等级
-         res.data.projectUserList.map((item, index) => {
           this.constAll(item.startEndTime, index);
           let parame = {
             regionId: res.data.projectUserList[index].regionId,
