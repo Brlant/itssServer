@@ -1443,7 +1443,7 @@ export default {
     transformProject() {
       // 跳转到项目详情页 再转换
       const obj = {
-        path: "/ProjectManager/AddProject",
+        path: "/projectManager/proManager-auth/addProject",
         query: { chanceId: this.formData.chanceId },
       };
       this.$tab.closeOpenPage(obj);

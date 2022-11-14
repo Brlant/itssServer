@@ -30,7 +30,7 @@ const store = new Vuex.Store({
       chanceConfigList: []
     }
   },
-  mutations: {
+  mutations: {  
     setRegionOptions(state, value) {
       state.regionOptions = value
     },
@@ -40,7 +40,7 @@ const store = new Vuex.Store({
     setTechniqueOptions(state, value) {
       state.techniqueOptions = value
     },
-    setGradeIdOptions(state, value) {
+    setPostLevelIOptions(state, value) {
       state.gradeIdOptions = value
     },
     setChanceDetail(state, value) {

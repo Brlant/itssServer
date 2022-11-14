@@ -525,37 +525,37 @@ export default {
       date2: "",
       redShow: false,
       formData: {
-        // priority: 3 /**优先级（1.最高，2.高，3.普通，4.较低）*/,
-        // projectChance: "" /**关联机会*/,
-        // projectCode: "" /**项目编号*/,
-        // projectEndTime: "" /**项目结束时间*/,
-        // projectGitUrl: "", // 项目git 地址
-        // projectGroupId: "", // 项目组
-        // projectName: "" /**项目名称*/,
-        // projectService: "" /**服务对象*/,
-        // projectStage: "" /**项目阶段*/,
-        // projectStartTime: "" /**项目开始时间*/,
-        // projectTimeArea: ["", ""],
-        // projectType: "" /**项目类型*/,
-        // projectUserId: "" /**项目负责人*/,
-        // projectUserList: [] /**项目成员列表*/,
-        // tbProjectId: "",
+        priority: 3 /**优先级（1.最高，2.高，3.普通，4.较低）*/,
+        projectChance: "" /**关联机会*/,
+        projectCode: "" /**项目编号*/,
+        projectEndTime: "" /**项目结束时间*/,
+        projectGitUrl: "", // 项目git 地址
+        projectGroupId: "", // 项目组
+        projectName: "" /**项目名称*/,
+        projectService: "" /**服务对象*/,
+        projectStage: "" /**项目阶段*/,
+        projectStartTime: "" /**项目开始时间*/,
+        projectTimeArea: ["", ""],
+        projectType: "" /**项目类型*/,
+        projectUserId: "" /**项目负责人*/,
+        projectUserList: [] /**项目成员列表*/,
+        tbProjectId: "",
         //快速调试
-        priority:3,
-        projectChance:2,
-        projectCode:"测试数据1110",
-        projectEndTime:"2022-10-30",
-        projectGitUrl:"测试数据1110",
-        projectGroupId:8,
-        projectName:"测试数据1110",
-        projectService:1,
-        projectStage:32,
-        projectStartTime:"2022-10-01",
-        projectTimeArea: ["2022-10-01", "2022-10-30"],
-        projectType:31,
-        projectUserId:5,
-        projectUserList: [],/**项目成员列表*/
-        tbProjectId:"123ABCDE",
+        // priority:3,
+        // projectChance:2,
+        // projectCode:"测试数据1110",
+        // projectEndTime:"2022-10-30",
+        // projectGitUrl:"测试数据1110",
+        // projectGroupId:8,
+        // projectName:"测试数据1110",
+        // projectService:1,
+        // projectStage:32,
+        // projectStartTime:"2022-10-01",
+        // projectTimeArea: ["2022-10-01", "2022-10-30"],
+        // projectType:31,
+        // projectUserId:5,
+        // projectUserList: [],/**项目成员列表*/
+        // tbProjectId:"123ABCDE",
       },
       rules: {
         // 配置信息的
@@ -751,9 +751,12 @@ export default {
 
     // 额外的判断  需要判断这个页面是不是从 机会跳转过来的
     if (this.$route.query.chanceId) {
-      toProject(this.$route.query.chanceId).then((res) => {
+      setTimeout(() => {
+          toProject(this.$route.query.chanceId).then((res) => {
         this.formData = res.data;
+        this.formData.projectChance = this.$route.query.chanceId
       });
+      }, 800);
     }
      this.childDateArea = {
       // 项目成员安排的 可选时间区间
