@@ -41,6 +41,11 @@
                     <span class='title'>邮箱:</span>
                     <span>{{info.email}}</span>
                 </div>
+                 <div style="margin:20px;font-size:18px;">
+                  
+                    <span class='title'>git账号:</span>
+                    <span>{{info.gitAccount}}</span>
+                </div>
                    <div style="margin:20px;0;font-size:18px;">
                   
                     <span class='title'>区域:</span>

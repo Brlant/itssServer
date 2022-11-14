@@ -55,6 +55,11 @@
                     <span class='title'>邮箱:</span>
                     <span>{{info.email}}</span>
                 </div>
+                 <div style="margin:20px;font-size:18px;">
+                  
+                    <span class='title'>git账号:</span>
+                    <span>{{info.gitAccount}}</span>
+                </div>
                    <div style="margin:20px;0;font-size:18px;">
                   
                     <span class='title'>区域:</span>
@@ -119,11 +124,15 @@ export default {
     return{
         userId:this.$route.query.userId,
         info:{},
+        deptId:this.$route.query.deptId,
+        deptTitle:this.$route.query.deptTitle
         
     }
   },
   mounted(){
     this.detailInfo()
+    // window.localStorage.setItem('depttId',this.$route.query.deptId)
+    // window.localStorage.setItem('deptTitle',this.$route.query.deptTitle)
   },
   methods:{
     // 详情
@@ -137,6 +146,7 @@ export default {
     goBack(){
         const obj = {
             path: "/system/user",
+            query:{deptId:this.deptId,deptTitle:this.deptTitle}
         };
       this.$tab.closeOpenPage(obj);
     },

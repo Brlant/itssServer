@@ -83,12 +83,22 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+             <el-row>
             <el-col :span="12">
               <el-form-item label="邮箱" prop="email">
                 <el-input
                   v-model="formData.email"
                   placeholder="请输入邮箱"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="git账号" prop="email">
+                <el-input
+                  v-model="formData.gitAccount"
+                  placeholder="请输入git账号"
                 ></el-input>
               </el-form-item>
             </el-col>
