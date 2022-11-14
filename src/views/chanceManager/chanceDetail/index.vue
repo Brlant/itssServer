@@ -8,12 +8,12 @@
         <!-- <router-link class="priority3 ft13" :to="'/chanceManager/chanceEdit'"
           >编辑基本信息</router-link
         > -->
-        <a href="javascript:;" class="priority3 ft13" @click="enterChanceEdict"
+        <a href="javascript:;" class="priority3 ft13" @click="enterChanceEdict"  v-hasPermi="['chanceManage:chance:duty']"
           >编辑基本信息</a
         >
-        <span class="priority3 ft13" @click="addFollow">| 添加跟进记录</span>
+        <span class="priority3 ft13" @click="addFollow"  v-hasPermi="['chanceManage:chance:duty']">| 添加跟进记录</span>
         <!-- <router-link class="priority3 ft13" :to="'/chanceManager/addChance'">| 机会详情</router-link> -->
-        <span class="priority3 ft13" @click="transformProject">| 转为正式项目</span>
+        <span class="priority3 ft13" @click="transformProject"  v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
       </div>
     </div>
     <div class="titleBar">机会基础信息</div>
@@ -108,7 +108,7 @@
     <div class="toggleBar">
       <!-- 资源配置和跟进记录的切换 -->
       <template v-for="(item, i) in BarList">
-        <span :class="[nowActive == i ? 'nowActive' : '']" @click="toggleWho(i)">
+        <span :class="[nowActive == i ? 'nowActive' : '']" @click="toggleWho(i)"  v-hasPermi="['chanceManage:chance:duty']">
           {{ item }}
         </span>
       </template>
@@ -116,7 +116,7 @@
         <el-button
           size="mini"
           v-show="nowActive == 0"
-          @click="addConfigListHandel"
+          @click="addConfigListHandel"  v-hasPermi="['chanceManage:chance:duty']"
           type="primary"
           >+ 添加配置</el-button
         >
@@ -163,7 +163,7 @@
               type="text"
               size="small"
               class="priority3"
-              @click.native.stop="editResourceRow(scope.row, scope.$index)"
+              @click.native.stop="editResourceRow(scope.row, scope.$index)"  v-hasPermi="['chanceManage:chance:duty']"
             >
               修改
             </el-button>
@@ -171,7 +171,7 @@
               type="text"
               size="small"
               class="priority1"
-              @click.native.stop="delResourceRow(scope.row, scope.$index)"
+              @click.native.stop="delResourceRow(scope.row, scope.$index)"  v-hasPermi="['chanceManage:chance:duty']"
             >
               删除
             </el-button>
@@ -238,7 +238,7 @@
                 计划负荷：<span class="priority3">{{ chanceConfigItem.planLoad }}%</span>
               </el-col>
               <el-col :span="4" :offset="1" class="lineTT">
-                预计成本：<span class="priority3">{{
+                预计成本：<span class="priority3"  v-hasPermi="['chanceManage:chance:viewCost']" >{{
                   chanceConfigItem.expectedCost
                 }}</span
                 >元
@@ -388,7 +388,7 @@
                     type="primary"
                     size="mini"
                     v-show="editOrAdd == 1 || editOrAdd == 2"
-                    @click="saveConfigList(chanceConfigIndex)"
+                    @click="saveConfigList(chanceConfigIndex)"  v-hasPermi="['chanceManage:chance:duty']"
                   >
                     保存
                   </el-button>
@@ -396,7 +396,7 @@
                     type="info"
                     size="mini"
                     v-show="editOrAdd == 1 || editOrAdd == 2"
-                    @click="cancelConfigList(chanceConfigIndex)"
+                    @click="cancelConfigList(chanceConfigIndex)"  v-hasPermi="['chanceManage:chance:duty']"
                   >
                     取消
                   </el-button>
@@ -580,8 +580,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer">
-        <el-button @click="close">取消</el-button>
-        <el-button type="primary" @click="handleConfirm">确定</el-button>
+        <el-button @click="close"  v-hasPermi="['chanceManage:chance:duty']">取消</el-button>
+        <el-button type="primary" @click="handleConfirm"  v-hasPermi="['chanceManage:chance:duty']">确定</el-button>
       </div>
     </el-dialog>
     <!-- 人选推荐 表格 0 => 显示资源配置 -->
@@ -623,12 +623,12 @@
             <div>
               <!-- 1 不显示 有审核记录，0显示  没有审核记录 -->
               <el-button type="text" size="mini" v-if="scope.row.showOrCancel == 1">
-                <span class="priority3" @click="addUserToProject(scope.row, scope.$index)"
+                <span class="priority3" @click="addUserToProject(scope.row, scope.$index)"  v-hasPermi="['chanceManage:chance:duty']"
                   >添加
                 </span>
               </el-button>
               <el-button type="text" size="mini" v-if="scope.row.showOrCancel == 2">
-                <span class="priority4" @click="delUserToProject(scope.row, scope.index)"
+                <span class="priority4" @click="delUserToProject(scope.row, scope.index)"  v-hasPermi="['chanceManage:chance:duty']"
                   >取消
                 </span>
               </el-button>

@@ -754,7 +754,7 @@ export default {
       setTimeout(() => {
           toProject(this.$route.query.chanceId).then((res) => {
         this.formData = res.data;
-        this.formData.projectChance = this.$route.query.chanceId
+        this.formData.projectChance = parseInt(this.$route.query.chanceId)
       });
       }, 800);
     }

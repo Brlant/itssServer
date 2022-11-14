@@ -33,7 +33,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <el-button type="primary" @click="addChance">新增机会</el-button>
+            <el-button type="primary"  v-hasPermi="['chanceManage:chance:create']" @click="addChance">新增机会</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -46,12 +46,12 @@
         border
         style="width: 100%"
         max-height="650"
-        @row-click="clickRow"
       >
+        <!-- @row-click="clickRow" -->
         <el-table-column prop="chanceName"  fixed="left" label="机会名称" min-width="120">
           <template slot-scope="scope">
             <span :class="['yuan', 'yuan' + scope.row.priority]"></span>
-            <span class="priority3" style="cursor: pointer;"> {{ scope.row.chanceName }}</span>
+            <span class="priority3" style="cursor: pointer;"  v-hasPermi="['chanceManage:chance:all','chanceManage:chance:duty']"  @click="clickRow(scope.row)"> {{ scope.row.chanceName }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="chanceStatus" fixed="left" label="状态" width="80">

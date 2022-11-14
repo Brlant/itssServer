@@ -232,7 +232,7 @@
           计划负荷：<span class="priority3">{{chanceConfigItem.planLoad}}%</span>
         </el-col>
          <el-col :span="4" :offset="1" class="lineTT">
-          预计成本：<span class="priority3">{{chanceConfigItem.expectedCost}}</span>元
+          预计成本：<span class="priority3" v-hasPermi="['chanceManage:chance:viewCost']" >{{chanceConfigItem.expectedCost}}</span>元
         </el-col>
         </el-row>
         <!-- 动态生成的内部 strat  -->
