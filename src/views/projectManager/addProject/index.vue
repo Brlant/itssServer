@@ -753,8 +753,25 @@ export default {
     if (this.$route.query.chanceId) {
       setTimeout(() => {
           toProject(this.$route.query.chanceId).then((res) => {
+            res.data.projectUserList.map((item,i)=>{
+             let  parame = {
+                 postTypeId: res.data.projectUserList[i].postTypeId,
+                postNameId: res.data.projectUserList[i].postNameId,
+                regionId: res.data.projectUserList[i].regionId,
+              };
+              getPostName(parame).then((res) => {
+                this.postNameIdOptions = res.data;
+              });
+                getLevelCostNum(parame).then((res) => {
+                  this.postLevelIdOptions = res.data;
+                });
+              item.startEndTime = [item.startTime,item.endTime]
+              
+            })
+             res.data.projectTimeArea = [res.data.projectStartTime,res.data.projectEndTime]
         this.formData = res.data;
         this.formData.projectChance = parseInt(this.$route.query.chanceId)
+       
       });
       }, 800);
     }
