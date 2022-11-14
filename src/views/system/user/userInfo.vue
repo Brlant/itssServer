@@ -124,12 +124,12 @@ export default {
     return{
         userId:this.$route.query.userId,
         info:{},
-        deptId:this.$route.query.deptId,
-        deptTitle:this.$route.query.deptTitle
+        // deptId:this.$route.query.deptId,
+        // deptTitle:this.$route.query.deptTitle
         
     }
   },
-  mounted(){
+  created(){
     this.detailInfo()
     // window.localStorage.setItem('depttId',this.$route.query.deptId)
     // window.localStorage.setItem('deptTitle',this.$route.query.deptTitle)
