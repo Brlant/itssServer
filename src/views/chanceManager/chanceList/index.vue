@@ -51,7 +51,7 @@
         <el-table-column prop="chanceName"  fixed="left" label="机会名称" min-width="120">
           <template slot-scope="scope">
             <span :class="['yuan', 'yuan' + scope.row.priority]"></span>
-            {{ scope.row.chanceName }}
+            <span class="priority3" style="cursor: pointer;"> {{ scope.row.chanceName }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="chanceStatus" fixed="left" label="状态" width="80">

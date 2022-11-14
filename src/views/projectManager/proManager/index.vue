@@ -126,7 +126,6 @@
             <span :class="[scope.row.isNew==1?'isNew':'']"></span>
             <span :class="['yuan','yuan'+scope.row.priority]"></span>
             {{ scope.row.projectName }}
-
           </template>
         </el-table-column>
         <el-table-column
