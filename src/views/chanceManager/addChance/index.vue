@@ -80,7 +80,7 @@
         </el-col>
         <el-col :span="10" :offset="1">
           <el-form-item label="成功率：" prop="successRate">
-            <el-input-number v-model="formData.successRate" placeholder="请输入" :precision='0'>
+            <el-input-number v-model="formData.successRate" placeholder="请输入" :precision='0' :min="0" :max="100">
             </el-input-number>
             <span class="priority4"> &nbsp;&nbsp;&nbsp;&nbsp;%</span>
           </el-form-item>
@@ -138,7 +138,8 @@
 
         <el-row >
           <el-col :span="5">
-            <el-form-item label="区域：" :prop="`chanceConfigList.${chanceConfigIndex}.regionId`" :rules="rules.chanceConfigItemregionId">
+            <el-form-item label="区域：" :prop="`chanceConfigList.${chanceConfigIndex}.regionId`"
+             :rules="rules.chanceConfigItemregionId">
               <el-select v-model="chanceConfigItem.regionId" placeholder="请选择区域" 
                 :style="{width: '100%'}"
               @change="(dates) => editNext('region',dates, chanceConfigIndex)">
@@ -355,44 +356,46 @@ export default {
       postNameIdOptions:[], // 职位名称
       postLevelIdOptions:[],  // 职位等级  
       formData: {
-        // chanceName: "", //          机会名称
-          // chanceStatus: "", //          机会状态：1.新建、2.跟进中、3.已结束、4.已转项目
-          // priority: 3, //          优先级（1.最高;2.高，3.普通，4.较低）
-          // projectId:null, //      已转项目
-          // projectName:null, //      已转项目
-          // chanceUserId: "",//       机会负责人id
-          // chanceUserName:"", //          机会负责人
-          // customer: "", //          客户
-          // customerLink: "", //          客户联系人
-          // tel: "", //          联系方式
-          // budget: undefined, //          客户预算
-          // successRate: undefined, //          成功率
-          // expectStartTime: "", //          预计开始时间
-          // expectEndTime: "", //          预计结束时间
-          // expectWork: undefined, //          预计工时（人日）
-          // expectOffer: undefined, //          预计报价
-          // chanceService: "", //          服务对象(1.对内;2.对外)
-          // remark: "", //          备注
-          /*------------测试用-----------------*/
-          chanceName: "机会测试1", 
-          chanceStatus: 1, 
-          priority: 3, 
-          // projectId:null, 
-          // projectName:null, 
-          chanceUserId: 2,
-          // chanceUserName:"测试", 
-          customer: "国药控股合肥奇兵有限公司", 
-          customerLink: "周佩煌", 
-          tel: "13817242305", 
-          budget: 250000, 
-          successRate: 85, 
-          expectStartTime: "2022-10-01", 
-          expectEndTime: "2022-11-20", 
-          expectWork: 66, 
-          expectOffer: 660000, 
-          chanceService: 1, 
-          remark: "都很棒", 
+        chanceName: "", //          机会名称
+          chanceStatus: "", //          机会状态：1.新建、2.跟进中、3.已结束、4.已转项目
+          priority: 3, //          优先级（1.最高;2.高，3.普通，4.较低）
+          projectId:null, //      已转项目
+          projectName:null, //      已转项目
+          chanceUserId: "",//       机会负责人id
+          chanceUserName:"", //          机会负责人
+          customer: "", //          客户
+          customerLink: "", //          客户联系人
+          tel: "", //          联系方式
+          budget: undefined, //          客户预算
+          successRate: undefined, //          成功率
+          expectStartTime: undefined, //          预计开始时间
+          expectEndTime: undefined, //          预计结束时间
+          expectWork: undefined, //          预计工时（人日）
+          expectOffer: undefined, //          预计报价
+          chanceService: "", //          服务对象(1.对内;2.对外)
+          remark: "", //          备注
           chanceConfigList:[]
+
+          /*------------测试用-----------------*/
+          // chanceName: "机会测试1", 
+          // chanceStatus: 1, 
+          // priority: 3, 
+          // // projectId:null, 
+          // // projectName:null, 
+          // chanceUserId: 2,
+          // // chanceUserName:"测试", 
+          // customer: "国药控股合肥奇兵有限公司", 
+          // customerLink: "周佩煌", 
+          // tel: "13817242305", 
+          // budget: 250000, 
+          // successRate: 85, 
+          // expectStartTime: "2022-10-01", 
+          // expectEndTime: "2022-11-20", 
+          // expectWork: 66, 
+          // expectOffer: 660000, 
+          // chanceService: 1, 
+          // remark: "都很棒", 
+          // chanceConfigList:[]
       },
       // 配置的基本信息
       chanceConfigList: 
@@ -431,6 +434,16 @@ export default {
           required: true,
           message: '请输入机会名称',
           trigger: 'blur'
+        }],
+        expectStartTime: [{
+          required: true,
+          message: '请选择预计起始日',
+          trigger: 'change'
+        }],
+        expectEndTime: [{
+          required: true,
+          message: '请选择预计结束日',
+          trigger: 'change'
         }],
         chanceStatus: [{
           required: true,

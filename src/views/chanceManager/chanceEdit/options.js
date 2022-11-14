@@ -44,6 +44,16 @@ export const formData = {
 }
 
 export const rules = {
+  expectStartTime: [{
+    required: true,
+    message: '请选择预计起始日',
+    trigger: 'change'
+  }],
+  expectEndTime: [{
+    required: true,
+    message: '请选择预计结束日',
+    trigger: 'change'
+  }],
   chanceName: [{
     required: true,
     message: '请输入机会名称',
