@@ -82,9 +82,7 @@ export const rules = {
     trigger: 'blur'
   }],
   budget: [],
-  successRate: [],
-  expectStartTime: [],
-  expectEndTime: [],
+  successRate: [], 
   expectOffer: [],
   expectOffer: [],
   chanceService: [{

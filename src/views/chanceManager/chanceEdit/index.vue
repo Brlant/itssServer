@@ -83,12 +83,12 @@
           </el-col>
           <el-col :span="10" :offset="1">
             <el-form-item label="预计起始日：" prop="expectStartTime">
-              <el-date-picker v-model="formData.expectStartTime" format="yyyy-MM-dd" value-format="yyyy-MM-dd" :style="{width: '100%'}" placeholder="请选择预计起始日" clearable />
+              <el-date-picker v-model="formData.expectStartTime" format="yyyy-MM-dd" value-format="yyyy-MM-dd" :style="{width: '100%'}" placeholder="请选择预计起始日"   />
             </el-form-item>
           </el-col>
           <el-col :span="10" :offset="1">
             <el-form-item label="预计结束日：" prop="expectEndTime">
-              <el-date-picker v-model="formData.expectEndTime" format="yyyy-MM-dd" value-format="yyyy-MM-dd" :style="{width: '100%'}" placeholder="请选择预计结束日" clearable />
+              <el-date-picker v-model="formData.expectEndTime" format="yyyy-MM-dd" value-format="yyyy-MM-dd" :style="{width: '100%'}" placeholder="请选择预计结束日"   />
             </el-form-item>
           </el-col>
           <el-col :span="10" :offset="1">

@@ -469,8 +469,6 @@ export default {
         }],
         budget: [],
         successRate: [],
-        expectStartTime: [],
-        expectEndTime: [],
         expectOffer: [],
         expectOffer: [],
         chanceService: [{
