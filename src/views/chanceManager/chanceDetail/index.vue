@@ -932,9 +932,10 @@ export default {
       postLevelIdOptions: [], // 职位等级
       // 配置的基本信息
       chanceConfigList: {
-        postId: "", //职位id
-        areaId: "", //区域id
-        gradeId: "", //等级id
+        postNameId: "", //职位id
+        postTypeId:"",// 职位类型id
+        regionId: "", //区域id
+        postLevelId: "", //等级id
         skillIdList: [], //技能id
         startTime: "", //开始时间
         endTime: "", //结束时间
