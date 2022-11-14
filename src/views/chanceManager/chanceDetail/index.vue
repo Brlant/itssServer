@@ -1018,7 +1018,41 @@ export default {
       this.rules = this.rulesTemp;
       this.$forceUpdate();
     },
+       changePlanLoad(number, weekDay, fatherIndex, myIndex){
+      console.log("changePlanLoad");
+      // 修改每周期间 计划负荷
+      // 工作时间为固定的8  
+      if(number!=0){// 不等于0  就拿修改之后的百分比 除以 100 拿到比例  
+        this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workDay = ((number/100)*weekDay).toFixed(2) //人日==> 现有百分比除以100 乘以天数
+        this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workTime = ((number/100)*8).toFixed(2)      //每日工时==> 现有百分比除以100 乘以 8
+      }else{
+       this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workDay = 0
+        this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workTime = 0
+      }
+      /*----------------以上是 配置安排的具体计算-------------------*/
+      // 循环 取出每周的工作时长
+      let totalTime = 0,
+        totalDay = 0;
+     this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList.map(
+        (item, i) => {
+            // 其他的没有修改的 直接 拿天数累加
+            totalDay += parseFloat(item.workDay); // 总天数 == 每周人日累计
+            totalTime += parseFloat(item.workDay*8);// 总时长 == 每周人日*8
+          })
+          this.formData.chanceConfigList[fatherIndex].workTime = totalTime.toFixed(2) 
+          this.formData.chanceConfigList[fatherIndex].workDay = totalDay.toFixed(2)    
+          const tempWorkDay = this.formData.chanceConfigList[fatherIndex].workDayTemp; // 之前的总天数
+          console.log(tempWorkDay);
+           if (totalDay === 0) { // 防止憨批选到 节假日
+            this.formData.chanceConfigList[fatherIndex].planLoad = 0;
+          } else {
+            this.formData.chanceConfigList[fatherIndex].planLoad = ((totalDay/tempWorkDay)*100).toFixed(2) //计划负荷 == 实际人日/计划的人日 *100%
+          }
+          this.formData.chanceConfigList[fatherIndex].expectedCost = (totalDay*this.formData.chanceConfigList[fatherIndex].costNum).toFixed(2) /**预计成本*/
+           
+      /*----------------以上是 总计的安排的具体计算-------------------*/
 
+    },
     /*根据起始和结束 生成下面表格*/
     constAll(dates, index) {
       let params = {

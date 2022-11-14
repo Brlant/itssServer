@@ -13,7 +13,7 @@
       <el-row  >
         <el-col :span="10" :offset="1">
           <el-form-item label="机会名称：" prop="chanceName">
-            <el-input v-model="formData.chanceName" placeholder="请输入机会名称" clearable :style="{width: '100%'}">
+            <el-input v-model="formData.chanceName" placeholder="请输入机会名称" :maxlength="20" clearable :style="{width: '100%'}">
             </el-input>
           </el-form-item>
         </el-col>
@@ -57,13 +57,13 @@
         </el-col>
         <el-col :span="10" :offset="1">
           <el-form-item label="客户：" prop="customer">
-            <el-input v-model="formData.customer" placeholder="请输入客户" clearable :style="{width: '100%'}">
+            <el-input v-model="formData.customer" placeholder="请输入客户" :maxlength="20" clearable :style="{width: '100%'}">
             </el-input>
           </el-form-item>
         </el-col>
         <el-col :span="10" :offset="1">
           <el-form-item label="客户联系人" prop="customerLink">
-            <el-input v-model="formData.customerLink" placeholder="请输入客户联系人" clearable
+            <el-input v-model="formData.customerLink" placeholder="请输入客户联系人" :maxlength="20" clearable
               :style="{width: '100%'}"></el-input>
           </el-form-item>
         </el-col>
@@ -799,7 +799,7 @@ export default {
       });
       this.$forceUpdate()
     },
-       changePlanLoad(number, weekDay, fatherIndex, myIndex){
+    changePlanLoad(number, weekDay, fatherIndex, myIndex){
       // 修改每周期间 计划负荷
       // 工作时间为固定的8  
       if(number!=0){// 不等于0  就拿修改之后的百分比 除以 100 拿到比例  
