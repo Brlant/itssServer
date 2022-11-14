@@ -18,9 +18,10 @@
           <el-tree
             :data="deptOptions"
             :props="defaultProps"
+            node-key='id'
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
-            ref="tree"
+            ref="trees"
             default-expand-all
             highlight-current
             @node-click="handleNodeClick"
@@ -319,6 +320,7 @@ import {
 } from "@/api/DeptMange/DeptManage.js";
 // import { directive } from 'vue/types/umd';
 
+
 export default {
   name: "User",
   dicts: ["sys_normal_disable", "sys_user_sex"],
@@ -415,6 +417,7 @@ export default {
       postList: [],
       parentDeptData: [],
       projectUserIdOptions: [],
+      curren:'',
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -485,19 +488,28 @@ export default {
       this.$refs.tree.filter(val);
     },
   },
+
   created() {
     // this.getList();
+   
     this.getTreeselect();
     this.reqStatusFn();
     this.reqAllListFn();
     this.reqOrgListFn();
     this.reqParentDeptFn();
-    this.queryUserlistByRole();
-    // this.getConfigKey("sys.user.initPassword").then((response) => {
-    //   this.initPassword = response.msg;
-    // });
+ 
+    
   },
   methods: {
+     defaultData(){
+      // console.log(this.$refs.tree,'this.$refs.tree')
+      // this.$refs.trees.setCurrentKey(this.deptOptions[0].label)
+      this.$nextTick(function () {
+        this.$refs.trees.setCurrentKey(this.curren)//data[0].id为默认选中的节点
+               })
+    
+  
+     },
     sureEdit() {
       this.$refs["diaForm"].validate((valid) => {
         if(valid){
@@ -638,8 +650,9 @@ export default {
       this.$tab.closeOpenPage(obj);
     },
     detail(id) {
-      console.log(id, "dddd");
-      const obj = { path: "/system/user-auth/userInfo", query: { userId: id } };
+    // window.localStorage.setItem('depttId',this.queryParams.deptId)
+    // window.localStorage.setItem('deptTitle',this.deptTitle)
+      const obj = { path: "/system/user-auth/userInfo", query: { userId: id , deptId:this.queryParams.deptId,deptTitle:this.deptTitle} };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
@@ -676,10 +689,34 @@ export default {
     getTreeselect() {
       treeselect().then((response) => {
         this.deptOptions = response.data;
-        console.log(this.deptOptions, "sssss");
-        this.queryParams.deptId = this.deptOptions[0].id;
-        this.deptTitle = this.deptOptions[0].label;
+        // this.$store.commit('SET_DEPTID',this.deptOptions[0].id)
+    //  if(this.$store.state.deptId){
+ 
+     
+    //       this.queryParams.deptId = window.localStorage.getItem('depttId')
+    //        this.deptTitle =window.localStorage.getItem('deptTitle');
+    //         this.curren=window.localStorage.getItem('depttId')
+          
+    //     }else{
+          // this.queryParams.deptId = this.deptOptions[0].id;
+          if(this.$store.state.user.deptId){
+             console.log(this.$store.state.user.deptId)
+           this.queryParams.deptId = this.$store.state.user.deptId;
+           this.deptTitle = this.$store.state.user.deptTitle;
+            this.curren= this.$store.state.user.deptId;
+          }else{
+             this.queryParams.deptId =  this.deptOptions[0].id
+              this.deptTitle = this.deptOptions[0].label;
+            this.curren= this.deptOptions[0].id
+          }
+         
+        // }
+        
+       console.log( this.deptTitle,' this.deptTitle')
+       
         this.getList();
+        this.queryUserlistByRole();
+           this.defaultData()
       });
     },
     // 筛选节点
@@ -689,9 +726,12 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      console.log(data);
+      console.log(this.defaultData,'defaultData')
+      console.log(data,'data');
       this.queryParams.deptId = data.id;
+      this.$store.commit('SET_DEPTID',this.queryParams.deptId)
       this.deptTitle = data.label;
+      this.$store.commit('SET_DEPTTITLE',this.deptTitle)
       this.queryUserlistByRole()
       this.getList();
     },
@@ -731,35 +771,9 @@ export default {
       },
       this.resetForm("form");
     },
-    // /** 搜索按钮操作 */
-    // handleQuery() {
-    //   this.getList();
-    // },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.dateRange = [];
-      this.resetForm("queryForm");
-      this.handleQuery();
-    },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.userId);
-      this.single = selection.length != 1;
-      this.multiple = !selection.length;
-    },
-    // 更多操作触发
-    handleCommand(command, row) {
-      switch (command) {
-        case "handleResetPwd":
-          this.handleResetPwd(row);
-          break;
-        case "handleAuthRole":
-          this.handleAuthRole(row);
-          break;
-        default:
-          break;
-      }
-    },
+
+  
+  
     newAdd() {
       this.deptForm.posts =
         this.deptForm.posts && Array.isArray(this.deptForm.posts)
@@ -803,70 +817,9 @@ export default {
         // this.form.password = this.initPassword;
       });
     },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      this.getTreeselect();
-      const userId = row.userId || this.ids;
-      getUser(userId).then((response) => {
-        this.form = response.data;
-        response.posts.map((item, i) => {
-          item.postName =
-            item.regionName + "-" + item.postName + "-" + item.postLevel;
-        });
-        this.postOptions = response.posts;
-        this.roleOptions = response.roles;
-        // this.form.postIds = response.postIds;
-        this.form.postId = response.data.postId;
-        this.form.roleIds = response.roleIds;
-        this.open = true;
-        this.title = "修改用户";
-        this.form.password = "";
-      });
-    },
-    /** 重置密码按钮操作 */
-    handleResetPwd(row) {
-      this.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        closeOnClickModal: false,
-        inputPattern: /^.{5,20}$/,
-        inputErrorMessage: "用户密码长度必须介于 5 和 20 之间",
-      })
-        .then(({ value }) => {
-          resetUserPwd(row.userId, value).then((response) => {
-            this.$modal.msgSuccess("修改成功，新密码是：" + value);
-          });
-        })
-        .catch(() => {});
-    },
-    /** 分配角色操作 */
-    handleAuthRole: function (row) {
-      const userId = row.userId;
-      this.$router.push("/system/user-auth/role/" + userId);
-    },
-    /** 提交按钮 */
-    // submitForm: function () {
-    //   this.$refs["form"].validate((valid) => {
-    //     if (valid) {
-    //       // this.form.postid = this.form.postIds
-    //       // delete this.form.postIds
-    //       if (this.form.userId != undefined) {
-    //         updateUser(this.form).then((response) => {
-    //           this.$modal.msgSuccess("修改成功");
-    //           this.open = false;
-    //           this.getList();
-    //         });
-    //       } else {
-    //         addUser(this.form).then((response) => {
-    //           this.$modal.msgSuccess("新增成功");
-    //           this.open = false;
-    //           this.getList();
-    //         });
-    //       }
-    //     }
-    //   });
-    // },
+   
+   
+   
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate((valid) => {
@@ -886,66 +839,7 @@ export default {
           }
         }
       });
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const userIds = row.userId || this.ids;
-      this.$modal
-        .confirm('是否确认删除用户编号为"' + userIds + '"的数据项？')
-        .then(function () {
-          return delUser(userIds);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download(
-        "system/user/export",
-        {
-          ...this.queryParams,
-        },
-        `user_${new Date().getTime()}.xlsx`
-      );
-    },
-    /** 导入按钮操作 */
-    handleImport() {
-      this.upload.title = "用户导入";
-      this.upload.open = true;
-    },
-    /** 下载模板操作 */
-    importTemplate() {
-      this.download(
-        "system/user/importTemplate",
-        {},
-        `user_template_${new Date().getTime()}.xlsx`
-      );
-    },
-    // 文件上传中处理
-    handleFileUploadProgress(event, file, fileList) {
-      this.upload.isUploading = true;
-    },
-    // 文件上传成功处理
-    handleFileSuccess(response, file, fileList) {
-      this.upload.open = false;
-      this.upload.isUploading = false;
-      this.$refs.upload.clearFiles();
-      this.$alert(
-        "<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" +
-          response.msg +
-          "</div>",
-        "导入结果",
-        { dangerouslyUseHTMLString: true }
-      );
-      this.getList();
-    },
-    // 提交上传文件
-    submitFileForm() {
-      this.$refs.upload.submit();
-    },
+    }
   },
 };
 </script>

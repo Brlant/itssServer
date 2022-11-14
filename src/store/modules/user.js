@@ -13,9 +13,17 @@ const user = {
     roles: [],
     permissions: [],
     updatePassFlag:false,
+    deptId:'',
+    deptTitle:''
   },
 
   mutations: {
+    SET_DEPTID: (state, deptId) => {
+      state.deptId = deptId
+    },
+    SET_DEPTTITLE: (state, deptTitle) => {
+      state.deptTitle = deptTitle
+    },
     SET_TOKEN: (state, token) => {
       state.token = token
     },
