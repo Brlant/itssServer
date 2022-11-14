@@ -82,7 +82,7 @@
                    <i class='el-icon-lock' v-if='info.skillLock==1'></i>
                     <span class='title'>工作技能:</span>
                     <span class='work' v-for='(item,index) in info.userSkills' :key='index' :style="{background: matchColor(item.cssClass)}">{{item.skillName}}</span>
-                    
+                    <div v-if='info.skillLock==1' style='padding:10px 0px 0px 100px;font-size:12px;color:#a8b5c1;'>*改技能锁定后，该成员本人将无法修改技能</div>
                 </div>
             </div>
         </div>
