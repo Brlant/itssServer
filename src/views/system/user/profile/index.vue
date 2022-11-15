@@ -162,7 +162,13 @@ export default {
       this.$tab.closeOpenPage(obj);
     },
     detail() {
-      let id=this.$store.state.user.user.userId
+      let id;
+      if(this.$route.query.userId){
+        id=this.$route.query.userId
+      }else{
+         id=this.$store.state.user.user.userId
+      }
+    
 
         userDetail(id).then(res=>{
             this.info=res.data
@@ -232,7 +238,7 @@ export default {
 }
 .work {
   display: inline-block;
-  width: 100px;
+  min-width: 100px;
   height: 30px;
   text-align: center;
   border-radius: 20px;
@@ -240,6 +246,7 @@ export default {
   color: #ffffff;
   line-height: 30px;
   margin-right: 15px;
+  padding:0 10px;
 }
 .titleinfo {
   height: 50px;
