@@ -836,7 +836,7 @@
               <el-button
                 type="text"
                 size="small"
-                v-show="isProjectByUser(formData) && isJurisdiction('projectManager:proManager:handle')"
+                v-show="isProjectByUser(formData) && isJurisdictionper('projectManager:proManager:handle')"
                 @click="updateAuditPro(scope.row, '4')"
                 ><span class="color1"> 取消 </span></el-button
               >
@@ -844,14 +844,14 @@
                 type="text"
                 size="small"
                 @click="updateAuditPro(scope.row, '2')"
-                v-show="isJurisdiction('projectManager:proManager:modify')"
+                v-show="isJurisdictionper('projectManager:proManager:modify')"
                 ><span class="color2"> 通过 </span></el-button
               >
               <el-button
                 type="text"
                 size="small"
                 @click="updateAuditPro(scope.row, '3')"
-                v-show="isJurisdiction('projectManager:proManager:modify')"
+                v-show="isJurisdictionper('projectManager:proManager:modify')"
                 ><span class="color3"> 拒绝 </span></el-button
               >
             </div>

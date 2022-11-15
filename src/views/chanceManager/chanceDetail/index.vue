@@ -13,7 +13,10 @@
         >
         <span class="priority3 ft13" style="cursor: pointer;" @click="addFollow"  v-hasPermi="['chanceManage:chance:duty']">| 添加跟进记录</span>
         <!-- <router-link class="priority3 ft13" :to="'/chanceManager/addChance'">| 机会详情</router-link> -->
-        <span class="priority3 ft13"  style="cursor: pointer;" @click="transformProject"  v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
+        <!--   转为正式  需要 项目创建权限    ( 项目创建    projectManager:proManager:create   )  -->
+        <span v-hasPermi="['projectManager:proManager:create']">
+          <span class="priority3 ft13"  style="cursor: pointer;" @click="transformProject" v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
+        </span>
       </div>
     </div>
     <div class="titleBar">机会基础信息</div>
@@ -825,7 +828,7 @@ export default {
           value: 2,
         },
       ],
-      rules: {      
+      rules: {
       },
       rulesTemp: {
         chanceName: [
@@ -979,7 +982,7 @@ export default {
     },
      detail(id) {
     // window.localStorage.setItem('depttId',this.queryParams.deptId)
-    // window.localStorage.setItem('deptTitle',this.deptTitle) 
+    // window.localStorage.setItem('deptTitle',this.deptTitle)
       // const obj = { path: "/system/user-auth/userInfo", query: { userId: id , deptId:this.queryParams.deptId,deptTitle:this.deptTitle} };
       const obj = { path: "/system/user-auth/userInfo", query: { userId: id  } };
       // getToday()
@@ -1046,8 +1049,8 @@ export default {
        changePlanLoad(number, weekDay, fatherIndex, myIndex){
       console.log("changePlanLoad");
       // 修改每周期间 计划负荷
-      // 工作时间为固定的8  
-      if(number!=0){// 不等于0  就拿修改之后的百分比 除以 100 拿到比例  
+      // 工作时间为固定的8
+      if(number!=0){// 不等于0  就拿修改之后的百分比 除以 100 拿到比例
         this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workDay = ((number/100)*weekDay).toFixed(2) //人日==> 现有百分比除以100 乘以天数
         this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workTime = ((number/100)*8).toFixed(2)      //每日工时==> 现有百分比除以100 乘以 8
       }else{
@@ -1064,8 +1067,8 @@ export default {
             totalDay += parseFloat(item.workDay); // 总天数 == 每周人日累计
             totalTime += parseFloat(item.workDay*8);// 总时长 == 每周人日*8
           })
-          this.formData.chanceConfigList[fatherIndex].workTime = totalTime.toFixed(2) 
-          this.formData.chanceConfigList[fatherIndex].workDay = totalDay.toFixed(2)    
+          this.formData.chanceConfigList[fatherIndex].workTime = totalTime.toFixed(2)
+          this.formData.chanceConfigList[fatherIndex].workDay = totalDay.toFixed(2)
           const tempWorkDay = this.formData.chanceConfigList[fatherIndex].workDayTemp; // 之前的总天数
           console.log(tempWorkDay);
            if (totalDay === 0) { // 防止憨批选到 节假日
@@ -1074,7 +1077,7 @@ export default {
             this.formData.chanceConfigList[fatherIndex].planLoad = ((totalDay/tempWorkDay)*100).toFixed(2) //计划负荷 == 实际人日/计划的人日 *100%
           }
           this.formData.chanceConfigList[fatherIndex].expectedCost = (totalDay*this.formData.chanceConfigList[fatherIndex].costNum).toFixed(2) /**预计成本*/
-           
+
       /*----------------以上是 总计的安排的具体计算-------------------*/
 
     },
@@ -1231,7 +1234,7 @@ export default {
           this.formData.chanceConfigList[index].postTypeId = ""; // 职位类型
           this.formData.chanceConfigList[index].postNameId = ""; // 职位名称
           this.formData.chanceConfigList[index].postLevelId = ""; // 等级
-          this.formData.chanceConfigList[index].expectedCost = "--"; //// 预计成本          
+          this.formData.chanceConfigList[index].expectedCost = "--"; //// 预计成本
           this.postNameIdOptions = []; // 清空下拉
           this.postLevelIdOptions = []; // 清空下拉
           break;
@@ -1241,7 +1244,7 @@ export default {
           // this.formData.chanceConfigList[index].postTypeId="" // 职位类型
           this.formData.chanceConfigList[index].postNameId = ""; // 职位名称
           this.formData.chanceConfigList[index].postLevelId = ""; // 等级
-          this.formData.chanceConfigList[index].expectedCost = "--"; //// 预计成本          
+          this.formData.chanceConfigList[index].expectedCost = "--"; //// 预计成本
 
           this.postNameIdOptions = [];
           this.postLevelIdOptions = [];
@@ -1259,7 +1262,7 @@ export default {
           // this.formData.chanceConfigList[index].postTypeId="" // 职位类型
           // this.formData.chanceConfigList[index].postNameId="" // 职位名称
           this.formData.chanceConfigList[index].postLevelId = ""; // 等级
-          this.formData.chanceConfigList[index].expectedCost = "--"; //// 预计成本          
+          this.formData.chanceConfigList[index].expectedCost = "--"; //// 预计成本
 
           // this.postNameIdOptions= []
           this.postLevelIdOptions = [];
@@ -1273,7 +1276,7 @@ export default {
           });
           break;
         case "postLevelId": // 选择职位等级
-          this.formData.chanceConfigList[index].nextActive = false; // 初始化展示下面的所有          
+          this.formData.chanceConfigList[index].nextActive = false; // 初始化展示下面的所有
 
           // 选择 等级之后，拿到成本下拉 根据选择的等级id 拿到成本
           let costNumArry = this.postLevelIdOptions.find((item) => {

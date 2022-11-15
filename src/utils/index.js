@@ -12,12 +12,12 @@ import { parseTime } from './ruoyi'
  */
 export function formatDate(cellValue) {
   if (cellValue == null || cellValue == "") return "";
-  var date = new Date(cellValue) 
+  var date = new Date(cellValue)
   var year = date.getFullYear()
   var month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
-  var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate() 
-  var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours() 
-  var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes() 
+  var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+  var hours = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+  var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
   var seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
   return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
 }
@@ -337,7 +337,7 @@ export function makeMap(str, expectsLowerCase) {
     ? val => map[val.toLowerCase()]
     : val => map[val]
 }
- 
+
 export const exportDefault = 'export default '
 
 export const beautifierConf = {
@@ -394,7 +394,7 @@ export function camelCase(str) {
 export function isNumberStr(str) {
   return /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g.test(str)
 }
- 
+
     // 清空没有数据的空参数
     export function   clearNullParam(obj) {
       Object.keys(obj).forEach((item) => {
@@ -410,7 +410,7 @@ export function getMonthStartEnd(type){
   let nextMonthFirstDay=new Date(date.getFullYear(),nextMonth,1);
   let oneDay=1000*60*60*24;
   let lastDate = new Date(nextMonthFirstDay-oneDay);
-  
+
   let startTime = date.getFullYear()+"-"+((date.getMonth()+1)<10?"0":"")+(date.getMonth()+1)+"-"+"01";
   let endTime = lastDate.getFullYear()+"-"+((lastDate.getMonth()+1)<10?"0":"")+(lastDate.getMonth()+1)+"-"+(lastDate.getDate()<10?"0":"")+lastDate.getDate();
   if(type=='start'){
@@ -464,13 +464,17 @@ export function isProjectByUser(projectInfo){
   // console.log(projectInfo);
   let result = false
   const userInfo = JSON.parse(window.localStorage.getItem("user"))?JSON.parse(window.localStorage.getItem("user")):[]
+  if(userInfo.userId == 1){
+    // 是管理员
+    return true;
+  }
   // 预先判断这个人是不是 项目主管
   if(isJurisdiction("projectdirector")){
     // 项目主管
     if(userInfo.userId == projectInfo.projectUserId){
        result = true
       }
-  } 
+  }
   return result
 }
 //  js 模拟JQ addClass
@@ -484,7 +488,7 @@ export function addClassName(ele,str){
     ele.className =str
    }
   }
-  
+
 }
 /**
  *  智能处理小数位 使用 就是 this.autoFixed(参数,3)
