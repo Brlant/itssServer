@@ -1391,7 +1391,9 @@ export default {
         res.data.postTypeActive = false;
         res.data.nextActive = false;
         res.data.startEndTime = [res.data.startTime, res.data.endTime];
-        // this.constAll([res.data.startTime, res.data.endTime], 0);
+        // this.constAll([res.data.startTime, res.data.endTime], 0);// 这行导致的
+        console.log(res.data);
+        res.data.workDayTemp = res.data.workDay
         this.formData.chanceConfigList = [res.data];
         res.data.costNum = res.data.expectedCost / res.data.workDay;
         this.getRecommendUserHandel(0, res.data); // 因为无论是 查看详情的单行 还是 点击修改的单行 始终都是0 第一条
@@ -1452,6 +1454,7 @@ export default {
       this.nowIndex = row.index;
       this.resourceEditActive = false;
       this.resourceDetailActive = true;
+      this.recommendUserActive = true; //显示人选推荐
       this.refreshOneUser(row);
     },
     // 获取推荐人选的

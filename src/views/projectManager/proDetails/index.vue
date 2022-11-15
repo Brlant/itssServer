@@ -1418,6 +1418,8 @@ export default {
 
           this.addEditFormData.projectUserList.push(oneUser);
           this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
+          this.recommendUserActive = true; //显示人选推荐
+
           this.getRecommendUserHandel(row.index, row);
           // }
           // // 删除成功 只会去查询 审核的方法
@@ -1650,7 +1652,6 @@ export default {
       // if (this.id === row.id) return; // 此行先点击详情 再点击修改无作用
       this.id = row.id;
       this.delBtn = false;
-
       this.detailUserActive = false;
       this.addEditUserActive = true;
       this.resouceBtnActive = true; // 隐藏按钮的逻辑
@@ -1719,6 +1720,8 @@ export default {
           this.formData.projectUserList[index] = oneUser; //因为后台对于生成的三级数据没有id
           // console.log(JSON.stringify(oneUser));
           this.changeChildDateArea(oneUser,index);
+          this.recommendUserActive = true; //显示人选推荐
+
           this.getRecommendUserHandel(index, row);
 
           // }
@@ -1731,7 +1734,6 @@ export default {
     },
     // 拿到 并 显示 推荐人选
     getRecommendUserHandel(index, row) {
-      this.recommendUserActive = true;
       console.log(row);
       let params = {
         id:row.id||this.formData.projectUserList[index].id, //项目配置表主键第二级的主键
