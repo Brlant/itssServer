@@ -469,12 +469,12 @@ export function isProjectByUser(projectInfo){
     return true;
   }
   // 预先判断这个人是不是 项目主管
-  if(isJurisdiction("projectdirector")){
+
     // 项目主管
     if(userInfo.userId == projectInfo.projectUserId){
        result = true
-      }
-  }
+    }
+
   return result
 }
 //  js 模拟JQ addClass
