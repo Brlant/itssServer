@@ -13,7 +13,7 @@
           < 返回
         </span>
         <div
-          class="rightLink"
+          class="rightLink" v-show="isProjectByUser(formData)"
         >
         <!-- v-show="isProjectByUser(formData) || isJurisdiction('admin')" -->
           <span
@@ -292,6 +292,7 @@
           label="操作"
           width="120"
           fixed="right"
+          v-if="isProjectByUser(formData) && isJurisdiction('projectManager:proManager:handle')"
         >
           <!-- v-if="isProjectByUser(formData) || isJurisdiction('admin')"  // 暂时注释掉 是否为项目拥有者和超管 -->
           <template slot-scope="scope">

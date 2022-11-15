@@ -231,6 +231,7 @@
               详情
             </el-button>
             <el-button
+              v-show="isProjectByUser(scope.row)"
               v-hasPermi="['projectManager:proManager:handle']"
               @click.native.prevent="toggleActive(scope.$index, scope.row)"
               type="text"
