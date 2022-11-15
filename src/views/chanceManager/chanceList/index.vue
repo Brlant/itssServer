@@ -50,8 +50,9 @@
         <!-- @row-click="clickRow" -->
         <el-table-column prop="chanceName"  fixed="left" label="机会名称" min-width="120">
           <template slot-scope="scope">
-            <span :class="['yuan', 'yuan' + scope.row.priority]"></span>
-            <span class="priority3" style="cursor: pointer;"  v-hasPermi="['chanceManage:chance:all','chanceManage:chance:duty']"  @click="clickRow(scope.row)"> {{ scope.row.chanceName }}</span>
+            <span v-if="scope.row.projectId"  class="priority4">{{ scope.row.chanceName }}</span>
+            <span v-else :class="['yuan', 'yuan' + scope.row.priority]"></span>
+            <span v-else class="priority3" style="cursor: pointer;"  v-hasPermi="['chanceManage:chance:all','chanceManage:chance:duty']"  @click="clickRow(scope.row)"> {{ scope.row.chanceName }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="chanceStatus" fixed="left" label="状态" width="80">
@@ -61,7 +62,10 @@
         </el-table-column>
         <el-table-column prop="" label="已转项目"  width="160">
             <template slot-scope="scope">
-               <router-link class="priority3" :to="{path:'/projectManager/proDetails/', query:{ projectId:scope.row.projectId,projectName:scope.row.projectName,countScope:countScope}}">{{ scope.row.projectName}}</router-link>
+            
+                 <router-link class="priority3" :to="{path:'/projectManager/proManager-auth/proDetails/', query:{ projectId:scope.row.projectId,projectName:scope.row.projectName,countScope:countScope}}">{{ scope.row.projectName}}</router-link>
+             
+             
             </template>
         </el-table-column>
         <el-table-column prop="chanceUserName" label="负责人" width="120"> </el-table-column>
@@ -90,6 +94,7 @@ export default {
   data() {
     return {
       countScope:"",// 统计范围
+      scopeOptions:[],
       tableData: [
         {
           chanceName: "", //          机会名称
@@ -162,25 +167,25 @@ export default {
     // 项目主管 projectdirector 2
     // 运营管理 operatemanage
     // 项目监管 管理员 projectsupervision || admin ==>  1
-    let deptdirector = this.isJurisdiction("deptdirector"); // 部门主管
-    let projectdirector = this.isJurisdiction("projectdirector"); // 项目主管
-    let projectsupervision = this.isJurisdiction("projectsupervision"); // 项目监管
-    let operatemanage = this.isJurisdiction("operatemanage"); // 运营管理
-    let admin = this.isJurisdiction("admin"); // 管理员
-    // 运营管理        operatemanage
-       if (projectdirector) {
-          // 项目主管
-          this.countScope = 2
+    let scopeOptions = []
+    const options = [
+      { permi: 'projectManager:proManager:viewAllPro', label: '全部', value: 1 },
+      { permi: 'projectManager:proManager:viewMyPro', label: '仅我负责', value: 2 },
+      { permi: 'projectManager:proManager:viewMemberPro', label: '仅部门成员', value: 3 },
+      { permi: '*:*:*', label: '全部', value: 1 }
+    ]
+    options.forEach(v1 => {
+      this.$store.getters.permissions.forEach(v2 => {
+        if (v1.permi === v2) {
+          scopeOptions.push(v1)
         }
-        if (deptdirector) {
-          // 部门主管
-          this.countScope = 3
-        }
-
-        if (projectsupervision || admin|| operatemanage) {
-          // 项目监管 超管 运营管理
-          this.countScope = 1
-        }
+      })
+    })
+    this.scopeOptions = scopeOptions
+    console.log(scopeOptions);
+    if (scopeOptions.length) {
+      this.countScope = scopeOptions[0].value
+    }
     /*------------------额外的初始化查询的判断------------------------------*/
     this.init()
   },
