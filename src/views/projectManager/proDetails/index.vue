@@ -1070,9 +1070,16 @@ export default {
     // 部门主管 deptdirector  3
     // 项目主管 projectdirector 2
     // 项目监管 管理员 projectsupervision || admin ==>  1
-    let deptdirector = this.isJurisdiction("deptdirector"); // 部门主管
-    let projectdirector = this.isJurisdiction("projectdirector"); // 项目主管
-    let projectsupervision = this.isJurisdiction("projectsupervision"); // 项目监管
+    //
+//     项目查看（仅负责的项目）
+// projectManager:proManager:viewMyPro
+//     项目查看（仅部门成员参与的项目及数值）
+// projectManager:proManager:viewMemberPro
+//     项目查看（全部项目）
+// projectManager:proManager:viewAllPro
+    let deptdirector = this.isJurisdiction("projectManager:proManager:viewMemberPro"); // 部门主管   部门成员
+    let projectdirector = this.isJurisdiction("projectManager:proManager:viewMyPro"); // 项目主管   仅我负责
+    let projectsupervision = this.isJurisdiction("projectManager:proManager:viewAllPro"); // 项目监管  全部项目
     let operatemanage = this.isJurisdiction("operatemanage"); // 运营管理
     let admin = this.isJurisdiction("admin"); // 管理员
     let countScopeOptionsTemp = [];
@@ -1093,7 +1100,7 @@ export default {
       });
     }
 
-    if (projectsupervision || admin || operatemanage) {
+    if (projectsupervision) {
       // 项目监管
       this.countScopeInit = 1;
       countScopeOptionsTemp.push({

@@ -22,37 +22,37 @@
             </div>
             <div>
                 <div style="margin:20px;font-size:18px;padding-left:12px">
-                   
+
                     <span class='title'> <span style="color:red">*</span>手机号:</span>
                     <span>{{info.phonenumber}}</span>
                 </div>
                  <div style="margin:20px;font-size:18px;padding-left:12px">
-                  
+
                     <span class='title'> <span style="color:red">*</span>账号:</span>
                     <span>{{info.userName}}</span>
                 </div>
                  <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>工号:</span>
                     <span>{{info.employeeNo}}</span>
                 </div>
                  <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>邮箱:</span>
                     <span>{{info.email}}</span>
                 </div>
                  <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>git账号:</span>
                     <span>{{info.gitAccount}}</span>
                 </div>
                    <div style="margin:20px;0;font-size:18px;">
-                  
+
                     <span class='title'>区域:</span>
                     <span>{{info.regionName}}</span>
                 </div>
                   <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>职位类型:</span>
                     <span class="content">{{info.postType}}</span>
                     <span class='title'>职位名称:</span>
@@ -61,19 +61,19 @@
                     <span class="content">{{info.postLevel}}</span>
                 </div>
                    <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>入职时间:</span>
                     <span class="content">{{info.inTime}}</span>
                     <span class='title'>离职时间:</span>
                     <span>{{info.outTime}}</span>
-                  
+
                 </div>
                  <div style="margin:20px;font-size:18px;">
                   <i class='el-icon-unlock' v-if='info.skillLock==0'></i>
                    <i class='el-icon-lock' v-if='info.skillLock==1'></i>
                     <span class='title'>工作技能:</span>
                     <span class='work' v-for='(item,index) in info.userSkills' :key='index' :style="{background: matchColor(item.cssClass)}">{{item.skillName}}</span>
-                    
+
                 </div>
             </div>
         </div>
@@ -81,7 +81,7 @@
              <div class="titleinfo">权限信息</div>
             <div style="font-size:18px;">
                    <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>系统角色:</span>
                     <span v-for='(item,index) in info.roles' :key='index'>
                         <span>{{item.roleName}}</span>
@@ -89,7 +89,7 @@
                     </span>
                 </div>
                   <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>所属部门:</span>
                     <span v-if='info.dept' class="content">{{info.dept.deptName}}</span>
                     <span class='title'>负责人:</span>
@@ -141,10 +141,10 @@ export default {
       },
        rules: {
           tel: [
-            { required: true, message: '请输入新手机号', trigger: 'blur' }, 
+            { required: true, message: '请输入新手机号', trigger: 'blur' },
           ],
            verification: [
-            { required: true, message: '请输入短信验证码', trigger: 'blur' }, 
+            { required: true, message: '请输入短信验证码', trigger: 'blur' },
           ],
         }
     };
@@ -163,12 +163,12 @@ export default {
     },
     detail() {
       let id=this.$store.state.user.user.userId
-      
+
         userDetail(id).then(res=>{
             this.info=res.data
-            
+
         })
-    
+
     },
     // 匹配颜色
     matchColor(cssClass) {
@@ -188,9 +188,9 @@ export default {
             return false;
           }
         });
-      
+
     }
-  
+
   },
 };
 </script>
