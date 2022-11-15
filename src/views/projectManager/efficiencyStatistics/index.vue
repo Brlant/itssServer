@@ -210,10 +210,10 @@ export default {
         // this.selfJurisdiction=this.isJurisdiction('common')
         // this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')
         // permissions   是否包含  workloadStatistics:stat:all  或 workloadStatistics:stat:dept
-         if(this.isJurisdictionper('workloadStatistics:stat:all') || this.isJurisdictionper('workloadStatistics:stat:dept')){
+         if(this.isJurisdiction('workloadStatistics:stat:all') || this.isJurisdiction('workloadStatistics:stat:dept')){
             this.mangerJurisdiction=true
             this.drillDowm=true
-        }else if(this.isJurisdictionper('efficiencyStatistics:stat:self')){
+        }else if(this.isJurisdiction('efficiencyStatistics:stat:self')){
             this.drillDowm=false
             this.selfJurisdiction=true
         }

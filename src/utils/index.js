@@ -437,7 +437,7 @@ export function getToday(){
 // parent ("operatemanage"); // 运营管理
 // parent ("admin"); // 管理员
 // 之前用角色判断权限 ， 改成 用（用户的角色绑定的菜单）菜单的权限标识 判断权限
-export function isJurisdictionper(...permissionStrs) {
+export function isJurisdiction(...permissionStrs) {
   // 先判断是否为管理员
   const userInfo = JSON.parse(window.localStorage.getItem("user"))?JSON.parse(window.localStorage.getItem("user")):[]
   if(userInfo.userId == 1){
@@ -451,14 +451,14 @@ export function isJurisdictionper(...permissionStrs) {
   })
   return result
 }
-export function isJurisdiction(...roles) {
-  const role = JSON.parse(window.localStorage.getItem("roles"))?JSON.parse(window.localStorage.getItem("roles")):[]
-  let result = false
-  roles.forEach((p) => {
-    if (role.includes(p)) result = true
-  })
-  return result
-}
+// export function isJurisdiction(...roles) {
+//   const role = JSON.parse(window.localStorage.getItem("roles"))?JSON.parse(window.localStorage.getItem("roles")):[]
+//   let result = false
+//   roles.forEach((p) => {
+//     if (role.includes(p)) result = true
+//   })
+//   return result
+// }
 // 判断当前登录人 是不是 项目负责人 返回true false
 export function isProjectByUser(projectInfo){
   // console.log(projectInfo);
