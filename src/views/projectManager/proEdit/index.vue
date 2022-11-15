@@ -593,13 +593,7 @@ export default {
           },
         ],
 
-        projectGitUrl: [
-          {
-            required: true,
-            message: "请输入GitLab地址",
-            trigger: "blur",
-          },
-        ],
+       
         projectCode: [
           {
             required: true,
@@ -656,13 +650,7 @@ export default {
             trigger: "change",
           },
         ],
-        projectChance: [
-          {
-            required: true,
-            message: "请选择关联机会",
-            trigger: "change",
-          },
-        ],
+        
       },
       // 单独的 用户列表
       projectUserList: {
@@ -1245,7 +1233,7 @@ export default {
       })
         .then(() => {
           const obj = {
-            path: "/projectManager/proDetails/",
+            path: "/projectManager/proManager-auth/proDetails",
             query: {
               projectId: this.formData.projectId,
               projectName: this.formData.projectName,

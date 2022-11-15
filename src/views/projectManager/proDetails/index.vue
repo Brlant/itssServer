@@ -1411,7 +1411,7 @@ export default {
           oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
 
           this.addEditFormData.projectUserList.push(oneUser);
-          // this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
+          this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
           this.getRecommendUserList(row.index, row);
           // }
           // // 删除成功 只会去查询 审核的方法
@@ -1710,7 +1710,7 @@ export default {
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${oneUser.costNum}`);
           this.addEditFormData.projectUserList.push(oneUser);
-          // this.formData.projectUserList[index] = oneUser; //因为后台对于生成的三级数据没有id
+          this.formData.projectUserList[index] = oneUser; //因为后台对于生成的三级数据没有id
           // console.log(JSON.stringify(oneUser));
           this.changeChildDateArea(oneUser,index);
           this.getRecommendUserList(index, row);
