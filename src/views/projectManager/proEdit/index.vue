@@ -357,9 +357,9 @@
                 <el-button
                   type="primary"
                   size="mini"
-                  @click="DelPostList(addUserListindex)"
+                  @click="DelPostList(addUserListindex,addUserList)"
                 >
-                  删除
+                  删除11
                 </el-button>
                 <!-- <el-button type="info" size="mini"> 取消 </el-button> -->
               </el-form-item>
@@ -783,7 +783,7 @@ export default {
           });
         });
           res.data.projectUserList.map((item, index) => {
-          this.changeTextColor(item.skillIdList, "mySkillIdList");
+        
 
          // 循环 回显 职位名称和职位等级
           this.constAll(item.startEndTime, index);
@@ -798,6 +798,7 @@ export default {
           getPostName(parame).then((PostNameres) => {
             item.postNameIdOptions = PostNameres.data;
           });
+            this.changeTextColor(item.skillIdList, "mySkillIdList");
         });
 
         this.formData = res.data; // 填充详情的 projectTimeArea
@@ -922,12 +923,43 @@ export default {
           break;
       }
     },
-    //
-    DelPostList(index) {
-      // 直接删除单行
-      this.formData.projectUserList.splice(index, 1);
-    },
+    // 删除单行用户的
+    DelPostList(index, row) {
+      // 修改类型（1.新增,2.删除,3.修改原数据）
+      // oneUser.updateType = 1
+      this.$confirm(`您确定要删除这条数据吗?`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          // 修改类型（1.新增,2.删除,3.修改原数据）
+          if (row.updateType == 3) {
+            // 修改 就提交接口
+            let params = this.deepClone(this.formData);
+            params.projectUserList = [];
+            params.projectUserList.push(row);
+            params.projectUserList[0].updateType = 2;
 
+            // updateProjectUserAddEdit(params).then((res) => {
+            //   let { code, msg } = res;
+            //   this.$message.success(msg);
+            //   if (+code == 200) {
+            //     // 提交删除成功 无需操作什么 因为 需要审核
+            //   }
+            // });
+            this.DelUserListTemp.push(...params.projectUserList);
+            this.formData.projectUserList.splice(index, 1);
+            // this.formData.projectUserList[index].updateType=2;
+          }
+          if (row.updateType == 1) {
+            // 新增的就前端删除
+            this.formData.projectUserList.splice(index, 1);
+            this.filterUserList()
+          }
+        })
+        .catch(() => {});
+    },
     /*修改每周计划负荷*/
     /*
      * number 计划负荷的百分比 总天数 父级的下标 和自己的下标
@@ -1225,6 +1257,8 @@ export default {
                     projectId: this.formData.projectId,
                     projectName: this.formData.projectName,
                     countScope: this.$route.query.countScope,
+                    startTime:this.formData.projectStartTime,
+                    endTime:this.formData.projectEndTime
                   },
                 });
               }

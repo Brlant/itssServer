@@ -2067,6 +2067,7 @@ export default {
       /**
        * 生成 动态表头
        */
+      console.log(this.checkFormData);
       if(this.checkFormData.startTime&&this.checkFormData.endTime){
 
         getTimeProcess(params).then((res) => {
