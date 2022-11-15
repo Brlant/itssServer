@@ -1208,6 +1208,7 @@ export default {
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.addEditFormData.projectUserList[index].costNum}`);
           this.constAll(this.addEditFormData.projectUserList[index].startEndTime, index);
+          this.getRecommendUserList(0, this.addEditFormData.projectUserList[0]);
 
           break;
       }
@@ -1237,6 +1238,7 @@ export default {
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
+             this.getRecommendUserList(0, this.addEditFormData.projectUserList[0]);
         }, 800);
       });
     },

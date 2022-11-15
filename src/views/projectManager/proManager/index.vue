@@ -192,8 +192,9 @@
         <el-table-column prop="realWork" label="实际完成工作" width="130">
           <template slot-scope="scope">
             {{ scope.row.realWork }}人日
+            <!-- v-show="isProjectByUser(scope.row)||isJurisdiction('admin')" -->
             <el-button
-            v-show="isProjectByUser(scope.row)||isJurisdiction('admin')"
+            v-hasPermi="['projectManager:editTeam:edit']"
               @click.native.prevent="updateRealWork(scope.$index, scope.row)"
               type="text"
               size="mini"
