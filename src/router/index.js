@@ -345,7 +345,7 @@ export const dynamicRoutes = [
     path: '/system/user-auth/profile',
     component: Layout,
     hidden: true,
-    permissions: ['system:user:userEdit'],
+    permissions: ['system:user:selfInfo'],
     children: [
       {
         path: 'userEdit',
@@ -443,7 +443,7 @@ export const dynamicRoutes = [
       }
     ]
   },
-  
+
 ]
 
 // 防止连续点击多次路由报错

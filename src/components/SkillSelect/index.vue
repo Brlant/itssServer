@@ -54,6 +54,7 @@ export default {
   data() {
     return {
       skill: '',
+      list: [],
       data: [],
       dataCopy:[]
     }
@@ -98,9 +99,9 @@ export default {
     },
   computed: {
    
-    list() {
-      return this.dataCopy.filter(v => v.tick)
-    }
+    // list() {
+    //   return this.dataCopy.filter(v => v.tick)
+    // }
   },
   created() {
     console.log(this.skillDafault)
@@ -122,10 +123,17 @@ export default {
         })
         this.data = data;
         this.dataCopy=data
-        this.dataCopy.forEach(v1 => {
-          this.value.forEach(v2 => {
-            if (v1.dictCode === v2) {
-              v1.tick = true
+        // this.dataCopy.forEach(v1 => {
+        //   this.value.forEach(v2 => {
+        //     if (v1.dictCode === v2) {
+        //       v1.tick = true
+        //     }
+        //   })
+        // })
+        this.value.forEach(v1 => {
+          this.dataCopy.forEach(v2 => {
+            if (v2.dictCode === v1) {
+              v2.tick = true
             }
           })
         })
@@ -134,7 +142,14 @@ export default {
     // 选中技能
     change(index) {
       this.data[index].tick = !this.data[index].tick
-     
+      if (this.data[index].tick) {
+        this.list.push(this.data[index])
+      } else {
+        const sign = this.list.findIndex(v => v.dictCode === this.data[index].dictCode)
+        if (sign !== -1) {
+          this.list.splice(sign, 1)
+        }
+      }
     },
     // 删除标签
     del(item) {

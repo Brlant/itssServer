@@ -112,7 +112,7 @@
         <!-- 个人效率 -->
         <div v-if='selfJurisdiction'>
             <div v-for="(item,index) in userData" :key='index'  class='table-style'>
-                <div class='name' @click='userInfoId(item.userId)'>{{item.username}}</div>
+                <div class='name' @click='userInfoId(item.userId)' style='cursor:pointer;color:#3D7DFF;'>{{item.username}}</div>
                 <el-table :data="item.projectEfficiencyList" border class="tableData" style="width:100%" :span-method="arraySpanMethod">
                     <el-table-column label="项目" align="center"   min-width='150' prop='projectName' fixed="left">
                          <template slot-scope="scope">

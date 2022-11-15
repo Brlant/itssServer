@@ -1100,7 +1100,7 @@ export default {
     // 部门主管 deptdirector  3
     // 项目主管 projectdirector 2
     // 项目监管 管理员 projectsupervision || admin ==>  1
-     
+ 
     // 统计范围的-------------------------------------------
     this.projectName = this.$route.query.projectName;
     this.projectId = this.$route.query.projectId;
