@@ -5,8 +5,8 @@
         <i class='el-icon-arrow-left' @click="goBack"></i><span>{{teamName}}</span>
         <div class="rightBtns">
           <!-- 必须是项目主管的角色 -->
-          <el-button size="mini" type="primary" v-if="isJurisdiction('projectdirector','admin')">
-            <router-link :replace="true"  :to="'/ProjectManager/AddProject'"
+          <el-button size="mini" type="primary"  v-hasPermi="['projectManager:proManager:create']">
+            <router-link :replace="true"  :to="'/projectManager/proManager-auth/addProject'"
               >新建项目</router-link
             >
           </el-button>
