@@ -15,7 +15,9 @@
         <!-- <router-link class="priority3 ft13" :to="'/chanceManager/addChance'">| 机会详情</router-link> -->
         <!--   转为正式  需要 项目创建权限    ( 项目创建    projectManager:proManager:create   )  -->
         <span v-hasPermi="['projectManager:proManager:create']">
-          <span class="priority3 ft13"  style="cursor: pointer;" @click="transformProject" v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
+
+          <span class="priority4 ft13"  v-if="formData.projectId"    v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
+          <span class="priority3 ft13" v-else  style="cursor: pointer;" @click="transformProject" v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
         </span>
       </div>
     </div>
