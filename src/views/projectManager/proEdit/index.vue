@@ -550,6 +550,7 @@ export default {
         projectUserId: "" /**项目负责人*/,
         projectUserList: [] /**项目成员列表*/,
         tbProjectId: "",
+        bugId:''
       },
       rules: {
         // 配置信息的

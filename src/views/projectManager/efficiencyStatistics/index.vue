@@ -222,7 +222,7 @@ export default {
     },
     methods:{
         userInfoId(id){
-            const obj = { path: "/system/user-auth/userInfo", query: { userId: id } };
+            const obj = { path:'/user/profile', query: { userId: id } };
             // getToday()
             this.$tab.closeOpenPage(obj);
         },

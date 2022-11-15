@@ -112,7 +112,7 @@
         </el-row>
          <el-row>
           <el-col :span="7" :offset="1">
-            <el-form-item label="TB项目ID" prop="bugId">
+            <el-form-item label="缺陷管理ID" prop="bugId">
               {{ formData.bugId }}
             </el-form-item>
            
