@@ -405,7 +405,7 @@
                 label="技能需求："
               >
                <div class="colText2">
-                  <span v-for="skill in skillList" :class="['skillBox','skill'+skill.cssClass]">
+                  <span v-for="skill in addUserList.skillList" :class="['skillBox','skill'+skill.cssClass]">
                     {{ skill.skillName }}
                   </span>
                 </div>
@@ -1844,6 +1844,7 @@ export default {
           this.detailUserActive = true;
           this.addEditUserActive = false;
           this.recommendUserActive = false;// 先给人选给隐藏
+          console.log(row);
           this.showRowDetail(row);
       }
 

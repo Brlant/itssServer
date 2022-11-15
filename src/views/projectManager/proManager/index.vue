@@ -373,8 +373,6 @@ export default {
     ]
     options.forEach(v1 => {
       this.$store.getters.permissions.forEach(v2 => {
-        console.log(v1.permi,v2);
-
         if (v1.permi === v2) {
           scopeOptions.push(v1)
         }
