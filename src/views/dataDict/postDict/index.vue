@@ -21,7 +21,7 @@
           :class="{current: index === n}"
           @click.self="change(index)"
         >
-          <span>{{ item.dictLabel }}</span>
+          <span @click.self="change(index)">{{ item.dictLabel }}</span>
           <div class="action">
             <i class="el-icon-edit-outline" @click="handlePost(item, index)"></i>
             <i class="el-icon-delete" @click="delPost(item, index)"></i>
@@ -190,6 +190,7 @@ export default {
     },
     // 选择类型职位
     change(index) {
+      console.log(111111111)
       if (this.n === index) return
       this.n = index
       this.getTableData()
