@@ -421,7 +421,7 @@
                 预计成本：<span>{{ addUserList.expectedCost }}</span> 元
               </div></el-col
             >
-           
+
           </el-row>
           <!----------------------内部-start------------------------------>
           <el-row
@@ -593,7 +593,7 @@ export default {
           },
         ],
 
-       
+
         projectCode: [
           {
             required: true,
@@ -650,7 +650,7 @@ export default {
             trigger: "change",
           },
         ],
-        
+
       },
       // 单独的 用户列表
       projectUserList: {
@@ -772,7 +772,7 @@ export default {
         });
           res.data.projectUserList.map((item, index) => {
           this.changeTextColor(item.skillIdList, "mySkillIdList");
-        
+
          // 循环 回显 职位名称和职位等级
           this.constAll(item.startEndTime, index);
           let parame = {
@@ -787,7 +787,7 @@ export default {
             item.postNameIdOptions = PostNameres.data;
           });
         });
-     
+
         this.formData = res.data; // 填充详情的 projectTimeArea
 
         this.team();
