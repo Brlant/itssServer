@@ -112,7 +112,7 @@ export default {
       teamUserIdOptions: [{ nickName: "aa", userId: "1" }],
       formData: {
         teamName:'',
-        teamName:[],
+        teamTimeArea:[],
         teamUserId:''
       },
       rules: {
