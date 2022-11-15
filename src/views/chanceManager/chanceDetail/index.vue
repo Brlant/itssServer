@@ -228,7 +228,7 @@
             <el-row>
               <el-col :span="6">
                 <el-form-item label="配置安排：">
-                  {{ chanceConfigItem.startTime + "--" + chanceConfigItem.startTime }}
+                  {{ chanceConfigItem.startTime + "--" + chanceConfigItem.endTime }}
                 </el-form-item>
               </el-col>
               <el-col :span="3" :offset="1" class="lineTT">

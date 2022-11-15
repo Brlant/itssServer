@@ -2044,6 +2044,7 @@ export default {
           : "";
         this.checkFormData.projectId = this.$route.query.projectId;
         // this.checkFormData.countScope = this.checkFormData.totalArea;
+        this.constAll(this.checkFormData.projectStartEndTime, this.nowIndex);
       }
       queryInfoById(this.checkFormData).then((res) => {
         //isShow;  //是否显示按钮 1 不显示，0显示
@@ -2052,19 +2053,17 @@ export default {
         if(res.data.projectUserList.length>0){
            this.projectTable.projectUserList = res.data.projectUserList;
         }
-       
-
         // 拼接列名
         this.monthArrTemp = [];
         // 动态生成 合计天数周数 日期区间
          let params = {
-        startDate: res.data.projectStartTime,
-        endDate: res.data.projectEndTime,
+        startDate: this.checkFormData.startTime,
+        endDate: this.checkFormData.endTime,
       };
       /**
        * 生成 动态表头
        */
-      if(res.data.projectStartTime&&res.data.projectEndTime){
+      if(this.checkFormData.startTime&&this.checkFormData.endTime){
 
         getTimeProcess(params).then((res) => {
           res.data.list.map((item,i)=>{
