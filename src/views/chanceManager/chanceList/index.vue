@@ -51,8 +51,10 @@
         <el-table-column prop="chanceName"  fixed="left" label="机会名称" min-width="120">
           <template slot-scope="scope">
             <span v-if="scope.row.projectId"  class="priority4">{{ scope.row.chanceName }}</span>
-            <span v-else :class="['yuan', 'yuan' + scope.row.priority]"></span>
-            <span v-else class="priority3" style="cursor: pointer;"  v-hasPermi="['chanceManage:chance:all','chanceManage:chance:duty']"  @click="clickRow(scope.row)"> {{ scope.row.chanceName }}</span>
+            <span v-else class="priority3" style="cursor: pointer;"  v-hasPermi="['chanceManage:chance:all','chanceManage:chance:duty']"  @click="clickRow(scope.row)">
+            <span   :class="['yuan', 'yuan' + scope.row.priority]"></span>
+               {{ scope.row.chanceName }}
+               </span>
           </template>
         </el-table-column>
         <el-table-column prop="chanceStatus" fixed="left" label="状态" width="80">
