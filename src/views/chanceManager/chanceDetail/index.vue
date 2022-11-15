@@ -626,7 +626,7 @@
           <template slot-scope="scope">
             <div>
                <el-button type="text" size="mini" >
-                <span class="priority3" @click="detail(scope.row.userId)"  v-hasPermi="['chanceManage:chance:duty']"
+                <span class="priority3" @click="detail(scope.row.userId)"  v-hasPermi="['system:user:query']"
                   >详情
                 </span>
               </el-button>

@@ -232,6 +232,17 @@
             </el-form-item>
           </el-col>
         </el-row>
+         <el-row>
+            <el-col :span="10" :offset="1">
+            <el-form-item label="缺陷管理ID" prop="bugId">
+              <el-input
+                v-model="formData.bugId"
+                placeholder="缺陷管理ID"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+       
+        </el-row>
       </div>
       <div class="titleBar">
         项目资源配置
