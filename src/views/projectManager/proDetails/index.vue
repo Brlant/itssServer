@@ -1245,12 +1245,15 @@ export default {
     goAudit() {
       // 此处提交的是 全量数据
       // 下面是塞入数据
-      this.formData.projectUserList[
+      if(this.projectTable.projectUserList && this.projectTable.projectUserList[this.nowIndex].userId){
+        this.formData.projectUserList[
         this.nowIndex
       ].userId = this.projectTable.projectUserList[this.nowIndex].userId;
       this.formData.projectUserList[
         this.nowIndex
       ].userName = this.projectTable.projectUserList[this.nowIndex].userName;
+      }
+      
       // 提交审核之前 ，处理一下 刚刚添加的资源
       this.formData.projectUserList.unshift(...this.holdUserList)
       let parame = this.deepClone(this.formData)
@@ -2046,7 +2049,10 @@ export default {
         //isShow;  //是否显示按钮 1 不显示，0显示
         this.isShowActive = res.data.isShow;
         // this.projectTable = res.data;
-        this.projectTable.projectUserList = res.data.projectUserList;
+        if(res.data.projectUserList.length>0){
+           this.projectTable.projectUserList = res.data.projectUserList;
+        }
+       
 
         // 拼接列名
         this.monthArrTemp = [];
