@@ -110,6 +110,15 @@
             </el-form-item>
           </el-col>
         </el-row>
+         <el-row>
+          <el-col :span="7" :offset="1">
+            <el-form-item label="TB项目ID" prop="bugId">
+              {{ formData.bugId }}
+            </el-form-item>
+           
+          </el-col>
+       
+        </el-row>
       </el-form>
       <!--------------------------------------------------------------------------->
     </div>
@@ -1215,6 +1224,7 @@ export default {
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.addEditFormData.projectUserList[index].costNum}`);
           this.constAll(this.addEditFormData.projectUserList[index].startEndTime, index);
+          this.getRecommendUserList(0, this.addEditFormData.projectUserList[0]);
 
           break;
       }
@@ -1244,6 +1254,7 @@ export default {
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
+             this.getRecommendUserList(0, this.addEditFormData.projectUserList[0]);
         }, 800);
       });
     },

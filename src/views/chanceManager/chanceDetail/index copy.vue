@@ -626,7 +626,7 @@
           <template slot-scope="scope">
             <div>
                <el-button type="text" size="mini" >
-                <span class="priority3" @click="detail(scope.row.userId)"  v-hasPermi="['system:user:query']"
+                <span class="priority3" @click="detail(scope.row.userId)"  v-hasPermi="['chanceManage:chance:duty']"
                   >详情
                 </span>
               </el-button>
@@ -1220,10 +1220,8 @@ export default {
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
-      this.getRecommendUserHandel(0, this.formData.chanceConfigList[0]);
         }, 800);
       });
-
     },
     // 判断当前这个值是否选中了
     editNext(who, data, index) {
@@ -1300,7 +1298,7 @@ export default {
           );
           // 并计算 下面的周排期
           this.constAll(this.formData.chanceConfigList[index].startEndTime, index);
-          this.getRecommendUserHandel(0, this.formData.chanceConfigList[0]);
+
           break;
       }
     },
@@ -1340,7 +1338,7 @@ export default {
           );
           console.log(this.formData.chanceConfigList);
           this.$forceUpdate();
-          // 点击了取消，就重新获取一遍人选的推荐
+
           this.getRecommendUserHandel(0, this.formData.chanceConfigList[0]);
         }, 800);
         this.followInit(this.$route.query.chanceId);

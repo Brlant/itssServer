@@ -168,7 +168,7 @@
           <template slot-scope="scope">
             {{ scope.row.realWork }}人日
             <el-button
-            v-show="isProjectByUser(scope.row)||isJurisdiction('admin')"
+            v-hasPermi="['projectManager:editTeam:edit']"
               @click.native.prevent="updateRealWork(scope.$index, scope.row)"
               type="text"
               size="mini"
