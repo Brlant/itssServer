@@ -110,6 +110,15 @@
             </el-form-item>
           </el-col>
         </el-row>
+         <el-row>
+          <el-col :span="7" :offset="1">
+            <el-form-item label="TB项目ID" prop="bugId">
+              {{ formData.bugId }}
+            </el-form-item>
+           
+          </el-col>
+       
+        </el-row>
       </el-form>
       <!--------------------------------------------------------------------------->
     </div>

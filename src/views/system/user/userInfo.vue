@@ -144,11 +144,12 @@ export default {
     },
     //返回
     goBack(){
-        const obj = {
-            path: "/system/user",
-            query:{deptId:this.deptId,deptTitle:this.deptTitle}
-        };
-      this.$tab.closeOpenPage(obj);
+    //     const obj = {
+    //         path: "/system/user",
+    //         query:{deptId:this.deptId,deptTitle:this.deptTitle}
+    //     };
+    //   this.$tab.closeOpenPage(obj);
+    this.$router.go(-1)
     },
     //编辑
     editInfo(){
