@@ -1207,8 +1207,9 @@ export default {
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.addEditFormData.projectUserList[index].costNum}`);
           this.constAll(this.addEditFormData.projectUserList[index].startEndTime, index);
-          this.getRecommendUserList(0, this.addEditFormData.projectUserList[0]);
-
+           setTimeout(() => {
+          this.getRecommendUserHandel(0, this.addEditFormData.projectUserList[0]);
+           },500);
           break;
       }
     },
@@ -1237,7 +1238,7 @@ export default {
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
-             this.getRecommendUserList(0, this.addEditFormData.projectUserList[0]);
+             this.getRecommendUserHandel(0, this.addEditFormData.projectUserList[0]);
         }, 800);
       });
     },
@@ -1417,7 +1418,7 @@ export default {
 
           this.addEditFormData.projectUserList.push(oneUser);
           this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
-          this.getRecommendUserList(row.index, row);
+          this.getRecommendUserHandel(row.index, row);
           // }
           // // 删除成功 只会去查询 审核的方法
           // this.auditStatus = "1"; // 初始化 显示 待审核
@@ -1718,7 +1719,7 @@ export default {
           this.formData.projectUserList[index] = oneUser; //因为后台对于生成的三级数据没有id
           // console.log(JSON.stringify(oneUser));
           this.changeChildDateArea(oneUser,index);
-          this.getRecommendUserList(index, row);
+          this.getRecommendUserHandel(index, row);
 
           // }
           // // 删除成功 只会去查询 审核的方法
@@ -1729,10 +1730,11 @@ export default {
       });
     },
     // 拿到 并 显示 推荐人选
-    getRecommendUserList(index, row) {
+    getRecommendUserHandel(index, row) {
       this.recommendUserActive = true;
+      console.log(row);
       let params = {
-        id:row.id, //项目配置表主键第二级的主键
+        id:row.id||this.formData.projectUserList[index].id, //项目配置表主键第二级的主键
         postNameId:row.postNameId,//职位id
         regionId:row.regionId,//区域id
         postTypeId:row.postTypeId,//职位类型id

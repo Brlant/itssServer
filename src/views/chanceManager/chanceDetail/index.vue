@@ -1302,7 +1302,9 @@ export default {
           );
           // 并计算 下面的周排期
           this.constAll(this.formData.chanceConfigList[index].startEndTime, index);
-          this.getRecommendUserHandel(0, this.formData.chanceConfigList[0]);
+         setTimeout(() => {
+             this.getRecommendUserHandel(0, this.formData.chanceConfigList[0]);
+         }, 500)
           break;
       }
     },
@@ -1389,9 +1391,9 @@ export default {
         res.data.postTypeActive = false;
         res.data.nextActive = false;
         res.data.startEndTime = [res.data.startTime, res.data.endTime];
+        // this.constAll([res.data.startTime, res.data.endTime], 0);
         this.formData.chanceConfigList = [res.data];
         res.data.costNum = res.data.expectedCost / res.data.workDay;
-        this.constAll([res.data.startTime, res.data.endTime], 0);
         this.getRecommendUserHandel(0, res.data); // 因为无论是 查看详情的单行 还是 点击修改的单行 始终都是0 第一条
         // 请求人选推荐
       });
@@ -1403,6 +1405,7 @@ export default {
       this.refreshOneUser(row);
       this.resourceDetailActive = false; //
       this.resourceEditActive = true;
+      this.recommendUserActive = true; // 显示人选推荐
       this.editOrAdd = 1; // 1是修改 2 是新增
 
       // 填充 职位名称 和 等级的下拉菜单
@@ -1453,10 +1456,11 @@ export default {
     },
     // 获取推荐人选的
     getRecommendUserHandel(index, row) {
-      this.recommendUserActive = true; // 显示人选推荐
+      
+      console.log("getRecommendUserHandel-----",row);
       let params = {
         id: row.id, //机会配置表的主键
-        chanceId: row.chanceId, //机会id
+        chanceId: row.chanceId||this.formData.chanceId, //机会id
         postNameId: row.postNameId, //职位id
         regionId: row.regionId, //区域id
         postTypeId: row.postTypeId, //职位类型id
@@ -1472,7 +1476,7 @@ export default {
           item.showOrCancel = 1; // 默认显示  添加
           // chanceConfigUserList:Array
           if (
-            _this.formData.chanceConfigList[index].chanceConfigUserList.length &&
+            _this.formData.chanceConfigList[index].chanceConfigUserList &&
             _this.formData.chanceConfigList[index].chanceConfigUserList.length > 0
           ) {
             _this.formData.chanceConfigList[index].chanceConfigUserList.map((user, u) => {

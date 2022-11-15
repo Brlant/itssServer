@@ -134,13 +134,16 @@ export default {
   },
   methods: {
     change(){
-      
-      let  data = {
-            str: this.form.query.toString(),
-          };
-          fuzzyQuery(data).then((res) => {
-            this.user = res.data;
-          });
+      if(this.form.query!=""){
+        let  data = {
+              str: this.form.query.toString(),
+            };
+            fuzzyQuery(data).then((res) => {
+              this.user = res.data;
+            });
+      }else{
+        this.user =[]
+      }
     },
     onBlur(flag, ref) {
       this.$refs[ref].$refs.input.blur = () => {
