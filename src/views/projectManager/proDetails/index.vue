@@ -2056,16 +2056,19 @@ export default {
       /**
        * 生成 动态表头
        */
-      getTimeProcess(params).then((res) => {
-        res.data.list.map((item,i)=>{
-            let pp = `${item.startDate.substring(0, 4)}年
-                    ${item.startDate.substring(5, 7)}月
-                    ${item.week}周
-                    ${item.startDate.substring(5, 7)}/${item.startDate.substring(8)}-
-                    ${item.startDate.substring(5, 7)}/${item.endDate.substring(8)}`;
-            this.monthArrTemp.push(pp.toString());
+      if(res.data.projectStartTime&&res.data.projectEndTime){
+
+        getTimeProcess(params).then((res) => {
+          res.data.list.map((item,i)=>{
+              let pp = `${item.startDate.substring(0, 4)}年
+                      ${item.startDate.substring(5, 7)}月
+                      ${item.week}周
+                      ${item.startDate.substring(5, 7)}/${item.startDate.substring(8)}-
+                      ${item.startDate.substring(5, 7)}/${item.endDate.substring(8)}`;
+              this.monthArrTemp.push(pp.toString());
+          })
         })
-      })
+      }
         if (res.data.projectUserList.length > 0) {
           res.data.projectUserList.map((item, i) => {
             item.projectUserScheduleList.map((jtem, j) => {
