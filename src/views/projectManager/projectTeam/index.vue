@@ -8,7 +8,6 @@
           <el-button
             size="mini"
             type="primary"
-            v-if="isJurisdiction('projectdirector', 'admin')"
              v-hasPermi="['projectManager:addTeam:add']"
               @click="add"
           >
