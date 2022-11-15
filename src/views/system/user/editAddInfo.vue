@@ -109,7 +109,7 @@
                 <el-select
                   v-model="formData.regionId"
                   placeholder="请选择区域"
-                  clearable
+                 
                   @change="changePosition('area')"
                 >
                   <el-option
@@ -129,7 +129,7 @@
                 <el-select
                   v-model="formData.postTypeId"
                   placeholder="请选择职位类型"
-                  clearable
+                
                   @change="changePosition('postType')"
                 >
                   <el-option
@@ -144,7 +144,7 @@
             <el-col :span="8">
               <el-form-item label="职位名称" prop='postNameId'>
                 <el-select
-                  clearable
+                
                   v-model="formData.postNameId"
                   placeholder="请选择职位名称"
                   @change="changePosition('postName')"
@@ -164,7 +164,7 @@
                 <el-select
                   v-model="formData.postLevelId"
                   placeholder="请选择等级"
-                  clearable
+                  
                   :disabled="!formData.postNameId"
                   @change='dd'
                 >
@@ -380,14 +380,21 @@ export default {
     // 详情
     detailInfo() {
       userDetail(this.userId).then((res) => {
+        console.log(res.data,'res.data')
         this.formData = res.data;
         this.formData.skillIds = res.data.userSkills.map((v) => v.skillId);
         if (this.formData.regionId && this.formData.postTypeId) {
-          this.position();
+         this.positions =[res.data]
+         if(this.formData.postNameId){
+         this.levelList =  this.positions;
+         this.levelList.forEach(i=>{
+          i.postLevelName=i.postLevel
+         })
+         }
         }
-        if (this.formData.postNameId) {
-          this.level();
-        }
+        // if (this.formData.postNameId) {
+        //   this.level();
+        // }
       });
       // );
     },
@@ -426,11 +433,16 @@ export default {
       if(index == 'area'){
         this.position()
          this.formData.postNameId=''
+          this.formData.postLevelId=''
+          this.formData.postLevelName=''
+          this.formData.postName=''
+         console.log(this.formData.postLevelId,'this.formData.postLevelId')
       }else if(index == 'postType'){
         this.position()
        this.formData.postNameId=''
-         
-       
+        this.formData.postLevelId=''
+           this.formData.postLevelName=''
+       this.formData.postName=''
       }else if(index == 'postName'){
         this.level()
          this.formData.postLevelId=''

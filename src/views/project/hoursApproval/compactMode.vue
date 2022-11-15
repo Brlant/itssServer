@@ -120,7 +120,7 @@ export default {
     created(){
             // this.tableTitle()
             this.today=moment().format('YYYY-MM-DD') 
-            this.projectdirector=this.isJurisdictionper('project:approval:leader')
+            this.projectdirector=this.isJurisdiction('project:approval:leader')
             console.log(this.projectdirector)
     },
     watch: {

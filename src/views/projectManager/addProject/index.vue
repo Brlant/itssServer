@@ -339,7 +339,7 @@
                 <el-button
                   type="primary"
                   size="mini"
-                  @click="DelConfigList(addUserListindex)"
+                  @click="DelPostList(addUserListindex)"
                 >
                   删除
                 </el-button>
@@ -416,9 +416,9 @@
             >
             <el-col :span="3" :offset="3"
               ><div class="colText2">
-                <el-button size="mini" @click="DelPostList(addUserListindex)" type="error"
+                <!-- <el-button size="mini" @click="DelPostList(addUserListindex)" type="error"
                   >删除</el-button
-                >
+                > -->
               </div>
             </el-col>
           </el-row>
@@ -790,6 +790,7 @@ export default {
     // this.addUserListHandel() // 自测用
   },
   methods: {
+     
     // 选择技能之后 的变色逻辑
     changeTextColor(listData, refName) {
       this.$nextTick(() => {
