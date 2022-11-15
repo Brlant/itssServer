@@ -110,7 +110,11 @@ export default {
       },
       // 人员 列表
       teamUserIdOptions: [{ nickName: "aa", userId: "1" }],
-      formData: {},
+      formData: {
+        teamName:'',
+        teamName:[],
+        teamUserId:''
+      },
       rules: {
         teamName: [
           {

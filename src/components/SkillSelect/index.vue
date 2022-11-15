@@ -8,7 +8,7 @@
         :style="{background: matchColor(item.cssClass), borderColor: matchColor(item.cssClass)}"
       >
         {{ item.dictLabel }}
-        <i class="el-icon-error" @click="del(item)"></i>
+        <i class="el-icon-error" @click="del(item, index)"></i>
       </el-tag>
     </div>
 
@@ -83,19 +83,20 @@ export default {
         
       }
       },
-      value: {
-        handler(value) {
-          this.dataCopy.forEach(v1 => {
-            value.forEach(v2 => {
-              if (v1.dictCode === v2) {
-                v1.tick = true
-              }
-            })
-          })
-        },
-        immediate: true,
-        deep: true
-      },
+      // value: {
+      //   handler(value) {
+      //     this.data.forEach(v1 => {
+      //       value.forEach(v2 => {
+      //         if (v1.dictCode === v2) {
+      //           v1.tick = true
+      //         }
+      //       })
+      //     })
+      //     // this.list = this.data.filter(v => v.tick)
+      //   },
+      //   immediate: true,
+      //   deep: true
+      // },
     },
   computed: {
    
@@ -137,6 +138,7 @@ export default {
             }
           })
         })
+        this.list = this.dataCopy.filter(v => v.tick)
       })
     },
     // 选中技能
@@ -152,9 +154,16 @@ export default {
       }
     },
     // 删除标签
-    del(item) {
-      const index = this.data.findIndex(v => v.dictLabel === item.dictLabel)
-      this.data[index].tick = false
+    del(item, index) {
+      this.list.splice(index, 1)
+      this.data.forEach(v => v.tick = false)
+      this.data.forEach(v1 => {
+        this.list.forEach(v2 => {
+          if (v1.dictCode === v2.dictCode) {
+            v2.tick = true
+          }
+        })
+      })
     },
     // 匹配颜色
     matchColor(cssClass) {

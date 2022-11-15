@@ -367,7 +367,7 @@ export default {
       stop: false,
       // 表单校验
       rules: {
-        
+
         parentId: [
           { required: true, message: "上级部门不能为空", trigger: "blur" },
         ],
@@ -491,14 +491,14 @@ export default {
 
   created() {
     // this.getList();
-   
+
     this.getTreeselect();
     this.reqStatusFn();
     this.reqAllListFn();
     this.reqOrgListFn();
     this.reqParentDeptFn();
- 
-    
+
+
   },
   methods: {
     showRowDetail(row){
@@ -513,8 +513,8 @@ export default {
       this.$nextTick(function () {
         this.$refs.trees.setCurrentKey(this.curren)//data[0].id为默认选中的节点
                })
-    
-  
+
+
      },
     sureEdit() {
       this.$refs["diaForm"].validate((valid) => {
@@ -531,7 +531,7 @@ export default {
           }
         });
         }
-       
+
       });
     },
     setCommander() {
@@ -542,7 +542,7 @@ export default {
     },
     /* 查询是项目主管的用户列表 */
     queryUserlistByRole() {
-      let data = {deptId:this.queryParams.deptId};
+      let data = {deptId:this.queryParams.deptId, hasChild:false};
       console.log(data,'dd')
       queryUserlistByRole(data).then((res) => {
         // res.data.map((item) => {
@@ -697,12 +697,12 @@ export default {
         this.deptOptions = response.data;
         // this.$store.commit('SET_DEPTID',this.deptOptions[0].id)
     //  if(this.$store.state.deptId){
- 
-     
+
+
     //       this.queryParams.deptId = window.localStorage.getItem('depttId')
     //        this.deptTitle =window.localStorage.getItem('deptTitle');
     //         this.curren=window.localStorage.getItem('depttId')
-          
+
     //     }else{
           // this.queryParams.deptId = this.deptOptions[0].id;
           if(this.$store.state.user.deptId){
@@ -715,11 +715,11 @@ export default {
               this.deptTitle = this.deptOptions[0].label;
             this.curren= this.deptOptions[0].id
           }
-         
+
         // }
-        
+
        console.log( this.deptTitle,' this.deptTitle')
-       
+
         this.getList();
         this.queryUserlistByRole();
            this.defaultData()
@@ -778,8 +778,8 @@ export default {
       this.resetForm("form");
     },
 
-  
-  
+
+
     newAdd() {
       this.deptForm.posts =
         this.deptForm.posts && Array.isArray(this.deptForm.posts)
@@ -823,9 +823,9 @@ export default {
         // this.form.password = this.initPassword;
       });
     },
-   
-   
-   
+
+
+
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate((valid) => {
