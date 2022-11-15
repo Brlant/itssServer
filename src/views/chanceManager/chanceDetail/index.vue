@@ -1017,7 +1017,7 @@ export default {
         chanceConfigList: this.tableData,
       });
       this.$router.push({
-        path: "/chanceManager/chanceEdit",
+        path: "/chanceManager/chanceManager-auth/chanceEdit",
         query: {
           chanceId: this.$route.query.chanceId,
         },

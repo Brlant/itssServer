@@ -195,12 +195,12 @@ export default {
     clickRow(row, column, event){
       // console.log(row);
        // 点击单行进入详情页
-      const obj = { path: "/chanceManager/chanceDetail/",query:{"chanceId":row.chanceId} };
+      const obj = { path: "/chanceManager/chanceManager-auth/chanceDetails",query:{"chanceId":row.chanceId} };
       this.$tab.closeOpenPage(obj);
     },
     addChance() {
       // 新增 机会
-      const obj = { path: "/chanceManager/addChance/" };
+      const obj = { path: "/chanceManager/chanceManager-auth/addChance" };
       this.$tab.closeOpenPage(obj);
     },
   },

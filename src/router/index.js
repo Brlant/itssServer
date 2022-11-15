@@ -397,6 +397,53 @@ export const dynamicRoutes = [
       }
     ]
   },
+
+
+
+
+  {
+    path: '/chanceManager/chanceManager-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:create'],
+    children: [
+      {
+        path: 'addChance',
+        component: () => import('@/views/chanceManager/addChance'),
+        name: 'addChance',
+        meta: { title: '新建机会' }
+      }
+    ]
+  },
+  {
+    path: '/chanceManager/chanceManager-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:all'],
+    children: [
+      {
+        path: 'chanceDetails',
+        component: () => import('@/views/chanceManager/chanceDetail'),
+        name: 'chanceDetails',
+        meta: { title: '机会详情' }
+      }
+    ]
+  },
+  {
+    path: '/chanceManager/chanceManager-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:duty'],
+    children: [
+      {
+        path: 'chanceEdit',
+        component: () => import('@/views/chanceManager/chanceEdit'),
+        name: 'chanceEdit',
+        meta: { title: '编辑机会' }
+      }
+    ]
+  },
+  
 ]
 
 // 防止连续点击多次路由报错

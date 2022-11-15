@@ -17,7 +17,7 @@
         >
         <!-- v-show="isProjectByUser(formData) || isJurisdiction('admin')" -->
           <span
-            v-hasPermi="['projectManager:proManager:handle']"  
+            v-hasPermi="['projectManager:proManager:handle']"
             @click="goEditPage"
             style="cursor: pointer"
             v-show="isShowActive == 0 && !isUpdateActive"
@@ -348,7 +348,7 @@
                     {{ addUserList.regionName }}
                   </span>
                 </div>
-               
+
               </el-form-item>
             </el-col>
             <el-col :span="5">
@@ -360,7 +360,7 @@
                     {{ addUserList.postTypeName }}
                   </span>
                 </div>
-               
+
               </el-form-item>
             </el-col>
             <el-col :span="5">
@@ -372,7 +372,7 @@
                     {{ addUserList.postName }}
                   </span>
                 </div>
-              
+
               </el-form-item>
             </el-col>
             <el-col :span="5">
@@ -384,7 +384,7 @@
                     {{ addUserList.postLevelName }}
                   </span>
                 </div>
-              
+
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -658,7 +658,7 @@
               </div></el-col
             >
             <el-col :span="3" :offset="3">
-            
+
                   <div class="colText3" v-show="resouceBtnActive">
                     <el-button size="mini"  @click="addUserListHandel(addUserListindex)" :disabled="addUserActive" type="primary" >暂存</el-button>
                     <el-button size="mini" @click="DelUserList(addUserList, addUserListindex)" type="error" >取消</el-button>
@@ -828,7 +828,7 @@
             {{ scope.row.status | toStatus }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" v-hasPermi="['projectManager:proManager:handle']">
+        <el-table-column label="操作" width="120" >
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <!-- 他必须是项目主管和项目负责人 才可以点击取消 -->
@@ -836,7 +836,7 @@
               <el-button
                 type="text"
                 size="small"
-                v-show="isProjectByUser(formData) || isJurisdiction('admin')"
+                v-show="isProjectByUser(formData) && isJurisdiction('projectManager:proManager:handle')"
                 @click="updateAuditPro(scope.row, '4')"
                 ><span class="color1"> 取消 </span></el-button
               >
@@ -844,14 +844,14 @@
                 type="text"
                 size="small"
                 @click="updateAuditPro(scope.row, '2')"
-                v-show="isJurisdiction('projectsupervision', 'admin')"
+                v-show="isJurisdiction('projectManager:proManager:modify')"
                 ><span class="color2"> 通过 </span></el-button
               >
               <el-button
                 type="text"
                 size="small"
                 @click="updateAuditPro(scope.row, '3')"
-                v-show="isJurisdiction('projectsupervision', 'admin')"
+                v-show="isJurisdiction('projectManager:proManager:modify')"
                 ><span class="color3"> 拒绝 </span></el-button
               >
             </div>
@@ -1342,7 +1342,7 @@ export default {
       this.formData.projectUserList[this.nowIndex].userId = row.userId;
       this.formData.projectUserList[this.nowIndex].userName = row.nickName;
       this.$forceUpdate();
-      this.isUpdateActive = true; // 我添加了用户 
+      this.isUpdateActive = true; // 我添加了用户
       // 点击添加成功后 显示取消按钮
       this.recommendUserTableData.map((item) => {
         item.showOrCancel = 1; // 全部 显示添加
@@ -1443,7 +1443,7 @@ export default {
         }
       });
     },
-     
+
     /*修改每周计划负荷*/
     /*
      * number 计划负荷的百分比 总天数 父级的下标 和自己的下标
@@ -1644,12 +1644,12 @@ export default {
       // if (this.id === row.id) return; // 此行先点击详情 再点击修改无作用
       this.id = row.id;
       this.delBtn = false;
-      
+
       this.detailUserActive = false;
       this.addEditUserActive = true;
       this.resouceBtnActive = true; // 隐藏按钮的逻辑
       this.nowIndex = index; // 存储刚刚点击是那一条
-     
+
       this.nowAction = "update"; // 记录我是修改操作
       // 我是修改
       this.addEditFormData = {};
@@ -1798,10 +1798,10 @@ export default {
             oneUser.userName =""
             // 修改类型（1.新增,2.删除,3.修改原数据）
             oneUser.updateType = 1;
-            
+
             // this.formData.projectUserList.push(oo);
             this.holdUserList.push(oneUser); // 上面的代码会影响其他的内容
-            // 新增代码块  start 
+            // 新增代码块  start
             // this.addEditFormData.projectUserList[0].unshift(this.projectTable.projectUserList)
             console.log(oneUser);
             // this.projectTable.projectUserList.unshift(oneUser)
@@ -1846,7 +1846,7 @@ export default {
           this.recommendUserActive = false;// 先给人选给隐藏
           this.showRowDetail(row);
       }
-    
+
     },
 
     /*根据起始和结束 生成下面表格*/
@@ -2044,7 +2044,7 @@ export default {
         this.isShowActive = res.data.isShow;
         // this.projectTable = res.data;
         this.projectTable.projectUserList = res.data.projectUserList;
- 
+
         // 拼接列名
         this.monthArrTemp = [];
         // 动态生成 合计天数周数 日期区间
@@ -2058,7 +2058,7 @@ export default {
       getTimeProcess(params).then((res) => {
         res.data.list.map((item,i)=>{
             let pp = `${item.startDate.substring(0, 4)}年
-                    ${item.startDate.substring(5, 7)}月 
+                    ${item.startDate.substring(5, 7)}月
                     ${item.week}周
                     ${item.startDate.substring(5, 7)}/${item.startDate.substring(8)}-
                     ${item.startDate.substring(5, 7)}/${item.endDate.substring(8)}`;
@@ -2293,9 +2293,9 @@ export default {
   height: 20px !important;
   padding: 2px 0 !important;
 }
-.myTable /deep/ .el-table__body tr.hover-row > td.el-table__cell, 
+.myTable /deep/ .el-table__body tr.hover-row > td.el-table__cell,
 .myTable /deep/ .el-table__body tr.hover-row.current-row > td.el-table__cell,
- .myTable /deep/ .el-table__body tr.hover-row.el-table__row--striped > td.el-table__cell, 
+ .myTable /deep/ .el-table__body tr.hover-row.el-table__row--striped > td.el-table__cell,
  .myTable /deep/ .el-table__body tr.hover-row.el-table__row--striped.current-row > td.el-table__cell{
   background-color: #f7f4d3;
 }

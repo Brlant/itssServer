@@ -22,7 +22,7 @@ export function dictData(params) {
 // 添加与编辑
 export function addAndEdit(data, method = 'put') {
   return request({
-      url: '/system/dict/data',
+      url: '/system/post_dict',
       method,
       data
   })
