@@ -214,6 +214,16 @@
         </el-table-column>
       </el-table>
     </div>
+      <el-dialog
+      width="20%"
+      :visible.sync="delShow"
+    >
+      <span style='font-size:18px;display:inline-block;padding-bottom:20px'>删除后，与此项目组关联的项目，将自动解除与项目组的归属关系，是否确认删除？</span>
+      <div class="txtAlignC dialogBtnInfo">
+        <el-button type="primary" @click="saveDel">确定</el-button>
+        <el-button @click="cancelDel">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -238,6 +248,8 @@ export default {
       },
       // 弹出层 以上
       tableData: [],
+      delShow:false,
+      projectGroupId:'',
       countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
       countScopeInit: "",
       startDate: "",
@@ -338,13 +350,22 @@ export default {
       this.$tab.closeOpenPage(obj);
     },
     del(row) {
-      deleteTeam(row.projectGroupId).then((res) => {
+      this.projectGroupId=row.projectGroupId
+      this.delShow=true
+    },
+    saveDel(){
+        deleteTeam(this.projectGroupId).then((res) => {
         if (res.code == 200) {
           this.$message.success(res.msg);
           this.query();
+          this.delShow=false
         }
       });
     },
+    cancelDel(){
+        this.delShow=false
+    },
+
     toggleActive(index, row) {
       // this.$router.push('/projectManager/editTeam')
       const obj = { path: "/projectManager/editTeam", query: { project: row } };

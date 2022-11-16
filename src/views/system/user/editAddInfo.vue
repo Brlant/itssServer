@@ -261,6 +261,16 @@
         <el-button @click="cancelFn">取消</el-button>
       </div>
     </el-dialog>
+     <el-dialog
+      width="20%"
+      :visible.sync="cancelShow"
+    >
+      <span style='font-size:18px;display:inline-block;padding-bottom:20px'>此操作会重置本页面所有填写的内容</span>
+      <div class="txtAlignC dialogBtnInfo">
+        <el-button type="primary" @click="saveCancle">确定</el-button>
+        <el-button @click="cancelForm">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -327,6 +337,7 @@ export default {
       levelList: [],
       userId: "",
       ss: -1,
+      cancelShow:false,
       rules: {
         nickName: [{ required: true, message: "请输入姓名", trigger: "blur" }],
         sex: [{ required: true, message: "请选择性别", trigger: "change" }],
@@ -337,6 +348,7 @@ export default {
         inTime: [
           { required: true, message: "请选择入职时间", trigger: "blur" },
         ],
+        deptId:[{ required: true, message: "请选择所属部门", trigger: "blur" }]
       },
     };
   },
@@ -370,12 +382,18 @@ export default {
     cancelFn(){
       this.saveShow=false
     },
+
     saveDialog(){
-      if(!this.formData.postNameId || !this.formData. postLevelId){
+        this.$refs["elForm"].validate((valid) => {
+          if(valid){
+             if(!this.formData.postNameId || !this.formData. postLevelId){
         this.saveShow=true
       }else{
         this.save()
       }
+          }
+        })
+     
     },
     // 详情
     detailInfo() {
@@ -521,14 +539,21 @@ export default {
     },
     //取消
     cancle() {
+     this.cancelShow=true
      
-      if(this.$route.query.isEdit == 1){
+     
+    },
+    saveCancle(){
+       if(this.$route.query.isEdit == 1){
          this.detailInfo()
       }else{
         this.$message.success('取消成功')
         this.$refs["elForm"].resetFields();
+        this.cancelShow=false
       }
-     
+    },
+    cancelForm(){
+      this.cancelShow=false
     },
     /*查询字典的接口*/
     positinType(val) {
