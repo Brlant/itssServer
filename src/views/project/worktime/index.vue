@@ -18,7 +18,7 @@
       </el-date-picker>
     </div>
     <div>
-      <div class="content">
+      <div class="content-work">
         <div class="hidden-sm-and-down" @click="weekPre">
           <i class="el-icon-arrow-left" style="color: #ffffff"></i>
         </div>
@@ -539,7 +539,7 @@ export default {
 };
 </script>
 <style lang='scss'>
-.content {
+.content-work {
   background: #547cb8;
   height: 52px;
   line-height: 52px;
