@@ -212,7 +212,7 @@
                   v-for="(item, index) in projectTeams"
                   :key="index"
                   :value="item.projectGroupId"
-                  :label="item.projectGroupName"
+                  :label="item.projectGroupName+ '(' + item.startDate + ' 至 ' + item.endDate +')'"
                   :disabled="item.disabled"
                 ></el-option>
               </el-select>
