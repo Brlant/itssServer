@@ -265,7 +265,7 @@
       width="20%"
       :visible.sync="cancelShow"
     >
-      <span style='font-size:18px;display:inline-block;padding-bottom:20px'>此操作会重置本页面所有填写的内容</span>
+      <span style='font-size:18px;display:inline-block;padding-bottom:20px'>{{title}}</span>
       <div class="txtAlignC dialogBtnInfo">
         <el-button type="primary" @click="saveCancle">确定</el-button>
         <el-button @click="cancelForm">取消</el-button>
@@ -306,6 +306,7 @@ export default {
       skillData: [],
       postId:'',
       saveShow:false,
+      title:'',
       formData: {
         nickName:'',
         sex:'',
@@ -540,12 +541,19 @@ export default {
     //取消
     cancle() {
      this.cancelShow=true
+     if(this.$route.query.isEdit == 1){
+      this.title='当前页面修改内容尚未保存，是否确认退出'
+     }else{
+      this.title='此操作会重置本页面所有填写的内容'
+     }
      
      
     },
     saveCancle(){
        if(this.$route.query.isEdit == 1){
          this.detailInfo()
+         this.$message.success('取消成功')
+         this.cancelShow=false
       }else{
         this.$message.success('取消成功')
         this.$refs["elForm"].resetFields();
