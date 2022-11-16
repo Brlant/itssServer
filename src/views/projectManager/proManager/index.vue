@@ -303,8 +303,8 @@ export default {
       },
       // 弹出层 以上
       tableData: [],
-      countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
-      scopeOptions: [],
+      //countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
+      scopeOptions: [],//统计范围 1.全部，2.仅我负责，3.仅部门成员
       countScopeInit:'',
       projectStatusOptions: [
         {
@@ -380,9 +380,9 @@ export default {
         }
       })
     })
-    console.log(scopeOptions);
-    this.countScopeOptions = scopeOptions
-    console.log(scopeOptions);
+    //console.log(scopeOptions);
+    this.scopeOptions = scopeOptions
+    //console.log(scopeOptions);
     if (scopeOptions.length) {
       this.searchForm.countScope = parseInt(scopeOptions[0].value)
     }
@@ -391,7 +391,7 @@ export default {
     // 项目主管 projectdirector 2
     // 运营管理 operatemanage
     // 项目监管 管理员 projectsupervision || admin ==>  1
-    
+
     /*------------------额外的初始化查询的判断------------------------------*/
     this.init();
     // console.log(getToday()+"--------");
