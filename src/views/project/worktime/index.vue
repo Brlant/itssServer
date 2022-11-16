@@ -538,7 +538,7 @@ export default {
 
 };
 </script>
-<style lang='scss'>
+<style lang='scss' scoped>
 .content-work {
   background: #547cb8;
   height: 52px;
@@ -633,17 +633,20 @@ span{
   }
 }
 
+
+.timePickCss{
+    position: absolute;
+    top:0px;
+    // right: 100px;
+    z-index: -1;
+}
+</style>
+<style lang="scss">
 .el-date-picker-custom {
 // 用了/deep/后不兼容ie,所以还是不要随便加上样式穿透,vue-cli3以上也不支持/deep/
 // /deep/
 .el-date-table td {
     padding: 10px 0;
   }
-}
-.timePickCss{
-    position: absolute;
-    top:0px;
-    // right: 100px;
-    z-index: -1;
 }
 </style>
