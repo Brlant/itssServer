@@ -75,7 +75,7 @@
                 size="mini"
                 type="text"
                 v-hasPermi="['system:user:query']"
-                @click="detail(scope.row.userId)"
+                @click.stop="detail(scope.row.userId)"
                 >详情</el-button
               >
               <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
