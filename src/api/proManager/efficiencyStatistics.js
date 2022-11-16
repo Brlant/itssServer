@@ -16,10 +16,10 @@ export function userQuery(query) {
   })
 }
 //查询用户列表
-  export function queryUserlist(data) {
+  export function queryUserlist() {
     return request({
-      url: '/system/user/queryUserlist',
-      method: 'post',
-      data
+      url: '/system/user/efficiency/userListByPermission',
+      method: 'get',
+      
     })
   }

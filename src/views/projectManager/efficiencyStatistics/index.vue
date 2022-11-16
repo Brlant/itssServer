@@ -244,7 +244,7 @@ export default {
         },
         //获取用户
         queryUser(){
-            queryUserlist({}).then(res=>{
+            queryUserlist().then(res=>{
                 this.users=res.data
             })
         },

@@ -161,8 +161,8 @@
 <script>
 import moment from "moment";
 import "moment/locale/zh-cn";
-import { departmentQuery,userQuery } from '@/api/proManager/workloadStatistics.js'
-import { queryUserlist} from '@/api/proManager/efficiencyStatistics.js'
+import { departmentQuery,userQuery,queryUserlist } from '@/api/proManager/workloadStatistics.js'
+// import { queryUserlist} from '@/api/proManager/efficiencyStatistics.js'
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -237,7 +237,7 @@ export default {
         },
         //获取用户
         queryUser(){
-            queryUserlist({}).then(res=>{
+            queryUserlist().then(res=>{
                 this.users=res.data
             })
         },
