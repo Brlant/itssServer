@@ -64,7 +64,8 @@
         <el-table-column prop="" label="已转项目"  width="160">
             <template slot-scope="scope">
             
-                 <router-link class="priority3" :to="{path:'/projectManager/proManager-auth/proDetails/', query:{ projectId:scope.row.projectId,projectName:scope.row.projectName,countScope:countScope}}">{{ scope.row.projectName}}</router-link>
+                 <router-link class="priority3" :to="{path:'/projectManager/proManager-auth/proDetails/',
+                  query:{ projectId:scope.row.projectId,projectName:scope.row.projectName,countScope:countScope,startTime:scope.row.expectStartTime,endTime:scope.row.expectEndTime}}">{{ scope.row.projectName}}</router-link>
              
              
             </template>
