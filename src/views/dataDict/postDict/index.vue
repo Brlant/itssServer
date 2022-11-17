@@ -190,7 +190,6 @@ export default {
     },
     // 选择类型职位
     change(index) {
-      console.log(111111111)
       if (this.n === index) return
       this.n = index
       this.getTableData()
