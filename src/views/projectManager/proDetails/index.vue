@@ -611,9 +611,9 @@
                   v-model="addUserList.skillIdList"
                   multiple
                   placeholder="请选择技能需求"
-                  @change="changeTextColor($event, 'mySkillIdList')"
+                  @change="changeTextColor($event, 'mySkillIdList',addUserListindex)"
                   ref="mySkillIdList"
-                  :disabled="addUserList.nextActive"
+                 
                   :style="{ width: '100%' }"
                 >
                   <el-option
@@ -949,13 +949,13 @@ export default {
             trigger: "change",
           },
         ],
-        addUserListSkillIdList: [
-          {
-            required: true,
-            message: "请选择技能需求!",
-            trigger: "change",
-          },
-        ],
+        // addUserListSkillIdList: [
+        //   {
+        //     required: true,
+        //     message: "请选择技能需求!",
+        //     trigger: "change",
+        //   },
+        // ],
     },
     // 单独的 用户列表
     projectUserList: {
@@ -1141,6 +1141,7 @@ export default {
      */
     editNext(who, data, index) {
       let parame = {}; // 入参
+       
       switch (who) {
         case "region": // 选择区域
           this.addEditFormData.projectUserList[index].postTypeActive = false; // 初始化展示下一个
@@ -1207,7 +1208,7 @@ export default {
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.addEditFormData.projectUserList[index].costNum}`);
           this.constAll(this.addEditFormData.projectUserList[index].startEndTime, index);
-           setTimeout(() => {
+          setTimeout(() => {
           this.getRecommendUserHandel(0, this.addEditFormData.projectUserList[0]);
            },500);
           break;
@@ -1418,7 +1419,7 @@ export default {
 
           this.addEditFormData.projectUserList.push(oneUser);
           this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
-          this.recommendUserActive = true; //显示人选推荐
+          this.recommendUserActive = false; //显示人选推荐
 
           this.getRecommendUserHandel(row.index, row);
           // }
@@ -1565,14 +1566,23 @@ export default {
     initaddEditUserList() {
       // this.delBtn = true;
       // this.formData.projectUserList =[]
+      //点资源配置放开暂存按钮
+      this.addUserActive = false
+      // this.recommendUserTableData
+     
+      
       this.detailUserActive = false;
       this.addEditUserActive = true;
-      this.isUpdateActive = true; // 我修改了 并且暂存了
+      this.isUpdateActive = false; // 我修改了 并且暂存了
       this.recommendUserActive = false; // 点击添加 人选需要隐藏
       this.nowAction = "add"; // 记录下他是什么
+      // if(this.detailUserActive){
+      //   this.$refs["addEditForm"].resetFields()
+      // }
 
       // 我是新增
-      this.addEditFormData = {};
+      this.addEditFormData = {
+      };
       this.addEditFormData = this.deepClone(this.formData); // 填充新增的
       this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
       let oneUser = this.deepClone(this.projectUserList);
@@ -1799,6 +1809,7 @@ export default {
           if (this.nowAction == "add") {
             // 点击暂存 需要立即禁用按钮
             this.addUserActive = true;
+            console.log(this.addEditFormData.projectUserList[0],'this.addEditFormData.projectUserList[0]')
             // 此处修改为 暂存 , 数据丢进去即可
             let oneUser = this.deepClone(this.addEditFormData.projectUserList[0]);
             oneUser.startTime = this.addEditFormData.projectUserList[index].startTime;
@@ -1817,6 +1828,7 @@ export default {
             // 新增代码块  end
             this.$forceUpdate();
             this.$message.success("新增暂存成功！");
+            // this.$refs["addEditForm"].resetFields()
             console.log("add");
           }
           if (this.nowAction == "update") {

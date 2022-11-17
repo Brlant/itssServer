@@ -8,7 +8,7 @@
 
       <span> （仅项目负责人可对此项目下列对内进行编辑）</span>
       <div class="rightBox">
-        <el-button size="mini" @click="submitForm" type="primary">保存</el-button>
+        <el-button size="mini" @click="submitForm" type="primary">提交审核</el-button>
         <el-button size="mini" @click="backDetail" type="default">取消</el-button>
       </div>
     </div>
