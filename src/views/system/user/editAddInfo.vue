@@ -362,16 +362,6 @@ export default {
      
       let id=window.localStorage.getItem("userId")
       this.userId = id;
-      // this.formData = this.$route.query.userInfo;
-      // this.formData.skillIds = this.$route.query.userInfo.userSkills.map(
-      //   (v) => v.skillId
-      // // );
-      // if (this.formData.regionId && this.formData.postTypeId) {
-      //   this.position();
-      // }
-      // if (this.formData.postNameId) {
-      //   this.level();
-      // }
       this.detailInfo();
       this.position();
       this.level()
@@ -405,6 +395,7 @@ export default {
         console.log(res.data,'res.data')
         this.formData = res.data;
         this.formData.skillIds = res.data.userSkills.map((v) => v.skillId);
+        console.log(this.formData.skillIds,'this.formData.skillIds')
         if (this.formData.regionId && this.formData.postTypeId) {
          this.positions =[res.data]
          if(this.formData.postNameId){
@@ -602,11 +593,12 @@ export default {
     },
     //返回
     backuser() {
-      const obj = {
-        path: "/system/user",
-      };
-      // getToday()
-      this.$tab.closeOpenPage(obj);
+      // const obj = {
+      //   path: "/system/user",
+      // };
+      // // getToday()
+      // this.$tab.closeOpenPage(obj);
+      this.$router.go(-1)
     },
   },
 };

@@ -321,7 +321,7 @@ import {
   deptStatus,
 } from "@/api/DeptMange/DeptManage.js";
 // import { directive } from 'vue/types/umd';
-
+import { dictData } from '@/api/dataDict'
 
 export default {
   name: "User",
@@ -499,10 +499,21 @@ export default {
     this.reqAllListFn();
     this.reqOrgListFn();
     this.reqParentDeptFn();
-
+    this.getSkills()
 
   },
   methods: {
+    getSkills() {
+      const params = {
+        dictType: 'skill_type',
+        status: '0'
+      }
+      dictData(params).then(res => {
+        let { rows } = res
+        rows.forEach(v => v.tick = false)
+        sessionStorage.setItem('skills', JSON.stringify(rows))
+      })
+    },
     detailInfo(id){
    const obj = { path:'/user/profile', query: { userId: id ,isUser:1} };
       // getToday()

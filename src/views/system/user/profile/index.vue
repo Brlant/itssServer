@@ -129,6 +129,7 @@
 import {
 userDetail,stopUse,skillLocking,delUser
 } from "@/api/system/user";
+import { dictData } from '@/api/dataDict'
 import { color } from '@/components/ColorSelect/options'
 export default {
   data() {
@@ -153,9 +154,21 @@ export default {
   },
   mounted() {
     this.detail()
+     this.getSkills()
    
   },
   methods: {
+     getSkills() {
+      const params = {
+        dictType: 'skill_type',
+        status: '0'
+      }
+      dictData(params).then(res => {
+        let { rows } = res
+        rows.forEach(v => v.tick = false)
+        sessionStorage.setItem('skills', JSON.stringify(rows))
+      })
+    },
     //编辑个人信息
     edit() {
            const obj = {
