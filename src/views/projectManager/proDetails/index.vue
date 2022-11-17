@@ -979,26 +979,6 @@ export default {
         postNameIdOptions:[],
         postLevelIdOptions:[],
     },
-    skillList:[{
-    "cssClass": "color1",
-    "skillId": 48,
-    "skillName": "web前端1"
-},
-{
-    "cssClass": "color2",
-    "skillId": 48,
-    "skillName": "web前端2"
-},
-{
-    "cssClass": "color3",
-    "skillId": 48,
-    "skillName": "web前端3"
-},
-{
-    "cssClass": "color4",
-    "skillId": 48,
-    "skillName": "web前端4"
-}],
     // 新增编辑的初始化 数据结构集合
     addEditFormData: {},
     resouceBtnActive: true, // 是否展示 暂存和取消
