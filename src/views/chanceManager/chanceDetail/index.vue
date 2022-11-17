@@ -890,28 +890,28 @@ export default {
           {
             required: true,
             message: "请选择区域!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         chanceConfigItemPostTypeId: [
           {
             required: true,
             message: "请选择职位类型!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         chanceConfigItempostNameId: [
           {
             required: true,
             message: "请选择职位!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         chanceConfigItempostLevelId: [
           {
             required: true,
             message: "请选择等级!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         // chanceConfigItemSkillIdList: [

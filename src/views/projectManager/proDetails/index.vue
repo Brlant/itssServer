@@ -918,7 +918,7 @@ export default {
         {
           required: true,
           message: "请选择配置安排",
-          trigger: "change",
+          trigger: "blur",
         },
       ],
       // 配置信息的
@@ -926,28 +926,28 @@ export default {
           {
             required: true,
             message: "请选择职位类型!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         addUserListregionId: [
           {
             required: true,
             message: "请选择区域!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         addUserListpostNameId: [
           {
             required: true,
             message: "请选择职位!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         addUserListpostLevelId: [
           {
             required: true,
             message: "请选择等级!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         // addUserListSkillIdList: [
