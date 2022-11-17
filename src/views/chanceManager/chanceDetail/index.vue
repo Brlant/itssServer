@@ -914,13 +914,13 @@ export default {
             trigger: "change",
           },
         ],
-        chanceConfigItemSkillIdList: [
-          {
-            required: true,
-            message: "请选择技能需求!",
-            trigger: "change",
-          },
-        ],
+        // chanceConfigItemSkillIdList: [
+        //   {
+        //     required: true,
+        //     message: "请选择技能需求!",
+        //     trigger: "change",
+        //   },
+        // ],
         chanceConfigItemStartEndTime: [
           {
             required: true,
