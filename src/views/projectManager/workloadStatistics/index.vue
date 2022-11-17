@@ -243,7 +243,7 @@ export default {
         },
         //初始时间
         defaultDate(){
-            let today=moment().add(180, "days").format('YYYY/MM/DD')
+            let today=moment().add(1, "month").format('YYYY/MM/DD')
             let preOne=moment().format('YYYY/MM/DD')
             this.dateRange=`${preOne}-${today}`
             this.beginDate=moment(preOne).format('YYYY-MM-DD')
