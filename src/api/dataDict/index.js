@@ -27,7 +27,13 @@ export function addAndEdit(data, method = 'put') {
       data
   })
 }
+export function delDictData(id) {
+  return request({
+    url: `/system/post_dict/`+id,
+    method: 'delete',
 
+  })
+}
 // 以下为职位管理字典接口
 // 职位类型
 export function queryType(params) {

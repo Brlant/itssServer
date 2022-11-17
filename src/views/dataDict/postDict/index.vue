@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { queryType, dictData, addAndEdit, queryPost, updatePost } from '@/api/dataDict'
+import { queryType, dictData, addAndEdit, queryPost, updatePost,delDictData } from '@/api/dataDict'
 import debounce from '@/utils/debounce'
 import AddEdit from './AddEdit'
 import PostDialog from './PostDialog'
@@ -155,21 +155,25 @@ export default {
       this.$confirm(`确认删除${item.dictLabel}？`, '提示', {
         type: 'warning'
       }).then(() => {
-        const data = {
-          delFlag: 1,
-          dictType: 'post_type',
-          dictLabel: item.dictLabel,
-          dictCode: item.dictCode
-        }
-        addAndEdit(data).then(res => {
-          if (res.code === 200) {
-            this.$message.success(res.msg)
-            if (this.n !== index) {
-              this.list.splice(index, 1)
-            } else {
-              this.getPost()
-            }
-          }
+        // const data = {
+        //   delFlag: 1,
+        //   dictType: 'post_type',
+        //   dictLabel: item.dictLabel,
+        //   dictCode: item.dictCode
+        // }
+        // addAndEdit(data).then(res => {
+        //   if (res.code === 200) {
+        //     this.$message.success(res.msg)
+        //     if (this.n !== index) {
+        //       this.list.splice(index, 1)
+        //     } else {
+        //       this.getPost()
+        //     }
+        //   }
+        // })
+        delDictData(item.dictCode).then(res=>{
+          this.$message.success(res.msg)
+          this.getPost()
         })
       }).catch(() => {})
     },
