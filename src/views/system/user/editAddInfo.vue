@@ -111,6 +111,7 @@
                   placeholder="请选择区域"
                  
                   @change="changePosition('area')"
+                  @blur="changePosition('area')"
                 >
                   <el-option
                     v-for="(dict, index) in areas"
@@ -131,6 +132,7 @@
                   placeholder="请选择职位类型"
                 
                   @change="changePosition('postType')"
+                  @blur="changePosition('postType')"
                 >
                   <el-option
                     v-for="(dict, index) in typeList"
@@ -148,6 +150,7 @@
                   v-model="formData.postNameId"
                   placeholder="请选择职位名称"
                   @change="changePosition('postName')"
+                  @blur="changePosition('postName')"
                   :disabled="!formData.postTypeId || !formData.regionId"
                 >
                   <el-option
@@ -265,7 +268,7 @@
       width="20%"
       :visible.sync="cancelShow"
     >
-      <span style='font-size:18px;display:inline-block;padding-bottom:20px'>此操作会重置本页面所有填写的内容</span>
+      <span style='font-size:18px;display:inline-block;padding-bottom:20px'>{{title}}</span>
       <div class="txtAlignC dialogBtnInfo">
         <el-button type="primary" @click="saveCancle">确定</el-button>
         <el-button @click="cancelForm">取消</el-button>
@@ -306,6 +309,7 @@ export default {
       skillData: [],
       postId:'',
       saveShow:false,
+      title:'',
       formData: {
         nickName:'',
         sex:'',
@@ -358,16 +362,6 @@ export default {
      
       let id=window.localStorage.getItem("userId")
       this.userId = id;
-      // this.formData = this.$route.query.userInfo;
-      // this.formData.skillIds = this.$route.query.userInfo.userSkills.map(
-      //   (v) => v.skillId
-      // // );
-      // if (this.formData.regionId && this.formData.postTypeId) {
-      //   this.position();
-      // }
-      // if (this.formData.postNameId) {
-      //   this.level();
-      // }
       this.detailInfo();
       this.position();
       this.level()
@@ -401,6 +395,7 @@ export default {
         console.log(res.data,'res.data')
         this.formData = res.data;
         this.formData.skillIds = res.data.userSkills.map((v) => v.skillId);
+        console.log(this.formData.skillIds,'this.formData.skillIds')
         if (this.formData.regionId && this.formData.postTypeId) {
          this.positions =[res.data]
          if(this.formData.postNameId){
@@ -540,16 +535,25 @@ export default {
     //取消
     cancle() {
      this.cancelShow=true
+     if(this.$route.query.isEdit == 1){
+      this.title='当前页面修改内容尚未保存，是否确认退出'
+     }else{
+      this.title='此操作会重置本页面所有填写的内容'
+     }
      
      
     },
     saveCancle(){
        if(this.$route.query.isEdit == 1){
          this.detailInfo()
+         this.$message.success('取消成功')
+         this.cancelShow=false
+           this.$router.go(-1)
       }else{
         this.$message.success('取消成功')
         this.$refs["elForm"].resetFields();
         this.cancelShow=false
+       
       }
     },
     cancelForm(){
@@ -589,11 +593,12 @@ export default {
     },
     //返回
     backuser() {
-      const obj = {
-        path: "/system/user",
-      };
-      // getToday()
-      this.$tab.closeOpenPage(obj);
+      // const obj = {
+      //   path: "/system/user",
+      // };
+      // // getToday()
+      // this.$tab.closeOpenPage(obj);
+      this.$router.go(-1)
     },
   },
 };

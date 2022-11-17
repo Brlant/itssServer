@@ -222,7 +222,7 @@ export default {
     },
     methods:{
         userInfoId(id){
-            const obj = { path:'/user/profile', query: { userId: id } };
+            const obj = { path: "/system/user-auth/userInfo", query: { userId: id }};
             // getToday()
             this.$tab.closeOpenPage(obj);
         },
@@ -244,14 +244,14 @@ export default {
         },
         //获取用户
         queryUser(){
-            queryUserlist({}).then(res=>{
+            queryUserlist().then(res=>{
                 this.users=res.data
             })
         },
         //初始时间
         defaultDate(){
             // let preOne=moment().subtract(1,'month').startOf('month').format('YYYY/MM/DD')
-            let preOne = moment().subtract(5, 'months').startOf('month').format('YYYY/MM/DD');
+            let preOne = moment().subtract(1, 'months').format('YYYY/MM/DD');
             let today=moment().format('YYYY/MM/DD')
             this.dateRange=`${preOne}-${today}`
             this.beginDate=moment(preOne).format('YYYY-MM-DD')

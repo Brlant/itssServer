@@ -4,7 +4,7 @@
       <div class="editTitle">
         <span>个人中心</span>
       </div>
-      <div style="cursor: pointer" class="ope">
+      <div style="cursor: pointer" class="ope" >
         <!-- <span @click='changeAccount'>账号更改 |</span> -->
         <span @click='edit' v-if='info.skillLock==0'> 编辑 </span>
       </div>
@@ -129,12 +129,15 @@
 import {
 userDetail,stopUse,skillLocking,delUser
 } from "@/api/system/user";
+import { dictData } from '@/api/dataDict'
 import { color } from '@/components/ColorSelect/options'
 export default {
   data() {
     return {
       dialogFormVisible: false,
       info:{},
+      id:'',
+      
       form: {
         tel: "",
         verification: "",
@@ -151,26 +154,40 @@ export default {
   },
   mounted() {
     this.detail()
+     this.getSkills()
+   
   },
   methods: {
+     getSkills() {
+      const params = {
+        dictType: 'skill_type',
+        status: '0'
+      }
+      dictData(params).then(res => {
+        let { rows } = res
+        rows.forEach(v => v.tick = false)
+        sessionStorage.setItem('skills', JSON.stringify(rows))
+      })
+    },
     //编辑个人信息
     edit() {
            const obj = {
         path: "/system/user-auth/profile/userEdit",
+        query:{userId:this.id}
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
     detail() {
-      let id;
-      if(this.$route.query.userId){
-        id=this.$route.query.userId
-      }else{
-         id=this.$store.state.user.user.userId
-      }
+      // console.log(this.$route.query.isUser)
+      // if(this.$route.query.isUser==1){
+      //   this.id=this.$route.query.userId
+      // }else if(this.$route.query.isUser==0){
+         this.id=this.$store.state.user.user.userId
+      // }
     
 
-        userDetail(id).then(res=>{
+        userDetail(this.id).then(res=>{
             this.info=res.data
 
         })

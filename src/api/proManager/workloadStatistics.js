@@ -15,3 +15,11 @@ export function userQuery(data) {
     data
   })
 }
+//查询用户列表
+export function queryUserlist() {
+  return request({
+    url: '/system/user/workload/userListByPermission',
+    method: 'get',
+    
+  })
+}

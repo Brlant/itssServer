@@ -24,8 +24,10 @@
             ref="trees"
             default-expand-all
             highlight-current
-            @node-click="handleNodeClick"
-          />
+            @node-click="handleNodeClick">
+            <!-- <span slot-scope="{ data }">{{data.label}}<i class='el-icon-plus' style='margin-left:100px;'></i></span> -->
+            </el-tree>
+          
         </div>
       </div>
       <div class="right">
@@ -43,7 +45,7 @@
           <!-- <el-table-column type="selection" width="50" align="center" /> -->
           <el-table-column label="姓名" align="center" prop="nickName">
             <template slot-scope="scope">
-              <span @click="detailInfo(scope.row.userId)" style='cursor:pointer;color:#3D7DFF'><i class='el-icon-user-solid' v-if='scope.row.dept.leader==scope.row.userId'></i>{{scope.row.nickName}}</span>
+              <span @click="detail(scope.row.userId)" style='cursor:pointer;color:#3D7DFF'><i class='el-icon-user-solid' v-if='scope.row.dept.leader==scope.row.userId'></i>{{scope.row.nickName}}</span>
             </template>
           </el-table-column>
           <el-table-column label="职位" align="center" prop="postName" />
@@ -75,7 +77,7 @@
                 size="mini"
                 type="text"
                 v-hasPermi="['system:user:query']"
-                @click="detail(scope.row.userId)"
+                @click.stop="detail(scope.row.userId)"
                 >详情</el-button
               >
               <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
@@ -319,7 +321,7 @@ import {
   deptStatus,
 } from "@/api/DeptMange/DeptManage.js";
 // import { directive } from 'vue/types/umd';
-
+import { dictData } from '@/api/dataDict'
 
 export default {
   name: "User",
@@ -497,18 +499,29 @@ export default {
     this.reqAllListFn();
     this.reqOrgListFn();
     this.reqParentDeptFn();
-
+    this.getSkills()
 
   },
   methods: {
+    getSkills() {
+      const params = {
+        dictType: 'skill_type',
+        status: '0'
+      }
+      dictData(params).then(res => {
+        let { rows } = res
+        rows.forEach(v => v.tick = false)
+        sessionStorage.setItem('skills', JSON.stringify(rows))
+      })
+    },
     detailInfo(id){
-   const obj = { path:'/user/profile', query: { userId: id } };
+   const obj = { path:'/user/profile', query: { userId: id ,isUser:1} };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
     showRowDetail(row){
       console.log(row)
-       const obj = { path:'/user/profile', query: { userId:row.userId} };
+        const obj = { path: "/system/user-auth/userInfo", query: { userId: row.userId , deptId:this.queryParams.deptId,deptTitle:this.deptTitle} };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },

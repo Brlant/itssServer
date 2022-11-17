@@ -161,8 +161,8 @@
 <script>
 import moment from "moment";
 import "moment/locale/zh-cn";
-import { departmentQuery,userQuery } from '@/api/proManager/workloadStatistics.js'
-import { queryUserlist} from '@/api/proManager/efficiencyStatistics.js'
+import { departmentQuery,userQuery,queryUserlist } from '@/api/proManager/workloadStatistics.js'
+// import { queryUserlist} from '@/api/proManager/efficiencyStatistics.js'
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -237,13 +237,13 @@ export default {
         },
         //获取用户
         queryUser(){
-            queryUserlist({}).then(res=>{
+            queryUserlist().then(res=>{
                 this.users=res.data
             })
         },
         //初始时间
         defaultDate(){
-            let today=moment().add(180, "days").format('YYYY/MM/DD')
+            let today=moment().add(1, "month").format('YYYY/MM/DD')
             let preOne=moment().format('YYYY/MM/DD')
             this.dateRange=`${preOne}-${today}`
             this.beginDate=moment(preOne).format('YYYY-MM-DD')

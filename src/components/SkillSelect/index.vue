@@ -60,15 +60,16 @@ export default {
     }
   },
     watch: {
-      list: {
-        handler(value) {
-          const skillId = value.map(v => v.dictCode)
-          console.log(11111,skillId)
-          this.$emit('input', skillId);
-        },
-        immediate: true,
-        deep: true
-      },
+      // list: {
+      //   handler(value) {
+      //     console.log(value,'value')
+      //     const skillId = value.map(v => v.dictCode)
+      //     console.log(11111,skillId)
+      //     this.$emit('input', skillId);
+      //   },
+      //   // immediate: true,
+      //   deep: true
+      // },
     
       // skill(val) {
       //   console.log(this.data,'sss')
@@ -83,20 +84,29 @@ export default {
         
       }
       },
-      // value: {
-      //   handler(value) {
-      //     this.data.forEach(v1 => {
-      //       value.forEach(v2 => {
-      //         if (v1.dictCode === v2) {
-      //           v1.tick = true
-      //         }
-      //       })
-      //     })
-      //     // this.list = this.data.filter(v => v.tick)
-      //   },
-      //   immediate: true,
-      //   deep: true
-      // },
+      value: {
+        handler(value) {
+          this.data.forEach(v1 => {
+            value.forEach(v2 => {
+              if (v1.dictCode === v2) {
+                v1.tick = true
+              }
+            })
+          })
+          // this.list = this.data.filter(v => v.tick)
+          let list = []
+          value.forEach(v1 => {
+            this.data.forEach(v2 => {
+              if (v1 === v2.dictCode) {
+                list.push(v2)
+              }
+            })
+          })
+          this.list = list
+        },
+        immediate: true,
+        deep: true
+      },
     },
   computed: {
    
@@ -105,9 +115,13 @@ export default {
     // }
   },
   created() {
+    this.data = JSON.parse(sessionStorage.getItem('skills'))
+     this.dataCopy=this.data
     console.log(this.skillDafault)
+    console.log(this.value,'this.value')
+    // this.skill=this.value.filter(v => v.tick)
     //  this.list=this.skillDafault
-    this.getData()
+    // this.getData()
   },
   methods: {
    
@@ -152,6 +166,7 @@ export default {
           this.list.splice(sign, 1)
         }
       }
+      this.$emit('input', this.list.map(v => v.dictCode))
     },
     // 删除标签
     del(item, index) {
@@ -164,6 +179,7 @@ export default {
           }
         })
       })
+      this.$emit('input', this.list.map(v => v.dictCode))
     },
     // 匹配颜色
     matchColor(cssClass) {
