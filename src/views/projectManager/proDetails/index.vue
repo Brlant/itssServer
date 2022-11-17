@@ -233,6 +233,7 @@
       >
         <el-table-column prop="userName" label="执行人员" width="120" fixed="left">
           <template slot-scope="scope">
+            <span :class="[scope.row.updateType==1?'isNew':'']">{{scope.row.updateType}}</span>
             <span :class="[scope.row.userName == '无' ? '' : 'priority3']">{{
               scope.row.userName ? scope.row.userName : "无"
             }}</span>
@@ -338,7 +339,7 @@
 
     <div class="whiteBox" v-if="detailUserActive" style="padding: 1%">
       <el-form
-        ref="addEditForm"
+        ref="defaultForm"
         :model="addEditFormData"
         :rules="rules"
         size="medium"
@@ -1256,8 +1257,8 @@ export default {
       }
       
       // 提交审核之前 ，处理一下 刚刚添加的资源
-      this.formData.projectUserList.unshift(...this.holdUserList)
       let parame = this.deepClone(this.formData)
+      parame.projectUserList.unshift(...this.holdUserList)
       let projectUserListTemp =[]
       parame.projectUserList.map((item,i)=>{
         // 删除没有修改过的 没有新增的 updateType为空的
@@ -1295,8 +1296,8 @@ export default {
         })
         .catch(() => {});
     },
-    delUserToProject(row, index) {
       // 取消当前的人
+    delUserToProject(row, index) {
       this.addEditFormData.projectUserList[0].userId = "";
       this.addEditFormData.projectUserList[0].userName = "";
       this.$forceUpdate();
@@ -1324,8 +1325,8 @@ export default {
         }
       });
     },
-    addUserToProject(row, index) {
       //点击添加人员到 资源配置中 去
+    addUserToProject(row, index) {
       // projectTable.projectUserList projectTable.projectUserList
       this.addEditFormData.projectUserList[0].userId = row.userId;
       this.addEditFormData.projectUserList[0].userName = row.nickName;
@@ -1565,6 +1566,7 @@ export default {
     initaddEditUserList() {
       // this.delBtn = true;
       // this.formData.projectUserList =[]
+     
       this.detailUserActive = false;
       this.addEditUserActive = true;
       this.isUpdateActive = true; // 我修改了 并且暂存了
@@ -1586,6 +1588,9 @@ export default {
       this.addEditFormData.projectUserList.push(oneUser);
       // this.changeChildDateArea(oneUser,index);// 新增的时候 是否控制
       this.$forceUpdate();
+        if (this.$refs['addEditForm']) {
+          this.$refs['addEditForm'].resetFields();
+        }
     },
     // 动态修改 时间选择器的区间值
     changeChildDateArea(userInfo, index) {
@@ -1734,9 +1739,9 @@ export default {
     },
     // 拿到 并 显示 推荐人选
     getRecommendUserHandel(index, row) {
-      console.log(row);
+      console.log(row,index);
       let params = {
-        id:row.id||this.formData.projectUserList[index].id, //项目配置表主键第二级的主键
+        id:row?.id||this.formData.projectUserList[index]?.id||"", //项目配置表主键第二级的主键
         postNameId:row.postNameId,//职位id
         regionId:row.regionId,//区域id
         postTypeId:row.postTypeId,//职位类型id
@@ -1814,6 +1819,7 @@ export default {
             // this.addEditFormData.projectUserList[0].unshift(this.projectTable.projectUserList)
             console.log(oneUser);
             // this.projectTable.projectUserList.unshift(oneUser)
+            // this.formData.projectUserList.unshift(oneUser)
             // 新增代码块  end
             this.$forceUpdate();
             this.$message.success("新增暂存成功！");
@@ -2318,6 +2324,18 @@ export default {
 
 </style>
 <style lang="scss">
+.isNew{
+  background-image: url('../../../assets/images/newIco.png');
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    width: 20px;
+    height: 20px;
+    left: 2px;
+    top: 2px;
+    display: inline-block;
+    position: absolute;
+}
 .skillcolor1 {
   background: rgb(0, 113, 189) !important;
   color: white !important;
