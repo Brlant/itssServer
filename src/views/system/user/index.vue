@@ -33,9 +33,9 @@
       <div class="right">
         <div class="right-header">
           <div>{{ deptTitle }}</div>
-          <div>
+          <div v-hasPermi="['system:user:add']">
             <el-button type="text" @click="setCommander">设置负责人</el-button>
-            <span v-hasPermi="['system:user:add']">
+            <span>
               <span>|</span>
               <el-button type="text" @click="add">添加</el-button>
             </span>
