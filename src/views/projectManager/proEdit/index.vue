@@ -359,7 +359,7 @@
                   size="mini"
                   @click="DelPostList(addUserListindex,addUserList)"
                 >
-                  删除11
+                  删除
                 </el-button>
                 <!-- <el-button type="info" size="mini"> 取消 </el-button> -->
               </el-form-item>
