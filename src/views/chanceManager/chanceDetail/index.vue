@@ -986,7 +986,7 @@ export default {
     // window.localStorage.setItem('depttId',this.queryParams.deptId)
     // window.localStorage.setItem('deptTitle',this.deptTitle)
       // const obj = { path: "/system/user-auth/userInfo", query: { userId: id , deptId:this.queryParams.deptId,deptTitle:this.deptTitle} };
-      const obj = { path:'/user/profile', query: { userId: id } };
+      const obj = { path: "/system/user-auth/userInfo", query: { userId: id } };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },

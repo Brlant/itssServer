@@ -4,7 +4,7 @@
       <div class="editTitle">
         <span>个人中心</span>
       </div>
-      <div style="cursor: pointer" class="ope">
+      <div style="cursor: pointer" class="ope" >
         <!-- <span @click='changeAccount'>账号更改 |</span> -->
         <span @click='edit' v-if='info.skillLock==0'> 编辑 </span>
       </div>
@@ -136,6 +136,7 @@ export default {
       dialogFormVisible: false,
       info:{},
       id:'',
+      
       form: {
         tel: "",
         verification: "",
@@ -152,6 +153,7 @@ export default {
   },
   mounted() {
     this.detail()
+   
   },
   methods: {
     //编辑个人信息
@@ -164,12 +166,12 @@ export default {
       this.$tab.closeOpenPage(obj);
     },
     detail() {
-      
-      if(this.$route.query.userId){
-        this.id=this.$route.query.userId
-      }else{
+      // console.log(this.$route.query.isUser)
+      // if(this.$route.query.isUser==1){
+      //   this.id=this.$route.query.userId
+      // }else if(this.$route.query.isUser==0){
          this.id=this.$store.state.user.user.userId
-      }
+      // }
     
 
         userDetail(this.id).then(res=>{

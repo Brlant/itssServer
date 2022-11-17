@@ -151,7 +151,7 @@ export default {
         }
     };
   },
-  mounted() {
+  created() {
     this.detail()
   },
   methods: {
@@ -165,11 +165,12 @@ export default {
        editSkill(data).then(res=>{
             if(res.code==200){
                 this.$message.success(res.msg)
-                 const obj = {
-                path: "/user/profile",
-            };
-            // getToday()
-            this.$tab.closeOpenPage(obj);
+            //      const obj = {
+            //     path: "/user/profile",
+            // };
+            // // getToday()
+            // this.$tab.closeOpenPage(obj);
+             this.$router.go(-1)
             }
        })
     },
@@ -184,7 +185,6 @@ export default {
       }else{
          id=this.$store.state.user.user.userId
       }
-    
       
         userDetail(id).then(res=>{
             this.info=res.data
@@ -195,11 +195,12 @@ export default {
     
     },
     goBack(){
-        const obj = {
-        path: "/user/profile",
-      };
-      // getToday()
-      this.$tab.closeOpenPage(obj);
+      //   const obj = {
+      //   path: "/user/profile",
+      // };
+      // // getToday()
+      // this.$tab.closeOpenPage(obj);
+      this.$router.go(-1)
     },
     //更改账号
     changeAccount(){},
