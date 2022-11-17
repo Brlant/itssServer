@@ -135,6 +135,7 @@ export default {
     return {
       dialogFormVisible: false,
       info:{},
+      id:'',
       form: {
         tel: "",
         verification: "",
@@ -157,20 +158,21 @@ export default {
     edit() {
            const obj = {
         path: "/system/user-auth/profile/userEdit",
+        query:{userId:this.id}
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
     detail() {
-      let id;
+      
       if(this.$route.query.userId){
-        id=this.$route.query.userId
+        this.id=this.$route.query.userId
       }else{
-         id=this.$store.state.user.user.userId
+         this.id=this.$store.state.user.user.userId
       }
     
 
-        userDetail(id).then(res=>{
+        userDetail(this.id).then(res=>{
             this.info=res.data
 
         })

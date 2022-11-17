@@ -8,7 +8,7 @@
       <div style="cursor: pointer" class="ope">
         <!-- <span @click='changeAccount'>账号更改 |</span> -->
         <el-button type='primary' @click='save'>保存</el-button>
-         <el-button>取消</el-button>
+         <el-button @click='cancle'>取消</el-button>
       </div>
     </div>
      <div>
@@ -69,7 +69,7 @@
                   
                    <div slot="label"><i class='el-icon-unlock' v-if='info.skillLock==0'></i>
                    <i class='el-icon-lock' v-if='info.skillLock==1'></i> 工作技能：</div>
-                <skill-select v-model="skillIds" />
+                    <skill-select v-model="skillIds" />
                     
                 </div>
             </div>
@@ -173,12 +173,23 @@ export default {
             }
        })
     },
+    cancle(){
+       this.$router.go(-1)
+    },
     detail() {
-      let id=this.$store.state.user.user.userId
+      // let id=this.$store.state.user.user.userId
+      let id;
+      if(this.$route.query.userId){
+        id=this.$route.query.userId
+      }else{
+         id=this.$store.state.user.user.userId
+      }
+    
       
         userDetail(id).then(res=>{
             this.info=res.data
              this.skillIds = res.data.userSkills.map((v) => v.skillId);
+             console.log(this.skillIds,'this.skillIds')
             
         })
     

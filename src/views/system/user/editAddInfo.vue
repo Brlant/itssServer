@@ -111,6 +111,7 @@
                   placeholder="请选择区域"
                  
                   @change="changePosition('area')"
+                  @blur="changePosition('area')"
                 >
                   <el-option
                     v-for="(dict, index) in areas"
@@ -131,6 +132,7 @@
                   placeholder="请选择职位类型"
                 
                   @change="changePosition('postType')"
+                  @blur="changePosition('postType')"
                 >
                   <el-option
                     v-for="(dict, index) in typeList"
@@ -148,6 +150,7 @@
                   v-model="formData.postNameId"
                   placeholder="请选择职位名称"
                   @change="changePosition('postName')"
+                  @blur="changePosition('postName')"
                   :disabled="!formData.postTypeId || !formData.regionId"
                 >
                   <el-option
@@ -554,10 +557,12 @@ export default {
          this.detailInfo()
          this.$message.success('取消成功')
          this.cancelShow=false
+           this.$router.go(-1)
       }else{
         this.$message.success('取消成功')
         this.$refs["elForm"].resetFields();
         this.cancelShow=false
+       
       }
     },
     cancelForm(){

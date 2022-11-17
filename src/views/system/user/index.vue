@@ -24,8 +24,10 @@
             ref="trees"
             default-expand-all
             highlight-current
-            @node-click="handleNodeClick"
-          />
+            @node-click="handleNodeClick">
+            <!-- <span slot-scope="{ data }">{{data.label}}<i class='el-icon-plus' style='margin-left:100px;'></i></span> -->
+            </el-tree>
+          
         </div>
       </div>
       <div class="right">
