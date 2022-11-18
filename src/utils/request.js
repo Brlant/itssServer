@@ -7,7 +7,7 @@ import errorCode from '@/utils/errorCode'
 import { tansParams, blobValidate } from "@/utils/ruoyi";
 import cache from '@/plugins/cache'
 import { saveAs } from 'file-saver'
-
+let count = 0
 let downloadLoadingInstance;
 // 是否显示重新登录
 export let isRelogin = { show: false };
@@ -94,9 +94,13 @@ service.interceptors.response.use(res => {
     //   });
     // }
       // TODO
-      Message.closeAll()
-      Message.error(msg)
+      count++
+      if(count==1){
+          Message.closeAll()
+          Message.error(msg)
+      }
       store.dispatch('LogOut').then(() => {
+        count=0
         router.push('/login');
       })
       return Promise.reject(msg)
