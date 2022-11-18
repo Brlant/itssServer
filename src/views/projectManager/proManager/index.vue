@@ -208,11 +208,15 @@
 
         <el-table-column prop="ysDeviation" label="预算偏差" width="130">
           <template slot-scope="scope">
-            <span :class="['piancha' + scope.row.pianchaActive]">
+             <span :class="['piancha' + scope.row.pianchaActive]" v-if='scope.row.pianchaActive == 2'>
               {{
-                scope.row.pianchaActive == 2
-                  ? "-" + moneyFormat(scope.row.ysDeviation)
-                  : moneyFormat(scope.row.ysDeviation)
+                scope.row.ysDeviation ? "-" + moneyFormat(scope.row.ysDeviation) : ''
+                 
+              }}
+            </span>
+             <span :class="['piancha' + scope.row.pianchaActive]" v-else>
+              {{
+                scope.row.ysDeviation ?  moneyFormat(scope.row.ysDeviation) : ''
               }}
             </span>
           </template>
