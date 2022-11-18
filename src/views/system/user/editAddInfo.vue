@@ -534,28 +534,48 @@ export default {
     },
     //取消
     cancle() {
-     this.cancelShow=true
+    //  this.cancelShow=true
      if(this.$route.query.isEdit == 1){
-      this.title='当前页面修改内容尚未保存，是否确认退出'
+      
+       this.$confirm(`当前页面修改内容尚未保存，是否确认退出？`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          // this.$refs["elForm"].resetFields();
+             this.$router.go(-1)
+        })
+        .catch(() => {});
+    
      }else{
-      this.title='此操作会重置本页面所有填写的内容'
+       this.$confirm(`此操作会重置本页面所有填写的内容!`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$refs["elForm"].resetFields();
+            //  this.$router.go(-1)
+        })
+        .catch(() => {});
      }
      
      
     },
-    saveCancle(){
-       if(this.$route.query.isEdit == 1){
-         this.detailInfo()
-         this.$message.success('取消成功')
-         this.cancelShow=false
-           this.$router.go(-1)
-      }else{
-        this.$message.success('取消成功')
-        this.$refs["elForm"].resetFields();
-        this.cancelShow=false
+    // saveCancle(){
+    //    if(this.$route.query.isEdit == 1){
+    //      this.detailInfo()
+    //      this.$message.success('取消成功')
+    //      this.cancelShow=false
+    //        this.$router.go(-1)
+    //   }else{
+    //     this.$message.success('取消成功')
+    //     this.$refs["elForm"].resetFields();
+    //     this.cancelShow=false
        
-      }
-    },
+    //   }
+    // },
     cancelForm(){
       this.cancelShow=false
     },
