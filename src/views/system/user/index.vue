@@ -12,22 +12,27 @@
             style="margin-bottom: 20px"
             @focus="searchTable"
           />
-          <i class="el-icon-plus" @click="handleAdd"  v-hasPermi="['system:user:add']" style='cursor:pointer'></i>
+          <i
+            class="el-icon-plus"
+            @click="handleAdd"
+            v-hasPermi="['system:user:add']"
+            style="cursor: pointer"
+          ></i>
         </div>
         <div class="head-container">
           <el-tree
             :data="deptOptions"
             :props="defaultProps"
-            node-key='id'
+            node-key="id"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
             ref="trees"
             default-expand-all
             highlight-current
-            @node-click="handleNodeClick">
+            @node-click="handleNodeClick"
+          >
             <!-- <span slot-scope="{ data }">{{data.label}}<i class='el-icon-plus' style='margin-left:100px;'></i></span> -->
-            </el-tree>
-          
+          </el-tree>
         </div>
       </div>
       <div class="right">
@@ -41,11 +46,19 @@
             </span>
           </div>
         </div>
-        <el-table :data="user"  @row-click="showRowDetail">
+        <el-table :data="user" @row-click="showRowDetail">
           <!-- <el-table-column type="selection" width="50" align="center" /> -->
           <el-table-column label="姓名" align="center" prop="nickName">
             <template slot-scope="scope">
-              <span @click="detail(scope.row.userId)" style='cursor:pointer;color:#3D7DFF'><i class='el-icon-user-solid' v-if='scope.row.dept.leader==scope.row.userId'></i>{{scope.row.nickName}}</span>
+              <span
+                @click="detail(scope.row.userId)"
+                style="cursor: pointer; color: #3d7dff"
+                ><i
+                  class="el-icon-user-solid"
+                  v-if="scope.row.dept.leader == scope.row.userId"
+                ></i
+                >{{ scope.row.nickName }}</span
+              >
             </template>
           </el-table-column>
           <el-table-column label="职位" align="center" prop="postName" />
@@ -175,7 +188,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <!-- <el-row>
           <el-col :span="14">
             <el-form-item label="关联岗位" prop="posts">
               <el-select
@@ -197,7 +210,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
         <el-row>
           <el-col :span="14">
             <el-form-item label="显示排序" prop="sort">
@@ -305,7 +318,7 @@ import {
   queryUserList,
   stopUse,
   setuser,
-  queryUserlistByRole
+  queryUserlistByRole,
 } from "@/api/system/user";
 import { getToken } from "@/utils/auth";
 import { treeselect, listDept, addDept } from "@/api/system/dept";
@@ -321,7 +334,7 @@ import {
   deptStatus,
 } from "@/api/DeptMange/DeptManage.js";
 // import { directive } from 'vue/types/umd';
-import { dictData } from '@/api/dataDict'
+import { dictData } from "@/api/dataDict";
 
 export default {
   name: "User",
@@ -369,7 +382,6 @@ export default {
       stop: false,
       // 表单校验
       rules: {
-
         parentId: [
           { required: true, message: "上级部门不能为空", trigger: "blur" },
         ],
@@ -419,7 +431,7 @@ export default {
       postList: [],
       parentDeptData: [],
       projectUserIdOptions: [],
-      curren:'',
+      curren: "",
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -449,7 +461,7 @@ export default {
         // parentIdNode : null,
         posts: "",
         sort: "",
-        status: "",
+        status: 1,
         remark: "",
       },
       propsObj: {
@@ -495,73 +507,76 @@ export default {
     // this.getList();
 
     this.getTreeselect();
-    this.reqStatusFn();
+
     this.reqAllListFn();
     this.reqOrgListFn();
     this.reqParentDeptFn();
-    this.getSkills()
-
+    this.getSkills();
   },
   methods: {
     getSkills() {
       const params = {
-        dictType: 'skill_type',
-        status: '0'
-      }
-      dictData(params).then(res => {
-        let { rows } = res
-        rows.forEach(v => v.tick = false)
-        sessionStorage.setItem('skills', JSON.stringify(rows))
-      })
+        dictType: "skill_type",
+        status: "0",
+      };
+      dictData(params).then((res) => {
+        let { rows } = res;
+        rows.forEach((v) => (v.tick = false));
+        sessionStorage.setItem("skills", JSON.stringify(rows));
+      });
     },
-    detailInfo(id){
-   const obj = { path:'/user/profile', query: { userId: id ,isUser:1} };
+    detailInfo(id) {
+      const obj = { path: "/user/profile", query: { userId: id, isUser: 1 } };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
-    showRowDetail(row){
-      console.log(row)
-        const obj = { path: "/system/user-auth/userInfo", query: { userId: row.userId , deptId:this.queryParams.deptId,deptTitle:this.deptTitle} };
+    showRowDetail(row) {
+      console.log(row);
+      const obj = {
+        path: "/system/user-auth/userInfo",
+        query: {
+          userId: row.userId,
+          deptId: this.queryParams.deptId,
+          deptTitle: this.deptTitle,
+        },
+      };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
-     defaultData(){
+    defaultData() {
       // console.log(this.$refs.tree,'this.$refs.tree')
       // this.$refs.trees.setCurrentKey(this.deptOptions[0].label)
       this.$nextTick(function () {
-        this.$refs.trees.setCurrentKey(this.curren)//data[0].id为默认选中的节点
-               })
-
-
-     },
+        this.$refs.trees.setCurrentKey(this.curren); //data[0].id为默认选中的节点
+      });
+    },
     sureEdit() {
       this.$refs["diaForm"].validate((valid) => {
-        if(valid){
-           let data = {
-          deptId: this.queryParams.deptId,
-          leader: this.diaForm.commander,
-        };
-        setuser(data).then((res) => {
-          if (res.code == 200) {
-            this.$message.success(res.msg);
-            this.editShow = false;
-            this.getList();
-          }
-        });
+        if (valid) {
+          let data = {
+            deptId: this.queryParams.deptId,
+            leader: this.diaForm.commander,
+          };
+          setuser(data).then((res) => {
+            if (res.code == 200) {
+              this.$message.success(res.msg);
+              this.editShow = false;
+              this.getList();
+            }
+          });
         }
-
       });
     },
     setCommander() {
-      this.diaForm={
-        commander: ""
-      }
+      this.diaForm = {
+        commander: "",
+      };
       this.editShow = true;
     },
     /* 查询是项目主管的用户列表 */
     queryUserlistByRole() {
-      let data = {deptId:this.queryParams.deptId, hasChild:false};
-      console.log(data,'dd')
+      let data = { deptId: this.queryParams.deptId, hasChild: false };
+      console.log(data, "dd");
       queryUserlistByRole(data).then((res) => {
         // res.data.map((item) => {
         //   item.userNameAndPost = item.nickName + "（" + item.postName + "）";
@@ -656,6 +671,11 @@ export default {
                 });
               }
               this.statusList = statusArr;
+              this.statusList.map((v) =>
+                v.label === "启用" || v.value === 1
+                  ? (this.deptForm.status = v.value)
+                  : ""
+              );
             }
           }
         })
@@ -674,9 +694,16 @@ export default {
       this.$tab.closeOpenPage(obj);
     },
     detail(id) {
-    // window.localStorage.setItem('depttId',this.queryParams.deptId)
-    // window.localStorage.setItem('deptTitle',this.deptTitle)
-      const obj = { path: "/system/user-auth/userInfo", query: { userId: id , deptId:this.queryParams.deptId,deptTitle:this.deptTitle} };
+      // window.localStorage.setItem('depttId',this.queryParams.deptId)
+      // window.localStorage.setItem('deptTitle',this.deptTitle)
+      const obj = {
+        path: "/system/user-auth/userInfo",
+        query: {
+          userId: id,
+          deptId: this.queryParams.deptId,
+          deptTitle: this.deptTitle,
+        },
+      };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
@@ -714,33 +741,32 @@ export default {
       treeselect().then((response) => {
         this.deptOptions = response.data;
         // this.$store.commit('SET_DEPTID',this.deptOptions[0].id)
-    //  if(this.$store.state.deptId){
+        //  if(this.$store.state.deptId){
 
+        //       this.queryParams.deptId = window.localStorage.getItem('depttId')
+        //        this.deptTitle =window.localStorage.getItem('deptTitle');
+        //         this.curren=window.localStorage.getItem('depttId')
 
-    //       this.queryParams.deptId = window.localStorage.getItem('depttId')
-    //        this.deptTitle =window.localStorage.getItem('deptTitle');
-    //         this.curren=window.localStorage.getItem('depttId')
-
-    //     }else{
-          // this.queryParams.deptId = this.deptOptions[0].id;
-          if(this.$store.state.user.deptId){
-             console.log(this.$store.state.user.deptId)
-           this.queryParams.deptId = this.$store.state.user.deptId;
-           this.deptTitle = this.$store.state.user.deptTitle;
-            this.curren= this.$store.state.user.deptId;
-          }else{
-             this.queryParams.deptId =  this.deptOptions[0].id
-              this.deptTitle = this.deptOptions[0].label;
-            this.curren= this.deptOptions[0].id
-          }
+        //     }else{
+        // this.queryParams.deptId = this.deptOptions[0].id;
+        if (this.$store.state.user.deptId) {
+          console.log(this.$store.state.user.deptId);
+          this.queryParams.deptId = this.$store.state.user.deptId;
+          this.deptTitle = this.$store.state.user.deptTitle;
+          this.curren = this.$store.state.user.deptId;
+        } else {
+          this.queryParams.deptId = this.deptOptions[0].id;
+          this.deptTitle = this.deptOptions[0].label;
+          this.curren = this.deptOptions[0].id;
+        }
 
         // }
 
-       console.log( this.deptTitle,' this.deptTitle')
+        console.log(this.deptTitle, " this.deptTitle");
 
         this.getList();
         this.queryUserlistByRole();
-           this.defaultData()
+        this.defaultData();
       });
     },
     // 筛选节点
@@ -750,13 +776,13 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      console.log(this.defaultData,'defaultData')
-      console.log(data,'data');
+      console.log(this.defaultData, "defaultData");
+      console.log(data, "data");
       this.queryParams.deptId = data.id;
-      this.$store.commit('SET_DEPTID',this.queryParams.deptId)
+      this.$store.commit("SET_DEPTID", this.queryParams.deptId);
       this.deptTitle = data.label;
-      this.$store.commit('SET_DEPTTITLE',this.deptTitle)
-      this.queryUserlistByRole()
+      this.$store.commit("SET_DEPTTITLE", this.deptTitle);
+      this.queryUserlistByRole();
       this.getList();
     },
     // 用户状态修改
@@ -781,7 +807,7 @@ export default {
     },
     // 表单重置
     reset() {
-       this.deptForm={
+      (this.deptForm = {
         name: "",
         deptNo: "",
         orgId: "",
@@ -792,11 +818,9 @@ export default {
         sort: "",
         status: "",
         remark: "",
-      },
-      this.resetForm("form");
+      }),
+        this.resetForm("form");
     },
-
-
 
     newAdd() {
       this.deptForm.posts =
@@ -808,7 +832,7 @@ export default {
         .then((d) => {
           if (d.code === 200) {
             // this.$message.success('新增部门成功')
-            this.open=false
+            this.open = false;
             this.getTreeselect(); // 刷新列表数据
           }
 
@@ -835,14 +859,25 @@ export default {
       // this.title = "添加部门";
       this.open = true;
       this.title = "添加部门";
+      this.deptForm = {
+        name: "",
+        deptNo: "",
+        orgId: "",
+        // orgIdNode : null,
+        parentId: "",
+        // parentIdNode : null,
+        posts: "",
+        sort: "",
+        status: "",
+        remark: "",
+      }; // deptForm.status statusList
+      this.reqStatusFn();
       treeselect().then((response) => {
         this.deptOption = response.data;
 
         // this.form.password = this.initPassword;
       });
     },
-
-
 
     /** 提交按钮 */
     submitForm: function () {
@@ -863,7 +898,7 @@ export default {
           }
         }
       });
-    }
+    },
   },
 };
 </script>
