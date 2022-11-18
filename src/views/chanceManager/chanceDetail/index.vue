@@ -244,7 +244,7 @@
               </el-col>
               <el-col :span="4" :offset="1" class="lineTT">
                 预计成本：<span class="priority3"  v-hasPermi="['chanceManage:chance:viewCost']" >{{
-                  chanceConfigItem.expectedCost
+                  chanceConfigItem.expectedCost ? moneyFormat(chanceConfigItem.expectedCost) : ''
                 }}</span
                 >元
               </el-col>
@@ -622,8 +622,16 @@
           </template>
         </el-table-column>
         <el-table-column prop="freeLoad" label="空闲负荷"></el-table-column>
-        <el-table-column prop="price" label="单价"></el-table-column>
-        <el-table-column prop="allPrice" label="总价"></el-table-column>
+        <el-table-column prop="price" label="单价">
+          <template slot-scope="scope">
+            <span>{{scope.row.price ? moneyFormat(scope.row.price) : ''}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="allPrice" label="总价">
+          <template slot-scope="scope">
+            <span>{{scope.row.allPrice ? moneyFormat(scope.row.allPrice) : ''}}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <div>

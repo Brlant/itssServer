@@ -256,14 +256,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="planCost" label="计划投入" width="120" fixed="left">
-           <template slot-scope="scope">
-            <span>{{ scope.row.planCost ? moneyFormat(scope.row.planCost) : ''}}</span>
-          </template>
         </el-table-column>
         <el-table-column prop="realCost" label="实际投入" width="120" fixed="left">
           <template slot-scope="scope">
             <span :class="['loadType' + scope.row.costType]">{{
-              scope.row.realCost ? moneyFormat(scope.row.realCost) : ''
+              scope.row.realCost
             }}</span>
           </template>
         </el-table-column>
@@ -447,7 +444,7 @@
             >
             <el-col :span="3"
               ><div class="colText">
-                预计成本：<span>{{ addUserList.expectedCost }}</span> 元
+                预计成本：<span>{{ moneyFormat(addUserList.expectedCost) }}</span> 元
               </div></el-col
             >
           </el-row>
@@ -668,7 +665,7 @@
             >
             <el-col :span="3"
               ><div class="colText">
-                预计成本：<span>{{ addUserList.expectedCost ? moneyFormat(addUserList.expectedCost) : ''}}</span> 元
+                预计成本：<span>{{ moneyFormat(addUserList.expectedCost) }}</span> 元
               </div></el-col
             >
             <el-col :span="3" :offset="3">
@@ -755,16 +752,8 @@
           </template>
         </el-table-column>
         <el-table-column prop="freeLoad" label="空闲负荷"></el-table-column>
-        <el-table-column prop="price" label="单价">
-          <template slot-scope="scope">
-            <span>{{ scope.row.price ? moneyFormat(scope.row.price) : ''}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="allPrice" label="总价">
-          <template slot-scope="scope">
-            <span>{{ scope.row.allPrice ? moneyFormat(scope.row.allPrice) : ''}}</span>
-          </template>
-        </el-table-column>
+        <el-table-column prop="price" label="单价"></el-table-column>
+        <el-table-column prop="allPrice" label="总价"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <div v-show="isShowActive == 0">
@@ -1132,25 +1121,22 @@ export default {
 
   methods: {
     // 根据ID 拿到 字典名字
-    getDictname(dictData,code,value,label){
+    getDictname(dictData,code){
        let dictItem = dictData.find((item)=>{
-        if(item[value]==code){
-          return item
-        }
-        //  if(item?.dictCode == code){ //dictLabel
-        //       return item
-        //   }
-        //     if(item?.postNameId ==code){ //postName
-        //     return item
-        //   }
-        //     if(item?.postLevelId ==code){ //postLevelName
-        //     return item
-        //   }
+         if(item?.dictCode == code){ //dictLabel
+              return item
+          }
+            if(item?.postNameId ==code){ //postName
+            return item
+          }
+            if(item?.postLevelId ==code){ //postLevelName
+            return item
+          }
       
        })
       // 写的如此麻烦 是以为后端太拉跨，返回的字典名字 千奇百怪
       // 以为find没有 会返回undefind
-       return dictItem?dictItem[label]:"--"
+       return dictItem?dictItem?.dictLabel||dictItem?.postName||dictItem?.postLevelName:"--"
     },
     getDictnameMore(dictData,codes){
        let skillList =[]
@@ -1179,7 +1165,7 @@ export default {
       //  console.log(data);
       switch (who) {
         case "region": // 选择区域
-          this.addEditFormData.projectUserList[index].regionName = this.getDictname(this.regionOptions,data,'dictCode','dictLabel')
+          this.addEditFormData.projectUserList[index].regionName = this.getDictname(this.regionOptions,data)
           //以上为新增逻辑
           this.addEditFormData.projectUserList[index].postTypeActive = false; // 初始化展示下一个
       // this.addEditFormData.projectUserList[index].regionId=undefined // 区域
@@ -1191,7 +1177,7 @@ export default {
           this.postLevelIdOptions = []; // 清空下拉
           break;
         case "postType": // 选择 职位类型
-          this.addEditFormData.projectUserList[index].postTypeName = this.getDictname(this.postTypeOptions,data,'dictCode','dictLabel')
+          this.addEditFormData.projectUserList[index].postTypeName = this.getDictname(this.postTypeOptions,data)
           this.addEditFormData.projectUserList[index].postNameIdActive = false; // 初始化展示下一个
           // this.addEditFormData.projectUserList[index].regionId="" // 区域
           // this.addEditFormData.projectUserList[index].postTypeId="" // 职位类型
@@ -1209,7 +1195,7 @@ export default {
           });
           break;
         case "postNameId": // 选择职位名称
-          this.addEditFormData.projectUserList[index].postName = this.getDictname(this.postNameIdOptions,data,'postNameId','postName')
+          this.addEditFormData.projectUserList[index].postName = this.getDictname(this.postNameIdOptions,data)
           this.addEditFormData.projectUserList[index].postLevelIdActive = false; // 初始化展示下一个
           // this.addEditFormData.projectUserList[index].regionId="" // 区域
           // this.addEditFormData.projectUserList[index].postTypeId="" // 职位类型
@@ -1228,7 +1214,7 @@ export default {
           });
           break;
         case "postLevelId": // 选择职位等级
-          this.addEditFormData.projectUserList[index].postLevelName = this.getDictname(this.postLevelIdOptions,data,'postLevelId','postLevelName')
+          this.addEditFormData.projectUserList[index].postLevelName = this.getDictname(this.postLevelIdOptions,data)
           this.addEditFormData.projectUserList[index].nextActive = false; // 初始化展示下面的所有
           // 选择 等级之后，拿到成本下拉 根据选择的等级id 拿到成本
           let costNumArry = this.postLevelIdOptions.find((item) => {
@@ -1454,7 +1440,7 @@ export default {
       this.addEditUserActive = false;
       // 我是修改
       this.addEditFormData = {};
-      if(row.id){ // 数据库后台的查看
+      if(row.id){
 
         let params = {
           id: row.id,
@@ -1486,7 +1472,7 @@ export default {
   
             this.addEditFormData.projectUserList.push(oneUser);
             this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
-            this.recommendUserActive = true; //显示人选推荐
+            this.recommendUserActive = false; //显示人选推荐
   
             this.getRecommendUserHandel(row.index, row);
             // }
@@ -1495,7 +1481,7 @@ export default {
             // this.proAuditInit();
           }
         });
-      }else{ // 刚刚新增的数据的查看
+      }else{
         console.log(row);
            this.addEditFormData.projectUserList =[]
            let showPprojectUserScheduleList =[]
@@ -1506,7 +1492,6 @@ export default {
                }
             })
             row.projectUserScheduleList = showPprojectUserScheduleList
-           row.planLoad = row.planLoadTemp 
            this.addEditFormData.projectUserList[0] = row; // 填充项目的基础数据
       }
 
@@ -1913,7 +1898,7 @@ export default {
             oneUser.updateType = 1;
 
             // this.formData.projectUserList.push(oo);
-            // this.holdUserList.push(oneUser); // 上面的代码会影响其他的内容
+            this.holdUserList.push(oneUser); // 上面的代码会影响其他的内容
             // 新增代码块  start
             // this.addEditFormData.projectUserList[0].unshift(this.projectTable.projectUserList)
             console.log(oneUser);
@@ -1926,10 +1911,6 @@ export default {
             oneUser.realCost = 0
             oneUser.loadType = 0
             oneUser.projectUserScheduleList = this.getprojectUserScheduleList(projectUserScheduleListTemp)
-            oneUser.planLoadTemp = oneUser.planLoad
-           setTimeout(() => {
-               oneUser.planLoad = this.autoFixed((oneUser.workDay/this.allWeekArrTemp.day)*100)
-           }, 100);
             console.log(  oneUser.projectUserScheduleList );
             this.formData.projectUserList.unshift(oneUser)
             // 新增代码块  end
@@ -2037,9 +2018,6 @@ export default {
         
         dates.map(checkItem=>{
           if(checkItem.year==allitem.year&&checkItem.week==allitem.week){
-            console.log(checkItem.workDay);
-            this.allWeekArrTemp.realDay += parseFloat(checkItem.workDay)
-          
             allweekArr[i] = checkItem
             // 内层的列 给真的值，实际使用 的除外，因为是新增
             checkItem.isMe = true
@@ -2052,7 +2030,6 @@ export default {
           //    checkItem.isMe =false
           // }
         })
-         
       })
       return allweekArr
     },
