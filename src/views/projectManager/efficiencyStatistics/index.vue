@@ -388,7 +388,7 @@ export default {
                 }
 
             })
-            this.queryTablehasYieldNum()
+            //this.queryTablehasYieldNum()
         },
         //查询个人效率表格方法
         queryTableBySelf(){
@@ -427,7 +427,7 @@ export default {
                 }
 
             })
-            this.queryTableBySelfYieldNum()
+            //this.queryTableBySelfYieldNum()
         },
          queryTableBySelfYieldNum(){
             this.months=[]
@@ -469,7 +469,7 @@ export default {
         },
         //下钻
         nameClick(val){
-            
+
             this.form.userId=''
             if(val.username == '总计'){
                 return;
