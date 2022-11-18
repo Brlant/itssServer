@@ -46,6 +46,11 @@ holdUserList
 除非 点击暂存 直接存储到后端，然后再次刷表格，然后提交审核变成了【物理删除】
 这样能解决这个问题+ 点击添加和 
 
+
+
+
+
+
 注释了2行 重要的代码 
 init(type) {
   // this.projectTable.projectUserList = res.data.projectUserList;
