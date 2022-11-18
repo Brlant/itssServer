@@ -1475,7 +1475,7 @@ export default {
   
             this.addEditFormData.projectUserList.push(oneUser);
             this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
-            this.recommendUserActive = false; //显示人选推荐
+            this.recommendUserActive = true; //显示人选推荐
   
             this.getRecommendUserHandel(row.index, row);
             // }
