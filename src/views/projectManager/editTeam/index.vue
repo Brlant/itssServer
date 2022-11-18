@@ -173,7 +173,8 @@ export default {
       });
     },
     backDetail() {
-      this.userList();
+      // this.userList();
+      this.$router.go(-1)
     },
     goManagerPage() {
       const obj = { path: "/projectManager/projectTeam" };
