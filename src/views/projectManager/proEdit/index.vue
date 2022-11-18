@@ -1272,7 +1272,7 @@ export default {
       this.$refs["elForm"].resetFields();
     },
     backDetail() {
-      this.$confirm(`您确定要返回详情页吗?刚刚修改的数据将不会被保存！`, "温馨提示", {
+      this.$confirm(`当前页面修改内容尚未保存，是否确认退出？`, "温馨提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",

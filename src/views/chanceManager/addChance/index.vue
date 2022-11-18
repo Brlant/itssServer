@@ -682,8 +682,18 @@ export default {
       // this.$refs['elForm'].resetFields()
       // 产品要返回
       // 新增 机会
-      const obj = { path: "/chanceManager/chanceList" };
-      this.$tab.closeOpenPage(obj);
+      // const obj = { path: "/chanceManager/chanceList" };
+      // this.$tab.closeOpenPage(obj);
+        this.$confirm(`此操作会重置本页面所有填写的内容!`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$refs["elForm"].resetFields();
+            //  this.$router.go(-1)
+        })
+        .catch(() => {});
     },
     // 判断当前这个值是否选中了
     editNext(who,data,index){

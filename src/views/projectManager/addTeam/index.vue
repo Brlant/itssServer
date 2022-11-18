@@ -170,7 +170,16 @@ export default {
       });
     },
     backDetail() {
-       this.$refs["elForm"].resetFields();
+      //  this.$refs["elForm"].resetFields();
+       this.$confirm(`此操作会重置本页面所有填写的内容!`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$refs["elForm"].resetFields();
+        })
+        .catch(() => {});
     },
     goManagerPage() {
       const obj = { path: "/projectManager/projectTeam" };
