@@ -925,7 +925,7 @@ export default {
         {
           required: true,
           message: "请选择配置安排",
-          trigger: "change",
+          trigger: "blur",
         },
       ],
       // 配置信息的
@@ -933,28 +933,28 @@ export default {
           {
             required: true,
             message: "请选择职位类型!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         addUserListregionId: [
           {
             required: true,
             message: "请选择区域!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         addUserListpostNameId: [
           {
             required: true,
             message: "请选择职位!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         addUserListpostLevelId: [
           {
             required: true,
             message: "请选择等级!",
-            trigger: "change",
+            trigger: "blur",
           },
         ],
         // addUserListSkillIdList: [
@@ -988,6 +988,8 @@ export default {
     },
     // 新增编辑的初始化 数据结构集合
     addEditFormData: {},
+    delRow:{},
+    isdel:false,
     resouceBtnActive: true, // 是否展示 暂存和取消
 
     // 详情页面显示的
@@ -1270,7 +1272,28 @@ export default {
     },
     // 顶部的点击提交审核
     goAudit() {
-      // 此处提交的是 全量数据
+      if(this.isdel){
+        let row=this.delRow
+         let params = this.deepClone(this.formData);
+          params.projectUserList = [];
+          params.projectUserList.push(row);
+          // 修改类型（1.新增,2.删除,3.修改原数据）
+          params.projectUserList[0].updateType = 2;
+          this.addEditUserActive = false;
+          this.detailUserActive = false;
+          this.recommendUserActive = false;
+          updateProjectUserAddEdit(params).then((res) => {
+            let { code, msg } = res;
+            this.$message.success(msg);
+            if (+code == 200) {
+              // 提交删除成功  需要审核
+              this.auditStatus = "1"; // 初始化 显示 待审核
+              this.proAuditInit();
+              this.$router.go(0);
+            }
+          });
+      }else{
+        // 此处提交的是 全量数据
       // 下面是塞入数据
       if(this.projectTable.projectUserList && this.projectTable.projectUserList[this.nowIndex].userId){
         this.formData.projectUserList[
@@ -1308,6 +1331,8 @@ export default {
           this.isUpdateActive = false; // 点击了立即审批 就删除编辑状态
         }
       });
+      }
+      
     },
     // 顶部的点击取消
     cancelSave() {
@@ -1826,7 +1851,7 @@ export default {
         type: "warning",
       })
         .then(() => {
-          if(row.id){ // 数据库的数据删除
+            if(row.id){ // 数据库的数据删除
             let params = this.deepClone(this.formData);
           params.projectUserList = [];
           params.projectUserList.push(row);
