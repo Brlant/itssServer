@@ -1,10 +1,12 @@
 <template>
   <div class="app-container">
     <div class="routerBar">
-      <router-link :to="`/chanceManager/chanceDetail?chanceId=${$route.query.chanceId}`"> &lt; 新建机会</router-link>
+      <!-- <router-link :to="`/chanceManager/chanceDetail?chanceId=${$route.query.chanceId}`"> &lt; 新建机会</router-link> -->
+      <span  @click="cancle" style='color:#557db3;font-size:16px'>&lt; 新建机会</span>
       <div class="rightBox">
         <el-button size="mini" @click="submitForm" type="primary">保存</el-button>
-        <el-button size="mini" @click="$router.push(`/chanceManager/chanceDetail?chanceId=${$route.query.chanceId}`)" type="default">取消</el-button>
+        <!-- <el-button size="mini" @click="$router.push(`/chanceManager/chanceDetail?chanceId=${$route.query.chanceId}`)" type="default">取消</el-button> -->
+        <el-button size="mini" @click="cancle" type="default">取消</el-button>
       </div>
     </div>
     <div class="titleBar">机会基础信息</div>
@@ -525,6 +527,10 @@ export default {
     this.queryAllUser()
   },
   methods: {
+    //取消
+    cancle(){
+      this.$router.go(-1)
+    },
     queryAllUser(){
       let data = {status:0};
       queryUserlist(data).then((res) => {
