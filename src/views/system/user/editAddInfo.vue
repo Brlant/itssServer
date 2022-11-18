@@ -264,16 +264,7 @@
         <el-button @click="cancelFn">取消</el-button>
       </div>
     </el-dialog>
-     <el-dialog
-      width="20%"
-      :visible.sync="cancelShow"
-    >
-      <span style='font-size:18px;display:inline-block;padding-bottom:20px'>{{title}}</span>
-      <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary" @click="saveCancle">确定</el-button>
-        <el-button @click="cancelForm">取消</el-button>
-      </div>
-    </el-dialog>
+
   </div>
 </template>
 <script>
@@ -563,19 +554,7 @@ export default {
      
      
     },
-    // saveCancle(){
-    //    if(this.$route.query.isEdit == 1){
-    //      this.detailInfo()
-    //      this.$message.success('取消成功')
-    //      this.cancelShow=false
-    //        this.$router.go(-1)
-    //   }else{
-    //     this.$message.success('取消成功')
-    //     this.$refs["elForm"].resetFields();
-    //     this.cancelShow=false
-       
-    //   }
-    // },
+  
     cancelForm(){
       this.cancelShow=false
     },
