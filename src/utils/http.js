@@ -113,7 +113,7 @@ reqFn = ( url, reqObj ) => {
 
         axiosObj( reqObj )
         .then( d => {
-            resolve( d.data ) ;
+            resolve( d ) ;
         } )
         .catch( err => {
             reject( err ) ;
