@@ -139,6 +139,7 @@
             <el-form-item label="部门名称" prop="name">
               <el-input
                 v-model="deptForm.name"
+                maxlength='30'
                 size="medium"
                 clearable
                 placeholder="请输入部门名称"

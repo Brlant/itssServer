@@ -462,9 +462,9 @@ export default {
 
       this.datalist.splice(index,1)
         // this.datalist=[{}]
-          this.datalist.forEach((v, i) => {
-            this.$refs[i][0].reset()
-          })
+          // this.datalist.forEach((v, i) => {
+          //   this.$refs[i][0].reset()
+          // })
     },
     //编辑
   edit(item){

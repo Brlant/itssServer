@@ -490,6 +490,11 @@ export function addClassName(ele,str){
   }
 
 }
+//js处理金钱加‘，’
+export function moneyFormat(num){
+  var reg=/(?=(?!\b)(\d{3})+$)/g;
+	return String(num).replace(reg, ',');
+}
 /**
  *  智能处理小数位 使用 就是 this.autoFixed(参数,3)
  * @param {*} num 要处理的小数

@@ -4,6 +4,7 @@ import { Notification, MessageBox, Message, Loading } from 'element-ui'
 import store from '@/store'
 import router from '@/router'
 import errorCode from '@/utils/errorCode'
+let count=0
 let   configObj =   {
                         baseURL : process.env.VUE_APP_BASE_API,
                         // baseURL : '/api',
@@ -35,6 +36,11 @@ axiosObj.interceptors.response.use( res => {
       return res.data
     }
     if (code === 401) {
+        count++
+        if(count==1){
+            Message.closeAll()
+            Message.error(msg)
+        }
     //   if (!isRelogin.show) {
     //     isRelogin.show = true;
     //     MessageBox.confirm(msg, '系统提示', {
@@ -52,9 +58,9 @@ axiosObj.interceptors.response.use( res => {
     //   });
     // }
       // TODO
-      Message.closeAll()
-      Message.error(msg)
+     
       store.dispatch('LogOut').then(() => {
+        count=0
         router.push('/login');
       })
       return Promise.reject(msg)
@@ -107,7 +113,7 @@ reqFn = ( url, reqObj ) => {
 
         axiosObj( reqObj )
         .then( d => {
-            resolve( d.data ) ;
+            resolve( d ) ;
         } )
         .catch( err => {
             reject( err ) ;
