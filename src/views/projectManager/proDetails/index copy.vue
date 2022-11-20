@@ -212,15 +212,15 @@
     <div class="whiteBox" style="padding: 1%">
       <b>| 项目资源配置</b>
       <p style="height: 10px"></p>
-      <p
+      <!-- <p
         v-show="projectTable.projectUserList && projectTable.projectUserList.length == 0"
       >
         <center><span class="color1">暂无资源配置</span></center>
-      </p>
+      </p> -->
+        <!-- v-show="projectTable.projectUserList && projectTable.projectUserList.length > 0" -->
 
       <el-table
         :row-style="rowStyle"
-        v-show="projectTable.projectUserList && projectTable.projectUserList.length > 0"
         :data="projectTable.projectUserList"
         border
         class="myTable"

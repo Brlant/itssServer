@@ -12,8 +12,10 @@
         <span @click="goManagerPage" style="cursor: pointer; color: #409eff">
           < 返回
         </span>
-        <div class="rightLink" v-show="isProjectByUser(formData)">
-          <!-- v-show="isProjectByUser(formData) || isJurisdiction('admin')" -->
+        <div
+          class="rightLink" v-show="isProjectByUser(formData)"
+        >
+        <!-- v-show="isProjectByUser(formData) || isJurisdiction('admin')" -->
           <span
             v-hasPermi="['projectManager:proManager:handle']"
             @click="goEditPage"
@@ -98,7 +100,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="7" :offset="1">
-            <el-form-item label="项目组" prop="projectGroupName">
+             <el-form-item label="项目组" prop="projectGroupName">
               {{ formData.projectGroupName }}
             </el-form-item>
           </el-col>
@@ -108,12 +110,14 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+         <el-row>
           <el-col :span="7" :offset="1">
             <el-form-item label="缺陷管理ID" prop="bugId">
               {{ formData.bugId }}
             </el-form-item>
+           
           </el-col>
+       
         </el-row>
       </el-form>
       <!--------------------------------------------------------------------------->
@@ -214,7 +218,7 @@
         <center><span class="color1">暂无资源配置</span></center>
       </p> -->
 
-      <!-- v-show="projectTable.projectUserList && projectTable.projectUserList.length > 0" -->
+        <!-- v-show="projectTable.projectUserList && projectTable.projectUserList.length > 0" -->
       <el-table
         :row-style="rowStyle"
         :data="projectTable.projectUserList"
@@ -229,7 +233,7 @@
       >
         <el-table-column prop="userName" label="执行人员" width="120" fixed="left">
           <template slot-scope="scope">
-            <span :class="[scope.row.updateType == 1 ? 'isNew' : '']"></span>
+            <span :class="[scope.row.updateType==1?'isNew':'']"></span>
             <span :class="[scope.row.userName == '无' ? '' : 'priority3']">{{
               scope.row.userName ? scope.row.userName : "无"
             }}</span>
@@ -298,16 +302,16 @@
           label="操作"
           width="120"
           fixed="right"
-          v-if="
-            isProjectByUser(formData) &&
-            isJurisdiction('projectManager:proManager:handle')
-          "
+          v-if="isProjectByUser(formData) && isJurisdiction('projectManager:proManager:handle')"
         >
           <!-- v-if="isProjectByUser(formData) || isJurisdiction('admin')"  // 暂时注释掉 是否为项目拥有者和超管 -->
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <el-button
-              v-show="scope.row.userName != '总计' && isShowActive == 0"
+              v-show="
+                 scope.row.userName!='总计' &&
+                isShowActive == 0
+              "
               type="text"
               size="small"
               @click.native.stop="updateProjectOne(scope.$index, scope.row)"
@@ -315,7 +319,10 @@
               修改
             </el-button>
             <el-button
-              v-show="scope.row.userName != '总计' && isShowActive == 0"
+              v-show="
+                scope.row.userName!='总计' &&
+                isShowActive == 0
+              "
               type="text"
               size="small"
               @click.native.stop="delProjectOne(scope.$index, scope.row)"
@@ -342,41 +349,53 @@
           class="UserLine"
           v-for="(addUserList, addUserListindex) in addEditFormData.projectUserList"
         >
-          <el-row>
+                <el-row>
             <el-col :span="5">
-              <el-form-item label="区域：">
-                <div class="colText2">
+              <el-form-item
+                label="区域："
+              >
+               <div class="colText2">
                   <span>
                     {{ addUserList.regionName }}
                   </span>
                 </div>
+
               </el-form-item>
             </el-col>
             <el-col :span="5">
-              <el-form-item label="职位类型：">
-                <div class="colText2">
+              <el-form-item
+                label="职位类型："
+              >
+              <div class="colText2">
                   <span>
                     {{ addUserList.postTypeName }}
                   </span>
                 </div>
+
               </el-form-item>
             </el-col>
             <el-col :span="5">
-              <el-form-item label="职位名称：">
-                <div class="colText2">
+              <el-form-item
+                label="职位名称："
+              >
+               <div class="colText2">
                   <span>
                     {{ addUserList.postName }}
                   </span>
                 </div>
+
               </el-form-item>
             </el-col>
             <el-col :span="5">
-              <el-form-item label="等级：">
-                <div class="colText2">
+              <el-form-item
+                label="等级："
+              >
+               <div class="colText2">
                   <span>
                     {{ addUserList.postLevelName }}
                   </span>
                 </div>
+
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -393,19 +412,15 @@
           </el-row>
           <el-row>
             <el-col :span="18">
-              <el-form-item label="技能需求：">
-                <div class="colText2">
-                  <span
-                    v-for="skill in addUserList.skillList"
-                    :class="['skillBox', 'skill' + skill.cssClass]"
-                  >
+              <el-form-item
+                label="技能需求："
+              >
+               <div class="colText2">
+                  <span v-for="skill in addUserList.skillList" :class="['skillBox','skill'+skill.cssClass]">
                     {{ skill.skillName }}
                   </span>
                 </div>
               </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              {{addUserList.userName?addUserList.userName:"无"}}
             </el-col>
           </el-row>
           <el-row>
@@ -482,7 +497,7 @@
           :key="addUserListindex"
           style="padding: 10px 20px"
         >
-          <el-row>
+               <el-row>
             <el-col :span="5">
               <el-form-item
                 label="区域："
@@ -588,13 +603,18 @@
           </el-row>
           <el-row>
             <el-col :span="18">
-              <el-form-item label="技能需求：">
+              <el-form-item
+                label="技能需求："
+                :prop="`projectUserList.${addUserListindex}.skillIdList`"
+                :rules="rules.addUserListSkillIdList"
+              >
                 <el-select
                   v-model="addUserList.skillIdList"
                   multiple
                   placeholder="请选择技能需求"
-                  @change="changeTextColor($event, 'mySkillIdList', addUserListindex)"
+                  @change="changeTextColor($event, 'mySkillIdList',addUserListindex)"
                   ref="mySkillIdList"
+                 
                   :style="{ width: '100%' }"
                 >
                   <el-option
@@ -608,9 +628,6 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              {{addUserList.userName?addUserList.userName:"无"}}
             </el-col>
           </el-row>
           <el-row>
@@ -652,20 +669,10 @@
               </div></el-col
             >
             <el-col :span="3" :offset="3">
-              <div class="colText3" v-show="resouceBtnActive">
-                <el-button
-                  size="mini"
-                  @click="addUserListHandel(addUserListindex)"
-                  type="primary"
-                  >暂存</el-button
-                >
-                <el-button
-                  size="mini"
-                  @click="DelUserList(addUserList, addUserListindex)"
-                  type="error"
-                  >取消</el-button
-                >
-              </div>
+            <div class="colText3" v-show="resouceBtnActive">
+              <el-button size="mini"  @click="addUserListHandel(addUserListindex)" :disabled="addUserActive" type="primary" >暂存</el-button>
+              <el-button size="mini" @click="DelUserList(addUserList, addUserListindex)" type="error" >取消</el-button>
+            </div>
             </el-col>
           </el-row>
           <!----------------------内部-start------------------------------>
@@ -738,11 +745,9 @@
         <el-table-column prop="postName" label="职位"></el-table-column>
         <el-table-column prop="postLevelName" label="等级"></el-table-column>
         <el-table-column prop="skillList" label="工作技能">
-          <template slot-scope="scope">
+            <template slot-scope="scope">
             <div v-for="(item, i) in scope.row.skillList">
-              <span :class="['skillBox', 'skill' + item.cssClass]">{{
-                item.skillName
-              }}</span>
+              <span :class="['skillBox','skill' + item.cssClass]">{{ item.skillName }}</span>
             </div>
           </template>
         </el-table-column>
@@ -814,7 +819,7 @@
         <el-table-column prop="applyUserName" label="申请人" width="150">
         </el-table-column>
         <el-table-column prop="relatePeople" label="涉及对象" width="250">
-          <template slot-scope="scope">
+           <template slot-scope="scope">
             <div v-html="scope.row.relatePeople"></div>
           </template>
         </el-table-column>
@@ -824,7 +829,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="updateContent" label="修改内容">
-          <template slot-scope="scope">
+           <template slot-scope="scope">
             <div v-html="scope.row.updateContent"></div>
           </template>
         </el-table-column>
@@ -833,7 +838,7 @@
             {{ scope.row.status | toStatus }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120">
+        <el-table-column label="操作" width="120" >
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
             <!-- 他必须是项目主管和项目负责人 才可以点击取消 -->
@@ -841,10 +846,7 @@
               <el-button
                 type="text"
                 size="small"
-                v-show="
-                  isProjectByUser(formData) &&
-                  isJurisdiction('projectManager:proManager:handle')
-                "
+                v-show="isProjectByUser(formData) && isJurisdiction('projectManager:proManager:handle')"
                 @click="updateAuditPro(scope.row, '4')"
                 ><span class="color1"> 取消 </span></el-button
               >
@@ -896,58 +898,10 @@ export default {
   components: {},
   props: {},
   data: () => ({
-    dd:[
-              {
-                  "userId": 27,
-                  "nickName": "luchao-5",
-                  "regionName": "合肥",
-                  "postTypeName": "后端开发",
-                  "postName": "JAVA工程师",
-                  "postLevelName": "初级",
-                  "freeLoad": 0,
-                  "price": 0,
-                  "allPrice": 0,
-                  "skillList": [
-                      {
-                          "skillId": 42,
-                          "skillName": "Java",
-                          "cssClass": "color5"
-                      },
-                      {
-                          "skillId": 48,
-                          "skillName": "web前端",
-                          "cssClass": "color1"
-                      }
-                  ]
-              },
-              {
-                  "userId": 28,
-                  "nickName": "luchao-4",
-                  "regionName": "合肥",
-                  "postTypeName": "后端开发",
-                  "postName": "JAVA工程师",
-                  "postLevelName": "初级",
-                  "freeLoad": 0,
-                  "price": 0,
-                  "allPrice": 0,
-                  "skillList": [
-                      {
-                          "skillId": 42,
-                          "skillName": "Java",
-                          "cssClass": "color5"
-                      },
-                      {
-                          "skillId": 48,
-                          "skillName": "web前端",
-                          "cssClass": "color1"
-                      }
-                  ]
-              }
-          ],
     addUserActive:false, // 新增情况下，点击暂存禁用
     id: "",
     monthArrTemp: [], // 存储动态表头
-    allWeekArrTemp:{},// 存储动态表头的以周的形式
+    allWeekArrTemp:{},// 存储动态表头的以周的形式  
     // { day:总天数，
     //  list:[{endDate:"2022-01-02"
     //     startDate:"2022-01-01"
@@ -1031,7 +985,6 @@ export default {
         nextActive: true,
         postNameIdOptions:[],
         postLevelIdOptions:[],
-        userList:[]
     },
     // 新增编辑的初始化 数据结构集合
     addEditFormData: {},
@@ -1079,11 +1032,11 @@ export default {
     countScope: "",
     countScopeOptions: [], //统计范围 1.全部，2.仅我负责，3.仅部门成员
     countScopeInit: "",
-    projectTable:
+    projectTable:  
       {
         projectUserList: [],
       },
-
+     
     labelArr: [],
     projectAuditTable: [], // 项目的信息修改的  历史记录
     checkAuditFormData: {
@@ -1133,7 +1086,7 @@ export default {
     // 部门主管 deptdirector  3
     // 项目主管 projectdirector 2
     // 项目监管 管理员 projectsupervision || admin ==>  1
-
+ 
     // 统计范围的-------------------------------------------
     this.projectName = this.$route.query.projectName;
     this.projectId = this.$route.query.projectId;
@@ -1178,7 +1131,7 @@ export default {
         //     if(item?.postLevelId ==code){ //postLevelName
         //     return item
         //   }
-
+      
        })
       // 写的如此麻烦 是以为后端太拉跨，返回的字典名字 千奇百怪
       // 以为find没有 会返回undefind
@@ -1186,19 +1139,15 @@ export default {
     },
     getDictnameMore(dictData,codes){
        let skillList =[]
-       console.log(codes);
-       if(Array.isArray(codes)){
-
-         dictData.map((item)=>{
-           // console.log(item);
-             codes.map(value=>{
-                 if(item.dictCode==value){
-                   item.skillName =item.dictLabel
-                     skillList.push(item)
-                 }
-             })
-         })
-       }
+        dictData.map((item)=>{
+          // console.log(item);
+            codes.map(value=>{
+                if(item.dictCode==value){
+                  item.skillName =item.dictLabel
+                    skillList.push(item)
+                }
+            })
+        })
       return skillList
     },
       /**
@@ -1295,7 +1244,7 @@ export default {
       this.$nextTick(() => {
         setTimeout(() => {
           let arr = []; // 对应数据对象数组
-          if(!Array.isArray(listData))return false
+
           listData.map((ind) => {
             this.techniqueOptions.map((v) => {
               if (v.dictCode === +ind) {
@@ -1346,16 +1295,17 @@ export default {
         // 此处提交的是 全量数据
       // 下面是塞入数据
       if(this.projectTable.projectUserList && this.projectTable.projectUserList[this.nowIndex].userId){
-
-        this.formData.projectUserList[this.nowIndex].userId = this.projectTable.projectUserList[this.nowIndex].userId;
-        this.formData.projectUserList[this.nowIndex].userName = this.projectTable.projectUserList[this.nowIndex].userName;
-
+        this.formData.projectUserList[
+        this.nowIndex
+      ].userId = this.projectTable.projectUserList[this.nowIndex].userId;
+      this.formData.projectUserList[
+        this.nowIndex
+      ].userName = this.projectTable.projectUserList[this.nowIndex].userName;
       }
-
+      
       // 提交审核之前 ，处理一下 刚刚添加的资源
-      this.formData.projectUserList = this.deepClone(this.projectTable.projectUserList)
       let parame = this.deepClone(this.formData)
-      // parame.projectUserList.unshift(...this.holdUserList)
+      parame.projectUserList.unshift(...this.holdUserList)
       let projectUserListTemp =[]
       parame.projectUserList.map((item,i)=>{
         // 删除没有修改过的 没有新增的 updateType为空的
@@ -1363,12 +1313,15 @@ export default {
           projectUserListTemp.push(item)
         }
       })
+       
         // 双保险，去除多余的没有选择的周数
         projectUserListTemp.map((row,i)=>{
           row.projectUserScheduleList = row.projectUserScheduleList.filter((el)=>{
               return el.isMe
             })
         })
+       
+
       parame.projectUserList=projectUserListTemp
       console.log(parame.projectUserList.length);
       updateProjectUserAddEdit(parame).then((res) => {
@@ -1387,7 +1340,7 @@ export default {
         }
       });
       }
-
+      
     },
     // 顶部的点击取消
     cancelSave() {
@@ -1432,31 +1385,22 @@ export default {
     },
       //点击添加人员到 资源配置中 去
     addUserToProject(row, index) {
-      // 此处需要同样的判断 是否有id 辨别是否有id  
-      // 是否有id 代表是否为 新增和 已有的资源配置
-      console.log(row.userId,row.nickName);
-      console.log("修改的是第几条",this.nowIndex);
       // projectTable.projectUserList projectTable.projectUserList
-      this.addEditFormData.projectUserList[0].userList.push(row.userId);
       this.addEditFormData.projectUserList[0].userId = row.userId;
       this.addEditFormData.projectUserList[0].userName = row.nickName;
-      this.projectTable.projectUserList[this.nowIndex].userList.push(row.userId);
       this.projectTable.projectUserList[this.nowIndex].userId = row.userId;
       this.projectTable.projectUserList[this.nowIndex].userName = row.nickName;
 
       this.$nextTick(() => {
         this.$set(this.projectTable.projectUserList[this.nowIndex], "userId", row.userId);
         this.$set(this.projectTable.projectUserList[this.nowIndex],"userName",row.nickName);
-        // this.$set(this.projectTable.projectUserList,this.nowIndex,row);
-      this.projectTable.projectUserList[this.nowIndex] = {...this.projectTable.projectUserList[this.nowIndex]}
       });
-      console.log(JSON.stringify(this.projectTable.projectUserList[this.nowIndex]));
+
 
       //  以上是展示
       // 下面是塞入数据 对已有的那条数据进行了操作
       // 修改类型（1.新增,2.删除,3.修改原数据）
       this.formData.projectUserList[this.nowIndex].updateType = 3;
-      this.formData.projectUserList[this.nowIndex].userList.push(row.userId);
       this.formData.projectUserList[this.nowIndex].userId = row.userId;
       this.formData.projectUserList[this.nowIndex].userName = row.nickName;
       this.$forceUpdate();
@@ -1475,7 +1419,7 @@ export default {
       row.index = rowIndex;
     },
     rowStyle({ row }) {
-      if (this.id === row.id||this.id === row.idTemp) {
+      if (this.id === row.id) {
         return {
           background: "#f7f4d3",
         };
@@ -1486,12 +1430,12 @@ export default {
     },
     showRowDetail(row) {
       // this.delBtn = false;
-      // if (this.idTemp === row.idTemp) return;
-      this.id = row.id||row.idTemp;
+      // if (this.id === row.id) return;
+      this.id = row.id;
 
       // 点击单行 显示信息
       //  console.log(row.index);   // 当前点击的行的索引值
-      if (this.projectTable.projectUserList[row.index].userName=="总计") {
+      if (row.index == this.projectTable.projectUserList[row.index].userName=="总计") {
         // 防止点击到 总计哪一行
         return false;
       }
@@ -1507,7 +1451,7 @@ export default {
         };
         updateQueryUserById(params).then((res) => {
           let { code, msg } = res;
-
+  
           if (+code == 200) {
             this.addEditFormData = this.deepClone(this.formData); // 填充项目的基础数据
             this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
@@ -1524,14 +1468,16 @@ export default {
             res.data.projectUserScheduleList.map((item) => {
               item.day = item.weekDay;
             });
-
+            
             let oneUser = this.deepClone(res.data);
             // 修改类型（1.新增,2.删除,3.修改原数据）
             // oneUser.updateType = 3;
             oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
+  
             this.addEditFormData.projectUserList.push(oneUser);
             this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
             this.recommendUserActive = true; //显示人选推荐
+  
             this.getRecommendUserHandel(row.index, row);
             // }
             // // 删除成功 只会去查询 审核的方法
@@ -1543,15 +1489,9 @@ export default {
         console.log(row,1);
            this.addEditFormData.projectUserList =[]
            row.projectUserScheduleList = row.projectUserScheduleList.filter((el)=>{
-              return el.isMe // 引起报错
+              return el.isMe
             })
-            //   row.projectUserScheduleList.map((item,i)=>{
-            // // 预先重置下，不然每次会沾染之前的数据
-            //     if(item.isMe){
-            //       delete item.isMe
-            //     }
-            //   })
-           row.planLoad = row.planLoadTemp
+           row.planLoad = row.planLoadTemp 
            console.log(row,2);
            this.addEditFormData.projectUserList[0] = row; // 填充项目的基础数据
       }
@@ -1637,7 +1577,47 @@ export default {
 
       /*----------------以上是 总计的安排的具体计算-------------------*/
     },
-     
+    // 选择职位之后的逻辑
+    getPostId(postId, index) {
+      // console.log(postId, index);
+
+      // 选择职位之后
+      this.postIdOptions.map((item) => {
+        if (postId == item.postId) {
+          // 选择 职位之后，拿到成本
+          if (this.formData.projectService == 2) {
+            //对外
+            this.addEditFormData.projectUserList[index].costNum = item.costOut;
+          } else {
+            // 对内
+            this.addEditFormData.projectUserList[index].costNum = item.costIn;
+          }
+        }
+      });
+      // 拿到成本之后，自动计算出 下面的期间负荷
+      let dates = this.addEditFormData.projectUserList[index].startEndTime;
+      this.constAll(dates, index);
+
+      // 需要更新一下  人选推荐的接口
+      setTimeout(() => {
+        let params = {
+          postId: postId, //职位id
+          projectService: this.formData.projectService, //服务对象
+          workDay: this.addEditFormData.projectUserList[index].workDay, // 总人日
+        };
+        console.log(params);
+        queryUserByPostId(params).then((res) => {
+          res.data.map((item) => {
+            item.showOrCancel = 1; // 默认显示  添加
+            if (this.projectTable.projectUserList[this.nowIndex].userId == item.userId) {
+              // 如果 当前点击的行的userID === 当前行id 就显示取消
+              item.showOrCancel = 2;
+            }
+          });
+          this.recommendUserTableData = res.data;
+        });
+      }, 1300);
+    },
     // 动态生成 表头样式
     headerClassName(row) {
       // console.log(row.column)
@@ -1650,7 +1630,7 @@ export default {
       // if(row.column.property=='total')
       return "recommendHeader";
     },
-    // 新增资源配置 初始化
+    // 新增资源配置 初始化 
     initaddEditUserList() {
       // this.delBtn = true;
       // this.formData.projectUserList =[]
@@ -1658,14 +1638,15 @@ export default {
       this.detailUserActive = false;
       this.addEditUserActive = true;
       this.isUpdateActive = false; // 我修改了 并且暂存了
-      this.recommendUserActive = true; // 点击添加 人选需要隐藏
+      this.recommendUserActive = false; // 点击添加 人选需要隐藏
       this.nowAction = "add"; // 记录下他是什么
       // if(this.detailUserActive){
       //   this.$refs["addEditForm"].resetFields()
       // }
 
       // 我是新增
-      this.addEditFormData = {};
+      this.addEditFormData = {
+      };
       this.addEditFormData = this.deepClone(this.formData); // 填充新增的
       this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
       let oneUser = this.deepClone(this.projectUserList);
@@ -1679,9 +1660,9 @@ export default {
       this.addEditFormData.projectUserList.push(oneUser);
       // this.changeChildDateArea(oneUser,index);// 新增的时候 是否控制
       this.$forceUpdate();
-        // if (this.$refs['addEditForm']) {
-        //   this.$refs['addEditForm'].resetFields();
-        // }
+        if (this.$refs['addEditForm']) {
+          this.$refs['addEditForm'].resetFields();
+        }
     },
     // 动态修改 时间选择器的区间值
     changeChildDateArea(userInfo, index) {
@@ -1746,17 +1727,17 @@ export default {
     updateProjectOne(index, row) {
       this.addUserActive =false;
       // if (this.id === row.id) return; // 此行先点击详情 再点击修改无作用
-      this.id = row.id|| row.idTemp;
+      this.id = row.id;
       this.delBtn = false;
       this.detailUserActive = false;
       this.addEditUserActive = true;
       this.resouceBtnActive = true; // 隐藏按钮的逻辑
       this.nowIndex = index; // 存储刚刚点击是那一条
 
+      this.nowAction = "update"; // 记录我是修改操作
       // 我是修改
       this.addEditFormData = {};
       if(row.id){
-          this.nowAction = "update"; // 记录我是新增修改操作
         // 后台返回的数据的修改
           let params = {
         id: row.id,
@@ -1829,15 +1810,10 @@ export default {
         this.changeTextColor(row.skillIdList, "mySkillIdList");
         }
       });
-
+   
       }else{
         // 新增行的修改
-          this.nowAction = "add"; // 记录我是新增修改操作
           this.addEditFormData.projectUserList =[]
-          row.projectUserScheduleList = row.projectUserScheduleList.filter((el)=>{
-            return el.isMe // 引起报错
-        })
-          row.planLoad = row.planLoadTemp
           this.addEditFormData.projectUserList[0] = row; // 填充项目的基础数据
       }
      },
@@ -1857,17 +1833,13 @@ export default {
         workDay:row.workDay,//总人日
       };
       queryUserByPostId(params).then((res) => {
-        res.data = this.dd;
         res.data.map((item) => {
           item.showOrCancel = 1; // 默认显示  添加
-          console.log(this.projectTable.projectUserList[this.nowIndex].userId , item.userId);
           if (this.projectTable.projectUserList[this.nowIndex].userId == item.userId) {
             // 如果 当前点击的行的userID === 当前行id 就显示取消
             item.showOrCancel = 2;
           }
         });
-      
-       
         this.recommendUserTableData = res.data;
       });
     },
@@ -1881,8 +1853,6 @@ export default {
       })
         .then(() => {
             if(row.id){ // 数据库的数据删除
-          console.log("我是数据库hang的删除",index);
-
             let params = this.deepClone(this.formData);
           params.projectUserList = [];
           params.projectUserList.push(row);
@@ -1901,19 +1871,12 @@ export default {
             }
           });
           }else{// 刚刚暂存的数据删除
-          console.log("我是暂存行的删除",index);
-            this.projectTable.projectUserList.splice(index,1)
-            // this.formData.projectUserList.splice(index,1)
+            this.formData.projectUserList.splice(index,1)
           }
-          this.$forceUpdate()
-          this.recommendUserActive =false;
-          this.addEditUserActive =false
-          this.detailUserActive =false
         })
         .catch(() => {});
       // console.log(index,row);
     },
-
     // 项目成员的添加的 保存 提交方法 暂存
     addUserListHandel(index) {
       this.$refs["addEditForm"].validate((valid) => {
@@ -1925,21 +1888,20 @@ export default {
           if (this.nowAction == "add") {
             // 点击暂存 需要立即禁用按钮 测试希望不管他 就先打开
             // this.addUserActive = true;
+            console.log(this.addEditFormData.projectUserList[0],'this.addEditFormData.projectUserList[0]')
             // 此处修改为 暂存 , 数据丢进去即可
-            // this.addEditFormData.projectUserList[0].projectUserScheduleList =[]
-            // let oneUser = this.deepClone(this.addEditFormData.projectUserList[0]);
-            let oneUser =this.deepClone(this.addEditFormData.projectUserList[0]);
-            // oneUser.startTime = this.addEditFormData.projectUserList[index].startTime;
-            // oneUser.endTime = this.addEditFormData.projectUserList[index].endTime;
-            // oneUser.startEndTime = this.addEditFormData.projectUserList[index].startEndTime;
+            let oneUser = this.deepClone(this.addEditFormData.projectUserList[0]);
+            oneUser.startTime = this.addEditFormData.projectUserList[index].startTime;
+            oneUser.endTime = this.addEditFormData.projectUserList[index].endTime;
+            oneUser.startEndTime = this.addEditFormData.projectUserList[index].startEndTime;
             oneUser.userName =""
-            // // 修改类型（1.新增,2.删除,3.修改原数据）
-            // oneUser.updateType = 1;
+            // 修改类型（1.新增,2.删除,3.修改原数据）
+            oneUser.updateType = 1;
 
-
-            // // 新增代码块  start
-            // console.log("oneUser",oneUser);
-
+            // this.formData.projectUserList.push(oo);
+            // this.holdUserList.push(oneUser); // 上面的代码会影响其他的内容
+            // 新增代码块  start
+            // console.log(oneUser);
             let projectUserScheduleListTemp = oneUser.projectUserScheduleList
             oneUser.planLoadWorkDay = oneUser.workDay
             oneUser.realLoad = 0
@@ -1949,13 +1911,10 @@ export default {
             oneUser.loadType = 0
             // 补全剩余列 使其正常显示不报错
             oneUser.projectUserScheduleList = this.getprojectUserScheduleList(projectUserScheduleListTemp)
-            // console.log(this.getprojectUserScheduleList(projectUserScheduleListTemp));
-
             oneUser.planLoadTemp = oneUser.planLoad
               setTimeout(() => {
                   oneUser.planLoad = this.autoFixed((oneUser.workDay/this.allWeekArrTemp.day)*100)
               }, 100);
-            oneUser.idTemp = new Date().getTime()
             // 表格数据不变
             this.projectTable.projectUserList.unshift(oneUser)
             // 提交数据改变，删除没用的周数 不要修改元数据，此处会有可能 触发 内存指针的问题
@@ -1969,27 +1928,14 @@ export default {
             // 新增代码块  end
             this.$forceUpdate();
             this.$message.success("新增暂存成功！");
-            this.addEditFormData.projectUserList[0].projectUserScheduleList= oneUserTemp.projectUserScheduleList.filter((el)=>{
-              return el.isMe
-            })
-
-
-        // this.addEditFormData.projectUserList=[{
-        //     startTime:this.formData.projectStartTime,
-        //     endTime:this.formData.projectEndTime,
-        //     startEndTime : [this.formData.projectStartTime,this.formData.projectEndTime],
-        //     updateType:1,
-        //     projectUserScheduleList:[]
-        //   }]
-        //    this.addEditFormData.projectUserList[0].projectUserScheduleList =[]
-        //    console.log(JSON.stringify(this.allWeekArrTemp.list));
-        //   this.allWeekArrTemp.list.map((item,i)=>{
-        // // 预先重置下，不然每次会沾染之前的数据
-        //     if(item.isMe){
-        //       delete item.isMe
-        //     }
-        //   })
-            this.$forceUpdate()
+            this.addEditFormData.projectUserList=[{
+                startTime:this.formData.projectStartTime,
+                endTime:this.formData.projectEndTime,
+               startEndTime : [this.formData.projectStartTime,this.formData.projectEndTime],
+              updateType:1
+              }
+            ]
+            // this.$refs["addEditForm"].resetFields()
             console.log("add");
           }
           if (this.nowAction == "update") {
@@ -2084,45 +2030,31 @@ export default {
     //*--------以上是添加和编辑 项目成员的方法----------------------------------------------------------------------
     // 此方法用于生成一个 项目起始到结束的一个 动态列
     getprojectUserScheduleList(dates,index){
-      this.clearAllWeekArrTemp();//新增成功 则删除之前选择的
-      let allweekArr = this.deepClone(this.allWeekArrTemp.list)
-            // console.log("------------getprojectUserScheduleList------------");
-            // console.log(allweekArr);
-            // console.log(dates);
-
+      let allweekArr = this.allWeekArrTemp.list
       allweekArr.map((allitem,i)=>{
         // 外层其他的列都给0
           allitem.realLoadCh = 0
           allitem.realLoadWorkDayCh = 0
           allitem.planLoadCh=0
           allitem.planLoadWorkDayCh=0
-          // delete allitem.isMe
+        
         dates.map(checkItem=>{
           if(checkItem.year==allitem.year&&checkItem.week==allitem.week){
             // console.log(checkItem.workDay);
             this.allWeekArrTemp.realDay += parseFloat(checkItem.workDay)
-
+          
+            allweekArr[i] = checkItem
             // 内层的列 给真的值，实际使用 的除外，因为是新增
             checkItem.isMe = true
             checkItem.realLoadCh = 0
             checkItem.realLoadWorkDayCh = 0
             checkItem.planLoadCh=checkItem.planLoad
             checkItem.planLoadWorkDayCh=checkItem.workDay
-            allweekArr[i] = checkItem
           }
         })
-
+         
       })
-      // console.log(allweekArr);
       return allweekArr
-    },
-    // 清除 点击暂存之后的，选中
-    clearAllWeekArrTemp(){
-      this.allWeekArrTemp.list.map((item,i)=>{
-        if(item.isMe){
-        delete item.isMe
-        }
-      })
     },
     // 设置生成 列的背景色
     columnStyle({ row, column, rowIndex, columnIndex }) {
@@ -2346,9 +2278,7 @@ export default {
           this.goAudit();
           next();
         })
-        .catch(() => {
-          next();
-        });
+        .catch(() => {});
     } else {
       // 没修改直接跳转
       next();
@@ -2532,27 +2462,24 @@ export default {
 }
 .myTable /deep/ .el-table__body tr.hover-row > td.el-table__cell,
 .myTable /deep/ .el-table__body tr.hover-row.current-row > td.el-table__cell,
-.myTable /deep/ .el-table__body tr.hover-row.el-table__row--striped > td.el-table__cell,
-.myTable
-  /deep/
-  .el-table__body
-  tr.hover-row.el-table__row--striped.current-row
-  > td.el-table__cell {
+ .myTable /deep/ .el-table__body tr.hover-row.el-table__row--striped > td.el-table__cell,
+ .myTable /deep/ .el-table__body tr.hover-row.el-table__row--striped.current-row > td.el-table__cell{
   background-color: #f7f4d3;
 }
+
 </style>
 <style lang="scss">
-.isNew {
-  background-image: url("../../../assets/images/zancun.png");
-  background-position: left top;
-  background-repeat: no-repeat;
-  background-size: cover;
-  width: 36px;
-  height: 36px;
-  left: 2px;
-  top: 2px;
-  display: inline-block;
-  position: absolute;
+.isNew{
+    background-image: url('../../../assets/images/zancun.png');
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 36px;
+    height: 36px;
+    left: 2px;
+    top: 2px;
+    display: inline-block;
+    position: absolute;
 }
 .skillcolor1 {
   background: rgb(0, 113, 189) !important;
@@ -2592,14 +2519,14 @@ export default {
 .skillcc .el-tag__close {
   background-color: transparent !important;
 }
-.skillBox {
-  padding: 4px 8px;
-  border: 1px white solid;
-  border-radius: 5px;
-  margin-left: 4px;
+.skillBox{
+padding: 4px 8px;
+    border: 1px white solid;
+    border-radius: 5px;
+    margin-left: 4px;
 }
-.colText2 {
-  height: inherit;
+.colText2{
+   height: inherit;
   line-height: 150%;
   // background-color: beige;
   // border: 1px red solid;

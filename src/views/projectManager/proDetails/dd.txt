@@ -58,3 +58,15 @@ init(type) {
 showRowDetail
   // this.formData.projectUserList[row.index] = oneUser; //因为后台对于生成的三级数据没有id
 
+
+
+点击添加资源配置
+1行没问题
+2行有问题
+
+点击添加资源配置
+点击暂存之后
+
+复制this.addEditFormData.projectUserList[0];
+错误在 this.addEditFormData.projectUserScheduleList
+
