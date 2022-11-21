@@ -72,6 +72,38 @@
                     <skill-select v-model="skillIds" />
                     
                 </div>
+                 <div style="font-size:18px;display:flex;">
+                  
+                    <el-form
+                      ref="elForm"
+                      :model="info"
+                      size="medium"
+                      label-width="110px"
+                      >
+                      <el-row>
+                        <el-col :span='24'>
+                          <el-form-item label="TB用户ID:" prop="tbUserId">
+                          <el-input
+                            v-model="info.tbUserId"
+                            placeholder="请输入TB用户ID"
+                          ></el-input>
+                        </el-form-item>
+                        </el-col>
+                      </el-row>
+                      
+                       <el-row>
+                        <el-col :span='24'>
+                          <el-form-item label="git账号:" prop="gitAccount">
+                          <el-input
+                            v-model="info.gitAccount"
+                            placeholder="请输入git账号"
+                          ></el-input>
+                        </el-form-item>
+                        </el-col>
+                      </el-row>
+                      </el-form>
+                    
+                </div>
             </div>
         </div>
         <div>
@@ -159,7 +191,10 @@ export default {
     save() {
         let data = {
             userId:this.$store.state.user.user.userId,
-            skillIds:this.skillIds
+            skillIds:this.skillIds,
+            tbUserId:this.info.tbUserId,
+            gitAccount:this.info.gitAccount
+
         }
         console.log(data)
        editSkill(data).then(res=>{
