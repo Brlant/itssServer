@@ -50,8 +50,8 @@ module.exports = {
      '/itss': {
         // target: 'http://192.168.1.113/tdp', // 本地测试
         // target: `http://ep3anh26g0xr.ngrok.xiaomiqiu123.top/`,
-        target: `http://192.168.1.112:8080/`,
-        // target: `http://5z6x9i.natappfree.cc/`,
+        // target: `http://192.168.1.112:8080/`,
+        target: `http://192.168.1.109:30687/`,
         // target: `http://192.168.5.144:8080/`,
         changeOrigin: true,
         logLevel:"debug",
