@@ -1320,7 +1320,7 @@ export default {
               this.$router.go(0);
             }
           });
-      // }else{
+      }else{
         // 此处提交的是 全量数据
       // 下面是塞入数据
       // if(this.projectTable.projectUserList && this.projectTable.projectUserList[this.nowIndex].userId){
