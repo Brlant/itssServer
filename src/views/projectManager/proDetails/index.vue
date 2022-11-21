@@ -1323,12 +1323,12 @@ export default {
       }else{
         // 此处提交的是 全量数据
       // 下面是塞入数据
-      if(this.projectTable.projectUserList && this.projectTable.projectUserList[this.nowIndex].userId){
+      // if(this.projectTable.projectUserList && this.projectTable.projectUserList[this.nowIndex].userId){
 
-        this.formData.projectUserList[this.nowIndex].userId = this.projectTable.projectUserList[this.nowIndex].userId;
-        this.formData.projectUserList[this.nowIndex].userName = this.projectTable.projectUserList[this.nowIndex].userName;
+      //   this.formData.projectUserList[this.nowIndex].userId = this.projectTable.projectUserList[this.nowIndex].userId;
+      //   this.formData.projectUserList[this.nowIndex].userName = this.projectTable.projectUserList[this.nowIndex].userName;
 
-      }
+      // }
 
       // 提交审核之前 ，处理一下 刚刚添加的资源
       // this.formData.projectUserList = this.deepClone(this.projectTable.projectUserList)
@@ -1458,7 +1458,6 @@ export default {
       // this.delBtn = false;
       // if (this.idTemp === row.idTemp) return;
       this.id = row.id||row.idTemp;
-
       // 点击单行 显示信息
       //  console.log(row.index);   // 当前点击的行的索引值
       if (this.projectTable.projectUserList[row.index].userName=="总计") {
@@ -1514,18 +1513,12 @@ export default {
       }else{ // 刚刚新增的数据的查看
         // console.log(row,1);
            this.addEditFormData.projectUserList =[]
-          //  row.projectUserScheduleList = row.projectUserScheduleList.filter((el)=>{
-          //     return el.isMe // 引起报错
-          //   })
-            //   row.projectUserScheduleList.map((item,i)=>{
-            // // 预先重置下，不然每次会沾染之前的数据
-            //     if(item.isMe){
-            //       delete item.isMe
-            //     }
-            //   })
-           row.planLoad = row.planLoadTemp
+          // 此处逻辑为，显示用存储没有多余的排期的去展示
+           let showRow =this.deepClone(this.formData.projectUserList[row.index]) 
+           showRow.planLoad = row.planLoadTemp
           //  console.log(row,2);
-           this.addEditFormData.projectUserList[0] = row; // 填充项目的基础数据
+           this.addEditFormData.projectUserList[0] = showRow; // 填充项目的基础数据
+           this.$forceUpdate()
       }
 
     },
@@ -1632,8 +1625,9 @@ export default {
       this.isUpdateActive = false; // 我修改了 并且暂存了
       this.recommendUserActive = false; // 点击添加 人选需要隐藏
       this.nowAction = "add"; // 记录下他是什么
+      this.nowIndex = 0
       // this.recommendUserTableData = []
-      this.nowIndex = -1 //让id 不存在 使其不要传入 之前选择的数据的id
+      // this.nowIndex = -1 //让id 不存在 使其不要传入 之前选择的数据的id
       // if(this.detailUserActive){
       //   this.$refs["addEditForm"].resetFields()
       // }
@@ -1650,7 +1644,7 @@ export default {
         this.formData.projectEndTime,
       ];
       oneUser.updateType = 1;
-      console.log(oneUser);
+      // console.log(oneUser);
       this.addEditFormData.projectUserList.push(oneUser);
       // this.changeChildDateArea(oneUser,index);// 新增的时候 是否控制
       this.$forceUpdate();
@@ -1810,13 +1804,16 @@ export default {
 
       }else{
         // 新增行的修改
-          this.nowAction = "add"; // 记录我是新增修改操作
+          this.nowAction = "update"; // 记录我是新增修改操作
+          this.nowIndex = index;
           this.addEditFormData.projectUserList =[]
-        //   row.projectUserScheduleList = row.projectUserScheduleList.filter((el)=>{
-        //     return el.isMe // 引起报错
-        // })
-          row.planLoad = row.planLoadTemp
-          this.addEditFormData.projectUserList[0] = row; // 填充项目的基础数据
+        
+           // 此处逻辑为，显示用存储没有多余的排期的去展示
+           let showRow =this.deepClone( this.formData.projectUserList[row.index]) 
+           showRow.planLoad = row.planLoadTemp
+          //  console.log(row,2);
+           this.addEditFormData.projectUserList[0] = showRow; // 填充项目的基础数据
+           this.$forceUpdate()
       }
      },
     // 拿到 并 显示 推荐人选
@@ -1839,8 +1836,7 @@ export default {
       queryUserByPostId(params).then((res) => {
         res.data.map((item) => {
           item.showOrCancel = 1; // 默认显示  添加
-          console.log(this.projectTable.projectUserList[this.nowIndex].userId ,item.userId);
-          if (this.projectTable.projectUserList[this.nowIndex].userId == item.userId) {
+          if (this.nowIndex!=-1&&this.projectTable.projectUserList[this.nowIndex].userId == item.userId) {
             // 如果 当前点击的行的userID === 当前行id 就显示取消
             item.showOrCancel = 2;
           }
@@ -1905,20 +1901,9 @@ export default {
             // 点击暂存 需要立即禁用按钮 测试希望不管他 就先打开
             // this.addUserActive = true;
             // 此处修改为 暂存 , 数据丢进去即可
-            // this.addEditFormData.projectUserList[0].projectUserScheduleList =[]
-            // let oneUser = this.deepClone(this.addEditFormData.projectUserList[0]);
             let oneUser =this.deepClone(this.addEditFormData.projectUserList[0]);
-            // oneUser.startTime = this.addEditFormData.projectUserList[index].startTime;
-            // oneUser.endTime = this.addEditFormData.projectUserList[index].endTime;
-            // oneUser.startEndTime = this.addEditFormData.projectUserList[index].startEndTime;
-            // oneUser.userName =""
             // // 修改类型（1.新增,2.删除,3.修改原数据）
             // oneUser.updateType = 1;
-
-
-            // // 新增代码块  start
-            // console.log("oneUser",oneUser);
-
             let projectUserScheduleListTemp = oneUser.projectUserScheduleList
             oneUser.planLoadWorkDay = oneUser.workDay
             oneUser.realLoad = 0
@@ -1935,6 +1920,7 @@ export default {
                   oneUser.planLoad = this.autoFixed((oneUser.workDay/this.allWeekArrTemp.day)*100)
               }, 100);
             oneUser.idTemp = new Date().getTime()
+            // console.log(this.projectTable.projectUserList[index].idTemp,"---------idTemp");
             // 表格数据不变
             this.projectTable.projectUserList.unshift(oneUser)
             // 提交数据改变，删除没用的周数 不要修改元数据，此处会有可能 触发 内存指针的问题
@@ -1948,14 +1934,16 @@ export default {
             // 新增代码块  end
             this.$forceUpdate();
             this.$message.success("新增暂存成功！");
-            this.addEditFormData.projectUserList[0].projectUserScheduleList= oneUserTemp.projectUserScheduleList.filter((el)=>{
-              return el.isMe
-            })
+            // this.addEditFormData.projectUserList[0].projectUserScheduleList= oneUserTemp.projectUserScheduleList.filter((el)=>{
+            //   return el.isMe
+            // })
+          
             this.$forceUpdate()
-            // console.log("add");
+
+            console.log("add");
           }
           if (this.nowAction == "update") {
-            // console.log("update");
+            console.log("update");
             // 此处修改为 暂存 , 数据丢进去即可
             this.formData.projectUserList[
               this.nowIndex
@@ -1964,13 +1952,28 @@ export default {
               this.nowIndex
             ].userName = this.addEditFormData.projectUserList[0].userName;
               // 修改类型（1.新增,2.删除,3.修改原数据）
-            this.formData.projectUserList[this.nowIndex].updateType = 3;
+            this.formData.projectUserList[this.nowIndex].updateType = 1;
             this.formData.projectUserList[this.nowIndex] = this.deepClone(
               this.addEditFormData.projectUserList[0]
             );
+
             this.$message.success("暂存成功！");
           }
           // this.resouceBtnActive = false; // 隐藏按钮的逻辑
+          // 暂存之后清空一下 表单数据
+            this.id =null
+            this.addEditFormData = {};
+            this.addEditFormData = this.deepClone(this.formData); // 填充新增的
+            this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
+            let initOneUser = this.deepClone(this.projectUserList);
+            initOneUser.startTime = this.formData.projectStartTime;
+            initOneUser.endTime = this.formData.projectEndTime;
+            initOneUser.startEndTime = [
+              this.formData.projectStartTime,
+              this.formData.projectEndTime,
+            ];
+            initOneUser.updateType = 1;
+            this.addEditFormData.projectUserList.push(initOneUser);
         }
       });
     },
@@ -1997,6 +2000,7 @@ export default {
     /*根据起始和结束 生成下面表格*/
     // 公共计算方法
     constAll(dates, index) {
+      console.log("constAll",dates);
       let params = {
         startDate: dates[0],
         endDate: dates[1],
@@ -2038,9 +2042,9 @@ export default {
         });
         this.$forceUpdate()
         this.addEditFormData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
-        this.$forceUpdate()
 
       });
+        this.$forceUpdate()
     },
 
     //*--------以上是添加和编辑 项目成员的方法----------------------------------------------------------------------
