@@ -1320,7 +1320,7 @@ export default {
               this.$router.go(0);
             }
           });
-      }else{
+      // }else{
         // 此处提交的是 全量数据
       // 下面是塞入数据
       // if(this.projectTable.projectUserList && this.projectTable.projectUserList[this.nowIndex].userId){
@@ -1721,7 +1721,7 @@ export default {
       this.addEditUserActive = true;
       this.resouceBtnActive = true; // 隐藏按钮的逻辑
       this.nowIndex = index; // 存储刚刚点击是那一条
-
+      // this.isdel=false
       // 我是修改
       this.addEditFormData = {};
       if(row.id){
@@ -1857,28 +1857,30 @@ export default {
         .then(() => {
             if(row.id){ // 数据库的数据删除
           // console.log("我是数据库hang的删除",index);
-
-            let params = this.deepClone(this.formData);
-          params.projectUserList = [];
-          params.projectUserList.push(row);
-          // 修改类型（1.新增,2.删除,3.修改原数据）
-          params.projectUserList[0].updateType = 2;
-          this.addEditUserActive = false;
-          this.detailUserActive = false;
-          this.recommendUserActive = false;
-          updateProjectUserAddEdit(params).then((res) => {
-            let { code, msg } = res;
-            this.$message.success(msg);
-            if (+code == 200) {
-              // 提交删除成功  需要审核
-              this.auditStatus = "1"; // 初始化 显示 待审核
-              this.proAuditInit();
-            }
-          });
-          }else{// 刚刚暂存的数据删除
-          // console.log("我是暂存行的删除",index);
-            this.projectTable.projectUserList.splice(index,1)
-            // this.formData.projectUserList.splice(index,1)
+            this.isUpdateActive=true
+            this.delRow=row
+            this.isdel=true
+            // let params = this.deepClone(this.formData);
+          // params.projectUserList = [];
+          // params.projectUserList.push(row);
+          // // 修改类型（1.新增,2.删除,3.修改原数据）
+          // params.projectUserList[0].updateType = 2;
+          // this.addEditUserActive = false;
+          // this.detailUserActive = false;
+          // this.recommendUserActive = false;
+          // updateProjectUserAddEdit(params).then((res) => {
+          //   let { code, msg } = res;
+          //   this.$message.success(msg);
+          //   if (+code == 200) {
+          //     // 提交删除成功  需要审核
+          //     this.auditStatus = "1"; // 初始化 显示 待审核
+          //     this.proAuditInit();
+          //   }
+          // });
+          // }else{// 刚刚暂存的数据删除
+          // // console.log("我是暂存行的删除",index);
+          //   this.projectTable.projectUserList.splice(index,1)
+          //   // this.formData.projectUserList.splice(index,1)
           }
           this.$forceUpdate()
           this.recommendUserActive =false;
