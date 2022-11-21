@@ -28,24 +28,34 @@ holdUserList
       
       projectTableEditNum
 
-        
+
+点击新增 资源配置，填写差不多的时候 再点击添加人选，会出现 出现在第一条表格上的问题 ok
+
 
 问题
 
-点击添加资源配置,塞入表格首行， 根据id 来判断 是否展示 new 图标
-此处的修改和 删除 需要和 以前的做区别  刚刚新增的数据，修改是 纯展示，类似自动填写了 新增资源
-删除直接从 表格 和暂存 还有formData内部 删除
+ 
+页面头部是formData
 
-然后点击 单行详情 展示应该问题不大
-点击修改，里面的暂存  如何做区分？
-点击修改，里面的取消，如何做区分？
+:projectUserList:是单行资源配置
+projectUserScheduleList:[一般是5]
 
-点击新增资源 选择的时间区间不一样，一个10天 一个20天
-每次都暂存到 新增资源表格内，
-动态表格 如何展示 每次必须 重新生成一次表头
-除非 点击暂存 直接存储到后端，然后再次刷表格，然后提交审核变成了【物理删除】
-这样能解决这个问题+ 点击添加和 
+页面表格是projectTabelData 
 
+
+this.formData.projectUserList
+
+数据结构和formData基本一致
+
+编辑单行是addEditFormData
+用于展示和编辑单行
+
+
+
+为什么 往formData修改数据 会触发projuectTableData的报错
+
+
+this.formData.projectUserList[row.index] = oneUser; // 引起问题的
 
 
 
@@ -60,13 +70,7 @@ showRowDetail
 
 
 
-点击添加资源配置
-1行没问题
-2行有问题
+  
 
-点击添加资源配置
-点击暂存之后
-
-复制this.addEditFormData.projectUserList[0];
-错误在 this.addEditFormData.projectUserScheduleList
-
+  问题：假设某一小区，混检20人，内有阳性病例一枚，
+  问？如何在最少的单管内，找到这枚阳性病例！
