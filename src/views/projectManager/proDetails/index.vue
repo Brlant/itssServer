@@ -1341,6 +1341,7 @@ export default {
           projectUserListTemp.push(item)
         }
       })
+      parame.projectUserList=projectUserListTemp
       updateProjectUserAddEdit(parame).then((res) => {
         let { code, msg } = res;
         this.$message.success(msg);
@@ -1425,7 +1426,7 @@ export default {
         this.formData.projectUserList[this.nowIndex].userName = row.nickName;
       }else{
         // 我是新增 我没有资源配置化的2级的id
-        this.formData.projectUserList[this.nowIndex].updateType = 1
+        // this.formData.projectUserList[this.nowIndex].updateType = 1
 
       }
 
@@ -1625,7 +1626,7 @@ export default {
       this.isUpdateActive = false; // 我修改了 并且暂存了
       this.recommendUserActive = false; // 点击添加 人选需要隐藏
       this.nowAction = "add"; // 记录下他是什么
-      this.nowIndex = 0
+      this.nowIndex = 9999
       // this.recommendUserTableData = []
       // this.nowIndex = -1 //让id 不存在 使其不要传入 之前选择的数据的id
       // if(this.detailUserActive){
@@ -1836,9 +1837,11 @@ export default {
       queryUserByPostId(params).then((res) => {
         res.data.map((item) => {
           item.showOrCancel = 1; // 默认显示  添加
-          if (this.nowIndex!=-1&&this.projectTable.projectUserList[this.nowIndex].userId == item.userId) {
-            // 如果 当前点击的行的userID === 当前行id 就显示取消
-            item.showOrCancel = 2;
+           if(this.nowAction=="update"){
+              if (this.projectTable.projectUserList[this.nowIndex].userId == item.userId) {
+                // 如果 当前点击的行的userID === 当前行id 就显示取消
+                item.showOrCancel = 2;
+              }
           }
         });
       
@@ -1963,7 +1966,7 @@ export default {
           }
           // this.resouceBtnActive = false; // 隐藏按钮的逻辑
           // 暂存之后清空一下 表单数据
-            this.id =null
+            this.id = ""
             this.addEditFormData = {};
             this.addEditFormData = this.deepClone(this.formData); // 填充新增的
             this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
@@ -2046,6 +2049,10 @@ export default {
         this.addEditFormData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
 
       });
+      setTimeout(() => {
+        this.recommendUserActive = true; // 点击添加 人选需要隐藏
+        this.getRecommendUserHandel(0, this.addEditFormData.projectUserList[0]);
+          },1000);
         this.$forceUpdate()
     },
 
