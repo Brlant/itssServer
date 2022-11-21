@@ -254,13 +254,13 @@
         </el-table-column>
         <el-table-column prop="planCost" label="计划投入" width="120" fixed="left">
            <template slot-scope="scope">
-            <span>{{ scope.row.planCost ? moneyFormat(scope.row.planCost) : ''}}</span>
+            <span>{{ scope.row.planCost || scope.row.planCost == 0 ? moneyFormat(scope.row.planCost) : ''}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="realCost" label="实际投入" width="120" fixed="left">
           <template slot-scope="scope">
             <span :class="['loadType' + scope.row.costType]">{{
-              scope.row.realCost ? moneyFormat(scope.row.realCost) : ''
+              scope.row.realCost || scope.row.realCost == 0 ? moneyFormat(scope.row.realCost) : ''
             }}</span>
           </template>
         </el-table-column>
@@ -664,7 +664,7 @@
             >
             <el-col :span="3"
               ><div class="colText">
-                预计成本：<span>{{ addUserList.expectedCost ? moneyFormat(addUserList.expectedCost) : ''}}</span> 元
+                预计成本：<span>{{ addUserList.expectedCost || addUserList.expectedCost == 0 ? moneyFormat(addUserList.expectedCost) : ''}}</span> 元
               </div></el-col
             >
             <el-col :span="3" :offset="3">
@@ -765,12 +765,12 @@
         <el-table-column prop="freeLoad" label="空闲负荷"></el-table-column>
         <el-table-column prop="price" label="单价">
           <template slot-scope="scope">
-            <span>{{ scope.row.price ? moneyFormat(scope.row.price) : ''}}</span>
+            <span>{{ scope.row.price || scope.row.price == 0 ? moneyFormat(scope.row.price) : ''}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="allPrice" label="总价">
           <template slot-scope="scope">
-            <span>{{ scope.row.allPrice ? moneyFormat(scope.row.allPrice) : ''}}</span>
+            <span>{{ scope.row.allPrice || scope.row.allPrice == 0? moneyFormat(scope.row.allPrice) : ''}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作">

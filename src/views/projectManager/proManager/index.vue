@@ -166,7 +166,7 @@
         </el-table-column>
         <el-table-column prop="ysCost" label="成本预算" width="120">
           <template slot-scope="scope">
-            {{ scope.row.ysCost ? moneyFormat(scope.row.ysCost) : ''}}
+            {{ scope.row.ysCost || scope.row.ysCost==0 ? moneyFormat(scope.row.ysCost) : ''}}
           </template>
         </el-table-column>
 
@@ -175,7 +175,7 @@
         </el-table-column>
         <el-table-column prop="jhCost" label="计划预算已用" width="130">
           <template slot-scope="scope">
-            {{ scope.row.jhCost ? moneyFormat(scope.row.jhCost) : ''}}
+            {{ scope.row.jhCost || scope.row.jhCost == 0 ? moneyFormat(scope.row.jhCost) : ''}}
           </template>
         </el-table-column>
         <el-table-column prop="jhSchedule" label="计划当前进度" width="130">
@@ -186,7 +186,7 @@
           <template slot-scope="scope"> {{ scope.row.sjConfig }}人日 </template>
         </el-table-column>
         <el-table-column prop="sjCost" label="实际预算已用" width="130">
-          <template slot-scope="scope"> {{ scope.row.sjCost ? moneyFormat(scope.row.sjCost) : '' }} </template>
+          <template slot-scope="scope"> {{ scope.row.sjCost || scope.row.sjCost == 0 ? moneyFormat(scope.row.sjCost) : '' }} </template>
         </el-table-column>
 
         <el-table-column prop="realWork" label="实际完成工作" width="130">
@@ -210,13 +210,13 @@
           <template slot-scope="scope">
              <span :class="['piancha' + scope.row.pianchaActive]" v-if='scope.row.pianchaActive == 2'>
               {{
-                scope.row.ysDeviation ? "-" + moneyFormat(scope.row.ysDeviation) : ''
+                scope.row.ysDeviation ||  scope.row.ysDeviation ==0 ? "-" + moneyFormat(scope.row.ysDeviation) : ''
                  
               }}
             </span>
              <span :class="['piancha' + scope.row.pianchaActive]" v-else>
               {{
-                scope.row.ysDeviation ?  moneyFormat(scope.row.ysDeviation) : ''
+                scope.row.ysDeviation ||  scope.row.ysDeviation ==0 ?  moneyFormat(scope.row.ysDeviation) : ''
               }}
             </span>
           </template>
