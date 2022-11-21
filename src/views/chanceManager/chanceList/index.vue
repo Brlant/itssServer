@@ -79,7 +79,7 @@
         </el-table-column>
         <el-table-column prop="budget" label="客户预算" width="120">
           <template slot-scope="scope">
-            <span>{{scope.row.budget ? moneyFormat(scope.row.budget) : ''}}</span>
+            <span>{{scope.row.budget || scope.row.budget == 0 ? moneyFormat(scope.row.budget) : ''}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="successRate" label="成功率" width="120"> </el-table-column>
@@ -87,7 +87,7 @@
         <el-table-column prop="expectWork" label="估算工时(人日)" width="120"> </el-table-column>
         <el-table-column prop="expectOffer" label="估计报价" width="120">
             <template slot-scope="scope">
-            <span>{{scope.row.expectOffer ? moneyFormat(scope.row.expectOffer) : ''}}</span>
+            <span>{{scope.row.expectOffer || scope.row.expectOffer == 0 ? moneyFormat(scope.row.expectOffer) : ''}}</span>
           </template>
            </el-table-column>
         <el-table-column prop="remark" label="备注" width="220"> </el-table-column>

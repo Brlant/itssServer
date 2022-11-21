@@ -444,7 +444,7 @@
             >
             <el-col :span="3"
               ><div class="colText">
-                预计成本：<span>{{ moneyFormat(addUserList.expectedCost) }}</span> 元
+                预计成本：<span>{{ addUserList.expectedCost || addUserList.expectedCost == 0 ? moneyFormat(addUserList.expectedCost) : ''}}</span> 元
               </div></el-col
             >
           </el-row>
@@ -665,7 +665,7 @@
             >
             <el-col :span="3"
               ><div class="colText">
-                预计成本：<span>{{ moneyFormat(addUserList.expectedCost) }}</span> 元
+                预计成本：<span>{{ addUserList.expectedCost || addUserList.expectedCost == 0 ?moneyFormat(addUserList.expectedCost) : ''}}</span> 元
               </div></el-col
             >
             <el-col :span="3" :offset="3">
