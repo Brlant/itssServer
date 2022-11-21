@@ -1341,14 +1341,6 @@ export default {
           projectUserListTemp.push(item)
         }
       })
-        // 双保险，去除多余的没有选择的周数
-        projectUserListTemp.map((row,i)=>{
-          row.projectUserScheduleList = row.projectUserScheduleList.filter((el)=>{
-              return el.isMe
-            })
-        })
-      parame.projectUserList=projectUserListTemp
-      console.log(parame.projectUserList.length);
       updateProjectUserAddEdit(parame).then((res) => {
         let { code, msg } = res;
         this.$message.success(msg);
@@ -1432,7 +1424,7 @@ export default {
         this.formData.projectUserList[this.nowIndex].userId = row.userId;
         this.formData.projectUserList[this.nowIndex].userName = row.nickName;
       }else{
-        // 我是新增
+        // 我是新增 我没有资源配置化的2级的id
         this.formData.projectUserList[this.nowIndex].updateType = 1
 
       }
@@ -1959,23 +1951,6 @@ export default {
             this.addEditFormData.projectUserList[0].projectUserScheduleList= oneUserTemp.projectUserScheduleList.filter((el)=>{
               return el.isMe
             })
-
-
-        // this.addEditFormData.projectUserList=[{
-        //     startTime:this.formData.projectStartTime,
-        //     endTime:this.formData.projectEndTime,
-        //     startEndTime : [this.formData.projectStartTime,this.formData.projectEndTime],
-        //     updateType:1,
-        //     projectUserScheduleList:[]
-        //   }]
-        //    this.addEditFormData.projectUserList[0].projectUserScheduleList =[]
-        //    console.log(JSON.stringify(this.allWeekArrTemp.list));
-        //   this.allWeekArrTemp.list.map((item,i)=>{
-        // // 预先重置下，不然每次会沾染之前的数据
-        //     if(item.isMe){
-        //       delete item.isMe
-        //     }
-        //   })
             this.$forceUpdate()
             // console.log("add");
           }
