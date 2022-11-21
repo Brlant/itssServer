@@ -1641,7 +1641,7 @@ export default {
       this.recommendUserActive = false; // 点击添加 人选需要隐藏
       this.nowAction = "add"; // 记录下他是什么
       // this.recommendUserTableData = []
-      // this.nowIndex = -1 //让id 不存在
+      this.nowIndex = -1 //让id 不存在 使其不要传入 之前选择的数据的id
       // if(this.detailUserActive){
       //   this.$refs["addEditForm"].resetFields()
       // }
@@ -1658,6 +1658,7 @@ export default {
         this.formData.projectEndTime,
       ];
       oneUser.updateType = 1;
+      console.log(oneUser);
       this.addEditFormData.projectUserList.push(oneUser);
       // this.changeChildDateArea(oneUser,index);// 新增的时候 是否控制
       this.$forceUpdate();
@@ -1830,7 +1831,6 @@ export default {
     getRecommendUserHandel(index, row) {
       // console.log(row,index);
       let params = {
-        id:row?.id||this.formData.projectUserList[index]?.id||"", //项目配置表主键第二级的主键
         postNameId:row.postNameId,//职位id
         regionId:row.regionId,//区域id
         postTypeId:row.postTypeId,//职位类型id
@@ -1841,6 +1841,9 @@ export default {
         projectService:this.formData.projectService,//服务对象
         workDay:row.workDay,//总人日
       };
+      if(this.nowIndex!=-1){
+        params.id=row?.id||this.formData.projectUserList[index]?.id||"" //项目配置表主键第二级的主键
+      }
       queryUserByPostId(params).then((res) => {
         res.data.map((item) => {
           item.showOrCancel = 1; // 默认显示  添加
