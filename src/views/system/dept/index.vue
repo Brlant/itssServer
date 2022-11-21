@@ -127,6 +127,7 @@
                 } );
             },
             reqDeptListFn( data ){
+                console.log(data,'data')
                 let reqObj = {} ;
 
                 this.isLoaded = true ;
@@ -148,6 +149,7 @@
                     this.isSearch = false ;
                     if( d.code === 200 ){
                         this.listData = d.data ;
+                       
                     }
                 } )
                 .catch( err => {
@@ -199,7 +201,7 @@
                 } );
             },
             reqDeptStatusFn( data ){
-                deptStatus( { method : 'post', ...data } )
+                deptStatus( { method : 'post', ...data} )
                 .then( d => {
 
                     if( d.code === 200 ){
@@ -216,7 +218,7 @@
                 } );
             },
             reqUpdateFn( data ){
-                update( { method : 'put', data : { ...data } } )
+                update( { method : 'put', data : data.form || {} } )
                 .then( d => {
                     let { msg } = d ;
                     if( d.code === 200 ){
@@ -233,7 +235,7 @@
                 } );
             },
             reqRemoveFn( data ){
-                remove( { method : 'delete', ...data } )
+                remove( { method : 'delete', id:data  } )
                 .then( d => {
 
                     if( d.code === 200 ){
@@ -250,7 +252,7 @@
                 } );
             },
             reqAddFn( data ){
-                add( { method : 'post', data : { ...data } } )
+                add( { method : 'post', data : data.form || {}  })
                 .then( d => {
 
                     if( d.code === 200 ){
@@ -276,9 +278,10 @@
                 this.reqUpdateFn( data ) ;
             },
             removeFn( data ){
-                this.reqRemoveFn( data ) ;
+                this.reqRemoveFn( data.row.id ) ;
             },
             statusFn( data ){
+                // console.log(data.row.id,'data')
                 this.reqDeptStatusFn( data.row ) ;
             },
             refreshFn( data ){
