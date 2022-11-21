@@ -1435,7 +1435,8 @@ export default {
       // 点击添加成功后 显示取消按钮
       this.recommendUserTableData.map((item) => {
         item.showOrCancel = 1; // 全部 显示添加
-        if (this.projectTable.projectUserList[this.nowIndex].userId === item.userId) {
+        console.log(this.addEditFormData.projectUserList[0].userId , item.userId);
+        if (this.addEditFormData.projectUserList[0].userId === item.userId) {
           item.showOrCancel = 2;
         }
       });
@@ -1837,12 +1838,14 @@ export default {
       queryUserByPostId(params).then((res) => {
         res.data.map((item) => {
           item.showOrCancel = 1; // 默认显示  添加
-           if(this.nowAction=="update"){
-              if (this.projectTable.projectUserList[this.nowIndex].userId == item.userId) {
+          //  if(this.nowAction=="update"){
+        
+            console.log(this.addEditFormData.projectUserList[0].userId , item.userId);
+              if (this.addEditFormData.projectUserList[0].userId == item.userId) {
                 // 如果 当前点击的行的userID === 当前行id 就显示取消
                 item.showOrCancel = 2;
               }
-          }
+          // }
         });
       
        
