@@ -71,7 +71,7 @@
                             >
                             </el-row>
                         </div>
-                        <div style="width: 5%; text-align: center; border-left: 1px solid #ddd;display:inline-block;padding:20px;" v-if='item3.status==0 && projectdirector'>
+                        <div style="width: 5%; text-align: center; border-left: 1px solid #ddd;display:inline-block;padding:20px;" v-if='item3.status==0 && projectdirector.includes(item3.projectId)'>
                             <div v-hasPermi="['project:approval:leader']"> <el-button class="editBtn" type="text" @click='pass(item3)'>通过</el-button></div>
                             <div v-hasPermi="['project:approval:leader']"> <el-button type="text" class="rejectBtn" @click='noPass(item3)'>拒绝</el-button></div>
                         </div>
@@ -118,7 +118,7 @@ export default{
         }
     },
    created(){
-     this.projectdirector=this.isJurisdiction('project:approval:leader')
+     this.projectdirector=this.queryId
      let a=moment(this.start,'YYYY-MM-DD').format('YYYY/MM/DD')
     let b=moment(this.end,'YYYY-MM-DD').format('YYYY/MM/DD')
      this.dateRange=a+'-'+b
