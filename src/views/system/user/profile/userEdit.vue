@@ -65,10 +65,17 @@
                     <span>{{info.outTime}}</span>
                   
                 </div>
-                 <div style="margin:20px;font-size:18px;display:flex;">
+                 <div style="margin:20px;font-size:18px;" v-if='info.skillLock==1'>
+                 
+                   <i class='el-icon-lock' v-if='info.skillLock==1'></i>
+                    <span class='title'>工作技能:</span>
+                    <span class='work' v-for='(item,index) in info.userSkills' :key='index' :style="{background: matchColor(item.cssClass)}">{{item.skillName}}</span>
+
+                </div>
+                 <div style="margin:20px;font-size:18px;display:flex;"  v-else>
                   
                    <div slot="label"><i class='el-icon-unlock' v-if='info.skillLock==0'></i>
-                   <i class='el-icon-lock' v-if='info.skillLock==1'></i> 工作技能：</div>
+                  工作技能：</div>
                     <skill-select v-model="skillIds" />
                     
                 </div>
@@ -187,6 +194,12 @@ export default {
     this.detail()
   },
   methods: {
+      // 匹配颜色
+    matchColor(cssClass) {
+      if (cssClass) {
+        return color.find(v => v.cssClass === cssClass).color
+      }
+    },
     //编辑个人信息
     save() {
         let data = {

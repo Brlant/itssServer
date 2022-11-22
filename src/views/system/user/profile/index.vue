@@ -5,8 +5,8 @@
         <span>个人中心</span>
       </div>
       <div style="cursor: pointer" class="ope" >
-        <!-- <span @click='changeAccount'>账号更改 |</span> -->
-        <span @click='edit' v-if='info.skillLock==0'> 编辑 </span>
+        <span @click='changePassWord'>修改密码 </span>
+        <span @click='edit'>| 编辑 </span>
       </div>
     </div>
      <div>
@@ -103,23 +103,34 @@
                 </div>
             </div>
         </div>
-    <el-dialog title="账号更改" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="30%">
       <el-form :model="form" label-width="100px" :rules="rules" ref="ruleForm">
+        <!-- <el-row>
+          <el-col :span="18" :offset="1">
+            <el-form-item label="手机号" prop='tel'>
+              <el-input v-model="form.tel" placeholder="请输入手机号"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row> -->
         <el-row>
-          <el-col :span="12" :offset="1">
-            <el-form-item label="新手机号" prop='tel'>
-              <el-input v-model="form.tel" placeholder="请输入新手机号"></el-input>
+          <el-col :span="18" :offset="1">
+            <el-form-item label="旧密码" prop='oldPassword'>
+              <el-input v-model="form.oldPassword" placeholder="请输入旧密码"></el-input>
+            </el-form-item>
+          </el-col>
+          </el-row>
+          <el-row>
+          <el-col :span="18" :offset="1">
+            <el-form-item label="新密码" prop='newPassword'>
+              <el-input v-model="form.newPassword" placeholder="请使用8-24位密码，由字母带小写，数字，特殊字符组成"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12" :offset="1">
-            <el-form-item label="短信验证码" prop='verification'>
-              <el-input v-model="form.verification" placeholder="请输入短信验证码"></el-input>
+          <el-col :span="18" :offset="1">
+            <el-form-item label="确认新密码" prop='confirmPassword'>
+              <el-input v-model="form.confirmPassword" placeholder="请使用8-24位密码，由字母带小写，数字，特殊字符组成"></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-button type="primary" style='margin-left:15px;'>获取验证码</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -127,6 +138,7 @@
         <el-button type="primary" @click="sure"
           >确 定</el-button
         >
+         <el-button type="danger" @click="close">关闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -137,23 +149,52 @@ userDetail,stopUse,skillLocking,delUser
 } from "@/api/system/user";
 import { dictData } from '@/api/dataDict'
 import { color } from '@/components/ColorSelect/options'
+import { updateUserPwd } from "@/api/system/user";
+const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,24}$/;
 export default {
   data() {
+      const equalToPassword = (rule, value, callback) => {
+      if (this.form.newPassword !== value) {
+        callback(new Error("两次输入的密码不一致"));
+      } else {
+        callback();
+      }
+      
+    };
+    const newPassWord = (rule, value, callback) => {
+      if (pwdReg.test(value)) {
+        callback()
+        this.show2 = true
+      } else {
+        callback(new Error('请使用8-24位密码，由字母带小写，数字，特殊字符组成'))
+        this.show2 = false
+      }
+    }
     return {
       dialogFormVisible: false,
       info:{},
       id:'',
       
       form: {
-        tel: "",
-        verification: "",
+        // tel: "",
+        oldPassword: "",
+        newPassword:'',
+        confirmPassword:''
       },
        rules: {
-          tel: [
-            { required: true, message: '请输入新手机号', trigger: 'blur' },
+          // tel: [
+          //   { required: true, message: '请输入新手机号', trigger: 'blur' },
+          // ],
+           oldPassword: [
+            { required: true, message: '旧密码不能为空', trigger: 'blur' },
           ],
-           verification: [
-            { required: true, message: '请输入短信验证码', trigger: 'blur' },
+           newPassword: [
+            { required: true, message: '新密码不能为空', trigger: 'blur' },
+            { validator: newPassWord, trigger: "blur" }
+          ],
+          confirmPassword: [
+            { required: true, message: '请确认新密码', trigger: 'blur' },
+              { required: true, validator: equalToPassword, trigger: "blur" }
           ],
         }
     };
@@ -164,6 +205,7 @@ export default {
    
   },
   methods: {
+    
      getSkills() {
       const params = {
         dictType: 'skill_type',
@@ -205,19 +247,26 @@ export default {
         return color.find(v => v.cssClass === cssClass).color
       }
     },
-    //更改账号
-    changeAccount(){},
+    //修改密码
+    changePassWord(){
+      this.dialogFormVisible=true
+    },
     //确定更改
     sure(){
          this.$refs['ruleForm'].validate((valid) => {
           if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
+          updateUserPwd(this.form.oldPassword, this.form.newPassword).then(response => {
+            this.$modal.msgSuccess("修改成功");
+            this.dialogFormVisible=false
+            this.$store.dispatch('GetInfo') // 修改密码成功后，更新个人信息
+          });
+        }
         });
 
+    },
+    close() {
+         this.dialogFormVisible=false
+          this.$refs['ruleForm'].resetFields();
     }
 
   },

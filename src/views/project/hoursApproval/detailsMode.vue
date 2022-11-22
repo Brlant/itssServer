@@ -71,7 +71,7 @@
                             >
                             </el-row>
                         </div>
-                        <div style="width: 5%; text-align: center; border-left: 1px solid #ddd;display:inline-block;padding:20px;" v-if='item3.status==0 && projectdirector.includes(item3.projectId)'>
+                        <div style="width: 5%; text-align: center; border-left: 1px solid #ddd;display:inline-block;padding:20px;" v-if='item3.status==0 && filterCheck(item3.projectId)'>
                             <div v-hasPermi="['project:approval:leader']"> <el-button class="editBtn" type="text" @click='pass(item3)'>通过</el-button></div>
                             <div v-hasPermi="['project:approval:leader']"> <el-button type="text" class="rejectBtn" @click='noPass(item3)'>拒绝</el-button></div>
                         </div>
@@ -113,7 +113,8 @@ export default{
             dialogVisible:false,
             trackId:'',
             form:{reason:''},
-            projectdirector:''
+            projectdirector:'',
+            userInfo:[]
 
         }
     },
@@ -122,8 +123,12 @@ export default{
      let a=moment(this.start,'YYYY-MM-DD').format('YYYY/MM/DD')
     let b=moment(this.end,'YYYY-MM-DD').format('YYYY/MM/DD')
      this.dateRange=a+'-'+b
+      this.userInfo = JSON.parse(window.localStorage.getItem("user"))?JSON.parse(window.localStorage.getItem("user")):[]
    },
     methods:{
+            filterCheck(projectId){
+                return this.userInfo.userId == 1 || this.projectdirector.includes(projectId);
+            },
             filterStatus(item){
                 if(item==0){
                     return '待审批'
@@ -170,7 +175,7 @@ export default{
            this.$emit('datailParent',query)
         },
          pass(val){
-             if(this.queryId.includes(val.projectId)){
+             if(this.filterCheck(val.projectId)){
                  let data={
                     trackId:val.id,
                     approved:true
@@ -183,7 +188,7 @@ export default{
 
         },
         noPass(val){
-            if(this.queryId.includes(val.projectId)){
+            if(this.filterCheck(val.projectId)){
             this.trackId=val.id
             this.dialogVisible=true
             }else{

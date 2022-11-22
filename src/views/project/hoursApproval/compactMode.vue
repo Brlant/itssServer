@@ -60,7 +60,7 @@
                                         <span v-if='matchData(scope.row, index).approvalPendingWorkTime || !matchData(scope.row, index).approvalPendingWorkTime && matchData(scope.row, index).approvedWorkTime'  style='margin:0 10px;'>|</span>
                                         <span  style="color:red">{{matchData(scope.row, index).approvalRejectionWorkTime}}</span></span>
                                 </div>
-                                <div v-if='projectdirector.includes(item.projectId)' v-hasPermi="['project:approval:leader']">
+                                <div v-if='filterCheck(item.projectId)' v-hasPermi="['project:approval:leader']">
                                     <div class="icon" v-if="matchData(scope.row, index).show" style='margin-top:10px;'>
                                         <div class="pass" @click='agree(matchData(scope.row, index).workDate,scope.row,item.projectId)'>
                                             <i class="el-icon-check"></i>
@@ -113,14 +113,17 @@ export default {
             val:{},
             row:{},
             id:-1,
-            projectdirectior:false
+            projectdirectior:false,
+            userInfo:undefined
 
         }
     },
     created(){
+        
             // this.tableTitle()
             this.today=moment().format('YYYY-MM-DD') 
             this.projectdirector=this.queryId
+             this.userInfo = JSON.parse(window.localStorage.getItem("user"))?JSON.parse(window.localStorage.getItem("user")):[]
             console.log(this.projectdirector)
     },
     watch: {
@@ -137,6 +140,9 @@ export default {
         }
     },
     methods:{
+         filterCheck(projectId){
+                return this.userInfo.userId == 1 || this.projectdirector.includes(projectId);
+            },
          styleRed(two,three,four){
             if(two<three){
                 if(three != 0 && four != 0){
@@ -199,7 +205,7 @@ export default {
             }
         },
         agree(val,row,id){
-            if(this.queryId.includes(id)){
+            if(this.filterCheck(id)){
                 let data={
                     userId:row.userId,
                     workDate:val.workDate,
@@ -207,7 +213,7 @@ export default {
                     approved:true,
                     projectId:id
                 }   
-            this.approval1(data)
+                this.approval1(data)
             }else{
                 this.$message.error('没有审批权限')
             }
@@ -216,7 +222,7 @@ export default {
         },
 
         reject(val,row,id){
-            if(this.queryId.includes(id)){
+            if(this.filterCheck(id)){
                  this.val=val
                 this.row=row
                 this.id=id
