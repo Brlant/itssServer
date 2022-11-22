@@ -175,7 +175,7 @@ export default{
            this.$emit('datailParent',query)
         },
          pass(val){
-             if(this.queryId.includes(val.projectId)){
+             if(this.filterCheck(val.projectId)){
                  let data={
                     trackId:val.id,
                     approved:true
@@ -188,7 +188,7 @@ export default{
 
         },
         noPass(val){
-            if(this.queryId.includes(val.projectId)){
+            if(this.filterCheck(val.projectId)){
             this.trackId=val.id
             this.dialogVisible=true
             }else{

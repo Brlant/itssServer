@@ -205,7 +205,7 @@ export default {
             }
         },
         agree(val,row,id){
-            if(this.queryId.includes(id)){
+            if(this.filterCheck(id)){
                 let data={
                     userId:row.userId,
                     workDate:val.workDate,
@@ -213,7 +213,7 @@ export default {
                     approved:true,
                     projectId:id
                 }   
-            this.approval1(data)
+                this.approval1(data)
             }else{
                 this.$message.error('没有审批权限')
             }
@@ -222,7 +222,7 @@ export default {
         },
 
         reject(val,row,id){
-            if(this.queryId.includes(id)){
+            if(this.filterCheck(id)){
                  this.val=val
                 this.row=row
                 this.id=id
