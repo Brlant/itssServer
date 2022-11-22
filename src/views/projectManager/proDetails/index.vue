@@ -1411,11 +1411,12 @@ export default {
         // 如果我有id 说明我是已经存在的数据
         this.projectTable.projectUserList[this.nowIndex].userId = row.userId;
         this.projectTable.projectUserList[this.nowIndex].userName = row.nickName;
-  
+        this.projectTable.projectUserList[this.nowIndex].updateType = 3
+
         this.$nextTick(() => {
           this.$set(this.projectTable.projectUserList[this.nowIndex], "userId", row.userId);
           this.$set(this.projectTable.projectUserList[this.nowIndex],"userName",row.nickName);
-           this.$forceUpdate();
+          this.$forceUpdate();
         });
         //  以上是展示
         // 下面是塞入数据 对已有的那条数据进行了操作
@@ -1435,7 +1436,7 @@ export default {
       // 点击添加成功后 显示取消按钮
       this.recommendUserTableData.map((item) => {
         item.showOrCancel = 1; // 全部 显示添加
-        console.log(this.addEditFormData.projectUserList[0].userId , item.userId);
+        // console.log(this.addEditFormData.projectUserList[0].userId , item.userId);
         if (this.addEditFormData.projectUserList[0].userId === item.userId) {
           item.showOrCancel = 2;
         }
@@ -1472,46 +1473,65 @@ export default {
       // 我是修改
       this.addEditFormData = {};
       if(row.id){ // 数据库后台的查看
+    
+        if(row.updateType==null){// 第1次点击 
 
-        let params = {
-          id: row.id,
-        };
-        updateQueryUserById(params).then((res) => {
-          let { code, msg } = res;
+          let params = {
+            id: row.id,
+          };
+          updateQueryUserById(params).then((res) => {
+            let { code, msg } = res;
+  
+            if (+code == 200) {
+              this.addEditFormData = this.deepClone(this.formData); // 填充项目的基础数据
+              this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
+              // if (this.formData.projectService == "") {
+              //   this.$message.error("请您先选择项目基础信息内-服务对象！");
+              // } else {
+              // console.log(res);
+              res.data.workDayTemp = res.data.workDay;
+              // 点击修改，拿到此项目的 项目类型 对内对外
+              //  1:'对内', costIn
+              //  2:'对外' costOut
+              res.data.costNum =
+                this.formData.projectService == 1 ? res.data.costIn : res.data.costOut;
+              res.data.projectUserScheduleList.map((item) => {
+                item.day = item.weekDay;
+              });
+  
+              let oneUser = this.deepClone(res.data);
+              // 修改类型（1.新增,2.删除,3.修改原数据）
+              // oneUser.updateType = 3;
+              oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
+              this.addEditFormData.projectUserList.push(oneUser);
+              //因为后台对于生成的三级数据没有id
+              // console.log(JSON.stringify(oneUser));
+              this.formData.projectUserList[row.index] = oneUser; // 引起问题的
+              this.recommendUserActive = true; //显示人选推荐
+              this.getRecommendUserHandel(row.index, row);
+              // }
+              // // 删除成功 只会去查询 审核的方法
+              // this.auditStatus = "1"; // 初始化 显示 待审核
+              // this.proAuditInit();
+            }
+          });
 
-          if (+code == 200) {
-            this.addEditFormData = this.deepClone(this.formData); // 填充项目的基础数据
-            this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
-            // if (this.formData.projectService == "") {
-            //   this.$message.error("请您先选择项目基础信息内-服务对象！");
-            // } else {
-            // console.log(res);
-            res.data.workDayTemp = res.data.workDay;
-            // 点击修改，拿到此项目的 项目类型 对内对外
-            //  1:'对内', costIn
-            //  2:'对外' costOut
-            res.data.costNum =
-              this.formData.projectService == 1 ? res.data.costIn : res.data.costOut;
-            res.data.projectUserScheduleList.map((item) => {
-              item.day = item.weekDay;
-            });
+        }else{
+              this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
 
-            let oneUser = this.deepClone(res.data);
-            // 修改类型（1.新增,2.删除,3.修改原数据）
-            // oneUser.updateType = 3;
-            oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
-            this.addEditFormData.projectUserList.push(oneUser);
-            //因为后台对于生成的三级数据没有id
-            // console.log(JSON.stringify(oneUser));
-            this.formData.projectUserList[row.index] = oneUser; // 引起问题的
-            this.recommendUserActive = true; //显示人选推荐
-            this.getRecommendUserHandel(row.index, row);
-            // }
-            // // 删除成功 只会去查询 审核的方法
-            // this.auditStatus = "1"; // 初始化 显示 待审核
-            // this.proAuditInit();
-          }
-        });
+              let oneUser = this.deepClone(this.formData.projectUserList[row.index]);
+              // 修改类型（1.新增,2.删除,3.修改原数据）
+              // oneUser.updateType = 3;
+              oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
+              this.addEditFormData.projectUserList.push(oneUser);
+              //因为后台对于生成的三级数据没有id
+              // console.log(JSON.stringify(oneUser));
+              // this.formData.projectUserList[row.index] = oneUser; // 引起问题的
+              this.recommendUserActive = true; //显示人选推荐
+              this.getRecommendUserHandel(row.index, row);
+        }
+
+
       }else{ // 刚刚新增的数据的查看
         // console.log(row,1);
            this.addEditFormData.projectUserList =[]
@@ -1728,81 +1748,100 @@ export default {
       this.addEditFormData = {};
       if(row.id){
           this.nowAction = "update"; // 记录我是新增修改操作
-        // 后台返回的数据的修改
-          let params = {
-        id: row.id,
-      };
-      updateQueryUserById(params).then((res) => {
-        let { code, msg } = res;
+            console.log(row.updateType);
+           if(row.updateType==null){
+             // 后台返回的数据的修改
+               let params = {
+                 id: row.id,
+               };
+           updateQueryUserById(params).then((res) => {
+             let { code, msg } = res;
+     
+             if (+code == 200) {
+               this.addEditFormData = this.deepClone(this.formData); // 填充项目的基础数据
+               this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
+               // if (this.formData.projectService == "") {
+               //   this.$message.error("请您先选择项目基础信息内-服务对象！");
+               // } else {
+               // console.log(res);
+               res.data.workDayTemp = res.data.workDay;
+               // 点击修改，拿到此项目的 项目类型 对内对外
+               //  1:'对内', costIn
+               //  2:'对外' costOut
+               res.data.costNum =
+                 this.formData.projectService == 1 ? res.data.costIn : res.data.costOut;
+               // res.data.projectUserScheduleList.map((item) => {
+               //   item.day = item.weekDay;
+               // });
+               let oneUser = this.deepClone(res.data);
+               // 修改类型（1.新增,2.删除,3.修改原数据）
+               oneUser.updateType = 3;
+               oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
+               // 填充 职位名称 和 等级的下拉菜单
+               let parame = {
+                 regionId: oneUser.regionId,
+                 postTypeId: oneUser.postTypeId,
+                 postNameId: oneUser.postNameId,
+               };
+               getLevelCostNum(parame).then((res) => {
+                 this.postLevelIdOptions = res.data;
+               });
+               getPostName(parame).then((res) => {
+                 this.postNameIdOptions = res.data;
+               });
+               // 拿到成本
+                 let costNumArry = this.postLevelIdOptions.find((item) => {
+                 return oneUser.postLevelId == item.postLevelId;
+               });
+               // 2对外      // 1 对内
+               if (costNumArry) {
+                 // console.log(oneUser);
+                 if( this.formData.projectService == 2){
+                   oneUser.costNum = costNumArry.costOut
+                 }else{
+                     oneUser.costNum =costNumArry.costIn;
+                 }
+     
+               } else {
+                 // 没有拿到成本 查找出来的数据返回的是undefined
+                 console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
+               }
+               console.log(`你好，我是第（${index})条资源配置，我的成本是 +${oneUser.costNum}`);
+               this.addEditFormData.projectUserList.push(oneUser);
+               //因为后台对于生成的三级数据没有id
+               // console.log(oneUser);
+               this.formData.projectUserList[index] = oneUser; // 引起问题的
+     
+               // console.log(JSON.stringify(oneUser));
+               this.changeChildDateArea(oneUser,index);
+               this.recommendUserActive = true; //显示人选推荐
+     
+               this.getRecommendUserHandel(index, row);
+     
+               // }
+               // // 删除成功 只会去查询 审核的方法
+               // this.auditStatus = "1"; // 初始化 显示 待审核
+               // this.proAuditInit();
+             this.changeTextColor(row.skillIdList, "mySkillIdList");
+             }
+           });
 
-        if (+code == 200) {
-          this.addEditFormData = this.deepClone(this.formData); // 填充项目的基础数据
-          this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
-          // if (this.formData.projectService == "") {
-          //   this.$message.error("请您先选择项目基础信息内-服务对象！");
-          // } else {
-          // console.log(res);
-          res.data.workDayTemp = res.data.workDay;
-          // 点击修改，拿到此项目的 项目类型 对内对外
-          //  1:'对内', costIn
-          //  2:'对外' costOut
-          res.data.costNum =
-            this.formData.projectService == 1 ? res.data.costIn : res.data.costOut;
-          // res.data.projectUserScheduleList.map((item) => {
-          //   item.day = item.weekDay;
-          // });
-          let oneUser = this.deepClone(res.data);
-          // 修改类型（1.新增,2.删除,3.修改原数据）
-          oneUser.updateType = 3;
-          oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
-          // 填充 职位名称 和 等级的下拉菜单
-          let parame = {
-            regionId: oneUser.regionId,
-            postTypeId: oneUser.postTypeId,
-            postNameId: oneUser.postNameId,
-          };
-          getLevelCostNum(parame).then((res) => {
-            this.postLevelIdOptions = res.data;
-          });
-          getPostName(parame).then((res) => {
-            this.postNameIdOptions = res.data;
-          });
-          // 拿到成本
-            let costNumArry = this.postLevelIdOptions.find((item) => {
-            return oneUser.postLevelId == item.postLevelId;
-          });
-          // 2对外      // 1 对内
-          if (costNumArry) {
-            // console.log(oneUser);
-            if( this.formData.projectService == 2){
-              oneUser.costNum = costNumArry.costOut
-            }else{
-                oneUser.costNum =costNumArry.costIn;
-            }
+           }else{
+              this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
+            console.log(index);
 
-          } else {
-            // 没有拿到成本 查找出来的数据返回的是undefined
-            console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
-          }
-          console.log(`你好，我是第（${index})条资源配置，我的成本是 +${oneUser.costNum}`);
-          this.addEditFormData.projectUserList.push(oneUser);
-          //因为后台对于生成的三级数据没有id
-          // console.log(oneUser);
-          // this.formData.projectUserList[index] = oneUser; // 引起问题的
-
-          // console.log(JSON.stringify(oneUser));
-          this.changeChildDateArea(oneUser,index);
-          this.recommendUserActive = true; //显示人选推荐
-
-          this.getRecommendUserHandel(index, row);
-
-          // }
-          // // 删除成功 只会去查询 审核的方法
-          // this.auditStatus = "1"; // 初始化 显示 待审核
-          // this.proAuditInit();
-        this.changeTextColor(row.skillIdList, "mySkillIdList");
-        }
-      });
+              let oneUser = this.deepClone(this.formData.projectUserList[index]);
+              console.log(JSON.stringify(oneUser));
+              // 修改类型（1.新增,2.删除,3.修改原数据）
+              // oneUser.updateType = 3;
+              oneUser.startEndTime = [oneUser.startTime, oneUser.endTime];
+              this.addEditFormData.projectUserList.push(oneUser);
+              //因为后台对于生成的三级数据没有id
+              // console.log(JSON.stringify(oneUser));
+              // this.formData.projectUserList[row.index] = oneUser; // 引起问题的
+              this.recommendUserActive = true; //显示人选推荐
+              this.getRecommendUserHandel(index, row);
+           }
 
       }else{
         // 新增行的修改
@@ -1840,7 +1879,6 @@ export default {
           item.showOrCancel = 1; // 默认显示  添加
           //  if(this.nowAction=="update"){
         
-            console.log(this.addEditFormData.projectUserList[0].userId , item.userId);
               if (this.addEditFormData.projectUserList[0].userId == item.userId) {
                 // 如果 当前点击的行的userID === 当前行id 就显示取消
                 item.showOrCancel = 2;
