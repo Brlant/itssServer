@@ -2310,7 +2310,7 @@ export default {
                       ${item.startDate.substring(5, 7)}月
                       ${item.week}周
                       ${item.startDate.substring(5, 7)}/${item.startDate.substring(8)}-
-                      ${item.startDate.substring(5, 7)}/${item.endDate.substring(8)}`;
+                      ${item.endDate.substring(5, 7)}/${item.endDate.substring(8)}`;
               this.monthArrTemp.push(pp.toString());
           })
           this.allWeekArrTemp = res.data;// 请勿修改它 他是最大的集合
