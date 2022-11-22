@@ -159,14 +159,17 @@
                 } );
             },
             reqParentDeptFn(){
+                console.log(1111111111111,'ssss')
                 let reqObj = {} ;
+                
 
                 // 测试数据
                 reqObj.headers = { 
                     userId : 1, // 当前登陆用户 ID   < 必填 >
-                    deptId : 1 // 当前登陆人的部门 ID   < 必填 >
+                    deptId : 1 ,// 当前登陆人的部门 ID   < 必填 >
+                   
                 } ;
-
+                reqObj.orgId=1
                 let _fn = arr => {
                     let result = arr ;
 
@@ -191,6 +194,7 @@
                 } ;
 
                 tree( reqObj )
+
                 .then( d => {
                     if( d.code === 200 ){
                         this.parentDeptData = _fn( d.data ) ;
@@ -223,6 +227,7 @@
                     let { msg } = d ;
                     if( d.code === 200 ){
                         this.reqDeptListFn() ; // 刷新列表数据
+                         this.reqParentDeptFn()
                     }
 
                     this.$message({
@@ -257,6 +262,7 @@
 
                     if( d.code === 200 ){
                         this.reqDeptListFn() ; // 刷新列表数据
+                        this.reqParentDeptFn()
                     }
 
                     this.$message({

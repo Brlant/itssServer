@@ -114,22 +114,22 @@
         </el-row> -->
         <el-row>
           <el-col :span="18" :offset="1">
-            <el-form-item label="老密码" prop='oldPassword'>
-              <el-input v-model="form.oldPassword" placeholder="请输入老密码"></el-input>
+            <el-form-item label="旧密码" prop='oldPassword'>
+              <el-input v-model="form.oldPassword" placeholder="请输入旧密码"></el-input>
             </el-form-item>
           </el-col>
           </el-row>
           <el-row>
           <el-col :span="18" :offset="1">
             <el-form-item label="新密码" prop='newPassword'>
-              <el-input v-model="form.newPassword" placeholder="请使用8-21位密码，由字母带小写，数字，特殊字符组成"></el-input>
+              <el-input v-model="form.newPassword" placeholder="请使用8-24位密码，由字母带小写，数字，特殊字符组成"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="18" :offset="1">
             <el-form-item label="确认新密码" prop='confirmPassword'>
-              <el-input v-model="form.confirmPassword" placeholder="请使用8-21位密码，由字母带小写，数字，特殊字符组成"></el-input>
+              <el-input v-model="form.confirmPassword" placeholder="请使用8-24位密码，由字母带小写，数字，特殊字符组成"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -138,6 +138,7 @@
         <el-button type="primary" @click="sure"
           >确 定</el-button
         >
+         <el-button type="danger" @click="close">关闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -149,6 +150,7 @@ userDetail,stopUse,skillLocking,delUser
 import { dictData } from '@/api/dataDict'
 import { color } from '@/components/ColorSelect/options'
 import { updateUserPwd } from "@/api/system/user";
+const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,24}$/;
 export default {
   data() {
       const equalToPassword = (rule, value, callback) => {
@@ -157,7 +159,17 @@ export default {
       } else {
         callback();
       }
+      
     };
+    const newPassWord = (rule, value, callback) => {
+      if (pwdReg.test(value)) {
+        callback()
+        this.show2 = true
+      } else {
+        callback(new Error('请使用8-24位密码，由字母带小写，数字，特殊字符组成'))
+        this.show2 = false
+      }
+    }
     return {
       dialogFormVisible: false,
       info:{},
@@ -178,6 +190,7 @@ export default {
           ],
            newPassword: [
             { required: true, message: '新密码不能为空', trigger: 'blur' },
+            { validator: newPassWord, trigger: "blur" }
           ],
           confirmPassword: [
             { required: true, message: '请确认新密码', trigger: 'blur' },
@@ -250,6 +263,10 @@ export default {
         }
         });
 
+    },
+    close() {
+         this.dialogFormVisible=false
+          this.$refs['ruleForm'].resetFields();
     }
 
   },
