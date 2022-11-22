@@ -75,6 +75,12 @@
                     <span class='work' v-for='(item,index) in info.userSkills' :key='index' :style="{background: matchColor(item.cssClass)}">{{item.skillName}}</span>
 
                 </div>
+                 <div style="margin:20px;font-size:18px;">
+                    <span class='title'>TB用户ID:</span>
+                    <span class="content">{{info.tbUserId}}</span>
+                    <span class='title'>git账号:</span>
+                    <span class="content">{{info.gitAccount}}</span>
+                </div>
             </div>
         </div>
         <div>
