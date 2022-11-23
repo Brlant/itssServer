@@ -632,7 +632,7 @@
           <el-row>
             <el-col :span="6">
               <el-form-item
-                label="配置安排："
+                label="配置11安排："
                 :prop="`projectUserList.${addUserListindex}.startEndTime`"
                 :rules="rules.projectUserListAllStartEndTime"
                 label-width="130px"
@@ -642,6 +642,7 @@
                   v-model="addUserList.startEndTime"
                   format="yyyy-MM-dd"
                   value-format="yyyy-MM-dd"
+                  :key="addUserListindex"
                   :style="{ width: '100%' }"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
@@ -649,6 +650,7 @@
                   :picker-options="childDateArea"
                   @change="(dates) => constAll(dates, addUserListindex)"
                 ></el-date-picker>
+                  <!-- @change="constAll(dates, addUserListindex)" -->
               </el-form-item>
             </el-col>
             <el-col :span="3">
@@ -703,6 +705,7 @@
                   size="mini"
                   :style="{ width: '110px' }"
                   v-model="UserScheduleList.planLoad"
+                  :key="UserScheduleListIndex"
                   :min="0"
                   :max="100"
                   :precision="0"
@@ -1261,9 +1264,8 @@ export default {
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.addEditFormData.projectUserList[index].costNum}`);
           this.constAll(this.addEditFormData.projectUserList[index].startEndTime, index);
           setTimeout(() => {
-          this.recommendUserActive = true; // 点击添加 人选需要隐藏
-
-          this.getRecommendUserHandel(0, this.addEditFormData.projectUserList[0]);
+            this.recommendUserActive = true; // 点击添加 人选需要隐藏
+            this.getRecommendUserHandel(0, this.addEditFormData.projectUserList[0]);
            },500);
           break;
       }
@@ -1611,13 +1613,15 @@ export default {
         this.addEditFormData.projectUserList[fatherIndex].planLoad = 0;
       } else {
         this.addEditFormData.projectUserList[fatherIndex].planLoad = this.autoFixed(
-          (totalDay / tempWorkDay) * 100
+          ((totalDay / tempWorkDay).toFixed(2) * 100),2
         ); //计划负荷 == 实际人日/计划的人日 *100%
+       // 解决 浮点数问题
+      //  console.log((11.64/12)*100)
       }
       this.addEditFormData.projectUserList[fatherIndex].expectedCost = this.autoFixed(
         totalDay * this.addEditFormData.projectUserList[fatherIndex].costNum
       ); /**预计成本*/
-
+      this.$forceUpdate()
       /*----------------以上是 总计的安排的具体计算-------------------*/
     },
      
@@ -1805,6 +1809,7 @@ export default {
                }
                console.log(`你好，我是第（${index})条资源配置，我的成本是 +${oneUser.costNum}`);
                this.addEditFormData.projectUserList.push(oneUser);
+               this.$forceUpdate()
                //因为后台对于生成的三级数据没有id
                // console.log(oneUser);
                this.formData.projectUserList[index] = oneUser; // 引起问题的
@@ -2067,7 +2072,7 @@ export default {
     /*根据起始和结束 生成下面表格*/
     // 公共计算方法
     constAll(dates, index) {
-      console.log("constAll",dates);
+      console.log("constAll",dates,index);
       let params = {
         startDate: dates[0],
         endDate: dates[1],
