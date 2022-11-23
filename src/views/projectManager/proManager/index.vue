@@ -194,7 +194,7 @@
             {{ scope.row.realWork }}人日
             <!-- v-show="isProjectByUser(scope.row)||isJurisdiction('admin')" -->
             <el-button
-            v-hasPermi="['projectManager:editTeam:edit']"
+            v-hasPermi="['projectManager:proManager:handle']"
               @click.native.prevent="updateRealWork(scope.$index, scope.row)"
               type="text"
               size="mini"
