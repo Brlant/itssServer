@@ -1011,7 +1011,7 @@ export default {
     },
     // 新增编辑的初始化 数据结构集合
     addEditFormData: {},
-    delRow:{},
+    delRow:[], // 用于暂存删除的数据
     isdel:false,
     resouceBtnActive: true, // 是否展示 暂存和取消
 
@@ -1300,40 +1300,18 @@ export default {
     },
     // 顶部的点击提交审核
     goAudit() {
-      if(this.isdel){
-        let row=this.delRow
-         let params = this.deepClone(this.formData);
-          params.projectUserList = [];
-          params.projectUserList.push(row);
-          // 修改类型（1.新增,2.删除,3.修改原数据）
-          params.projectUserList[0].updateType = 2;
-          this.addEditUserActive = false;
-          this.detailUserActive = false;
-          this.recommendUserActive = false;
-          updateProjectUserAddEdit(params).then((res) => {
-            let { code, msg } = res;
-            this.$message.success(msg);
-            if (+code == 200) {
-              // 提交删除成功  需要审核
-              this.auditStatus = "1"; // 初始化 显示 待审核
-              this.proAuditInit();
-              this.$router.go(0);
-            }
-          });
-      }else{
+     
         // 此处提交的是 全量数据
       // 下面是塞入数据
       // if(this.projectTable.projectUserList && this.projectTable.projectUserList[this.nowIndex].userId){
-
       //   this.formData.projectUserList[this.nowIndex].userId = this.projectTable.projectUserList[this.nowIndex].userId;
       //   this.formData.projectUserList[this.nowIndex].userName = this.projectTable.projectUserList[this.nowIndex].userName;
-
       // }
 
       // 提交审核之前 ，处理一下 刚刚添加的资源
       // this.formData.projectUserList = this.deepClone(this.projectTable.projectUserList)
       let parame = this.deepClone(this.formData)
-      // parame.projectUserList.unshift(...this.holdUserList)
+      parame.projectUserList.unshift(...this.delRow) // 合并删除的行
       let projectUserListTemp =[]
       parame.projectUserList.map((item,i)=>{
         // 删除没有修改过的 没有新增的 updateType为空的
@@ -1349,7 +1327,7 @@ export default {
           // 添加成功 只会去查询 审核的方法
           this.auditStatus = "1"; // 初始化 显示 待审核
           this.proAuditInit();
-          this.init("init");
+          // this.init("init");
           this.addEditFormData = {};
           this.addEditUserActive = false;
           this.detailUserActive = false;
@@ -1357,7 +1335,7 @@ export default {
           this.isUpdateActive = false; // 点击了立即审批 就删除编辑状态
         }
       });
-      }
+       
 
     },
     // 顶部的点击取消
@@ -1490,7 +1468,7 @@ export default {
       this.addEditUserActive = false;
       // 我是修改
       this.addEditFormData = {};
-      this.recommendUserActive = true; //显示人选推荐
+      // this.recommendUserActive = true; //显示人选推荐
 
       if(row.id){ // 数据库后台的查看
     
@@ -1527,7 +1505,7 @@ export default {
               //因为后台对于生成的三级数据没有id
               // console.log(JSON.stringify(oneUser));
               this.formData.projectUserList[row.index] = oneUser; // 引起问题的
-              this.getRecommendUserHandel(row.index, row);
+              // this.getRecommendUserHandel(row.index, row);
               // }
               // // 删除成功 只会去查询 审核的方法
               // this.auditStatus = "1"; // 初始化 显示 待审核
@@ -1546,7 +1524,7 @@ export default {
               //因为后台对于生成的三级数据没有id
               // console.log(JSON.stringify(oneUser));
               // this.formData.projectUserList[row.index] = oneUser; // 引起问题的
-              this.getRecommendUserHandel(row.index, row);
+              // this.getRecommendUserHandel(row.index, row);
         }
 
 
@@ -1868,7 +1846,7 @@ export default {
           this.addEditFormData.projectUserList =[]
         
            // 此处逻辑为，显示用存储没有多余的排期的去展示
-           let showRow =this.deepClone( this.formData.projectUserList[row.index]) 
+           let showRow =this.deepClone(this.formData.projectUserList[row.index]) 
            showRow.planLoad = row.planLoadTemp
           //  console.log(row,2);
            this.addEditFormData.projectUserList[0] = showRow; // 填充项目的基础数据
@@ -1920,29 +1898,34 @@ export default {
             if(row.id){ // 数据库的数据删除
           // console.log("我是数据库hang的删除",index);
             this.isUpdateActive=true
-            this.delRow=row
-            this.isdel=true
+            // // 修改类型（1.新增,2.删除,3.修改原数据）
+            row.updateType = 2
+            this.delRow.push(this.deepClone(row)) // 防止删除多行
+            // this.isdel=true
             // let params = this.deepClone(this.formData);
-          // params.projectUserList = [];
-          // params.projectUserList.push(row);
-          // // 修改类型（1.新增,2.删除,3.修改原数据）
-          // params.projectUserList[0].updateType = 2;
-          // this.addEditUserActive = false;
-          // this.detailUserActive = false;
-          // this.recommendUserActive = false;
-          // updateProjectUserAddEdit(params).then((res) => {
-          //   let { code, msg } = res;
-          //   this.$message.success(msg);
-          //   if (+code == 200) {
-          //     // 提交删除成功  需要审核
-          //     this.auditStatus = "1"; // 初始化 显示 待审核
-          //     this.proAuditInit();
-          //   }
-          // });
-          // }else{// 刚刚暂存的数据删除
-          // // console.log("我是暂存行的删除",index);
-          //   this.projectTable.projectUserList.splice(index,1)
-          //   // this.formData.projectUserList.splice(index,1)
+            // params.projectUserList = [];
+            // params.projectUserList.push(row);
+            // // 修改类型（1.新增,2.删除,3.修改原数据）
+            // params.projectUserList[0].updateType = 2;
+            // this.addEditUserActive = false;
+            // this.detailUserActive = false;
+            // this.recommendUserActive = false;
+            // updateProjectUserAddEdit(params).then((res) => {
+            //   let { code, msg } = res;
+            //   this.$message.success(msg);
+            //   if (+code == 200) {
+            //     // 提交删除成功  需要审核
+            //     this.auditStatus = "1"; // 初始化 显示 待审核
+            //     this.proAuditInit();
+            //   }
+            // });
+            this.projectTable.projectUserList.splice(index,1) //表格行也删除
+            this.formData.projectUserList.splice(index,1) //
+
+          }else{// 刚刚暂存的数据删除
+          // console.log("我是暂存行的删除",index);
+            this.projectTable.projectUserList.splice(index,1)
+            // this.formData.projectUserList.splice(index,1)
           }
           this.$forceUpdate()
           this.recommendUserActive =false;
@@ -1959,7 +1942,6 @@ export default {
         if (!valid) return;
         // TODO 提交表单
         if (valid) {
-           this.isUpdateActive = true; // 点击了暂存了 立即隐藏编辑 终止 和展示提交审核
           // 需要额外的判断他是 新增的暂存还是修改的暂存
           if (this.nowAction == "add") {
             // 点击暂存 需要立即禁用按钮 测试希望不管他 就先打开
@@ -1997,6 +1979,10 @@ export default {
             // console.log(this.formData.projectUserList.length);
             // 新增代码块  end
             this.$forceUpdate();
+             // 显示详情 
+            this.detailUserActive = false;
+            // 隐藏 编辑
+            this.addEditUserActive = false;
             this.$message.success("新增暂存成功！");
             // this.addEditFormData.projectUserList[0].projectUserScheduleList= oneUserTemp.projectUserScheduleList.filter((el)=>{
             //   return el.isMe
@@ -2005,8 +1991,17 @@ export default {
             this.$forceUpdate()
 
             console.log("add");
+            this.id =  oneUser.idTemp // 刚刚添加的 选中就 用它
           }
           if (this.nowAction == "update") {
+            console.log(this.addEditFormData.projectUserList[0]?.id);
+           if(this.addEditFormData.projectUserList[0]?.id){
+            // 我点击了暂存是 有id 说明是后台的数据
+            // 因为新增暂存的数据 也可以修改，但是没有id
+             this.isUpdateActive = true; // 点击了暂存了 立即隐藏编辑 终止 和展示提交审核
+           } 
+         
+
             console.log("update");
             // 此处修改为 暂存 , 数据丢进去即可
             this.formData.projectUserList[
@@ -2020,25 +2015,32 @@ export default {
             this.formData.projectUserList[this.nowIndex] = this.deepClone(
               this.addEditFormData.projectUserList[0]
             );
+            this.id = this.projectTable.projectUserList[this.nowIndex].id || this.projectTable.projectUserList[this.nowIndex].idTemp // 刚刚添加的 选中就 用它
 
             this.$message.success("暂存成功！");
           }
           // this.resouceBtnActive = false; // 隐藏按钮的逻辑
           // 暂存之后清空一下 表单数据
-            this.id = ""
-            this.addEditFormData = {};
-            this.addEditFormData = this.deepClone(this.formData); // 填充新增的
-            this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
-            let initOneUser = this.deepClone(this.projectUserList);
-            initOneUser.startTime = this.formData.projectStartTime;
-            initOneUser.endTime = this.formData.projectEndTime;
-            initOneUser.startEndTime = [
-              this.formData.projectStartTime,
-              this.formData.projectEndTime,
-            ];
-            initOneUser.updateType = 1;
-            this.addEditFormData.projectUserList.push(initOneUser);
+            // this.id = ""; // 清空选中行
+            // this.addEditFormData = {};
+            // this.addEditFormData = this.deepClone(this.formData); // 填充新增的
+            // this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
+            // let initOneUser = this.deepClone(this.projectUserList);
+            // initOneUser.startTime = this.formData.projectStartTime;
+            // initOneUser.endTime = this.formData.projectEndTime;
+            // initOneUser.startEndTime = [
+            //   this.formData.projectStartTime,
+            //   this.formData.projectEndTime,
+            // ];
+            // initOneUser.updateType = 1;
+            // this.addEditFormData.projectUserList.push(initOneUser);
+             //暂存成功后 
+             //隐藏人选推荐
             this.recommendUserActive = false
+            // 显示详情 
+            this.detailUserActive = true;
+            // 隐藏 编辑
+            this.addEditUserActive = false;
         }
       });
     },
