@@ -19,6 +19,14 @@ export function dictData(params) {
   })
 }
 
+export function dictDataAll(params) {
+  return request({
+    url: `/system/post_dict/listAll`,
+    method: 'get',
+    params
+  })
+}
+
 // 添加与编辑
 export function addAndEdit(data, method = 'put') {
   return request({

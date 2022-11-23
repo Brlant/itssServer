@@ -45,6 +45,17 @@
 export default {
     props:['formList','projectName','workName'],
     data(){
+        const checkNumber = (rule, value, callback) => {
+            if (String(Number(value)) === 'NaN') {
+                callback(new Error('请输入正确的工作时长'))
+            } else {
+                if (value <= 0) {
+                    callback(new Error('请输入正确的工作时长'))
+                } else {
+                    callback()
+                }
+            }
+        }
         return {
             rules: {
                 projectId: [
@@ -57,7 +68,8 @@ export default {
                     {  required: true, message: '请选择工作类型', trigger: 'change' }
                 ],
                 workTime: [
-                    { required: true, message: '请输入工作时长', trigger: 'blur' }
+                    { required: true, message: '请输入工作时长', trigger: 'blur' },
+                    { validator: checkNumber, trigger: 'blur' }
                 ],
                 workContent: [
                     { required: true, message: '请输入工作内容', trigger: 'blur' }

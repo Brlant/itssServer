@@ -115,21 +115,21 @@
         <el-row>
           <el-col :span="18" :offset="1">
             <el-form-item label="旧密码" prop='oldPassword'>
-              <el-input v-model="form.oldPassword" placeholder="请输入旧密码"></el-input>
+              <el-input v-model="form.oldPassword" type="password" placeholder="请输入旧密码"></el-input>
             </el-form-item>
           </el-col>
           </el-row>
           <el-row>
           <el-col :span="18" :offset="1">
             <el-form-item label="新密码" prop='newPassword'>
-              <el-input v-model="form.newPassword" placeholder="请使用8-24位密码，由字母带小写，数字，特殊字符组成"></el-input>
+              <el-input v-model="form.newPassword" type="password" placeholder="请使用8-24位密码，由字母带小写，数字，特殊字符组成"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="18" :offset="1">
             <el-form-item label="确认新密码" prop='confirmPassword'>
-              <el-input v-model="form.confirmPassword" placeholder="请使用8-24位密码，由字母带小写，数字，特殊字符组成"></el-input>
+              <el-input v-model="form.confirmPassword" type="password" placeholder="请使用8-24位密码，由字母带小写，数字，特殊字符组成"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -147,7 +147,7 @@
 import {
 userDetail,stopUse,skillLocking,delUser
 } from "@/api/system/user";
-import { dictData } from '@/api/dataDict'
+import { dictDataAll } from '@/api/dataDict'
 import { color } from '@/components/ColorSelect/options'
 import { updateUserPwd } from "@/api/system/user";
 const pwdReg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,24}$/;
@@ -211,7 +211,7 @@ export default {
         dictType: 'skill_type',
         status: '0'
       }
-      dictData(params).then(res => {
+      dictDataAll(params).then(res => {
         let { rows } = res
         rows.forEach(v => v.tick = false)
         sessionStorage.setItem('skills', JSON.stringify(rows))
