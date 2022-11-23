@@ -245,6 +245,7 @@
 
                     if( d.code === 200 ){
                         this.reqDeptListFn() ; // 刷新列表数据
+                        this.reqParentDeptFn();
                     }
 
                     this.$message({
@@ -284,7 +285,8 @@
                 this.reqUpdateFn( data ) ;
             },
             removeFn( data ){
-                this.reqRemoveFn( data.row.id ) ;
+                console.log('111', data)
+                this.reqRemoveFn( data.id ) ;
             },
             statusFn( data ){
                 // console.log(data.row.id,'data')
