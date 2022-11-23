@@ -2020,6 +2020,7 @@ export default {
             ];
             initOneUser.updateType = 1;
             this.addEditFormData.projectUserList.push(initOneUser);
+            this.recommendUserActive = false
         }
       });
     },

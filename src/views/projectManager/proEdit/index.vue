@@ -369,8 +369,7 @@
             <el-col :span="18">
               <el-form-item
                 label="技能需求："
-                :prop="`projectUserList.${addUserListindex}.skillIdList`"
-                :rules="rules.addUserListSkillIdList"
+                
               >
                 <el-select
                   v-model="addUserList.skillIdList"
@@ -582,13 +581,13 @@ export default {
             trigger: "change",
           },
         ],
-        addUserListSkillIdList: [
-          {
-            required: true,
-            message: "请选择技能需求!",
-            trigger: "change",
-          },
-        ],
+        // addUserListSkillIdList: [
+        //   {
+        //     required: true,
+        //     message: "请选择技能需求!",
+        //     trigger: "change",
+        //   },
+        // ],
         addUserListStartEndTime: [
           {
             required: true,
