@@ -1428,6 +1428,24 @@ export default {
       }else{
         // 我是新增 我没有资源配置化的2级的id
         // this.formData.projectUserList[this.nowIndex].updateType = 1
+        if(this.nowIndex!=9999){
+            // 如果我有nowIndex 说明我是暂存的数据
+            this.projectTable.projectUserList[this.nowIndex].userId = row.userId;
+            this.projectTable.projectUserList[this.nowIndex].userName = row.nickName;
+            this.projectTable.projectUserList[this.nowIndex].updateType = 1
+            this.$nextTick(() => {
+                this.$set(this.projectTable.projectUserList[this.nowIndex], "userId", row.userId);
+                this.$set(this.projectTable.projectUserList[this.nowIndex],"userName",row.nickName);
+                this.$forceUpdate();
+            });
+            //  以上是展示
+            // 下面是塞入数据 对已有的那条数据进行了操作
+            // 修改类型（1.新增,2.删除,3.修改原数据）
+            this.formData.projectUserList[this.nowIndex].updateType = 1
+            // this.formData.projectUserList[this.nowIndex].userList.push(row.userId);
+            this.formData.projectUserList[this.nowIndex].userId = row.userId;
+            this.formData.projectUserList[this.nowIndex].userName = row.nickName;   
+            }
 
       }
 
@@ -1472,6 +1490,8 @@ export default {
       this.addEditUserActive = false;
       // 我是修改
       this.addEditFormData = {};
+      this.recommendUserActive = true; //显示人选推荐
+
       if(row.id){ // 数据库后台的查看
     
         if(row.updateType==null){// 第1次点击 
@@ -1507,7 +1527,6 @@ export default {
               //因为后台对于生成的三级数据没有id
               // console.log(JSON.stringify(oneUser));
               this.formData.projectUserList[row.index] = oneUser; // 引起问题的
-              this.recommendUserActive = true; //显示人选推荐
               this.getRecommendUserHandel(row.index, row);
               // }
               // // 删除成功 只会去查询 审核的方法
@@ -1527,7 +1546,6 @@ export default {
               //因为后台对于生成的三级数据没有id
               // console.log(JSON.stringify(oneUser));
               // this.formData.projectUserList[row.index] = oneUser; // 引起问题的
-              this.recommendUserActive = true; //显示人选推荐
               this.getRecommendUserHandel(row.index, row);
         }
 
@@ -1742,6 +1760,7 @@ export default {
       this.detailUserActive = false;
       this.addEditUserActive = true;
       this.resouceBtnActive = true; // 隐藏按钮的逻辑
+      this.recommendUserActive = true; //显示人选推荐
       this.nowIndex = index; // 存储刚刚点击是那一条
       // this.isdel=false
       // 我是修改
@@ -1814,7 +1833,6 @@ export default {
      
                // console.log(JSON.stringify(oneUser));
                this.changeChildDateArea(oneUser,index);
-               this.recommendUserActive = true; //显示人选推荐
      
                this.getRecommendUserHandel(index, row);
      
@@ -1839,7 +1857,7 @@ export default {
               //因为后台对于生成的三级数据没有id
               // console.log(JSON.stringify(oneUser));
               // this.formData.projectUserList[row.index] = oneUser; // 引起问题的
-              this.recommendUserActive = true; //显示人选推荐
+            
               this.getRecommendUserHandel(index, row);
            }
 
