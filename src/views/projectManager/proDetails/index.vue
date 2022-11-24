@@ -1828,8 +1828,10 @@ export default {
            });
 
            }else{
+              console.log(index);
+              console.log("我是有id，在库数据的的修改");
+              console.log(row);
               this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
-            console.log(index);
 
               let oneUser = this.deepClone(this.formData.projectUserList[index]);
               console.log(JSON.stringify(oneUser));
@@ -1845,16 +1847,20 @@ export default {
            }
 
       }else{
+        console.log("我是没有id，新增暂存的修改");
+        console.log(row);
         // 新增行的修改
           this.nowAction = "update"; // 记录我是新增修改操作
           this.nowIndex = index;
           this.addEditFormData.projectUserList =[]
         
            // 此处逻辑为，显示用存储没有多余的排期的去展示
-           let showRow =this.deepClone(this.formData.projectUserList[row.index]) 
+          //  let showRow = this.deepClone(this.formData.projectUserList[row.index]) 
+           let showRow = this.formData.projectUserList[row.index]
            showRow.planLoad = row.planLoadTemp
-          //  console.log(row,2);
-           this.addEditFormData.projectUserList[0] = showRow; // 填充项目的基础数据
+           console.log(row,2);
+           console.log(showRow);
+           this.addEditFormData.projectUserList[0]= showRow; // 填充项目的基础数据
            this.$forceUpdate()
       }
      },
@@ -2000,12 +2006,16 @@ export default {
           }
           if (this.nowAction == "update") {
             console.log(this.addEditFormData.projectUserList[0]?.id);
-           if(this.addEditFormData.projectUserList[0]?.id){
-            // 我点击了暂存是 有id 说明是后台的数据
-            // 因为新增暂存的数据 也可以修改，但是没有id
-             this.isUpdateActive = true; // 点击了暂存了 立即隐藏编辑 终止 和展示提交审核
-           } 
-         
+            if(this.addEditFormData.projectUserList[0]?.id){
+              // 我点击了暂存是 有id 说明是后台的数据
+              // 因为新增暂存的数据 也可以修改，但是没有id
+              this.isUpdateActive = true; // 点击了暂存了 立即隐藏编辑 终止 和展示提交审核
+              this.formData.projectUserList[this.nowIndex].updateType = 3;
+            } 
+           else{
+              // 修改类型（1.新增,2.删除,3.修改原数据）
+              this.formData.projectUserList[this.nowIndex].updateType = 1;
+            }
 
             console.log("update");
             // 此处修改为 暂存 , 数据丢进去即可
@@ -2015,8 +2025,7 @@ export default {
             this.formData.projectUserList[
               this.nowIndex
             ].userName = this.addEditFormData.projectUserList[0].userName;
-              // 修改类型（1.新增,2.删除,3.修改原数据）
-            this.formData.projectUserList[this.nowIndex].updateType = 1;
+              
             this.formData.projectUserList[this.nowIndex] = this.deepClone(
               this.addEditFormData.projectUserList[0]
             );
