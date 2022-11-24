@@ -1862,11 +1862,14 @@ export default {
            console.log(showRow);
            this.addEditFormData.projectUserList[0]= showRow; // 填充项目的基础数据
            this.$forceUpdate()
+          this.getRecommendUserHandel(index, row);
+
       }
      },
     // 拿到 并 显示 推荐人选
     getRecommendUserHandel(index, row) {
-      // console.log(row,index);
+      console.log(row,index);
+      console.log(row.id);
       let params = {
         postNameId:row.postNameId,//职位id
         regionId:row.regionId,//区域id
@@ -1878,9 +1881,11 @@ export default {
         projectService:this.formData.projectService,//服务对象
         workDay:row.workDay,//总人日
       };
-      if(this.nowIndex!=-1){
-        params.id=row?.id||this.formData.projectUserList[index]?.id||"" //项目配置表主键第二级的主键
-      }
+      // 新增数据不需要有id
+       params.id=row?.id
+      // if(this.nowIndex!=9999){
+      //   params.id=row?.id||this.formData.projectUserList[index]?.id||"" //项目配置表主键第二级的主键
+      // }
       queryUserByPostId(params).then((res) => {
         res.data.map((item) => {
           item.showOrCancel = 1; // 默认显示  添加
