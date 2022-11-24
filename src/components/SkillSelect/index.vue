@@ -216,6 +216,8 @@ export default {
   padding: 10px 10px 0 10px;
   .list {
     margin-top: 5px;
+    max-height: 300px;
+    overflow-y: auto;
     .item {
       display: flex;
       justify-content: space-between;

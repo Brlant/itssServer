@@ -335,7 +335,7 @@ import {
   deptStatus,
 } from "@/api/DeptMange/DeptManage.js";
 // import { directive } from 'vue/types/umd';
-import { dictData } from "@/api/dataDict";
+import { dictDataAll } from "@/api/dataDict";
 
 export default {
   name: "User",
@@ -520,7 +520,7 @@ export default {
         dictType: "skill_type",
         status: "0",
       };
-      dictData(params).then((res) => {
+      dictDataAll(params).then((res) => {
         let { rows } = res;
         rows.forEach((v) => (v.tick = false));
         sessionStorage.setItem("skills", JSON.stringify(rows));
