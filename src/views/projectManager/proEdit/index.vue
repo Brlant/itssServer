@@ -150,14 +150,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="10" :offset="1">
-            <el-form-item label="GitLab地址" prop="projectGitUrl">
+            <el-form-item label="GitLab项目Id" prop="projectGitUrl">
               <el-input
-                v-model="formData.projectGitUrl"
-                placeholder="请输入GitLab地址"
+                v-model.trim="formData.projectGitUrl"
+                placeholder="请输入GitLab项目Id"
                 show-word-limit
                 clearable
                 :style="{ width: '100%' }"
               ></el-input>
+              <span class="myTag">(多个gitLab项目Id用,隔开)</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -507,6 +508,17 @@ import moment from "moment";
 import "moment/locale/zh-cn";
 export default {
   data() {
+    const check = (rule, value, callback) => {
+      if (!value) {
+        callback()
+      } else {
+        if (/^(\d+,?)+$/.test(value)) {
+          callback()
+        } else {
+          callback(new Error('输入格式不正确'))
+        }
+      }
+    }
     return {
       childDateArea: {
         // 项目成员安排的 可选时间区间
@@ -653,6 +665,12 @@ export default {
             message: "请选择服务对象",
             trigger: "change",
           },
+        ],
+        projectGitUrl: [
+          {
+            trigger: 'blur',
+            validator: check
+          }
         ],
         projectTimeArea: [
           {

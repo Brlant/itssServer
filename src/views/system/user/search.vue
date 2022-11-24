@@ -126,7 +126,8 @@ export default {
       form: {},
       user: [],
       condition: [],
-      data:{}
+      data:{},
+      params: null
     };
   },
   mounted() {
@@ -140,6 +141,7 @@ export default {
             };
             fuzzyQuery(data).then((res) => {
               this.user = res.data;
+              this.params = data
             });
       }else{
         this.user =[]
@@ -185,7 +187,7 @@ export default {
       stopUse({ status: code, userId: id }).then((res) => {
         if (res.code == 200) {
           this.$message.success(res.msg);
-           fuzzyQuery(this.data).then((res) => {
+           fuzzyQuery(this.params).then((res) => {
             this.user = res.data;
           });
         }
