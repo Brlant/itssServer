@@ -141,7 +141,7 @@ export default {
             };
             fuzzyQuery(data).then((res) => {
               this.user = res.data;
-              this.params = data
+              this.params = data;
             });
       }else{
         this.user =[]
