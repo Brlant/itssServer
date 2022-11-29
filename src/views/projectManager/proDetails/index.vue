@@ -1453,6 +1453,7 @@ export default {
         // 我是新增 我没有资源配置化的2级的id
         // this.formData.projectUserList[this.nowIndex].updateType = 1
         if (this.nowIndex != 9999) {
+          console.log("暂存的添加NO9999");
           // 如果我有nowIndex 说明我是暂存的数据
           this.projectTable.projectUserList[this.nowIndex].userId = row.userId;
           this.projectTable.projectUserList[this.nowIndex].userName = row.nickName;
@@ -1478,7 +1479,11 @@ export default {
             );
             this.$forceUpdate();
           });
+        }else{
+
+          console.log("暂存的添加9999");
         }
+
         //  以上是展示
       }
 
@@ -2037,7 +2042,7 @@ export default {
           oneUser.projectUserScheduleList = this.getprojectUserScheduleList(
             projectUserScheduleListTemp
           );
-          console.log(this.getprojectUserScheduleList(projectUserScheduleListTemp));
+          console.log("暂存的第三级---------",this.getprojectUserScheduleList(projectUserScheduleListTemp));
           // 暂存 之前的 计划负荷百分比，用于回显
           oneUser.planLoadTemp = oneUser.planLoad;
           setTimeout(() => {
@@ -2085,15 +2090,23 @@ export default {
             // 修改就插入原来的位置
             // 表格数据不变 塞入全量的列【每周计划负荷...】
             this.projectTable.projectUserList[this.nowIndex] = oneUser;
+            console.log(JSON.stringify(oneUser));
+            console.log(JSON.stringify( this.formData.projectUserList[this.nowIndex]));
             this.$set(this.projectTable.projectUserList,this.nowIndex,oneUser)
+            
+
+            
             // 所以 深拷贝了一个
             let oneUserTemp = this.deepClone(oneUser);
+            oneUserTemp.projectUserScheduleList =  this.formData.projectUserList[this.nowIndex].projectUserScheduleList
+            console.log("22222222222---------------"+JSON.stringify(oneUserTemp));
+
             // 提交数据改变，删除没用的周数 不要修改元数据，此处会有可能 触发 内存指针的问题
-            oneUserTemp.projectUserScheduleList = oneUserTemp.projectUserScheduleList.filter(
-              (el) => {
-                return el.isMe;
-              }
-            );
+            // oneUserTemp.projectUserScheduleList = oneUserTemp.projectUserScheduleList.filter(
+            //   (el) => {
+            //     return el.isMe;
+            //   }
+            // );
             this.formData.projectUserList[this.nowIndex] = oneUserTemp;
             // console.log(this.formData.projectUserList.length);
             // 新增代码块  end
