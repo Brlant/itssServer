@@ -58,6 +58,23 @@
             </div>
             <!-- </el-col>
         </el-row>         -->
+
+        <!-- 实时统计 -->
+        <div class="statistics" v-hasPermi="['threeInterface:gitlabAndTb:stat']">
+            <div class="time">
+                <b class="label">时间</b>
+                <el-date-picker
+                    v-model="times"
+                    value-format="yyyy-MM-dd"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                />
+            </div>
+            <el-button type="primary" :loading="loading" @click="onClick">统计</el-button>
+        </div>
+
         <!-- 部门效率 -->
         <div v-if="mangerJurisdiction">
             <div v-for="(item,index) in deptData" :key='index' class='table-style'>
@@ -168,7 +185,7 @@
 <script>
 import moment from "moment";
 import "moment/locale/zh-cn";
-import { departmentQuery,queryUserlist,userQuery } from '@/api/proManager/efficiencyStatistics.js'
+import { departmentQuery,queryUserlist,userQuery,statJob } from '@/api/proManager/efficiencyStatistics.js'
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -177,6 +194,8 @@ export default {
   components: { Treeselect },
     data(){
         return {
+            times: null,
+            loading: false,
             dateRange:'',//时间范围
             form:{
                 userId:null,
@@ -221,6 +240,25 @@ export default {
         this.defaultDate()
     },
     methods:{
+        // 实时统计
+        onClick() {
+            if (!this.times) {
+                return this.$message.warning('请选择时间范围')
+            }
+            this.loading = true
+            const params = {
+                startDate: this.times[0],
+                endDate: this.times[1]
+            }
+            statJob(params).then(res => {
+                this.loading = false
+                if (res.code === 200) {
+                    this.$message.success(res.msg)
+                }
+            }).catch(() => {
+                this.loading = false
+            })
+        },
         userInfoId(id){
             const obj = { path: "/system/user-auth/userInfo", query: { userId: id }};
             // getToday()
@@ -508,6 +546,21 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.statistics {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+    .time {
+        margin-right: 20px;
+        .label {
+            color: #606266;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+    }
+}
+
 .header{
         display: inline-block;
         height:37px;
