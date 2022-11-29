@@ -88,7 +88,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="7" :offset="1">
-            <el-form-item label="GitLab地址" prop="projectGitUrl">
+            <el-form-item label="GitLab项目Id" prop="projectGitUrl">
               {{ formData.projectGitUrl }}
             </el-form-item>
           </el-col>
