@@ -444,6 +444,7 @@ export default {
       this.realWorkActive = true;
 
       this.realFormData = { ...this.realFormData, ...row };
+      this.$refs['realForm'].resetFields()
     },
     /* 开启或者终止  项目详情 */
     toggleActive(index, row) {
