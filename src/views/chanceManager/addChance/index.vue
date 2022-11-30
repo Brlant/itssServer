@@ -196,7 +196,7 @@
         </el-row>
         <el-row>
         <el-col :span="18">
-          <el-form-item label="技能需求：" :prop="`chanceConfigList.${chanceConfigIndex}.skillIdList`" :rules="rules.chanceConfigItemSkillIdList" >
+          <el-form-item label="技能需求：" :prop="`chanceConfigList.${chanceConfigIndex}.skillIdList`"   >
             <el-select v-model="chanceConfigItem.skillIdList" multiple  placeholder="请选择技能需求"  @change="chageTextColor($event,'mySkillIdList')" ref="mySkillIdList"
             :disabled="chanceConfigItem.nextActive"    :style="{width: '100%',}" >
               <el-option v-for="(dict, index) in techniqueOptions"  

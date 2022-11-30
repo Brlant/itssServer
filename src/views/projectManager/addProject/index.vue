@@ -362,7 +362,7 @@
               <el-form-item
                 label="技能需求："
                 :prop="`projectUserList.${addUserListindex}.skillIdList`"
-                :rules="rules.addUserListSkillIdList"
+               
               >
                 <el-select
                   v-model="addUserList.skillIdList"

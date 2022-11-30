@@ -413,7 +413,7 @@
                 <el-form-item
                   label="技能需求："
                   :prop="`chanceConfigList.${chanceConfigIndex}.skillIdList`"
-                  :rules="rules.chanceConfigItemSkillIdList"
+                  
                 >
                   <el-select
                     v-model="chanceConfigItem.skillIdList"
