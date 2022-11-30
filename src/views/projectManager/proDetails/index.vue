@@ -288,7 +288,7 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="实际负荷2" min-width="130" align="center">
+          <el-table-column label="实际负荷" min-width="130" align="center">
             <template slot-scope="{ row }">
               <span :class="['loadType' + row.projectUserScheduleList[m].loadType]">
                 {{
@@ -1868,6 +1868,7 @@ export default {
               console.log(
                 `你好，我是第（${index})条资源配置，我的成本是 +${oneUser.costNum}`
               );
+              console.log("我是修改的----",oneUser);
               this.addEditFormData.projectUserList.push(oneUser);
               this.$forceUpdate();
               //因为后台对于生成的三级数据没有id
@@ -2039,10 +2040,12 @@ export default {
           oneUser.realCost = 0;
           oneUser.loadType = 0;
           // 补全剩余列 使其正常显示不报错
+          console.log("暂存的第三级1---------",projectUserScheduleListTemp);
+
           oneUser.projectUserScheduleList = this.getprojectUserScheduleList(
             projectUserScheduleListTemp
           );
-          console.log("暂存的第三级---------",this.getprojectUserScheduleList(projectUserScheduleListTemp));
+          console.log("暂存的第三级2---------",this.getprojectUserScheduleList(projectUserScheduleListTemp));
           // 暂存 之前的 计划负荷百分比，用于回显
           oneUser.planLoadTemp = oneUser.planLoad;
           setTimeout(() => {
@@ -2207,7 +2210,7 @@ export default {
       let allweekArr = this.deepClone(this.allWeekArrTemp.list);
       // console.log("------------getprojectUserScheduleList------------");
       // console.log(allweekArr);
-      // console.log(dates);
+      console.log("getprojectUserScheduleList1----",dates);
 
       allweekArr.map((allitem, i) => {
         // 外层其他的列都给0
@@ -2217,7 +2220,10 @@ export default {
         allitem.planLoadWorkDayCh = 0;
         // delete allitem.isMe
         dates.map((checkItem) => {
-          if (checkItem.year == allitem.year && checkItem.week == allitem.week) {
+          // if (checkItem.year == allitem.year && checkItem.week == allitem.week) {
+          if (checkItem.week == allitem.week) {
+                console.log("getprojectUserScheduleList2----",checkItem);
+
             // console.log(checkItem.workDay);
             this.allWeekArrTemp.realDay += parseFloat(checkItem.workDay);
 
@@ -2225,13 +2231,17 @@ export default {
             checkItem.isMe = true;
             checkItem.realLoadCh = 0;
             checkItem.realLoadWorkDayCh = 0;
+            console.log(checkItem.planLoad,checkItem.workDay);
             checkItem.planLoadCh = checkItem.planLoad;
             checkItem.planLoadWorkDayCh = checkItem.workDay;
             allweekArr[i] = checkItem;
+          }else{
+            console.log("没进去");
+            // console.log(checkItem.year +"---"+ allitem.year , checkItem.week +"---"+ allitem.week);
           }
         });
       });
-      // console.log(allweekArr);
+      console.log("getprojectUserScheduleList3----",allweekArr);
       return allweekArr;
     },
     // 清除 点击暂存之后的，选中

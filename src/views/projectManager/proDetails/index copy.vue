@@ -2147,7 +2147,7 @@ export default {
       let allweekArr = this.deepClone(this.allWeekArrTemp.list)
             // console.log("------------getprojectUserScheduleList------------");
             // console.log(allweekArr);
-            // console.log(dates);
+            console.log(dates);
 
       allweekArr.map((allitem,i)=>{
         // 外层其他的列都给0
