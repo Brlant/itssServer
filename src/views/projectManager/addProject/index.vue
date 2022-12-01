@@ -1251,10 +1251,12 @@ export default {
     //     this.postIdOptions = res.data; // 需要根据已经选择的人 来过滤
     //   });
     // },
-    /* 查询是项目主管的用户列表 */
+    /* 查询是项目主管的用户列表 
+    * 2022.12.1 产品要求修改成全部人员
+    */
     queryUserlistByRole() {
       let data = {};
-      queryUserlistByRole(data).then((res) => {
+      queryUserlist(data).then((res) => { // 2022.12.1 产品要求修改成全部人员
         // 此接口不对
         // res.data.map((item) => {
         //   item.userNameAndPost = item.nickName + "（" + item.postName + "）";
