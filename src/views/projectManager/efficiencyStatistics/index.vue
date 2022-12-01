@@ -26,7 +26,7 @@
 
             <el-col :span='11'> -->
 
-                <div style="font-size:16px;color:#666666;width:50%"  v-if='mangerJurisdiction'>
+                <div style="font-size:16px;color:#666666;width:50%"  v-hasPermi="['efficiencyStatistics:stat:dept', 'efficiencyStatistics:stat:all']">
                     <el-form ref="form" :model="form" label-width="20%">
                         <el-row >
                             <el-col :span="12">
@@ -46,7 +46,7 @@
                     </el-form>
 
                 </div>
-                <div  v-if='selfJurisdiction' style="font-size:16px;color:#666666;width:30%">
+                <div  v-if='selfJurisdiction1' style="font-size:16px;color:#666666;width:30%">
                          <el-form  inline>
                           <el-form-item label="人员" prop="userId" width='20%'>
                                     <el-select v-model="form.userId"  size="medium"  placeholder="请选择人员" filterable clearable  @change='searchUser'>
@@ -223,13 +223,15 @@ export default {
     },
     created(){
         console.log(this.$store.state.user.user.userId)
-        this.queryUser()
-        this.getDeptTree()
+        
         // this.drillDowm=this.isJurisdiction('common') ? false : true
         // this.selfJurisdiction=this.isJurisdiction('common')
         // this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')
         // permissions   是否包含  workloadStatistics:stat:all  或 workloadStatistics:stat:dept
-         if(this.isJurisdiction('workloadStatistics:stat:all') || this.isJurisdiction('workloadStatistics:stat:dept')){
+         if(this.isJurisdiction('efficiencyStatistics:stat:all') || this.isJurisdiction('efficiencyStatistics:stat:dept')){
+            // 可查询部门成员或全部人员
+            this.queryUser()
+            this.getDeptTree()
             this.mangerJurisdiction=true
             this.drillDowm=true
         }else if(this.isJurisdiction('efficiencyStatistics:stat:self')){
