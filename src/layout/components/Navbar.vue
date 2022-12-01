@@ -74,7 +74,7 @@ export default {
     },
     userName(){
       const userInfo = JSON.parse(window.localStorage.getItem("user"))?JSON.parse(window.localStorage.getItem("user")):[]
-      console.log(userInfo)
+      //console.log(userInfo)
       return userInfo.userName;
     }
   },
