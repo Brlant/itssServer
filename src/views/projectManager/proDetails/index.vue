@@ -2088,8 +2088,7 @@ export default {
                 console.log("update-------无id");
             }
             // 我是 有id 说明是后台的数据
-            // 因为新增暂存的数据 也可以修改，但是没有id
-            this.isUpdateActive = true; // 点击了暂存了 立即隐藏编辑 终止 和展示提交审核???
+           
             // 修改就插入原来的位置
             // 表格数据不变 塞入全量的列【每周计划负荷...】
             this.projectTable.projectUserList[this.nowIndex] = oneUser;
@@ -2115,6 +2114,8 @@ export default {
             // 新增代码块  end
             this.$forceUpdate();
           }
+           // 因为新增暂存的数据 也可以修改，但是没有id
+            this.isUpdateActive = true; // 点击了暂存了 立即隐藏编辑 终止 和展示提交审核???
           // 显示详情
           this.detailUserActive = false;
           // 隐藏 编辑
