@@ -271,11 +271,11 @@ export default {
                 val.forEach(v=>{
                     value.push(moment(v).format('YYYY/MM/DD'))
             })
-            if(value[0]==value[1]){
-                    this.dateRange=''
-            }else{
+            // if(value[0]==value[1]){
+            //         this.dateRange=''
+            // }else{
                 this.dateRange=`${value[0]}-${value[1]}`
-            }
+            // }
             this.beginDate=moment(val[0]).format('YYYY-MM-DD')
             this.endDate=moment(val[1]).format('YYYY-MM-DD')
             if(this.mangerJurisdiction){            
