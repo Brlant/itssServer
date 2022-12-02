@@ -118,7 +118,7 @@
                         </el-table-column>
                         <el-table-column label="出产问题率" align="center">
                             <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[indexs].errorRate}}</span>
+                                <span>{{scope.row.monthEfficiencyList[indexs].errorRate}}‰</span>
                             </template>
                         </el-table-column>
                     </el-table-column>
@@ -171,7 +171,7 @@
                         </el-table-column>
                         <el-table-column label="出产问题率" align="center">
                             <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[indexs].errorRate}}</span>
+                                <span>{{scope.row.monthEfficiencyList[indexs].errorRate}}‰</span>
                             </template>
                         </el-table-column>
                     </el-table-column>
@@ -256,6 +256,17 @@ export default {
                 this.loading = false
                 if (res.code === 200) {
                     this.$message.success(res.msg)
+                    if(this.mangerJurisdiction){
+                        this.queryTable()
+                        // this.queryTablehasYieldNum()
+                    }else if(this.selfJurisdiction && this.drillDowm){
+
+                        this.userId=this.form.userId
+                        this.queryTableBySelf()
+                    }else{
+                        this.userId=this.userInfo.userId
+                        this.queryTableBySelf()
+                    }
                 }
             }).catch(() => {
                 this.loading = false

@@ -222,7 +222,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="jdSchedule" label="进度偏差" width="130">
-          <template slot-scope="scope"> {{ scope.row.jdSchedule }} </template>
+          <template slot-scope="scope"> {{ scope.row.jdSchedule }}% </template>
         </el-table-column>
 
         <el-table-column label="操作" width="120" fixed="right">
