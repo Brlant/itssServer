@@ -1,6 +1,25 @@
 import request from '@/utils/request'
 import { parseStrEmpty } from "@/utils/ruoyi";
 
+// 导出excel 
+// exportTakeStockExcelFile(params: any) {
+//   params.pageNum = 1;
+//   params.pageSize = 0;
+//   return http({
+//       method: 'get',
+//       url: '/asset/inventory/excelStock',
+//       responseType: 'blob',
+//       params: params
+//   })
+// },
+export function exportExcel(data) {
+  return request({
+    url: '/projectManage/project/export',
+    method: 'post',
+    responseType: 'blob',
+    data: data
+  })
+}
 // 查询时间区间内的 工时具体
 export function getTimeProcess(data) {
   return request({

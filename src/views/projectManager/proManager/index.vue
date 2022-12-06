@@ -11,7 +11,7 @@
             >
           </el-button>
 
-          <el-button size="mini" @click="exportExcel" type="success">导出Excel</el-button>
+          <el-button size="mini" @click="exportExcelHandel" type="success">导出Excel</el-button>
         </div>
       </div>
 
@@ -285,11 +285,13 @@
   </div>
 </template>
 <script>
+import moment from "moment";
+import "moment/locale/zh-cn";
 import {
   queryDict,
   searchProjectList,
   updateProjectById,
-  updateProjectStatus,
+  updateProjectStatus,exportExcel,
 } from "@/api/proManager/proManager";
 import { getMonthStartEnd ,getToday} from "@/utils/index";
 export default {
@@ -407,9 +409,42 @@ export default {
     // console.log(getToday()+"--------");
   },
   methods: {
-    exportExcel(){
-
+    // 导出
+    exportExcelHandel(){
+      if(this.searchForm.projectStartEndTime){
+         // if(this.searchForm.projectStartEndTime&&this.searchForm.projectStartEndTime.length>0){
+         this.searchForm.projectStartTime = this.searchForm.projectStartEndTime[0];
+         this.searchForm.projectEndTime = this.searchForm.projectStartEndTime[1];
+       }else{
+         this.searchForm.projectStartTime = "";
+         this.searchForm.projectEndTime = "";
+       }
+       let params ={
+        ...this.searchForm
+       }
+         exportExcel(params).then((res) => {
+          console.log(res);
+            let blob = new Blob([res], {
+              // type:"application/vnd.ms-excel",
+                type: "application/octet-stream;charset=UTF-8",
+            });
+            console.log(blob);
+            let timeString =  moment().format("YYYYMMDDhhmmss");
+            const fileName = `项目管理${timeString}.xlsx` // 下载文件名称
+            const elink = document.createElement('a')
+            elink.download = fileName
+            elink.style.display = 'none'
+            elink.href = URL.createObjectURL(blob)
+            document.body.appendChild(elink)
+            elink.click()
+            URL.revokeObjectURL(elink.href) // 释放URL 对象
+            document.body.removeChild(elink)
+          this.$message.success("导出成功！");
+         
+        });
+        // /projectManage/project/export
     },
+ 
     handleEdit(e) {
       // 只允许输入数字+小数点，小数点后2位，且保证小数点不能为第一位
      let checkPlan = '' + this.realFormData.realWork

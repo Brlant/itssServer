@@ -235,6 +235,13 @@
             }}</span>
           </template>
         </el-table-column>
+        <el-table-column prop="deptName" label="岗位名称" width="120" fixed="left">
+          <template slot-scope="scope">
+            <span :class="[scope.row.deptName == '无' ? '' : 'priority3']">{{
+              scope.row.deptName ? scope.row.deptName : "无"
+            }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="planLoad" label="计划负荷" width="130" fixed="left">
           <template slot-scope="scope">
             {{ scope.row.planLoad + "%" }}
