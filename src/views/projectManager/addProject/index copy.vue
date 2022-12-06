@@ -110,7 +110,7 @@
               <el-select
                 v-model="formData.projectUserId"
                 placeholder="请选择项目负责人"
-                clearable filterable
+                clearable
                 :style="{ width: '100%' }"
               >
                 <el-option
@@ -235,11 +235,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="10" :offset="1">
-            <el-form-item label="成本上限" prop="costUp">
-                <el-input-number v-model="formData.costUp" placeholder="请输入成本上限" :precision='2'></el-input-number>
-            </el-form-item>
-          </el-col>
+       
         </el-row>
       </div>
       <div class="titleBar">
@@ -508,7 +504,7 @@ import moment from "moment";
 import "moment/locale/zh-cn";
 
 export default {
-  name:"AddProject",
+  name:"AddProjectCopy",
   data() {
     const check = (rule, value, callback) => {
       if (!value) {
@@ -698,14 +694,7 @@ export default {
             trigger: "change",
           },
         ],
-        costUp: [
-          {
-            required: true,
-            message: "成本上限不能为空",
-            trigger: "change",
-          },
-        ],
-        
+
       },
       // // 单独的 用户列表
       projectUserList: {
@@ -935,26 +924,7 @@ export default {
             console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.formData.projectUserList[index].costNum}`);
-          let isUpdate = this.formData.projectUserList[index].projectUserScheduleList.some(item=>{
-            // 只要里面有一项大于0 就证明编辑过，编辑过就 直接计算 成本即可
-            return item.planLoad>0
-          })
-          
-          if(isUpdate){
-            // 我是被人编辑过的 计划符合 直接计算 成本就好
-            if (this.formData.projectUserList[index].costNum==null||this.formData.projectUserList[index].costNum==undefined) {
-              this.formData.projectUserList[index].expectedCost = "--";
-            } else {
-              this.formData.projectUserList[index].expectedCost = this.autoFixed(
-                // 预计成本
-                this.formData.projectUserList[index].workDay * this.formData.projectUserList[index].costNum
-              );
-            }
-          }else{
-            // 我是没被编辑过的
-            this.constAll(this.formData.projectUserList[index].startEndTime, index,'update');
-          }
-
+          this.constAll(this.formData.projectUserList[index].startEndTime, index,'update');
 
           break;
       }
@@ -1012,15 +982,9 @@ export default {
         ); //计划负荷 == 实际人日/计划的人日 *100%
       }
       console.log(totalDay, this.formData.projectUserList[fatherIndex].costNum);
-      if(!this.formData.projectUserList[fatherIndex].costNum){
-        // 如果没有成本
-        // 则设置预计成本为"--"
-        this.formData.projectUserList[fatherIndex].expectedCost ="--"
-      }else{
-        this.formData.projectUserList[fatherIndex].expectedCost = this.autoFixed(
-          totalDay * this.formData.projectUserList[fatherIndex].costNum
-        ); /**预计成本*/
-      }
+      this.formData.projectUserList[fatherIndex].expectedCost = this.autoFixed(
+        totalDay * this.formData.projectUserList[fatherIndex].costNum
+      ); /**预计成本*/
 
       /*----------------以上是 总计的安排的具体计算-------------------*/
     },
@@ -1037,13 +1001,9 @@ export default {
         if (res.data.day === 0) {
           this.formData.projectUserList[index].planLoad = 0;
         } else {
-            if(action=='add'){
-              this.formData.projectUserList[index].planLoad =0
-            }else{
-              this.formData.projectUserList[index].planLoad = this.autoFixed(
-                ((8 * res.data.day) / (res.data.day * 8)) * 100
-              ); // 计划负荷
-            }
+          this.formData.projectUserList[index].planLoad = this.autoFixed(
+            ((8 * res.data.day) / (res.data.day * 8)) * 100
+          ); // 计划负荷
         }
         if (this.formData.projectUserList[index].costNum==null||this.formData.projectUserList[index].costNum==undefined) {
           this.formData.projectUserList[index].expectedCost = "--";
@@ -1061,15 +1021,13 @@ export default {
         res.data.list.map((item) => {
           item.startTime = item.startDate;
           item.endTime = item.endDate;
+          item.workTime = item.weekDay != 0 ? "8" : 0; // 内部的每周时长
+          item.workDay = item.weekDay; // 内部的每周人日
           // 期间计划负荷 =  每周工作日*8 除以 每周工作日*8 再乘以100 
           // 有时候 因为
           if(action=='add'){
-            item.workTime = 0; // 内部的每周时长
-            item.workDay = 0; // 内部的每周人日
              item.planLoad =0
           }else{
-            item.workTime = item.weekDay != 0 ? "8" : 0; // 内部的每周时长
-            item.workDay = item.weekDay; // 内部的每周人日
             item.planLoad = this.autoFixed(
               ((item.weekDay * 8) / (item.weekDay * 8)) * 100 || 0
             );

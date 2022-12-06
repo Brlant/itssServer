@@ -11,7 +11,7 @@
             >
           </el-button>
 
-          <!-- <el-button size="mini" type="success">导出Excel</el-button> -->
+          <el-button size="mini" @click="exportExcel" type="success">导出Excel</el-button>
         </div>
       </div>
 
@@ -114,6 +114,7 @@
         border
         style="width: 100%"
         max-height="650"
+         :row-class-name="rowStyle"
       >
         <el-table-column
           prop="projectName"
@@ -169,6 +170,11 @@
             {{ scope.row.ysCost || scope.row.ysCost==0 ? moneyFormat(scope.row.ysCost) : ''}}
           </template>
         </el-table-column>
+         <el-table-column prop="costUp" label="成本上限" width="120">
+          <template slot-scope="scope">
+            {{ scope.row.costUp || scope.row.costUp==0 ? moneyFormat(scope.row.costUp) : ''}}
+          </template>
+        </el-table-column>
 
         <el-table-column prop="jhConfig" label="计划配置已用" width="130">
           <template slot-scope="scope"> {{ scope.row.jhConfig }}人日 </template>
@@ -211,7 +217,6 @@
              <span :class="['piancha' + scope.row.pianchaActive]" v-if='scope.row.pianchaActive == 2'>
               {{
                 scope.row.ysDeviation ||  scope.row.ysDeviation ==0 ? "-" + moneyFormat(scope.row.ysDeviation) : ''
-                 
               }}
             </span>
              <span :class="['piancha' + scope.row.pianchaActive]" v-else>
@@ -288,6 +293,7 @@ import {
 } from "@/api/proManager/proManager";
 import { getMonthStartEnd ,getToday} from "@/utils/index";
 export default {
+  name:"ProManager",
   data() {
     let startDate = ''//getMonthStartEnd("start");
     let endDate = ''//getMonthStartEnd("endD");
@@ -401,6 +407,9 @@ export default {
     // console.log(getToday()+"--------");
   },
   methods: {
+    exportExcel(){
+
+    },
     handleEdit(e) {
       // 只允许输入数字+小数点，小数点后2位，且保证小数点不能为第一位
      let checkPlan = '' + this.realFormData.realWork
@@ -492,6 +501,14 @@ export default {
         // }
       });
     },
+   // 给某一行添加背景色class
+    rowStyle({ row, rowIndex }) {
+      if(row.isYellow){
+        return 'isYellow'
+      }else{
+        return ''
+      }
+    },
     init() {
       // let params = this.clearNullParam({ ...this.searchParame });
       if(this.searchForm.projectStartEndTime){
@@ -504,6 +521,14 @@ export default {
       }
       searchProjectList(this.searchForm).then((res) => {
         let { msg } = res;
+        // 添加额外的字段，用于展示 预算偏差or 进度偏差是否小于0
+        res.data.map(item=>{
+          // jdSchedule    ysDeviation
+          item.isYellow = false // 默认没有蓝色
+          if(item.jdSchedule<0||item.ysDeviation<0){
+            item.isYellow =true // 小于才给蓝色
+          }
+        })
         this.tableData = res.data;
         // this.$message.success(msg);
       });
@@ -655,8 +680,27 @@ export default {
 
 
   }
+
 </style>
+<style>
+ .isYellow{
+  background-color:'#FAFAC8'
+  }
+/***加上这个可以去掉table的hover效果***/
+/* .el-table--striped .el-table__body tr.el-table__row--striped.current-row td,
+.el-table__body tr.current-row > td,
+.el-table__body tr.hover-row.current-row > td,
+.el-table__body tr.hover-row.el-table__row--striped.current-row > td,
+.el-table__body tr.hover-row.el-table__row--striped > td,
+.el-table__body tr.hover-row > td {
+  background-color: #FAFAC8 !important;
+} */
+</style>
+
 <style lang="scss">
+  .isYellow{
+  background-color:#FAFAC8 !important
+  }
 .app-containers{
    thead>:first-child  .is-sortable{
     background:#E8E8F4!important;

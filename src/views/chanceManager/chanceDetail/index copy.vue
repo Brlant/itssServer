@@ -676,6 +676,7 @@ import { queryUserlist } from "@/api/system/user";
 
 import followIcon from "@/assets/images/followIcon.png";
 export default {
+  name:"ChanceDetailCopy",
   data() {
     return {
       childDateArea: {

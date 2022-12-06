@@ -364,8 +364,8 @@ export const dynamicRoutes = [
       {
         path: 'addProject',
         component: () => import('@/views/projectManager/addProject'),
-        name: 'addProject',
-        meta: { title: '新建项目' }
+        name: 'AddProject',
+        meta: { title: '新建项目',noCache:false  }
       }
     ]
   },
@@ -378,8 +378,8 @@ export const dynamicRoutes = [
       {
         path: 'proDetails',
         component: () => import('@/views/projectManager/proDetails'),
-        name: 'proDetails',
-        meta: { title: '项目详情' }
+        name: 'ProDetails',
+        meta: { title: '项目详情',noCache:false  }
       }
     ]
   },
@@ -392,15 +392,11 @@ export const dynamicRoutes = [
       {
         path: 'proEdit',
         component: () => import('@/views/projectManager/proEdit'),
-        name: 'proEdit',
-        meta: { title: '编辑项目' }
+        name: 'ProEdit',
+        meta: { title: '编辑项目',noCache:false  }
       }
     ]
   },
-
-
-
-
   {
     path: '/chanceManager/chanceManager-auth',
     component: Layout,
@@ -410,8 +406,8 @@ export const dynamicRoutes = [
       {
         path: 'addChance',
         component: () => import('@/views/chanceManager/addChance'),
-        name: 'addChance',
-        meta: { title: '新建机会' }
+        name: 'AddChance',
+        meta: { title: '新建机会',noCache:false  }
       }
     ]
   },
@@ -424,8 +420,8 @@ export const dynamicRoutes = [
       {
         path: 'chanceDetails',
         component: () => import('@/views/chanceManager/chanceDetail'),
-        name: 'chanceDetails',
-        meta: { title: '机会详情' }
+        name: 'ChanceDetails',
+        meta: { title: '机会详情',noCache:false }
       }
     ]
   },
@@ -438,8 +434,8 @@ export const dynamicRoutes = [
       {
         path: 'chanceEdit',
         component: () => import('@/views/chanceManager/chanceEdit'),
-        name: 'chanceEdit',
-        meta: { title: '编辑机会' }
+        name: 'ChanceEdit',
+        meta: { title: '编辑机会',noCache:false  }
       }
     ]
   },

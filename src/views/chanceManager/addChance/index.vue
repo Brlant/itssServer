@@ -336,6 +336,7 @@ import {
   queryUserlist
 } from "@/api/system/user";
 export default {
+  name:"AddChance",
   data() {
     return {
       childDateArea:{

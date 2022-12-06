@@ -507,6 +507,7 @@ import { getToday } from "@/utils/index";
 import moment from "moment";
 import "moment/locale/zh-cn";
 export default {
+  name:"ProEdit",
   data() {
     const check = (rule, value, callback) => {
       if (!value) {

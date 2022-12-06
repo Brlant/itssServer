@@ -257,6 +257,7 @@ import {
 } from "@/api/proManager/proManager";
 import { getMonthStartEnd ,getToday} from "@/utils/index";
 export default {
+  name:"TeamDetail",
   data() {
     let startDate = ''//getMonthStartEnd("start");
     let endDate = ''//getMonthStartEnd("endD");

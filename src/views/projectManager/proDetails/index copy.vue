@@ -919,7 +919,7 @@ import {
 } from "@/api/proManager/proManager";
 import Vue from "vue";
 export default {
-  name: "ProDetail",
+  name: "ProDetailCopy",
   components: {},
   props: {},
   data: () => ({

@@ -89,6 +89,7 @@
 import { teamedit, queryUserlist } from "@/api/proManager/teamMange";
 
 export default {
+  name:"EditTeam",
   data() {
     return {
       childDateArea: {

@@ -229,6 +229,7 @@
 <script>
 import { teamQuery, deleteTeam } from "@/api/proManager/teamMange";
 export default {
+  name:"ProjectTeam",
   data() {
     let startDate = ""; //getMonthStartEnd("start");
     let endDate = ""; //getMonthStartEnd("endD");

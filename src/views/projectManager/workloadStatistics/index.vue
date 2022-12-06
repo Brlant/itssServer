@@ -169,6 +169,7 @@ import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   components: { Treeselect },
+   name:"WorkloadStatistics",
     data(){
         return {
             dateRange:'',//时间范围

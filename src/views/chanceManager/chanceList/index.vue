@@ -101,6 +101,7 @@ import {
   queryDict 
 } from "@/api/chanceManager/chanceManager";
 export default {
+  name:"ChanceList",
   data() {
     return {
       countScope:"",// 统计范围

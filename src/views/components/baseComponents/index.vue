@@ -341,6 +341,7 @@ import {
 } from "@/api/proManager/proManager";
 
 export default {
+  name:"BaseComponents",
   data() {
     return {
       childDateArea: {

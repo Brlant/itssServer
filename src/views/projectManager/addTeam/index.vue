@@ -89,6 +89,7 @@
 import { teamAdd, queryUserlist } from "@/api/proManager/teamMange";
 
 export default {
+  name:"AddTeam",
   data() {
     return {
       childDateArea: {

@@ -12,6 +12,7 @@ import {
   queryDict 
 } from "@/api/chanceManager/chanceManager";
 export default {
+  name:"ChanceTestEasy",
   data() {
     return {
       nextEdit:false,

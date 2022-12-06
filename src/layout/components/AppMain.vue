@@ -19,6 +19,7 @@ export default {
   components: { iframeToggle },
   computed: {
     cachedViews() {
+      console.log("cachedViews",this.$store.state.tagsView.cachedViews);
       return this.$store.state.tagsView.cachedViews
     },
     key() {
