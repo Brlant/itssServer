@@ -464,13 +464,13 @@ export function isProjectByUser(projectInfo){
   // console.log(projectInfo);
   let result = false
   const userInfo = JSON.parse(window.localStorage.getItem("user"))?JSON.parse(window.localStorage.getItem("user")):[]
-  if(userInfo.userId == 1){
-    // 是管理员
-    return true;
-  }
-  // 预先判断这个人是不是 项目主管
-
-    // 项目主管
+  // if(userInfo.userId == 1){ 20221206 产品需求要求去掉 超管的这个权限 by 欢龙
+  //   // 是管理员
+  //   return true;
+  // }
+    // 预先判断这个人是不是 项目主管
+    // 注意现在的项目负责人 可以是所有人，不需要必须是项目主管了
+    // 项目主管&项目负责人
     if(userInfo.userId == projectInfo.projectUserId){
        result = true
     }

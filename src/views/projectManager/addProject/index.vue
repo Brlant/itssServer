@@ -701,7 +701,7 @@ export default {
         costUp: [
           {
             required: true,
-            message: "成本上限不能为空",
+            message: "成本上限不能为空", //内容格式有误，请重新填写
             trigger: "change",
           },
         ],

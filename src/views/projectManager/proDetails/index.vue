@@ -15,7 +15,7 @@
         <div class="rightLink" v-show="isProjectByUser(formData)">
           <!-- v-show="isProjectByUser(formData) || isJurisdiction('admin')" -->
           <span
-            v-hasPermi="['projectManager:proManager:handle']"
+            
             @click="goEditPage"
             style="cursor: pointer"
             v-show="isShowActive == 0 && !isUpdateActive"
@@ -25,7 +25,7 @@
           >
 
           <span
-            v-hasPermi="['projectManager:proManager:handle']"
+            
             @click="stopProject"
             style="cursor: pointer"
             v-show="isShowActive == 0 && !isUpdateActive"
@@ -126,7 +126,7 @@
             <div class="zhanwei"></div>
             <div v-show="isShowActive == 0">
               <el-button
-                v-show="isProjectByUser(formData) || isJurisdiction('admin')"
+                v-show="isProjectByUser(formData)"
                 v-if=""
                 size="mini"
                 type="text"
@@ -235,10 +235,10 @@
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="deptName" label="岗位名称" width="120" fixed="left">
+        <el-table-column prop="postName" label="岗位名称" width="120" fixed="left">
           <template slot-scope="scope">
-            <span :class="[scope.row.deptName == '无' ? '' : 'priority3']">{{
-              scope.row.deptName ? scope.row.deptName : "无"
+            <span :class="[scope.row.postName == '无' ? '' : 'priority3']">{{
+              scope.row.postName ? scope.row.postName : "--"
             }}</span>
           </template>
         </el-table-column>
@@ -314,11 +314,7 @@
           label="操作"
           width="120"
           fixed="right"
-          v-if="
-            isProjectByUser(formData) &&
-            isJurisdiction('projectManager:proManager:handle')
-          "
-        >
+          v-if="isProjectByUser(formData)">
           <!-- v-if="isProjectByUser(formData) || isJurisdiction('admin')"  // 暂时注释掉 是否为项目拥有者和超管 -->
           <template slot-scope="scope">
             <!-- @click.native.prevent="detailProject(scope.$index, scope.row)" -->
