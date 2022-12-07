@@ -175,14 +175,15 @@ export default {
     },
     backDetail() {
       // this.userList();
-       this.$confirm(`当前页面修改内容尚未保存，是否确认退出？`, "温馨提示", {
+        this.$confirm(`确定返回列表页？`, "温馨提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          // this.$refs["elForm"].resetFields();
-             this.$router.go(-1)
+         // this.$refs["elForm"].resetFields();
+          const obj = { path: "/projectManager/projectTeam" };
+      this.$tab.closeOpenPage(obj);
         })
         .catch(() => {});
     },

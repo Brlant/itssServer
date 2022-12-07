@@ -1339,15 +1339,17 @@ export default {
         });
       }
     },
-    // 取消重置表单的
+    // 取消 修改为返回上一页。不重置表单了
     resetForm() {
-      this.$confirm(`此操作会重置本页面所有填写的内容!`, "温馨提示", {
+      this.$confirm(`确定返回列表页？`, "温馨提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          this.$refs["elForm"].resetFields();
+           const obj = { path: "/projectManager/proManager" };
+              this.$tab.closeOpenPage(obj);
+              // this.$refs["elForm"].resetFields();
         })
         .catch(() => {});
     },
