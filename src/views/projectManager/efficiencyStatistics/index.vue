@@ -29,16 +29,22 @@
                 <div style="font-size:16px;color:#666666;width:50%"  v-hasPermi="['efficiencyStatistics:stat:dept', 'efficiencyStatistics:stat:all']">
                     <el-form ref="form" :model="form" label-width="20%">
                         <el-row >
-                            <el-col :span="12">
+                            <el-col :span="10">
                                 <el-form-item label="人员" prop="userId"  width='30%'>
                                     <el-select v-model="form.userId"  size="medium"  placeholder="请选择人员" filterable clearable  @change='searchUser'>
                                         <el-option v-for='(item) in users' :key='item.userId' :value='item.userId' :label='item.nickName'></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="12">
+                            <el-col :span="10">
                                 <el-form-item label="部门" prop="deptId" width='30%'>
                                     <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择部门" @input='searchDept'  @change='searchDept'/>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="4" >
+                                <el-form-item label="" align="center" justify="center">
+                                 <!-- -->
+                                 <el-button size="mini" @click="exportExcelHandel" type="success">导出Excel</el-button>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -46,7 +52,7 @@
                     </el-form>
 
                 </div>
-                <div  v-if='selfJurisdiction1' style="font-size:16px;color:#666666;width:30%">
+                <div  v-if='selfJurisdiction' style="font-size:16px;color:#666666;width:30%">
                          <el-form  inline>
                           <el-form-item label="人员" prop="userId" width='20%'>
                                     <el-select v-model="form.userId"  size="medium"  placeholder="请选择人员" filterable clearable  @change='searchUser'>
@@ -243,6 +249,41 @@ export default {
         this.defaultDate()
     },
     methods:{
+        // 导出
+    exportExcelHandel(){
+    //   if(this.searchForm.projectStartEndTime){
+    //      // if(this.searchForm.projectStartEndTime&&this.searchForm.projectStartEndTime.length>0){
+    //      this.searchForm.projectStartTime = this.searchForm.projectStartEndTime[0];
+    //      this.searchForm.projectEndTime = this.searchForm.projectStartEndTime[1];
+    //    }else{
+    //      this.searchForm.projectStartTime = "";
+    //      this.searchForm.projectEndTime = "";
+    //    }
+    //    let params ={
+    //     ...this.searchForm
+    //    }
+    //      exportExcel(params).then((res) => {
+    //       console.log(res);
+    //         let blob = new Blob([res], {
+    //           // type:"application/vnd.ms-excel",
+    //             type: "application/octet-stream;charset=UTF-8",
+    //         });
+    //         console.log(blob);
+    //         let timeString =  moment().format("YYYYMMDDhhmmss");
+    //         const fileName = `项目管理${timeString}.xlsx` // 下载文件名称
+    //         const elink = document.createElement('a')
+    //         elink.download = fileName
+    //         elink.style.display = 'none'
+    //         elink.href = URL.createObjectURL(blob)
+    //         document.body.appendChild(elink)
+    //         elink.click()
+    //         URL.revokeObjectURL(elink.href) // 释放URL 对象
+    //         document.body.removeChild(elink)
+    //       this.$message.success("导出成功！");
+         
+    //     });
+        // /projectManage/project/export
+    },
         // 实时统计
         onClick() {
             if (!this.times) {

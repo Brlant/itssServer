@@ -20,7 +20,7 @@ import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
 import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, handleTree,handleTree2 } from "@/utils/ruoyi";
 
-import { deepClone,clearNullParam,isJurisdiction ,moneyFormat,isProjectByUser,date2Number,addClass,addClassName,autoFixed} from "@/utils/index";
+import { deepClone,clearNullParam,isJurisdiction ,moneyFormat,isProjectByUser,date2Number,addClass,addClassName,autoFixed,formatAmount} from "@/utils/index";
 
 // 分页组件
 import Pagination from "@/components/Pagination";
@@ -62,6 +62,7 @@ Vue.prototype.addClass = addClass
 Vue.prototype.date2Number = date2Number
 Vue.prototype.isJurisdiction = isJurisdiction
 Vue.prototype.moneyFormat=moneyFormat
+Vue.prototype.formatAmount=formatAmount
 Vue.prototype.isProjectByUser = isProjectByUser
 Vue.prototype.clearNullParam = clearNullParam
 Vue.prototype.deepClone = deepClone

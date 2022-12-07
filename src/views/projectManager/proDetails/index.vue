@@ -190,7 +190,7 @@
               size="mini"
               type="primary"
               v-show="isShowActive == 0 && isUpdateActive"
-              @click="goAudit"
+              @click="auditMsgVisible=true"
               >提交审核</el-button
             >
             <el-button
@@ -913,6 +913,19 @@
         </el-table-column>
       </el-table>
     </div>
+    <!-- 提交审核的备注提示框 -->
+    <el-dialog title="提交审核" :visible.sync="auditMsgVisible">
+      <el-form :model="formData" style="width: 90%;">
+        <el-form-item label="备注信息" >
+            <el-input type="textarea" v-model="formData.remark"></el-input>
+        </el-form-item>
+       
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="auditMsgVisible = false">取 消</el-button>
+        <el-button type="primary" @click="goAudit">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -942,6 +955,7 @@ export default {
   components: {},
   props: {},
   data: () => ({
+    auditMsgVisible:false,// 提交审核的弹出层
     addUserActive: false, // 新增情况下，点击暂存禁用
     id: "",
     monthArrTemp: [], // 存储动态表头
@@ -1353,6 +1367,8 @@ export default {
 
       // 提交审核之前 ，处理一下 刚刚添加的资源
       // this.formData.projectUserList = this.deepClone(this.projectTable.projectUserList)
+      
+      
       let parame = this.deepClone(this.formData);
       parame.projectUserList.unshift(...this.delRow); // 合并删除的行
       let projectUserListTemp = [];
@@ -1376,6 +1392,7 @@ export default {
           this.detailUserActive = false;
           this.recommendUserActive = false;
           this.isUpdateActive = false; // 点击了立即审批 就删除编辑状态
+          this.auditMsgVisible = false;
         }
       });
     },

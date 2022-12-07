@@ -121,7 +121,7 @@
           sortable
           fixed
           label="项目"
-          min-width="120"
+          min-width="150"
         >
           <template slot-scope="scope">
             <span :class="[scope.row.isNew==1?'isNew':'']"></span>
@@ -165,23 +165,23 @@
         <el-table-column prop="ysConfig" label="预算配置" width="120">
           <template slot-scope="scope"> {{ scope.row.ysConfig }}人日 </template>
         </el-table-column>
-        <el-table-column prop="ysCost" label="成本预算" width="120">
+        <el-table-column prop="ysCost" label="成本预算" width="120" align="right">
           <template slot-scope="scope">
-            {{ scope.row.ysCost || scope.row.ysCost==0 ? moneyFormat(scope.row.ysCost) : ''}}
+            {{ scope.row.ysCost || scope.row.ysCost==0 ? formatAmount(scope.row.ysCost) : ''}}
           </template>
         </el-table-column>
-         <el-table-column prop="costUp" label="成本上限" width="120">
+         <el-table-column prop="costUp" label="成本上限" width="120" align="right">
           <template slot-scope="scope">
-            {{ scope.row.costUp || scope.row.costUp==0 ? moneyFormat(scope.row.costUp) : ''}}
+            {{ scope.row.costUp || scope.row.costUp==0 ? formatAmount(scope.row.costUp) : ''}}
           </template>
         </el-table-column>
 
         <el-table-column prop="jhConfig" label="计划配置已用" width="130">
           <template slot-scope="scope"> {{ scope.row.jhConfig }}人日 </template>
         </el-table-column>
-        <el-table-column prop="jhCost" label="计划预算已用" width="130">
+        <el-table-column prop="jhCost" label="计划预算已用" width="130" align="right">
           <template slot-scope="scope">
-            {{ scope.row.jhCost || scope.row.jhCost == 0 ? moneyFormat(scope.row.jhCost) : ''}}
+            {{ scope.row.jhCost || scope.row.jhCost == 0 ? formatAmount(scope.row.jhCost) : ''}}
           </template>
         </el-table-column>
         <el-table-column prop="jhSchedule" label="计划当前进度" width="130">
@@ -191,8 +191,8 @@
         <el-table-column prop="sjConfig" label="实际配置已用" width="130">
           <template slot-scope="scope"> {{ scope.row.sjConfig }}人日 </template>
         </el-table-column>
-        <el-table-column prop="sjCost" label="实际预算已用" width="130">
-          <template slot-scope="scope"> {{ scope.row.sjCost || scope.row.sjCost == 0 ? moneyFormat(scope.row.sjCost) : '' }} </template>
+        <el-table-column prop="sjCost" label="实际预算已用" width="130" align="right">
+          <template slot-scope="scope"> {{ scope.row.sjCost || scope.row.sjCost == 0 ? formatAmount(scope.row.sjCost) : '' }} </template>
         </el-table-column>
 
         <el-table-column prop="realWork" label="实际完成工作" width="130">
@@ -212,21 +212,21 @@
           <template slot-scope="scope"> {{ scope.row.sjSchedule }}% </template>
         </el-table-column>
 
-        <el-table-column prop="ysDeviation" label="预算偏差" width="130">
+        <el-table-column prop="ysDeviation" label="预算偏差" sortable width="130" align="right">
           <template slot-scope="scope">
              <span :class="['piancha' + scope.row.pianchaActive]" v-if='scope.row.pianchaActive == 2'>
               {{
-                scope.row.ysDeviation ||  scope.row.ysDeviation ==0 ? "-" + moneyFormat(scope.row.ysDeviation) : ''
+                scope.row.ysDeviation ||  scope.row.ysDeviation ==0 ? "-" + formatAmount(scope.row.ysDeviation) : ''
               }}
             </span>
              <span :class="['piancha' + scope.row.pianchaActive]" v-else>
               {{
-                scope.row.ysDeviation ||  scope.row.ysDeviation ==0 ?  moneyFormat(scope.row.ysDeviation) : ''
+                scope.row.ysDeviation ||  scope.row.ysDeviation ==0 ?  formatAmount(scope.row.ysDeviation) : ''
               }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="jdSchedule" label="进度偏差" width="130">
+        <el-table-column prop="jdSchedule" label="进度偏差" sortable width="130">
           <template slot-scope="scope"> {{ scope.row.jdSchedule }}% </template>
         </el-table-column>
 
@@ -737,7 +737,7 @@ export default {
   background-color:#FAFAC8 !important
   }
 .app-containers{
-   thead>:first-child  .is-sortable{
+  .el-table__fixed thead>:first-child  .is-sortable{
     background:#E8E8F4!important;
   }
   .el-table__fixed-right .el-table__fixed-header-wrapper tr:last-child  .is-leaf{
@@ -747,10 +747,12 @@ export default {
         margin-top: 0px;
         z-index:2;
     }
- .myTable .el-table__fixed-footer-wrapper tbody td.el-table__cell{
-  padding: 9px;
- }
+//  .myTable .el-table__fixed-footer-wrapper tbody td.el-table__cell{
+//   padding: 9px;
+//  }
 }
-
+.fontRight{
+  text-align: right;
+}
 
 </style>

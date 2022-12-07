@@ -496,6 +496,47 @@ export function moneyFormat(num){
 	return String(num).replace(reg, ',');
 }
 /**
+* 金额千分位分割格式函数
+* @param {Number|String} vlaue 需要转化的金额字符串
+*/
+export function formatAmount(value) {
+	//传入值不是数字直接返回0
+	if (!value) return '0.00'
+    const values = value.toString().split('.')
+    
+    // 整数部分
+    let integerNum = values[0]
+    // 小数部分
+    let decimalNum = values[1] ? values[1] : ''
+    decimalNum = decimalNum.length === 1 ? decimalNum  : decimalNum
+    // debugger
+    //传入值小于1000不切割
+    if (integerNum < 1000) {
+         if(values[1]){
+            return  `${integerNum}.${decimalNum}`   
+         }else{
+            return `${integerNum}`
+         }
+    }
+    const list = []
+    while (integerNum.length > 3) {
+       // 倒序切割
+      list.unshift(integerNum.slice(-3))
+      integerNum = integerNum.slice(0, -3)
+    }
+    // 处理剩余长度
+    list.unshift(integerNum)
+    let stringtemp = ""
+    if(values[1]){
+        console.log(1111)
+        stringtemp = `${list.join(',')}.${decimalNum}`
+    }else{
+       console.log(2222)
+       stringtemp = `${list.join(',')}`
+    }
+    return stringtemp
+ }
+/**
  *  智能处理小数位 使用 就是 this.autoFixed(参数,3)
  * @param {*} num 要处理的小数
  * @param {*} digit 要保留的位数 默认2
