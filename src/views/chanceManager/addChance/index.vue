@@ -547,6 +547,13 @@ export default {
       
     }
   },
+  created() {
+    // 表单数据回显
+    const formData = sessionStorage.getItem('addProject')
+    if (formData) {
+      this.formData = JSON.parse(formData)
+    }
+  },
   mounted() {
     this.getDictList("post_type");  //职位类型
     this.getDictList("skill_type");  // 技能 technique 
@@ -924,6 +931,8 @@ export default {
 
   beforeDestroy() {
     document.querySelector("body,html").removeAttribute("style");
+    // 表单数据存储
+    sessionStorage.setItem('addProject', JSON.stringify(this.formData))
   },
 };
 </script>
