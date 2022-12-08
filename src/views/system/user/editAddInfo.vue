@@ -345,9 +345,11 @@ export default {
         ],
         deptId:[{ required: true, message: "请选择所属部门", trigger: "blur" }]
       },
+      isEdit: ''
     };
   },
   created() {
+    this.isEdit = this.$route.query.isEdit
     
     if (this.$route.query.isEdit == 1) {
      
@@ -356,12 +358,24 @@ export default {
       this.detailInfo();
       this.position();
       this.level()
+    } else {
+      // 表单数据回显
+      const formData = sessionStorage.getItem('editAddInfo')
+      if (formData) {
+        this.formData = JSON.parse(formData) 
+      }
     }
     
     this.positinType("region");
     this.positinType("post_type");
     this.getTreeselect();
     this.role();
+  },
+  beforeDestroy() {
+    // 没有isEdit的时候，该页面为新增
+    if (!this.isEdit) {
+      sessionStorage.setItem('editAddInfo', JSON.stringify(this.formData))
+    }
   },
   methods: {
     cancelFn(){
