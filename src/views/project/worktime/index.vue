@@ -235,6 +235,15 @@ export default {
     this.getProject()
     this.workTypes()
   },
+  mounted() {
+    const datalist = sessionStorage.getItem('worktime')
+    if (datalist) {
+      this.datalist = JSON.parse(datalist)
+    }
+  },
+  beforeDestroy() {
+    sessionStorage.setItem('worktime', JSON.stringify(this.datalist))
+  },
 
   methods: {
     //工作类型
