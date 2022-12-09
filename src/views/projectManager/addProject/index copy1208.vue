@@ -362,7 +362,7 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="15">
+            <el-col :span="18">
               <el-form-item
                 label="技能需求："
                 :prop="`projectUserList.${addUserListindex}.skillIdList`"
@@ -372,7 +372,7 @@
                   v-model="addUserList.skillIdList"
                   multiple
                   placeholder="请选择技能需求"
-                  @change="changeTextColor($event, 'mySkillIdList',addUserListindex)"
+                  @change="changeTextColor($event, 'mySkillIdList')"
                   ref="mySkillIdList"
                   :disabled="addUserList.nextActive"
                   :style="{ width: '100%' }"
@@ -388,98 +388,6 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-            </el-col>
-             <el-col :span="4">
-              <el-form-item label="人选：">
-                <div class="colText2">
-                  <span>
-                    {{ addUserList.userName ? addUserList.userName : "无" }}
-                  </span>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-            <el-row>
-            <el-col :span="24">
-                <el-form-item label="选择人员：">
-                  <div class="whiteBox" v-show="addUserList.recommendUserActive" style="padding: 1%">
-        <!-- <b>| 人选推荐</b>
-        <p style="height: 10px"></p> -->
-                  <el-table
-                    :data="addUserList.recommendUserTableData"
-                    border
-                    class="myTable"
-                    :header-row-style="{ height: '14px', 'line-height': '14px' }"
-                    :header-cell-class-name="headerUserClassName"
-                    style="width: 90%"
-                    max-height="650"
-                  >
-                    <el-table-column prop="nickName" label="姓名"></el-table-column>
-                    <el-table-column prop="regionName" label="区域"></el-table-column>
-                    <el-table-column prop="postName" label="职位"></el-table-column>
-                    <el-table-column prop="postLevelName" label="等级"></el-table-column>
-                    <el-table-column prop="skillList" label="工作技能">
-                      <template slot-scope="scope">
-                        <div v-for="(item, i) in scope.row.skillList">
-                          <span :class="['skillBox', 'skill' + item.cssClass]">{{
-                            item.skillName
-                          }}</span>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="freeLoad" label="空闲负荷"></el-table-column>
-                    <el-table-column prop="price" label="单价">
-                      <template slot-scope="scope">
-                        <span>{{
-                          scope.row.price || scope.row.price == 0 ? moneyFormat(scope.row.price) : ""
-                        }}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="allPrice" label="总价">
-                      <template slot-scope="scope">
-                        <span>{{
-                          scope.row.allPrice || scope.row.allPrice == 0
-                            ? moneyFormat(scope.row.allPrice)
-                            : ""
-                        }}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="操作">
-                      <template slot-scope="scope">
-                        <div>
-                          <!-- 1 不显示 有审核记录，0显示  没有审核记录 && resouceBtnActive-->
-                          <el-button
-                            type="text"
-                            size="mini"
-                            v-if="scope.row.showOrCancel == 1 "
-                          >
-                            <span class="color2" @click="addUserToProject(scope.row, addUserListindex)"
-                              >添加
-                            </span>
-                          </el-button>
-                          <el-button
-                            type="text"
-                            size="mini"
-                            v-if="scope.row.showOrCancel == 2  "
-                          >
-                            <span
-                              class="color1"
-                              @click="delUserToProject(scope.row, addUserListindex)  "
-                              >取消
-                            </span>
-                          </el-button>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <!-- nickName:"",//姓名
-                  regionName:"",//区域
-                  postName:"",//职位名称
-                  postLevel:"",//等级
-                  price:"",//单价
-                  allPrice:"",//总价 -->
-                  </el-table>
-                  </div>
-                </el-form-item>
             </el-col>
           </el-row>
           <el-row>
@@ -589,7 +497,6 @@ import {
   queryDict,
   addProjectList,
   searchProjectList,
-  queryUserByPostId,
   getLevelCostNum,
   getPostName,
   getPostOptions,
@@ -644,39 +551,37 @@ export default {
       date2: "",
       redShow: false,
       formData: {
-        // priority: 3 /**优先级（1.最高，2.高，3.普通，4.较低）*/,
-        // projectChance: "" /**关联机会*/,
-        // projectCode: "" /**项目编号*/,
-        // projectEndTime: "" /**项目结束时间*/,
-        // projectGitUrl: "", // 项目git 地址
-        // projectGroupId: "", // 项目组
-        // projectName: "" /**项目名称*/,
-        // projectService: "" /**服务对象*/,
-        // projectStage: "" /**项目阶段*/,
-        // projectStartTime: "" /**项目开始时间*/,
-        // projectTimeArea: "",
-        // projectType: "" /**项目类型*/,
-        // projectUserId: "" /**项目负责人*/,
-        // projectUserList: [] /**项目成员列表*/,
-        // tbProjectId: "",
-        // costUp:"", /*成本上限*/
+        priority: 3 /**优先级（1.最高，2.高，3.普通，4.较低）*/,
+        projectChance: "" /**关联机会*/,
+        projectCode: "" /**项目编号*/,
+        projectEndTime: "" /**项目结束时间*/,
+        projectGitUrl: "", // 项目git 地址
+        projectGroupId: "", // 项目组
+        projectName: "" /**项目名称*/,
+        projectService: "" /**服务对象*/,
+        projectStage: "" /**项目阶段*/,
+        projectStartTime: "" /**项目开始时间*/,
+        projectTimeArea: "",
+        projectType: "" /**项目类型*/,
+        projectUserId: "" /**项目负责人*/,
+        projectUserList: [] /**项目成员列表*/,
+        tbProjectId: "",
         //快速调试
-        priority:3,
-        projectChance:2,
-        projectCode:"周佩煌测试1208",
-        projectEndTime:"2022-12-30",
-        projectGitUrl:"",
-        projectGroupId:"",
-        projectName:"周佩煌测试1208",
-        projectService:1,
-        projectStage:32,
-        projectStartTime:"2022-12-01",
-        projectTimeArea: ["2022-12-01", "2022-12-30"],
-        projectType:31,
-        projectUserId:143,
-        projectUserList: [],/**项目成员列表*/
-        tbProjectId:"",
-        costUp:12000,
+        // priority:3,
+        // projectChance:2,
+        // projectCode:"测试数据1110",
+        // projectEndTime:"2022-10-30",
+        // projectGitUrl:"测试数据1110",
+        // projectGroupId:8,
+        // projectName:"测试数据1110",
+        // projectService:1,
+        // projectStage:32,
+        // projectStartTime:"2022-10-01",
+        // projectTimeArea: ["2022-10-01", "2022-10-30"],
+        // projectType:31,
+        // projectUserId:5,
+        // projectUserList: [],/**项目成员列表*/
+        // tbProjectId:"123ABCDE",
       },
       rules: {
         // 配置信息的
@@ -821,17 +726,6 @@ export default {
         postTypeActive: true,
         nextActive: true,
       },
-         recommendUserActive: false, // 是否展示人选推荐
-    recommendUserTableData: [
-      // {
-      //   nickName: "", //姓名
-      //   regionName: "", //区域
-      //   postName: "", //职位名称
-      //   postLevel: "", //等级
-      //   price: "", //单价
-      //   allPrice: "", //总价
-      // },
-    ],
       // projectUserScheduleList: {
       //   /**
       //    * 周期
@@ -935,14 +829,9 @@ export default {
     // this.addUserListHandel() // 自测用
   },
   methods: {
-         // 动态生成 表头样式
-    headerUserClassName(row) {
-      // console.log(row.column)
-      // if(row.column.property=='total')
-      return "recommendHeader";
-    },
+     
     // 选择技能之后 的变色逻辑
-    changeTextColor(listData, refName,index) {
+    changeTextColor(listData, refName) {
       this.$nextTick(() => {
         setTimeout(() => {
           let arr = []; // 对应数据对象数组
@@ -966,7 +855,6 @@ export default {
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
-           this.getRecommendUserHandel(index, this.formData.projectUserList[index]);
         }, 100);
       });
     },
@@ -1066,86 +954,10 @@ export default {
             // 我是没被编辑过的
             this.constAll(this.formData.projectUserList[index].startEndTime, index,'update');
           }
-               setTimeout(() => {
-                  // this.recommendUserActive = true; // 点击添加 人选需要隐藏
-                  this.getRecommendUserHandel(index, this.formData.projectUserList[index]);
-                }, 500);
 
 
           break;
       }
-    },
-      // 拿到 并 显示 推荐人选
-    getRecommendUserHandel(index, row) {
-      console.log(row, index);
-      console.log(row.id);
-      let params = {
-        postNameId: row.postNameId, //职位id
-        regionId: row.regionId, //区域id
-        postTypeId: row.postTypeId, //职位类型id
-        postLevelId: row.postLevelId, //职位等级id
-        skillIdList: row.skillIdList, //技能id
-        startTime: row.startTime, //开始时间
-        endTime: row.endTime, //结束时间
-        projectService: this.formData.projectService, //服务对象
-        workDay: row.workDay, //总人日
-      };
-      // 新增数据不需要有id
-      params.id = row?.id;
-      // if(this.nowIndex!=9999){
-      //   params.id=row?.id||this.formData.projectUserList[index]?.id||"" //项目配置表主键第二级的主键
-      // }
-      queryUserByPostId(params).then((res) => {
-        res.data.map((item) => {
-          item.showOrCancel = 1; // 默认显示  添加
-          //  if(this.nowAction=="update"){
-
-          if (this.formData.projectUserList[index].userId == item.userId) {
-            // 如果 当前点击的行的userID === 当前行id 就显示取消
-            item.showOrCancel = 2;
-          }
-          // }
-        });
-
-        // this.formData.projectUserList  [index].recommendUserTableData = res.data;
-        this.$set(this.formData.projectUserList[index], 'recommendUserTableData', res.data)
-        this.$forceUpdate()
-      });
-    },
-    // 取消当前的人
-    delUserToProject(row, index) {
-      // 下面是塞入数据
-      this.formData.projectUserList[index].userId = "";
-      this.formData.projectUserList[index].userName = "";
-      this.$forceUpdate();
-       
-      // 点击添加成功后 显示取消按钮
-      this.formData.projectUserList[index].recommendUserTableData.map((item) => {
-        item.showOrCancel = 1; // 全部 显示添加
-        if (this.formData.projectUserList[index].userId === item.userId) {
-          item.showOrCancel = 2;
-        }
-      });
-    },
-     //点击添加人员到 资源配置中 去 次方法要修改
-    addUserToProject(row, index) {
-      // 此处需要同样的判断 是否有id 辨别是否有id
-      // 是否有id 代表是否为 新增和 已有的资源配置
-        // 我是新增 我没有资源配置化的2级的id
-        // this.formData.projectUserList[this.nowIndex].updateType = 1
-         console.log(row);
-          // this.formData.projectUserList[this.nowIndex].userList.push(row.userId);
-          this.formData.projectUserList[index].userId = row.userId;
-          this.formData.projectUserList[index].userName = row.nickName;
-        //  以上是展示
-      this.$forceUpdate();
-      // 点击添加成功后 显示取消按钮
-      this.formData.projectUserList[index].recommendUserTableData.map((item) => {
-        item.showOrCancel = 1; // 全部 显示添加
-        if (this.formData.projectUserList[index].userId === item.userId) {
-          item.showOrCancel = 2;
-        }
-      });
     },
     DelPostList(index) {
       // 直接删除单行
@@ -1283,8 +1095,6 @@ export default {
           this.$forceUpdate();
           let index = this.formData.projectUserList.length - 1;
           this.constAll(oneUser.startEndTime, index,"add");
-          this.formData.projectUserList[index].recommendUserTableData =[]
-          this.formData.projectUserList[index].recommendUserActive=true
           // 依照产品要求 点击添加配置 就需要生产 具体计划
         }
       });
@@ -1557,13 +1367,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-
-.color1 {
-  color: #909399;
-}
-.color2 {
-  color: #409eff;
-}
 .app-container {
   padding: 0;
 }
@@ -1623,14 +1426,6 @@ export default {
 }
 </style>
 <style>
-
-.myTable   .el-table__header-wrapper  .recommendHeader {
-    background: #5a7db9 !important;
-    height: 30px;
-    padding: 5px 0px;
-    color: white !important;
-   
-}
 .skillcolor1 {
   background: rgb(0, 113, 189) !important;
   color: white !important;
@@ -1668,12 +1463,6 @@ export default {
           //   { cssClass: 'color7', color: 'rgb(255,67,89)' }, */
 .skillcc .el-tag__close {
   background-color: transparent !important;
-}
-.skillBox {
-  padding: 4px 8px;
-  border: 1px white solid;
-  border-radius: 5px;
-  margin-left: 4px;
 }
 .UserLine /deep/.el-form-item {
   margin-bottom: 2px;

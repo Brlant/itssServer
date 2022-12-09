@@ -341,7 +341,7 @@
     </div>
     <!---项目成员 添加 or 编辑--------------------------------------------->
     <div v-if="addEditUserActive || detailUserActive" class="hr"></div>
-    <!-- 我是详情代码块 -->
+
     <div class="whiteBox" v-if="detailUserActive" style="padding: 1%">
       <el-form
         ref="defaultForm"
@@ -487,7 +487,6 @@
         </div>
       </el-form>
     </div>
-    <!-- 我是编辑新增代码块 -->
     <div class="whiteBox" v-if="addEditUserActive">
       <el-form
         ref="addEditForm"
@@ -639,89 +638,6 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="24">
-                <el-form-item label="选择人员：">
-                  <div class="whiteBox" v-show="recommendUserActive" style="padding: 1%">
-        <!-- <b>| 人选推荐</b>
-        <p style="height: 10px"></p> -->
-                  <el-table
-                    :data="recommendUserTableData"
-                    border
-                    class="myTable"
-                    :header-row-style="{ height: '14px', 'line-height': '14px' }"
-                    :header-cell-class-name="headerUserClassName"
-                    style="width: 90%"
-                    max-height="650"
-                  >
-                    <el-table-column prop="nickName" label="姓名"></el-table-column>
-                    <el-table-column prop="regionName" label="区域"></el-table-column>
-                    <el-table-column prop="postName" label="职位"></el-table-column>
-                    <el-table-column prop="postLevelName" label="等级"></el-table-column>
-                    <el-table-column prop="skillList" label="工作技能">
-                      <template slot-scope="scope">
-                        <div v-for="(item, i) in scope.row.skillList">
-                          <span :class="['skillBox', 'skill' + item.cssClass]">{{
-                            item.skillName
-                          }}</span>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="freeLoad" label="空闲负荷"></el-table-column>
-                    <el-table-column prop="price" label="单价">
-                      <template slot-scope="scope">
-                        <span>{{
-                          scope.row.price || scope.row.price == 0 ? moneyFormat(scope.row.price) : ""
-                        }}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="allPrice" label="总价">
-                      <template slot-scope="scope">
-                        <span>{{
-                          scope.row.allPrice || scope.row.allPrice == 0
-                            ? moneyFormat(scope.row.allPrice)
-                            : ""
-                        }}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="操作">
-                      <template slot-scope="scope">
-                        <div v-show="isShowActive == 0">
-                          <!-- 1 不显示 有审核记录，0显示  没有审核记录 -->
-                          <el-button
-                            type="text"
-                            size="mini"
-                            v-if="scope.row.showOrCancel == 1 && resouceBtnActive"
-                          >
-                            <span class="color2" @click="addUserToProject(scope.row, scope.index)"
-                              >添加
-                            </span>
-                          </el-button>
-                          <el-button
-                            type="text"
-                            size="mini"
-                            v-if="scope.row.showOrCancel == 2 && resouceBtnActive"
-                          >
-                            <span
-                              class="color1"
-                              @click="delUserToProject(scope.row, scope.index) && resouceBtnActive"
-                              >取消
-                            </span>
-                          </el-button>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <!-- nickName:"",//姓名
-                  regionName:"",//区域
-                  postName:"",//职位名称
-                  postLevel:"",//等级
-                  price:"",//单价
-                  allPrice:"",//总价 -->
-                  </el-table>
-                  </div>
-                </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
             <el-col :span="6">
               <el-form-item
                 label="配置安排："
@@ -837,7 +753,83 @@
     </div>
     <!---点击职业的修改---人员推荐------------------------------------------>
     <div class="hr" v-show="recommendUserActive"></div>
-  
+    <div class="whiteBox" v-show="recommendUserActive" style="padding: 1%">
+      <b>| 人选推荐</b>
+      <p style="height: 10px"></p>
+      <el-table
+        :data="recommendUserTableData"
+        border
+        class="myTable"
+        :header-row-style="{ height: '14px', 'line-height': '14px' }"
+        :header-cell-class-name="headerUserClassName"
+        style="width: 100%"
+        max-height="650"
+      >
+        <el-table-column prop="nickName" label="姓名"></el-table-column>
+        <el-table-column prop="regionName" label="区域"></el-table-column>
+        <el-table-column prop="postName" label="职位"></el-table-column>
+        <el-table-column prop="postLevelName" label="等级"></el-table-column>
+        <el-table-column prop="skillList" label="工作技能">
+          <template slot-scope="scope">
+            <div v-for="(item, i) in scope.row.skillList">
+              <span :class="['skillBox', 'skill' + item.cssClass]">{{
+                item.skillName
+              }}</span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="freeLoad" label="空闲负荷"></el-table-column>
+        <el-table-column prop="price" label="单价">
+          <template slot-scope="scope">
+            <span>{{
+              scope.row.price || scope.row.price == 0 ? moneyFormat(scope.row.price) : ""
+            }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="allPrice" label="总价">
+          <template slot-scope="scope">
+            <span>{{
+              scope.row.allPrice || scope.row.allPrice == 0
+                ? moneyFormat(scope.row.allPrice)
+                : ""
+            }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <div v-show="isShowActive == 0">
+              <!-- 1 不显示 有审核记录，0显示  没有审核记录 -->
+              <el-button
+                type="text"
+                size="mini"
+                v-if="scope.row.showOrCancel == 1 && resouceBtnActive"
+              >
+                <span class="color2" @click="addUserToProject(scope.row, scope.index)"
+                  >添加
+                </span>
+              </el-button>
+              <el-button
+                type="text"
+                size="mini"
+                v-if="scope.row.showOrCancel == 2 && resouceBtnActive"
+              >
+                <span
+                  class="color1"
+                  @click="delUserToProject(scope.row, scope.index) && resouceBtnActive"
+                  >取消
+                </span>
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
+        <!-- nickName:"",//姓名
+      regionName:"",//区域
+      postName:"",//职位名称
+      postLevel:"",//等级
+      price:"",//单价
+      allPrice:"",//总价 -->
+      </el-table>
+    </div>
 
     <!---项目信息修改---其实就是审核列表------------------------------------------>
     <div class="hr"></div>
@@ -1401,7 +1393,6 @@ export default {
           this.recommendUserActive = false;
           this.isUpdateActive = false; // 点击了立即审批 就删除编辑状态
           this.auditMsgVisible = false;
-          this.formData.remark = ""
         }
       });
     },
@@ -1532,7 +1523,6 @@ export default {
       // 存储下标
       row.index = rowIndex;
     },
-    // 行样式
     rowStyle({ row }) {
       if (this.id === row.id || this.id === row.idTemp) {
         return {

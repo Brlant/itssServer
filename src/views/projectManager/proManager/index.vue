@@ -538,11 +538,17 @@ export default {
     },
    // 给某一行添加背景色class
     rowStyle({ row, rowIndex }) {
+      // 若成本上限小于成本预算，则高亮显示对应行，高亮色色值：# FFE7EA；
+      // 若与进度偏差同时满足，则优先高亮提醒进度偏差；
       if(row.isYellow){
         return 'isYellow'
       }else{
+        if(row.isPink){
+          return "isPink"
+        }
         return ''
       }
+      // ysCost
     },
     init() {
       // let params = this.clearNullParam({ ...this.searchParame });
@@ -558,10 +564,17 @@ export default {
         let { msg } = res;
         // 添加额外的字段，用于展示 预算偏差or 进度偏差是否小于0
         res.data.map(item=>{
+          item.costUp = 123
           // jdSchedule    ysDeviation
-          item.isYellow = false // 默认没有蓝色
+          item.isYellow = false // 默认没有黄色
+          item.isPink = false // 默认无粉色
+          // 预算偏差or 进度偏差是否小于0
           if(item.jdSchedule<0||item.ysDeviation<0){
-            item.isYellow =true // 小于才给蓝色
+            item.isYellow =true // 小于才给黄色
+          }
+          // 如果 成本上限小于成本预算 则 粉色展示
+          if(item.costUp<item.ysCost){
+             item.isPink =true // 小于才给粉色
           }
         })
         this.tableData = res.data;
@@ -719,7 +732,10 @@ export default {
 </style>
 <style>
  .isYellow{
-  background-color:'#FAFAC8'
+  background-color:#FAFAC8
+  }
+  .isPink{
+     background-color:#FFE7EA
   }
 /***加上这个可以去掉table的hover效果***/
 /* .el-table--striped .el-table__body tr.el-table__row--striped.current-row td,
@@ -735,6 +751,9 @@ export default {
 <style lang="scss">
   .isYellow{
   background-color:#FAFAC8 !important
+  }
+  .isPink{
+     background-color:#FFE7EA !important
   }
 .app-containers{
   .el-table__fixed thead>:first-child  .is-sortable{

@@ -1,11 +1,15 @@
 <template>
   <div class="app-container">
     <div class="routerBar">
-      <router-link :to="'/projectManager/proManager'"> < 新建项目</router-link>
+      <!-- <router-link :to="'/projectManager/proManager'"> < 编辑项目</router-link> -->
+      <span @click="goManagerPage" style="cursor: pointer; color: #409eff">
+        &lt; 编辑项目
+      </span>
+
       <span> （仅项目负责人可对此项目下列对内进行编辑）</span>
       <div class="rightBox">
-        <el-button size="mini" @click="submitForm" type="primary">保存</el-button>
-        <el-button size="mini" @click="resetForm" type="default">取消</el-button>
+        <el-button size="mini" @click="submitForm" type="primary">提交审核</el-button>
+        <el-button size="mini" @click="backDetail" type="default">取消</el-button>
       </div>
     </div>
     <div class="titleBar">项目基础信息</div>
@@ -55,7 +59,7 @@
                 :style="{ width: '100%' }"
               >
                 <el-option
-                  v-for="(dict, index) in projectStageOptions"
+                  v-for="dict in projectStageOptions"
                   :key="dict.dictCode"
                   :label="dict.dictLabel"
                   :value="dict.dictCode"
@@ -74,7 +78,7 @@
                 :style="{ width: '100%' }"
               >
                 <el-option
-                  v-for="(dict, index) in projectTypeOptions"
+                  v-for="dict in projectTypeOptions"
                   :key="dict.dictCode"
                   :label="dict.dictLabel"
                   :value="dict.dictCode"
@@ -110,18 +114,20 @@
               <el-select
                 v-model="formData.projectUserId"
                 placeholder="请选择项目负责人"
-                clearable filterable
+                clearable
                 :style="{ width: '100%' }"
               >
                 <el-option
-                  v-for="(user, index) in projectUserIdOptions"
+                  v-for="user in projectUserIdOptions"
                   :key="user.userId"
                   :label="user.nickName"
                   :value="user.userId"
                   :disabled="user.disabled"
                 ></el-option>
               </el-select>
-              <span class="myTag">(负责关联此项目的工时的最终审批；可对关联此项目的工单进行编辑和人员指派)</span>
+              <span class="myTag"
+                >(负责关联此项目的工时的最终审批；可对关联此项目的工单进行编辑和人员指派)</span
+              >
             </el-form-item>
           </el-col>
         </el-row>
@@ -197,6 +203,7 @@
             </el-form-item>
           </el-col>
         </el-row>
+
         <el-row>
           <el-col :span="10" :offset="1">
             <el-form-item label="归属项目组" prop="projectGroupId">
@@ -211,7 +218,7 @@
                   v-for="(item, index) in projectTeams"
                   :key="index"
                   :value="item.projectGroupId"
-                  :label="item.projectGroupName+ '(' + item.startDate + ' 至 ' + item.endDate +')'"
+                  :label="item.projectGroupName+ '   (' + item.startDate + ' 至 ' + item.endDate +')'"
                   :disabled="item.disabled"
                 ></el-option>
               </el-select>
@@ -226,7 +233,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+         <el-row>
             <el-col :span="10" :offset="1">
             <el-form-item label="缺陷管理ID" prop="bugId">
               <el-input
@@ -235,11 +242,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="10" :offset="1">
-            <el-form-item label="成本上限" prop="costUp">
-                <el-input-number v-model="formData.costUp" placeholder="请输入成本上限" :precision='2'></el-input-number>
-            </el-form-item>
-          </el-col>
+
         </el-row>
       </div>
       <div class="titleBar">
@@ -312,11 +315,12 @@
                   v-model="addUserList.postNameId"
                   placeholder="请选择职位名称"
                   :disabled="addUserList.postNameIdActive"
+                  :key="addUserListindex"
                   :style="{ width: '100%' }"
                   @change="(dates) => editNext('postNameId', dates, addUserListindex)"
                 >
                   <el-option
-                    v-for="(dict, index) in postNameIdOptions"
+                    v-for="(dict, index) in addUserList.postNameIdOptions"
                     :key="dict.postNameId"
                     :label="dict.postName"
                     :value="dict.postNameId"
@@ -334,12 +338,13 @@
                 <el-select
                   v-model="addUserList.postLevelId"
                   placeholder="请选择等级"
+                  :key="addUserListindex"
                   :disabled="addUserList.postLevelIdActive"
                   :style="{ width: '100%' }"
                   @change="(dates) => editNext('postLevelId', dates, addUserListindex)"
                 >
                   <el-option
-                    v-for="(dict, index) in postLevelIdOptions"
+                    v-for="(dict, index) in  addUserList.postLevelIdOptions"
                     :key="dict.postLevelId"
                     :label="dict.postLevelName"
                     :value="dict.postLevelId"
@@ -353,7 +358,7 @@
                 <el-button
                   type="primary"
                   size="mini"
-                  @click="DelPostList(addUserListindex)"
+                  @click="DelPostList(addUserListindex,addUserList)"
                 >
                   删除
                 </el-button>
@@ -362,17 +367,16 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="15">
+            <el-col :span="18">
               <el-form-item
                 label="技能需求："
-                :prop="`projectUserList.${addUserListindex}.skillIdList`"
-               
+                
               >
                 <el-select
                   v-model="addUserList.skillIdList"
                   multiple
                   placeholder="请选择技能需求"
-                  @change="changeTextColor($event, 'mySkillIdList',addUserListindex)"
+                  @change="changeTextColor($event, 'mySkillIdList')"
                   ref="mySkillIdList"
                   :disabled="addUserList.nextActive"
                   :style="{ width: '100%' }"
@@ -389,98 +393,6 @@
                 </el-select>
               </el-form-item>
             </el-col>
-             <el-col :span="4">
-              <el-form-item label="人选：">
-                <div class="colText2">
-                  <span>
-                    {{ addUserList.userName ? addUserList.userName : "无" }}
-                  </span>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-            <el-row>
-            <el-col :span="24">
-                <el-form-item label="选择人员：">
-                  <div class="whiteBox" v-show="addUserList.recommendUserActive" style="padding: 1%">
-        <!-- <b>| 人选推荐</b>
-        <p style="height: 10px"></p> -->
-                  <el-table
-                    :data="addUserList.recommendUserTableData"
-                    border
-                    class="myTable"
-                    :header-row-style="{ height: '14px', 'line-height': '14px' }"
-                    :header-cell-class-name="headerUserClassName"
-                    style="width: 90%"
-                    max-height="650"
-                  >
-                    <el-table-column prop="nickName" label="姓名"></el-table-column>
-                    <el-table-column prop="regionName" label="区域"></el-table-column>
-                    <el-table-column prop="postName" label="职位"></el-table-column>
-                    <el-table-column prop="postLevelName" label="等级"></el-table-column>
-                    <el-table-column prop="skillList" label="工作技能">
-                      <template slot-scope="scope">
-                        <div v-for="(item, i) in scope.row.skillList">
-                          <span :class="['skillBox', 'skill' + item.cssClass]">{{
-                            item.skillName
-                          }}</span>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="freeLoad" label="空闲负荷"></el-table-column>
-                    <el-table-column prop="price" label="单价">
-                      <template slot-scope="scope">
-                        <span>{{
-                          scope.row.price || scope.row.price == 0 ? moneyFormat(scope.row.price) : ""
-                        }}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="allPrice" label="总价">
-                      <template slot-scope="scope">
-                        <span>{{
-                          scope.row.allPrice || scope.row.allPrice == 0
-                            ? moneyFormat(scope.row.allPrice)
-                            : ""
-                        }}</span>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="操作">
-                      <template slot-scope="scope">
-                        <div>
-                          <!-- 1 不显示 有审核记录，0显示  没有审核记录 && resouceBtnActive-->
-                          <el-button
-                            type="text"
-                            size="mini"
-                            v-if="scope.row.showOrCancel == 1 "
-                          >
-                            <span class="color2" @click="addUserToProject(scope.row, addUserListindex)"
-                              >添加
-                            </span>
-                          </el-button>
-                          <el-button
-                            type="text"
-                            size="mini"
-                            v-if="scope.row.showOrCancel == 2  "
-                          >
-                            <span
-                              class="color1"
-                              @click="delUserToProject(scope.row, addUserListindex)  "
-                              >取消
-                            </span>
-                          </el-button>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <!-- nickName:"",//姓名
-                  regionName:"",//区域
-                  postName:"",//职位名称
-                  postLevel:"",//等级
-                  price:"",//单价
-                  allPrice:"",//总价 -->
-                  </el-table>
-                  </div>
-                </el-form-item>
-            </el-col>
           </el-row>
           <el-row>
             <el-col :span="6">
@@ -488,7 +400,7 @@
                 label="配置安排："
                 :prop="`projectUserList.${addUserListindex}.startEndTime`"
                 :rules="rules.projectUserListAllStartEndTime"
-                label-width="120px"
+                label-width="130px"
               >
                 <el-date-picker
                   type="daterange"
@@ -500,7 +412,7 @@
                   end-placeholder="结束日期"
                   range-separator="至"
                   :picker-options="childDateArea"
-                  @change="(dates) => constAll(dates, addUserListindex,'update')"
+                  @change="(dates) => constAll(dates, addUserListindex)"
                 ></el-date-picker>
               </el-form-item>
             </el-col>
@@ -520,13 +432,7 @@
                 预计成本：<span>{{ addUserList.expectedCost }}</span> 元
               </div></el-col
             >
-            <el-col :span="3" :offset="3"
-              ><div class="colText2">
-                <!-- <el-button size="mini" @click="DelPostList(addUserListindex)" type="error"
-                  >删除</el-button
-                > -->
-              </div>
-            </el-col>
+
           </el-row>
           <!----------------------内部-start------------------------------>
           <el-row
@@ -576,7 +482,7 @@
             </el-col>
           </el-row>
           <!----------------------内部-end------------------------------>
-          <div class="jiange"></div>
+            <div class="jiange"></div>
         </div>
       </div>
     </el-form>
@@ -587,21 +493,21 @@ import {
   getTimeProcess,
   queryUserlist,
   queryDict,
-  addProjectList,
+  updateProjectUserAddEdit,
   searchProjectList,
-  queryUserByPostId,
+  proDetailBFEdit,
   getLevelCostNum,
   getPostName,
-  getPostOptions,
   teamQuery,
+  getPostOptions,
 } from "@/api/proManager/proManager";
-import { toProject, getChanceList } from "@/api/chanceManager/chanceManager";
 import { queryUserlistByRole } from "@/api/system/user";
+import { getChanceList } from "@/api/chanceManager/chanceManager";
+import { getToday } from "@/utils/index";
 import moment from "moment";
 import "moment/locale/zh-cn";
-
 export default {
-  name:"AddProject",
+  name:"ProEdit",
   data() {
     const check = (rule, value, callback) => {
       if (!value) {
@@ -638,45 +544,25 @@ export default {
       // 人员 列表
       userOptions: [],
       projectTeams: [],
-      postIdOptions: [],
       projectTeam: "",
-      date1: "",
-      date2: "",
       redShow: false,
       formData: {
-        // priority: 3 /**优先级（1.最高，2.高，3.普通，4.较低）*/,
-        // projectChance: "" /**关联机会*/,
-        // projectCode: "" /**项目编号*/,
-        // projectEndTime: "" /**项目结束时间*/,
-        // projectGitUrl: "", // 项目git 地址
-        // projectGroupId: "", // 项目组
-        // projectName: "" /**项目名称*/,
-        // projectService: "" /**服务对象*/,
-        // projectStage: "" /**项目阶段*/,
-        // projectStartTime: "" /**项目开始时间*/,
-        // projectTimeArea: "",
-        // projectType: "" /**项目类型*/,
-        // projectUserId: "" /**项目负责人*/,
-        // projectUserList: [] /**项目成员列表*/,
-        // tbProjectId: "",
-        // costUp:"", /*成本上限*/
-        //快速调试
-        priority:3,
-        projectChance:2,
-        projectCode:"周佩煌测试1208",
-        projectEndTime:"2022-12-30",
-        projectGitUrl:"",
-        projectGroupId:"",
-        projectName:"周佩煌测试1208",
-        projectService:1,
-        projectStage:32,
-        projectStartTime:"2022-12-01",
-        projectTimeArea: ["2022-12-01", "2022-12-30"],
-        projectType:31,
-        projectUserId:143,
-        projectUserList: [],/**项目成员列表*/
-        tbProjectId:"",
-        costUp:12000,
+        priority: 3 /**优先级（1.最高，2.高，3.普通，4.较低）*/,
+        projectChance: "" /**关联机会*/,
+        projectCode: "" /**项目编号*/,
+        projectEndTime: "" /**项目结束时间*/,
+        projectGitUrl: "", // 项目git 地址
+        projectGroupId: "", // 项目组
+        projectName: "" /**项目名称*/,
+        projectService: "" /**服务对象*/,
+        projectStage: "" /**项目阶段*/,
+        projectStartTime: "" /**项目开始时间*/,
+        projectTimeArea: ["", ""],
+        projectType: "" /**项目类型*/,
+        projectUserId: "" /**项目负责人*/,
+        projectUserList: [] /**项目成员列表*/,
+        tbProjectId: "",
+        bugId:''
       },
       rules: {
         // 配置信息的
@@ -708,13 +594,13 @@ export default {
             trigger: "change",
           },
         ],
-        addUserListSkillIdList: [
-          {
-            required: true,
-            message: "请选择技能需求!",
-            trigger: "change",
-          },
-        ],
+        // addUserListSkillIdList: [
+        //   {
+        //     required: true,
+        //     message: "请选择技能需求!",
+        //     trigger: "change",
+        //   },
+        // ],
         addUserListStartEndTime: [
           {
             required: true,
@@ -722,6 +608,7 @@ export default {
             trigger: "change",
           },
         ],
+        //
         projectUserListAllStartEndTime: [
           {
             required: true,
@@ -793,16 +680,9 @@ export default {
             trigger: "change",
           },
         ],
-        costUp: [
-          {
-            required: true,
-            message: "成本上限不能为空", //内容格式有误，请重新填写
-            trigger: "change",
-          },
-        ],
-        
+
       },
-      // // 单独的 用户列表
+      // 单独的 用户列表
       projectUserList: {
         postNameId: "", //职位id
         regionId: "", //区域id
@@ -820,32 +700,14 @@ export default {
         postNameIdActive: true,
         postTypeActive: true,
         nextActive: true,
+        postNameIdOptions:[],
+        postLevelIdOptions:[],
       },
-         recommendUserActive: false, // 是否展示人选推荐
-    recommendUserTableData: [
-      // {
-      //   nickName: "", //姓名
-      //   regionName: "", //区域
-      //   postName: "", //职位名称
-      //   postLevel: "", //等级
-      //   price: "", //单价
-      //   allPrice: "", //总价
-      // },
-    ],
       // projectUserScheduleList: {
-      //   /**
-      //    * 周期
-      //    */
-      //   startTime: "",
+      //   startTime: "" /**周期*/,
       //   endTime: "",
-      //   /**
-      //    * 计划负荷
-      //    */
-      //   planLoad: "",
-      //   /**
-      //    * 工时
-      //    */
-      //   workTime: "",
+      //   planLoad: "" /**计划负荷*/,
+      //   workTime: "" /**工时*/,
       // },
       projectStageOptions: [],
       projectTypeOptions: [],
@@ -869,6 +731,7 @@ export default {
       ],
       projectUserIdOptions: [],
       projectServiceOptions: [
+        //服务对象(1.对内，2.对外)
         {
           label: "对内",
           value: 1,
@@ -879,8 +742,10 @@ export default {
         },
       ],
       projectChanceOptions: [],
+      DelUserListTemp: [], //存储删除用户的
     };
   },
+
   mounted() {
     this.team();
     this.getChanceList(); //拿到机会列表
@@ -894,32 +759,9 @@ export default {
     // this.getDictList("post_name");   // 职位名称 post_name
     // this.getDictList("post_level"); // 职位等级 post_level
 
-    // 额外的判断  需要判断这个页面是不是从 机会跳转过来的
-    if (this.$route.query.chanceId) {
-      setTimeout(() => {
-          toProject(this.$route.query.chanceId).then((res) => {
-            res.data.projectUserList.map((item,i)=>{
-             let  parame = {
-                 postTypeId: res.data.projectUserList[i].postTypeId,
-                postNameId: res.data.projectUserList[i].postNameId,
-                regionId: res.data.projectUserList[i].regionId,
-              };
-              getPostName(parame).then((res) => {
-                this.postNameIdOptions = res.data;
-              });
-                getLevelCostNum(parame).then((res) => {
-                  this.postLevelIdOptions = res.data;
-                });
-              item.startEndTime = [item.startTime,item.endTime]
-              
-            })
-             res.data.projectTimeArea = [res.data.projectStartTime,res.data.projectEndTime]
-        this.formData = res.data;
-        this.formData.projectChance = parseInt(this.$route.query.chanceId)
-       
-      });
-      }, 800);
-    }
+    this.init();
+    // 页面默认点击一下  添加成员
+    // this.addUserListHandel()
      this.childDateArea = {
       // 项目成员安排的 可选时间区间
       disabledDate: (time) => {
@@ -932,17 +774,62 @@ export default {
         }
       },
     };
-    // this.addUserListHandel() // 自测用
   },
   methods: {
-         // 动态生成 表头样式
-    headerUserClassName(row) {
-      // console.log(row.column)
-      // if(row.column.property=='total')
-      return "recommendHeader";
+    init() {
+      let projectId = this.$route.query.projectId;
+      proDetailBFEdit(projectId).then((res) => {
+        // this.projectTable = res.data;
+        // this.projectTable.projectUserList = res.data.projectUserList;
+        // 在有项目成员之后  再 过滤已经有的人
+        // 获取并过滤用户的下拉
+        res.data.projectUserList.map((item, i) => {
+          // 修改类型（1.新增,2.删除,3.修改原数据）
+          // oneUser.updateType = 1
+          item.startEndTime = [item.startTime, item.endTime];
+          item.updateType = 3;
+          item.workDayTemp = item.workDay;
+          item.costNum = res.data.projectService == 1 ? item.costIn : item.costOut;
+          item.projectUserScheduleList.map((jtem, j) => {
+            item["planLoadCh" + i + j] = jtem.planLoadCh;
+            item["planLoadWorkDayCh" + i + j] = jtem.planLoadWorkDayCh;
+            item["realLoadCh" + i + j] = jtem.realLoadCh;
+            item["realLoadWorkDayCh" + i + j] = jtem.realLoadWorkDayCh;
+            jtem.weekTimeArea =
+              jtem.startTime.substring(5) + "-" + jtem.endTime.substring(5);
+            jtem.day = jtem.weekDay;
+          });
+        });
+          res.data.projectUserList.map((item, index) => {
+        
+
+         // 循环 回显 职位名称和职位等级
+          this.constAll(item.startEndTime, index);
+          let parame = {
+            regionId: res.data.projectUserList[index].regionId,
+            postTypeId: res.data.projectUserList[index].postTypeId,
+            postNameId: res.data.projectUserList[index].postNameId,
+          };
+          getLevelCostNum(parame).then((LevelCostres) => {
+            item.postLevelIdOptions = LevelCostres.data;
+          });
+          getPostName(parame).then((PostNameres) => {
+            item.postNameIdOptions = PostNameres.data;
+          });
+            this.changeTextColor(item.skillIdList, "mySkillIdList");
+        });
+
+        this.formData = res.data; // 填充详情的 projectTimeArea
+
+        this.team();
+        this.$set(this.formData, "projectTimeArea", [
+          res.data.projectStartTime,
+          res.data.projectEndTime,
+        ]);
+        });
     },
     // 选择技能之后 的变色逻辑
-    changeTextColor(listData, refName,index) {
+    changeTextColor(listData, refName) {
       this.$nextTick(() => {
         setTimeout(() => {
           let arr = []; // 对应数据对象数组
@@ -966,8 +853,7 @@ export default {
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
-           this.getRecommendUserHandel(index, this.formData.projectUserList[index]);
-        }, 100);
+        }, 800);
       });
     },
     /**
@@ -980,7 +866,6 @@ export default {
      *  切换等级  切换成本 + 预计成本
      */
     editNext(who, data, index) {
-      let parame = {}; // 入参
       switch (who) {
         case "region": // 选择区域
           this.formData.projectUserList[index].postTypeActive = false; // 初始化展示下一个
@@ -989,8 +874,8 @@ export default {
           this.formData.projectUserList[index].postNameId = ""; // 职位名称
           this.formData.projectUserList[index].postLevelId = ""; // 等级
           this.formData.projectUserList[index].expectedCost = "--"; //// 预计成本
-          this.postNameIdOptions = []; // 清空下拉
-          this.postLevelIdOptions = []; // 清空下拉
+          this.formData.projectUserList[index].postNameIdOptions = []; // 清空下拉
+          this.formData.projectUserList[index].postLevelIdOptions = []; // 清空下拉
           break;
         case "postType": // 选择 职位类型
           this.formData.projectUserList[index].postNameIdActive = false; // 初始化展示下一个
@@ -999,15 +884,18 @@ export default {
           this.formData.projectUserList[index].postNameId = ""; // 职位名称
           this.formData.projectUserList[index].postLevelId = ""; // 等级
           this.formData.projectUserList[index].expectedCost = "--"; //// 预计成本
-          this.postNameIdOptions = [];
-          this.postLevelIdOptions = [];
-          parame = {
+          this.formData.projectUserList[index].postNameIdOptions = [];
+          this.formData.projectUserList[index].postLevelIdOptions = [];
+          let parame1 = {
             regionId: this.formData.projectUserList[index].regionId,
             postTypeId: this.formData.projectUserList[index].postTypeId,
           };
-          getPostName(parame).then((res) => {
-            this.postNameIdOptions = res.data;
-          });
+        //  this.formData.projectUserList[index].postNameIdOptions =  this.getPostNameIdOptions(parame1)
+          getPostName(parame1).then((res) => {
+              console.log(res.data,"getPostName");
+              this.formData.projectUserList[index].postNameIdOptions= res.data
+              this.$forceUpdate()
+            });
           break;
         case "postNameId": // 选择职位名称
           this.formData.projectUserList[index].postLevelIdActive = false; // 初始化展示下一个
@@ -1016,21 +904,22 @@ export default {
           // this.formData.projectUserList[index].postNameId="" // 职位名称
           this.formData.projectUserList[index].postLevelId = ""; // 等级
           this.formData.projectUserList[index].expectedCost = "--"; //// 预计成本
-          // this.postNameIdOptions= []
-          this.postLevelIdOptions = [];
-          parame = {
+          this.formData.projectUserList[index].postLevelIdOptions = [];
+          let parame2 = {
             regionId: this.formData.projectUserList[index].regionId,
             postTypeId: this.formData.projectUserList[index].postTypeId,
             postNameId: this.formData.projectUserList[index].postNameId,
           };
-          getLevelCostNum(parame).then((res) => {
-            this.postLevelIdOptions = res.data;
-          });
+            getLevelCostNum(parame2).then((LevelCostNumres) => {
+            console.log(LevelCostNumres.data,"getLevelCostNum");
+            this.formData.projectUserList[index].postLevelIdOptions = LevelCostNumres.data;
+            this.$forceUpdate()
+          })
           break;
         case "postLevelId": // 选择职位等级
           this.formData.projectUserList[index].nextActive = false; // 初始化展示下面的所有
           // 选择 等级之后，拿到成本下拉 根据选择的等级id 拿到成本
-          let costNumArry = this.postLevelIdOptions.find((item) => {
+          let costNumArry = this.formData.projectUserList[index].postLevelIdOptions.find((item) => {
             return this.formData.projectUserList[index].postLevelId == item.postLevelId;
           });
           // 2对外      // 1 对内
@@ -1047,112 +936,48 @@ export default {
             console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.formData.projectUserList[index].costNum}`);
-          let isUpdate = this.formData.projectUserList[index].projectUserScheduleList.some(item=>{
-            // 只要里面有一项大于0 就证明编辑过，编辑过就 直接计算 成本即可
-            return item.planLoad>0
-          })
-          
-          if(isUpdate){
-            // 我是被人编辑过的 计划符合 直接计算 成本就好
-            if (this.formData.projectUserList[index].costNum==null||this.formData.projectUserList[index].costNum==undefined) {
-              this.formData.projectUserList[index].expectedCost = "--";
-            } else {
-              this.formData.projectUserList[index].expectedCost = this.autoFixed(
-                // 预计成本
-                this.formData.projectUserList[index].workDay * this.formData.projectUserList[index].costNum
-              );
-            }
-          }else{
-            // 我是没被编辑过的
-            this.constAll(this.formData.projectUserList[index].startEndTime, index,'update');
-          }
-               setTimeout(() => {
-                  // this.recommendUserActive = true; // 点击添加 人选需要隐藏
-                  this.getRecommendUserHandel(index, this.formData.projectUserList[index]);
-                }, 500);
-
+          this.constAll(this.formData.projectUserList[index].startEndTime, index);
 
           break;
       }
     },
-      // 拿到 并 显示 推荐人选
-    getRecommendUserHandel(index, row) {
-      console.log(row, index);
-      console.log(row.id);
-      let params = {
-        postNameId: row.postNameId, //职位id
-        regionId: row.regionId, //区域id
-        postTypeId: row.postTypeId, //职位类型id
-        postLevelId: row.postLevelId, //职位等级id
-        skillIdList: row.skillIdList, //技能id
-        startTime: row.startTime, //开始时间
-        endTime: row.endTime, //结束时间
-        projectService: this.formData.projectService, //服务对象
-        workDay: row.workDay, //总人日
-      };
-      // 新增数据不需要有id
-      params.id = row?.id;
-      // if(this.nowIndex!=9999){
-      //   params.id=row?.id||this.formData.projectUserList[index]?.id||"" //项目配置表主键第二级的主键
-      // }
-      queryUserByPostId(params).then((res) => {
-        res.data.map((item) => {
-          item.showOrCancel = 1; // 默认显示  添加
-          //  if(this.nowAction=="update"){
+    // 删除单行用户的
+    DelPostList(index, row) {
+      // 修改类型（1.新增,2.删除,3.修改原数据）
+      // oneUser.updateType = 1
+      this.$confirm(`您确定要删除这条数据吗?`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          // 修改类型（1.新增,2.删除,3.修改原数据）
+          if (row.updateType == 3) {
+            // 修改 就提交接口
+            let params = this.deepClone(this.formData);
+            params.projectUserList = [];
+            params.projectUserList.push(row);
+            params.projectUserList[0].updateType = 2;
 
-          if (this.formData.projectUserList[index].userId == item.userId) {
-            // 如果 当前点击的行的userID === 当前行id 就显示取消
-            item.showOrCancel = 2;
+            // updateProjectUserAddEdit(params).then((res) => {
+            //   let { code, msg } = res;
+            //   this.$message.success(msg);
+            //   if (+code == 200) {
+            //     // 提交删除成功 无需操作什么 因为 需要审核
+            //   }
+            // });
+            this.DelUserListTemp.push(...params.projectUserList);
+            this.formData.projectUserList.splice(index, 1);
+            // this.formData.projectUserList[index].updateType=2;
           }
-          // }
-        });
-
-        // this.formData.projectUserList  [index].recommendUserTableData = res.data;
-        this.$set(this.formData.projectUserList[index], 'recommendUserTableData', res.data)
-        this.$forceUpdate()
-      });
+          if (row.updateType == 1) {
+            // 新增的就前端删除
+            this.formData.projectUserList.splice(index, 1);
+            this.filterUserList()
+          }
+        })
+        .catch(() => {});
     },
-    // 取消当前的人
-    delUserToProject(row, index) {
-      // 下面是塞入数据
-      this.formData.projectUserList[index].userId = "";
-      this.formData.projectUserList[index].userName = "";
-      this.$forceUpdate();
-       
-      // 点击添加成功后 显示取消按钮
-      this.formData.projectUserList[index].recommendUserTableData.map((item) => {
-        item.showOrCancel = 1; // 全部 显示添加
-        if (this.formData.projectUserList[index].userId === item.userId) {
-          item.showOrCancel = 2;
-        }
-      });
-    },
-     //点击添加人员到 资源配置中 去 次方法要修改
-    addUserToProject(row, index) {
-      // 此处需要同样的判断 是否有id 辨别是否有id
-      // 是否有id 代表是否为 新增和 已有的资源配置
-        // 我是新增 我没有资源配置化的2级的id
-        // this.formData.projectUserList[this.nowIndex].updateType = 1
-         console.log(row);
-          // this.formData.projectUserList[this.nowIndex].userList.push(row.userId);
-          this.formData.projectUserList[index].userId = row.userId;
-          this.formData.projectUserList[index].userName = row.nickName;
-        //  以上是展示
-      this.$forceUpdate();
-      // 点击添加成功后 显示取消按钮
-      this.formData.projectUserList[index].recommendUserTableData.map((item) => {
-        item.showOrCancel = 1; // 全部 显示添加
-        if (this.formData.projectUserList[index].userId === item.userId) {
-          item.showOrCancel = 2;
-        }
-      });
-    },
-    DelPostList(index) {
-      // 直接删除单行
-      this.formData.projectUserList.splice(index, 1);
-    },
-    // 选择职位之后的逻辑
-   
     /*修改每周计划负荷*/
     /*
      * number 计划负荷的百分比 总天数 父级的下标 和自己的下标
@@ -1199,22 +1024,15 @@ export default {
           (totalDay / tempWorkDay) * 100
         ); //计划负荷 == 实际人日/计划的人日 *100%
       }
-      console.log(totalDay, this.formData.projectUserList[fatherIndex].costNum);
-      if(!this.formData.projectUserList[fatherIndex].costNum){
-        // 如果没有成本
-        // 则设置预计成本为"--"
-        this.formData.projectUserList[fatherIndex].expectedCost ="--"
-      }else{
-        this.formData.projectUserList[fatherIndex].expectedCost = this.autoFixed(
-          totalDay * this.formData.projectUserList[fatherIndex].costNum
-        ); /**预计成本*/
-      }
+      this.formData.projectUserList[fatherIndex].expectedCost = this.autoFixed(
+        totalDay * this.formData.projectUserList[fatherIndex].costNum
+      ); /**预计成本*/
 
       /*----------------以上是 总计的安排的具体计算-------------------*/
     },
     // 修改配置安排
 
-    constAll(dates, index,action="update") {
+    constAll(dates, index) {
       let params = {
         startDate: dates[0],
         endDate: dates[1],
@@ -1225,15 +1043,14 @@ export default {
         if (res.data.day === 0) {
           this.formData.projectUserList[index].planLoad = 0;
         } else {
-            if(action=='add'){
-              this.formData.projectUserList[index].planLoad =0
-            }else{
-              this.formData.projectUserList[index].planLoad = this.autoFixed(
-                ((8 * res.data.day) / (res.data.day * 8)) * 100
-              ); // 计划负荷
-            }
+          this.formData.projectUserList[index].planLoad = this.autoFixed(
+            ((8 * res.data.day) / (res.data.day * 8)) * 100
+          ); // 计划负荷
         }
-        if (this.formData.projectUserList[index].costNum==null||this.formData.projectUserList[index].costNum==undefined) {
+        if (
+          this.formData.projectUserList[index].costNum == null ||
+          this.formData.projectUserList[index].costNum == undefined
+        ) {
           this.formData.projectUserList[index].expectedCost = "--";
         } else {
           this.formData.projectUserList[index].expectedCost = this.autoFixed(
@@ -1249,19 +1066,11 @@ export default {
         res.data.list.map((item) => {
           item.startTime = item.startDate;
           item.endTime = item.endDate;
-          // 期间计划负荷 =  每周工作日*8 除以 每周工作日*8 再乘以100 
-          // 有时候 因为
-          if(action=='add'){
-            item.workTime = 0; // 内部的每周时长
-            item.workDay = 0; // 内部的每周人日
-             item.planLoad =0
-          }else{
-            item.workTime = item.weekDay != 0 ? "8" : 0; // 内部的每周时长
-            item.workDay = item.weekDay; // 内部的每周人日
-            item.planLoad = this.autoFixed(
-              ((item.weekDay * 8) / (item.weekDay * 8)) * 100 || 0
-            );
-          }
+          item.workTime = item.weekDay != 0 ? "8" : 0; // 内部的每周时长
+          item.workDay = item.weekDay; // 内部的每周人日
+          item.planLoad = this.autoFixed(
+            ((item.weekDay * 8) / (item.weekDay * 8)) * 100 || 0
+          );
         });
         this.formData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
       });
@@ -1279,17 +1088,13 @@ export default {
           oneUser.startTime = this.formData.projectStartTime;
           oneUser.endTime = this.formData.projectEndTime;
           oneUser.startEndTime = this.formData.projectTimeArea;
+          // 修改类型（1.新增,2.删除,3.修改原数据）
+          oneUser.updateType = 1;
           this.formData.projectUserList.push(oneUser);
           this.$forceUpdate();
-          let index = this.formData.projectUserList.length - 1;
-          this.constAll(oneUser.startEndTime, index,"add");
-          this.formData.projectUserList[index].recommendUserTableData =[]
-          this.formData.projectUserList[index].recommendUserActive=true
-          // 依照产品要求 点击添加配置 就需要生产 具体计划
         }
       });
     },
-    // 拿到机会列表
     getChanceList() {
       getChanceList({}).then((res) => {
         res.data.map((item) => {
@@ -1299,7 +1104,6 @@ export default {
         this.projectChanceOptions = res.data;
       });
     },
-    // 项目组的下拉菜单
     team() {
       let data = {
         startDate: this.formData.projectStartTime
@@ -1313,9 +1117,8 @@ export default {
         this.projectTeams = res.data;
       });
     },
-    // 项目组的选择时间
     teamChange() {
-      // console.log(this.formData, "fffff");
+      console.log(this.formData.projectGroupId, "fffff");
       let aa = this.projectTeams.filter((v) => {
         return v.projectGroupId == this.formData.projectGroupId;
       });
@@ -1391,58 +1194,15 @@ export default {
         },
       };
     },
-    // 动态修改 默认的日期区间
-    // changeAddUserDateArea(userInfo, index) {
-    //   // 项目成员安排的 可选时间区间
-    //   if (this.formData.projectEndTime != "" && this.formData.projectStartTime != "") {
-    //     console.log("有项目开始和结束日期");
-    //     // 判断此人是否已经在职在职在职
-    //     if (userInfo.status == 0) {
-    //       console.log("是在职");
-    //       if (
-    //         this.date2Number(userInfo.inTime) >
-    //         this.date2Number(this.formData.projectStartTime + " 23:59:59")
-    //       ) {
-    //         // 如果入职时间是否 大于 项目起始时间
-    //         // 就采用 该人的入职日期 和 项目结束日期
-    //         console.log("入职时间晚于项目起始时间");
-    //         return [userInfo.inTime, this.formData.projectEndTime];
-    //       } else {
-    //         console.log("入职时间早于项目起始时间");
-    //         // 如果入职时间是否 小于 项目起始时间
-    //         return [this.formData.projectStartTime, this.formData.projectEndTime];
-    //       }
-    //     }
-    //     // 实际上此段判断无用，原因是 查询用户的接口已经把
-    //     // 离职的员工给隔离了
-    //     // 判断此人是否已经离职
-    //     if (userInfo.status == 1) {
-    //       console.log("是离职");
-    //       if (
-    //         this.date2Number(userInfo.outTime) >
-    //         this.date2Number(this.formData.projectEndTime)
-    //       ) {
-    //         console.log("离职时间晚于项目结束时间，就拿项目结束时间");
-    //         // console.log("晚于项目起始时间")
-    //         // 如果离职时间是否 大于 项目结束时间
-    //         return [this.formData.projectStartTime, this.formData.projectEndTime];
-    //       } else {
-    //         // 如果离职时间 小于 项目结束时间
-    //         // 就采用 项目起始时间 该人的离职日期
-    //         console.log("离职时间早于项目起始时间，就拿最后的离职时间作为服务时间");
-    //         return [this.formData.projectStartTime, userInfo.outTime];
-    //       }
-    //     }
-    //   }
-    // },
-    /*选择项目有效期  备用*/
+    /*选择项目有效期*/
     getProjectTimeArea(dates) {
+      // this.formData.projectTimeArea=[]
+      console.log(dates, "sssssssss");
       this.formData.projectStartTime = dates[0];
       this.formData.projectEndTime = dates[1];
       this.team();
-      // console.log(this.formData.projectStartTime);
-      // console.log(this.date1);
       if (this.date1 && this.date2) {
+        // console.log(this.date1,'sssssssss')
         if (
           moment(this.date1, "YYYY-MM-DD").valueOf() <=
             moment(this.formData.projectStartTime, "YYYY-MM-DD").valueOf() &&
@@ -1478,33 +1238,19 @@ export default {
         }
       });
     },
-    /* 查询所有职位下拉 无用*/
-    // getPostOptions() {
-    //   getPostOptions().then((res) => {
-    //     res.data.map((item) => {
-    //       // regionName
-    //       item.postIdOptions = `${item.regionName}-${item.postName}-${item.postLevel}`;
-
-    //       // item.disabled = false;
-    //     });
-    //     this.postIdOptions = res.data; // 需要根据已经选择的人 来过滤
-    //   });
-    // },
     /* 查询是项目主管的用户列表 
-    * 2022.12.1 产品要求修改成全部人员
+    * // 2022.12.1 产品要求修改成全部人员
     */
     queryUserlistByRole() {
       let data = {};
       queryUserlist(data).then((res) => { // 2022.12.1 产品要求修改成全部人员
-        // 此接口不对
         // res.data.map((item) => {
         //   item.userNameAndPost = item.nickName + "（" + item.postName + "）";
         // });
         this.projectUserIdOptions = res.data; // 初始化填充给 项目负责人的 永远是所有用户
       });
     },
-
-    // 保存 addProjectList 新增用户信息的
+    // 保存 updateProjectUserAddEdit 新增用户信息的
     submitForm() {
       if (this.redShow) {
         this.$message.error("项目时间超出项目组限制时间!");
@@ -1513,38 +1259,64 @@ export default {
           if (!valid) return;
           // TODO 提交表单
           if (valid) {
+            // 把删除的用户也添加进去
             let parame = {
               ...this.formData,
               // carrierId:this.temData.carrierId,
               // status:0
             };
-            addProjectList(parame).then((res) => {
+            parame.projectUserList.push(...this.DelUserListTemp);
+            updateProjectUserAddEdit(parame).then((res) => {
               let { code, msg } = res;
               this.$message.success(msg);
               if (+code == 200) {
-                this.$router.push("/projectManager/proManager");
+                // this.$router.push("/projectManager/proManager");    path: "/projectManager/proDetails/",
+                this.$router.push({
+                  path: "/projectManager/proManager-auth/proDetails",
+                  query: {
+                    projectId: this.formData.projectId,
+                    projectName: this.formData.projectName,
+                    countScope: this.$route.query.countScope,
+                    startTime:this.formData.projectStartTime,
+                    endTime:this.formData.projectEndTime
+                  },
+                });
               }
             });
           }
         });
       }
     },
-    // 取消 修改为返回上一页。不重置表单了
+    // 取消重置表单的
     resetForm() {
-      this.$confirm(`确定返回列表页？`, "温馨提示", {
+      this.$refs["elForm"].resetFields();
+    },
+    backDetail() {
+      this.$confirm(`当前页面修改内容尚未保存，是否确认退出？`, "温馨提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-           const obj = { path: "/projectManager/proManager" };
-              this.$tab.closeOpenPage(obj);
-              // this.$refs["elForm"].resetFields();
+          const obj = {
+            path: "/projectManager/proManager-auth/proDetails",
+            query: {
+              projectId: this.formData.projectId,
+              projectName: this.formData.projectName,
+              countScope: this.$route.query.countScope,
+              startTime: this.formData.projectStartTime,
+              endTime: this.formData.projectEndTime,
+            },
+          };
+          this.$tab.closeOpenPage(obj);
         })
         .catch(() => {});
     },
+    goManagerPage() {
+      const obj = { path: "/projectManager/proManager" };
+      this.$tab.closeOpenPage(obj);
+    },
   },
-
   beforeCreate() {
     document
       .querySelector("body,html")
@@ -1557,23 +1329,16 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-
-.color1 {
-  color: #909399;
-}
-.color2 {
-  color: #409eff;
-}
 .app-container {
   padding: 0;
+}
+.date-style {
+  display: inline-block;
 }
 .UserLine {
   border-bottom: 1px #efefef solid;
   padding-bottom: 10px;
   margin-bottom: 10px;
-}
-.date-style {
-  display: inline-block;
 }
 .routerBar {
   a {
@@ -1621,16 +1386,11 @@ export default {
 .priority1 {
   color: #f56c6c;
 }
+.color4 {
+  color: #f56c6c;
+}
 </style>
 <style>
-
-.myTable   .el-table__header-wrapper  .recommendHeader {
-    background: #5a7db9 !important;
-    height: 30px;
-    padding: 5px 0px;
-    color: white !important;
-   
-}
 .skillcolor1 {
   background: rgb(0, 113, 189) !important;
   color: white !important;
@@ -1668,12 +1428,6 @@ export default {
           //   { cssClass: 'color7', color: 'rgb(255,67,89)' }, */
 .skillcc .el-tag__close {
   background-color: transparent !important;
-}
-.skillBox {
-  padding: 4px 8px;
-  border: 1px white solid;
-  border-radius: 5px;
-  margin-left: 4px;
 }
 .UserLine /deep/.el-form-item {
   margin-bottom: 2px;
