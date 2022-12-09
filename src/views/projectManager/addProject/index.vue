@@ -881,6 +881,13 @@ export default {
       projectChanceOptions: [],
     };
   },
+  created() {
+    // 表单数据回显
+    const formData = sessionStorage.getItem('addProject')
+    if (formData) {
+      this.formData = JSON.parse(formData)
+    }
+  },
   mounted() {
     this.team();
     this.getChanceList(); //拿到机会列表
@@ -1553,6 +1560,8 @@ export default {
 
   beforeDestroy() {
     document.querySelector("body,html").removeAttribute("style");
+    // 表单数据存储
+    sessionStorage.setItem('addProject', JSON.stringify(this.formData))
   },
 };
 </script>

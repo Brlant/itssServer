@@ -141,8 +141,19 @@ export default {
       },
     };
   },
+  created() {
+    // 表单数据回显
+    const formData = sessionStorage.getItem('addTeam')
+    if (formData) {
+      this.formData = JSON.parse(formData)
+    }
+  },
   mounted() {
     this.userList();
+  },
+  beforeDestroy() {
+    // 表单数据存储
+    sessionStorage.setItem('addTeam', JSON.stringify(this.formData))
   },
   methods: {
     userList() {
