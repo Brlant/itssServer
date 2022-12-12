@@ -112,9 +112,15 @@
                                 </span>                                 -->
                             </template>
                         </el-table-column>
-                        <el-table-column label="问题数量" align="center">
+                        <!-- 新增bug重开数量/bug重开率 -->
+                        <el-table-column label="bug重开数量" align="center">
                             <template slot-scope="scope">
-                                <span>{{scope.row.monthEfficiencyList[indexs].mistakeNum}}</span>
+                                <!-- <span>{{scope.row.monthEfficiencyList[indexs].mistakeNum}}</span> -->
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="bug重开率" align="center">
+                            <template slot-scope="scope">
+                                <!-- <span>{{scope.row.monthEfficiencyList[indexs].mistakeNum}}</span> -->
                             </template>
                         </el-table-column>
                         <el-table-column label="出产量" align="center">
@@ -163,6 +169,17 @@
                                 <span :class="[workLoadStyle(row.monthEfficiencyList[indexs])]">
                                     <span>{{row.monthEfficiencyList[indexs].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[indexs].workDay+'人日)'}}</span>
                                 </span>
+                            </template>
+                        </el-table-column>
+                         <!-- 新增bug重开数量/bug重开率 -->
+                        <el-table-column label="bug重开数量" align="center">
+                            <template slot-scope="scope">
+                                <!-- <span>{{scope.row.monthEfficiencyList[indexs].mistakeNum}}</span> -->
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="bug重开率" align="center">
+                            <template slot-scope="scope">
+                                <!-- <span>{{scope.row.monthEfficiencyList[indexs].mistakeNum}}</span> -->
                             </template>
                         </el-table-column>
                         <el-table-column label="问题数量" align="center">
