@@ -358,18 +358,19 @@ export default {
       this.detailInfo();
       this.position();
       this.level()
-    } else {
-      // 表单数据回显
-      const formData = sessionStorage.getItem('editAddInfo')
-      if (formData) {
-        this.formData = JSON.parse(formData) 
-      }
     }
     
     this.positinType("region");
     this.positinType("post_type");
     this.getTreeselect();
     this.role();
+  },
+  mounted() {
+    // 表单数据回显
+    const formData = sessionStorage.getItem('editAddInfo')
+    if (formData) {
+      this.formData = JSON.parse(formData) 
+    }
   },
   beforeDestroy() {
     // 没有isEdit的时候，该页面为新增
@@ -526,7 +527,10 @@ export default {
             addUser(data).then((res) => {
               if (res.code == 200) {
                 this.$message.success(res.msg);
-                  const obj = {
+
+                this.$refs.elForm.resetFields()
+
+                const obj = {
                   path: "/system/user",
                 };
                 // getToday()
