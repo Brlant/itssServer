@@ -495,7 +495,7 @@
                   end-placeholder="结束日期"
                   range-separator="至"
                   :picker-options="childDateArea"
-                  @change="(dates) => constAll(dates, addUserListindex)"
+                  @change="(dates) => constAll(dates, addUserListindex,'add')"
                 ></el-date-picker>
               </el-form-item>
             </el-col>
@@ -946,7 +946,7 @@ export default {
          // 循环 回显 职位名称和职位等级
           res.data.projectUserList.map((item, index) => {
          // 循环 回显 职位名称和职位等级
-          this.constAll(item.startEndTime, index);
+          this.constAll(item.startEndTime, index,'update');
           let params = {
             regionId: res.data.projectUserList[index].regionId,
             postTypeId: res.data.projectUserList[index].postTypeId,
@@ -1114,7 +1114,7 @@ export default {
             console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.formData.projectUserList[index].costNum}`);
-          this.constAll(this.formData.projectUserList[index].startEndTime, index);
+          this.constAll(this.formData.projectUserList[index].startEndTime, index,'add');
 
           break;
       }
@@ -1210,7 +1210,7 @@ export default {
     },
     // 修改配置安排
 
-    constAll(dates, index) {
+    constAll(dates, index,action="update") {
       let params = {
         startDate: dates[0],
         endDate: dates[1],
@@ -1221,9 +1221,13 @@ export default {
         if (res.data.day === 0) {
           this.formData.projectUserList[index].planLoad = 0;
         } else {
+           if(action=='add'){
+            this.formData.projectUserList[index].planLoad =0
+            }else{
           this.formData.projectUserList[index].planLoad = this.autoFixed(
             ((8 * res.data.day) / (res.data.day * 8)) * 100
           ); // 计划负荷
+          }
         }
         if (
           this.formData.projectUserList[index].costNum == null ||
@@ -1231,10 +1235,14 @@ export default {
         ) {
           this.formData.projectUserList[index].expectedCost = "--";
         } else {
+           if (action="add") {
+             this.formData.projectUserList[index].expectedCost = 0
+          }else{
           this.formData.projectUserList[index].expectedCost = this.autoFixed(
             // 预计成本
             res.data.day * this.formData.projectUserList[index].costNum
           );
+          }
         }
         /*---------第一行的数据-----------------*/
 
@@ -1244,11 +1252,17 @@ export default {
         res.data.list.map((item) => {
           item.startTime = item.startDate;
           item.endTime = item.endDate;
+           if(action=='add'){
+            item.workTime = 0; // 内部的每周时长
+            item.workDay = 0; // 内部的每周人日
+             item.planLoad =0
+          }else{
           item.workTime = item.weekDay != 0 ? "8" : 0; // 内部的每周时长
           item.workDay = item.weekDay; // 内部的每周人日
           item.planLoad = this.autoFixed(
             ((item.weekDay * 8) / (item.weekDay * 8)) * 100 || 0
           );
+          }
         });
         this.formData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
       });

@@ -500,7 +500,7 @@
                   end-placeholder="结束日期"
                   range-separator="至"
                   :picker-options="childDateArea"
-                  @change="(dates) => constAll(dates, addUserListindex,'update')"
+                  @change="(dates) => constAll(dates, addUserListindex,'add')"
                 ></el-date-picker>
               </el-form-item>
             </el-col>
@@ -1071,7 +1071,7 @@ export default {
             }
           }else{
             // 我是没被编辑过的
-            this.constAll(this.formData.projectUserList[index].startEndTime, index,'update');
+            this.constAll(this.formData.projectUserList[index].startEndTime, index,'add');
           }
                setTimeout(() => {
                   // this.recommendUserActive = true; // 点击添加 人选需要隐藏
@@ -1243,10 +1243,15 @@ export default {
         if (this.formData.projectUserList[index].costNum==null||this.formData.projectUserList[index].costNum==undefined) {
           this.formData.projectUserList[index].expectedCost = "--";
         } else {
-          this.formData.projectUserList[index].expectedCost = this.autoFixed(
-            // 预计成本
-            res.data.day * this.formData.projectUserList[index].costNum
-          );
+          if (action="add") {
+             this.formData.projectUserList[index].expectedCost = 0
+          }else{
+
+            this.formData.projectUserList[index].expectedCost = this.autoFixed(
+              // 预计成本
+              res.data.day * this.formData.projectUserList[index].costNum
+            );
+          }
         }
         /*---------第一行的数据-----------------*/
 
