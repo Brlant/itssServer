@@ -65,21 +65,43 @@
             <!-- </el-col>
         </el-row>         -->
 
-        <!-- 实时统计 -->
-        <div class="statistics" v-hasPermi="['threeInterface:gitlabAndTb:stat']">
-            <div class="time">
-                <b class="label">时间</b>
-                <el-date-picker
-                    v-model="times"
-                    value-format="yyyy-MM-dd"
-                    type="daterange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                />
+        <div class="newRow" v-hasPermi="['threeInterface:gitlabAndTb:stat']">
+            <!-- 配置相关 -->
+            <el-button type="success" @click="getConfig">修改配置</el-button>
+            <!-- 实时统计 -->
+            <div class="myWrap">
+                <div class="time">
+                    <b class="label">时间</b>
+                    <el-date-picker
+                        v-model="times"
+                        value-format="yyyy-MM-dd"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                    />
+                </div>
+                <el-button type="primary" :loading="loading" @click="onClick">统计</el-button>
             </div>
-            <el-button type="primary" :loading="loading" @click="onClick">统计</el-button>
         </div>
+        <!-- 配置弹窗 -->
+        <el-dialog
+            title="配置信息"
+            :visible.sync="dialogVisible"
+            width="30%"
+            destroy-on-close
+        >
+            <el-input
+                type="textarea"
+                :autosize="{ maxRows: 20}"
+                placeholder="请输入配置信息"
+                v-model="configInfo"
+            />
+            <div slot="footer" style="display:flex; justify-content:flex-end">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="updateConfig">确 定</el-button>
+            </div>
+        </el-dialog>
 
         <!-- 部门效率 -->
         <div v-if="mangerJurisdiction">
@@ -208,7 +230,14 @@
 <script>
 import moment from "moment";
 import "moment/locale/zh-cn";
-import { departmentQuery,queryUserlist,userQuery,statJob } from '@/api/proManager/efficiencyStatistics.js'
+import { 
+    departmentQuery,
+    queryUserlist,
+    userQuery,
+    statJob,
+    getTbConf,
+    updateTbConf
+} from '@/api/proManager/efficiencyStatistics.js'
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -242,7 +271,9 @@ export default {
             months:[],
             users:[],
             depts:[],
-            deptOptions:[]
+            deptOptions:[],
+            dialogVisible: false,
+            configInfo: ''
         }
     },
     created(){
@@ -266,6 +297,7 @@ export default {
         this.defaultDate()
     },
     methods:{
+
         // 导出
     exportExcelHandel(){
     //   if(this.searchForm.projectStartEndTime){
@@ -329,6 +361,26 @@ export default {
                 }
             }).catch(() => {
                 this.loading = false
+            })
+        },
+        // 查询配置
+        getConfig() {
+            getTbConf().then(res => {
+                this.dialogVisible = true
+                this.$nextTick(() => {
+                    this.configInfo = res.msg
+                })
+            })
+        },
+        updateConfig() {
+            const params = {
+                cookie: this.configInfo
+            }
+            updateTbConf(params).then(res => {
+                this.dialogVisible = false
+                if (res.code === 200) {
+                    this.$message.success(res.msg)
+                }
             })
         },
         userInfoId(id){
@@ -618,11 +670,17 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.statistics {
+.newRow {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     margin-bottom: 20px;
+}
+.myWrap {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-left: 20px;
     .time {
         margin-right: 20px;
         .label {
