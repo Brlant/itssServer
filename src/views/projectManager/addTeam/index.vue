@@ -141,14 +141,12 @@ export default {
       },
     };
   },
-  created() {
+  mounted() {
     // 表单数据回显
     const formData = sessionStorage.getItem('addTeam')
     if (formData) {
       this.formData = JSON.parse(formData)
     }
-  },
-  mounted() {
     this.userList();
   },
   beforeDestroy() {
@@ -174,6 +172,7 @@ export default {
           teamAdd(data).then((res) => {
             if (res.code == 200) {
               this.$message.success(res.msg);
+              this.$refs.elForm.resetFields();
               const obj = { path: "/projectManager/projectTeam" };
               this.$tab.closeOpenPage(obj);
             }

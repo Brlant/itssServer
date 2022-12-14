@@ -44,7 +44,7 @@
                             <el-col :span="4" >
                                 <el-form-item label="" align="center" justify="center">
                                  <!-- -->
-                                 <el-button size="mini" @click="exportExcelHandel" type="success">导出Excel</el-button>
+                                 <el-button @click="exportExcelHandel" type="success" :loading="btnLoading">导出Excel</el-button>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -65,21 +65,43 @@
             <!-- </el-col>
         </el-row>         -->
 
-        <!-- 实时统计 -->
-        <div class="statistics" v-hasPermi="['threeInterface:gitlabAndTb:stat']">
-            <div class="time">
-                <b class="label">时间</b>
-                <el-date-picker
-                    v-model="times"
-                    value-format="yyyy-MM-dd"
-                    type="daterange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                />
+        <div class="newRow" v-hasPermi="['threeInterface:gitlabAndTb:stat']">
+            <!-- 配置相关 -->
+            <el-button type="success" @click="getConfig">修改配置</el-button>
+            <!-- 实时统计 -->
+            <div class="myWrap">
+                <div class="time">
+                    <b class="label">时间</b>
+                    <el-date-picker
+                        v-model="times"
+                        value-format="yyyy-MM-dd"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                    />
+                </div>
+                <el-button type="primary" :loading="btnLoading" @click="onClick">统计</el-button>
             </div>
-            <el-button type="primary" :loading="loading" @click="onClick">统计</el-button>
         </div>
+        <!-- 配置弹窗 -->
+        <el-dialog
+            title="配置信息"
+            :visible.sync="dialogVisible"
+            width="30%"
+            destroy-on-close
+        >
+            <el-input
+                type="textarea"
+                :autosize="{ maxRows: 20}"
+                placeholder="请输入配置信息"
+                v-model="configInfo"
+            />
+            <div slot="footer" style="display:flex; justify-content:flex-end">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="updateConfig">确 定</el-button>
+            </div>
+        </el-dialog>
 
         <!-- 部门效率 -->
         <div v-if="mangerJurisdiction">
@@ -208,7 +230,15 @@
 <script>
 import moment from "moment";
 import "moment/locale/zh-cn";
-import { departmentQuery,queryUserlist,userQuery,statJob } from '@/api/proManager/efficiencyStatistics.js'
+import { 
+    departmentQuery,
+    queryUserlist,
+    userQuery,
+    statJob,
+    getTbConf,
+    updateTbConf,
+    exportExcel
+} from '@/api/proManager/efficiencyStatistics.js'
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -242,7 +272,12 @@ export default {
             months:[],
             users:[],
             depts:[],
-            deptOptions:[]
+            deptOptions:[],
+            dialogVisible: false,
+            configInfo: '',
+            data: null,
+            tableData: [],
+            btnLoading: false
         }
     },
     created(){
@@ -266,6 +301,7 @@ export default {
         this.defaultDate()
     },
     methods:{
+
         // 导出
     exportExcelHandel(){
     //   if(this.searchForm.projectStartEndTime){
@@ -300,6 +336,30 @@ export default {
          
     //     });
         // /projectManage/project/export
+        if (!this.tableData.length) {
+            return this.$message.warning('暂无可导出内容')
+        }
+        this.btnLoading = true
+        exportExcel(this.data).then(res => {
+            let blob = new Blob([res], {
+              // type:"application/vnd.ms-excel",
+                type: "application/octet-stream;charset=UTF-8",
+            });
+            console.log(blob);
+            let timeString =  moment().format("YYYYMMDDhhmmss");
+            const fileName = `效率统计${timeString}.xlsx` // 下载文件名称
+            const elink = document.createElement('a')
+            elink.download = fileName
+            elink.style.display = 'none'
+            elink.href = URL.createObjectURL(blob)
+            document.body.appendChild(elink)
+            elink.click()
+            URL.revokeObjectURL(elink.href) // 释放URL 对象
+            document.body.removeChild(elink)
+            this.btnLoading = false
+        }).catch(() => {
+            this.btnLoading = false
+        })
     },
         // 实时统计
         onClick() {
@@ -329,6 +389,26 @@ export default {
                 }
             }).catch(() => {
                 this.loading = false
+            })
+        },
+        // 查询配置
+        getConfig() {
+            getTbConf().then(res => {
+                this.dialogVisible = true
+                this.$nextTick(() => {
+                    this.configInfo = res.msg
+                })
+            })
+        },
+        updateConfig() {
+            const params = {
+                cookie: this.configInfo
+            }
+            updateTbConf(params).then(res => {
+                this.dialogVisible = false
+                if (res.code === 200) {
+                    this.$message.success(res.msg)
+                }
             })
         },
         userInfoId(id){
@@ -435,6 +515,10 @@ export default {
             }
             departmentQuery(data).then(res=>{
                 if(res.code==200){
+                    // 保存查询参数
+                    this.data = data
+                    console.log('查询参数', this.data)
+
                     if(res.data){
                         this.deptData=[]
                         this.months=[]
@@ -472,11 +556,15 @@ export default {
                  hasYieldNum:false
             }
             departmentQuery(data).then(res=>{
-
                 if(res.code==200){
-                      this.months=[]
+                    // 保存查询参数
+                    this.data = data
+                    console.log('查询参数', this.data)
+
+                    this.months=[]
                     if(res.data){
                         this.deptData=res.data
+                        this.tableData = res.data
                          console.log(this.deptData,'1111111')
                             let value1 = res.data.find(item => item.userList.length)
                              if(value1){
@@ -514,6 +602,7 @@ export default {
                     if(res.data){
                          this.months=[]
                         this.userData=res.data
+                        this.tableData = res.data
                           console.log( this.userData,111111111111)
                          let value1 = res.data.find(item => item.projectEfficiencyList.length)
                              if(value1){
@@ -618,11 +707,17 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.statistics {
+.newRow {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     margin-bottom: 20px;
+}
+.myWrap {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-left: 20px;
     .time {
         margin-right: 20px;
         .label {

@@ -514,6 +514,7 @@ export default {
        addworkingHour(this.datalist).then(res=>{
         if(res.code==200){
           this.$message.success('提交成功')
+          
           this.queryProject(this.datalist[0].workDate)
           // this.datalist=[{}]
           this.datalist.forEach((v, i) => {

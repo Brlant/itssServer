@@ -547,14 +547,13 @@ export default {
       
     }
   },
-  created() {
+  mounted() {
     // 表单数据回显
     const formData = sessionStorage.getItem('addProject')
     if (formData) {
       this.formData = JSON.parse(formData)
     }
-  },
-  mounted() {
+
     this.getDictList("post_type");  //职位类型
     this.getDictList("skill_type");  // 技能 technique 
     // this.getDictList("post_name");   // 职位名称 post_name
@@ -680,6 +679,7 @@ export default {
           addChance(parame).then((res) => {
             let { code, msg } = res;
             this.$message.success(msg);
+            this.$refs.elForm.resetFields();
             if (+code == 200) {
               this.$router.push("/chanceManager/chanceList");
             }

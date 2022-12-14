@@ -39,7 +39,7 @@
                             </el-col>
                              <el-col :span="4" align="center" justify="center">
                                 
-                                 <el-button size="mini" @click="exportExcelHandel" type="success">导出Excel</el-button>
+                                 <el-button @click="exportExcelHandel" type="success" :loading="loading">导出Excel</el-button>
                                   
                             </el-col>
                         </el-row>
@@ -122,6 +122,9 @@
         </div>
         <!-- 个人效率 -->
         <div v-if='selfJurisdiction'>
+            <div style="display:flex; justify-content:flex-end; margin-bottom:15px">
+                <el-button type="success" :loading="loading2" @click="exportExcelPersonal">导出Excel</el-button>
+            </div>
             <div class='table-style'>
                 <div class='name'>{{userData.userName}}</div>
                 <el-table :data="userData.workUserProjectVoList" border class="tableData" style="width:100%" :span-method="arraySpanMethod">
@@ -166,7 +169,13 @@
 <script>
 import moment from "moment";
 import "moment/locale/zh-cn";
-import { departmentQuery,userQuery,queryUserlist } from '@/api/proManager/workloadStatistics.js'
+import { 
+    departmentQuery,
+    userQuery,
+    queryUserlist,
+    exportExcel,
+    exportExcelPersonal
+} from '@/api/proManager/workloadStatistics.js'
 // import { queryUserlist} from '@/api/proManager/efficiencyStatistics.js'
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -199,7 +208,11 @@ export default {
             months:[],
             users:[],
             depts:[],
-            deptOptions:[]
+            deptOptions:[],
+            data: null,
+            tableData: [],
+            loading: false,
+            loading2: false
         }
     },
     created(){       
@@ -220,7 +233,7 @@ export default {
         this.defaultDate()
     },
     methods:{  
-        // 导出
+        // 导出-部门
     exportExcelHandel(){
     //   if(this.searchForm.projectStartEndTime){
     //      // if(this.searchForm.projectStartEndTime&&this.searchForm.projectStartEndTime.length>0){
@@ -254,6 +267,57 @@ export default {
          
     //     });
         // /projectManage/project/export
+        if (!this.tableData.length) {
+            return this.$message.warning('暂无可导出内容')
+        }
+        this.loading = true
+        exportExcel(this.data).then(res => {
+            let blob = new Blob([res], {
+              // type:"application/vnd.ms-excel",
+                type: "application/octet-stream;charset=UTF-8",
+            });
+            console.log(blob);
+            let timeString =  moment().format("YYYYMMDDhhmmss");
+            const fileName = `部门工作量统计${timeString}.xlsx` // 下载文件名称
+            const elink = document.createElement('a')
+            elink.download = fileName
+            elink.style.display = 'none'
+            elink.href = URL.createObjectURL(blob)
+            document.body.appendChild(elink)
+            elink.click()
+            URL.revokeObjectURL(elink.href) // 释放URL 对象
+            document.body.removeChild(elink)
+            this.loading = false
+        }).catch(() => {
+            this.loading = false
+        })
+    },
+    // 导出-个人
+    exportExcelPersonal() {
+        if (!this.tableData.length) {
+            return this.$message.warning('暂无可导出内容')
+        }
+        this.loading2 = true
+        exportExcelPersonal(this.data).then(res => {
+            let blob = new Blob([res], {
+              // type:"application/vnd.ms-excel",
+                type: "application/octet-stream;charset=UTF-8",
+            });
+            console.log(blob);
+            let timeString =  moment().format("YYYYMMDDhhmmss");
+            const fileName = `个人工作量统计${timeString}.xlsx` // 下载文件名称
+            const elink = document.createElement('a')
+            elink.download = fileName
+            elink.style.display = 'none'
+            elink.href = URL.createObjectURL(blob)
+            document.body.appendChild(elink)
+            elink.click()
+            URL.revokeObjectURL(elink.href) // 释放URL 对象
+            document.body.removeChild(elink)
+            this.loading2 = false
+        }).catch(() => {
+            this.loading2 = false
+        })
     },
             // 动态生成 表头样式
     headerClassName(row) {
@@ -353,9 +417,15 @@ export default {
             }
             departmentQuery(data).then(res=>{
                 if(res.code==200){
+                    // 保存查询参数
+                    this.data = data
+                    console.log('查询参数', this.data)
+
                     if(res.data){
                        
                         this.deptData=res.data
+                        this.tableData = res.data
+
                         if(res.data){
                             let value1 = res.data.find(item => item.workLoadUserVoList.length)
                             if(value1){
@@ -384,9 +454,14 @@ export default {
             }
             userQuery(data).then(res=>{
                 if(res.code==200){
+                    // 保存查询参数
+                    this.data = data
+                    console.log('查询参数', this.data)
+
                     if(res.data){
                         //  console.log(res.data,'rrrrr')
                         this.userData=res.data
+                        this.tableData = res.data.workUserProjectVoList
                         if(res.data){
                             if(res.data.workUserProjectVoList.length>0){
                                  let monthDate=res.data.workUserProjectVoList[0].workUserProjectWeekVoList

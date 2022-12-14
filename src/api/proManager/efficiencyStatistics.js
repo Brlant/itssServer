@@ -34,3 +34,30 @@ export function statJob(query) {
     params: query
   })
 }
+
+// 查询配置
+export function getTbConf() {
+  return request({
+    url: '/threeInterface/gitlabStat/getTbConf',
+    method: 'get'
+  })
+}
+
+// 修改配置
+export function updateTbConf(query) {
+  return request({
+    url: '/threeInterface/gitlabStat/updateTbConf',
+    method: 'get',
+    params: query
+  })
+}
+
+// 导出excel 
+export function exportExcel(query) {
+  return request({
+    url: '/efficiencyManage/efficiencyManage/exportOfficeEfficiency',
+    method: 'get',
+    responseType: 'blob',
+    params: query
+  })
+}
