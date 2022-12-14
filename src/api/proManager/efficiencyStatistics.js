@@ -51,3 +51,13 @@ export function updateTbConf(query) {
     params: query
   })
 }
+
+// 导出excel 
+export function exportExcel(query) {
+  return request({
+    url: '/efficiencyManage/efficiencyManage/exportOfficeEfficiency',
+    method: 'get',
+    responseType: 'blob',
+    params: query
+  })
+}

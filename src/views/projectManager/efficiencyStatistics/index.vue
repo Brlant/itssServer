@@ -44,7 +44,7 @@
                             <el-col :span="4" >
                                 <el-form-item label="" align="center" justify="center">
                                  <!-- -->
-                                 <el-button size="mini" @click="exportExcelHandel" type="success">导出Excel</el-button>
+                                 <el-button @click="exportExcelHandel" type="success">导出Excel</el-button>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -236,7 +236,8 @@ import {
     userQuery,
     statJob,
     getTbConf,
-    updateTbConf
+    updateTbConf,
+    exportExcel
 } from '@/api/proManager/efficiencyStatistics.js'
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -273,7 +274,9 @@ export default {
             depts:[],
             deptOptions:[],
             dialogVisible: false,
-            configInfo: ''
+            configInfo: '',
+            data: null,
+            tableData: []
         }
     },
     created(){
@@ -332,6 +335,26 @@ export default {
          
     //     });
         // /projectManage/project/export
+        if (!this.tableData.length) {
+            return this.$message.warning('暂无可下载内容')
+        }
+        exportExcel(this.data).then(res => {
+            let blob = new Blob([res], {
+              // type:"application/vnd.ms-excel",
+                type: "application/octet-stream;charset=UTF-8",
+            });
+            console.log(blob);
+            let timeString =  moment().format("YYYYMMDDhhmmss");
+            const fileName = `效率统计${timeString}.xlsx` // 下载文件名称
+            const elink = document.createElement('a')
+            elink.download = fileName
+            elink.style.display = 'none'
+            elink.href = URL.createObjectURL(blob)
+            document.body.appendChild(elink)
+            elink.click()
+            URL.revokeObjectURL(elink.href) // 释放URL 对象
+            document.body.removeChild(elink)
+        })
     },
         // 实时统计
         onClick() {
@@ -487,6 +510,10 @@ export default {
             }
             departmentQuery(data).then(res=>{
                 if(res.code==200){
+                    // 保存查询参数
+                    this.data = data
+                    console.log('查询参数', this.data)
+
                     if(res.data){
                         this.deptData=[]
                         this.months=[]
@@ -524,11 +551,15 @@ export default {
                  hasYieldNum:false
             }
             departmentQuery(data).then(res=>{
-
                 if(res.code==200){
-                      this.months=[]
+                    // 保存查询参数
+                    this.data = data
+                    console.log('查询参数', this.data)
+
+                    this.months=[]
                     if(res.data){
                         this.deptData=res.data
+                        this.tableData = res.data
                          console.log(this.deptData,'1111111')
                             let value1 = res.data.find(item => item.userList.length)
                              if(value1){
@@ -566,6 +597,7 @@ export default {
                     if(res.data){
                          this.months=[]
                         this.userData=res.data
+                        this.tableData = res.data
                           console.log( this.userData,111111111111)
                          let value1 = res.data.find(item => item.projectEfficiencyList.length)
                              if(value1){
