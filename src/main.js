@@ -20,7 +20,7 @@ import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
 import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, handleTree,handleTree2 } from "@/utils/ruoyi";
 
-import { deepClone,clearNullParam,isJurisdiction ,moneyFormat,isProjectByUser,date2Number,addClass,addClassName,autoFixed,formatAmount} from "@/utils/index";
+import { deepClone,clearNullParam,isJurisdiction ,moneyFormat,isProjectByUser,date2Number,addClass,addClassName,autoFixed,formatAmount,class2color} from "@/utils/index";
 
 // 分页组件
 import Pagination from "@/components/Pagination";
@@ -55,7 +55,6 @@ Vue.use( sinopharm ) ;
 
 
 // 全局方法挂载
-
 Vue.prototype.autoFixed = autoFixed
 Vue.prototype.addClassName = addClassName
 Vue.prototype.addClass = addClass
@@ -75,7 +74,8 @@ Vue.prototype.selectDictLabel = selectDictLabel
 Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
-Vue.prototype.handleTree2 = handleTree2
+Vue.prototype.handleTree2 = handleTree2 
+Vue.prototype.class2color = class2color 
 Vue.prototype.monent = Moment
 
 // 全局组件挂载

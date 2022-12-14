@@ -110,8 +110,7 @@
               <el-select
                 v-model="formData.projectUserId"
                 placeholder="请选择项目负责人"
-                clearable
-                filterable
+                clearable filterable
                 :style="{ width: '100%' }"
               >
                 <el-option
@@ -122,9 +121,7 @@
                   :disabled="user.disabled"
                 ></el-option>
               </el-select>
-              <span class="myTag"
-                >(负责关联此项目的工时的最终审批；可对关联此项目的工单进行编辑和人员指派)</span
-              >
+              <span class="myTag">(负责关联此项目的工时的最终审批；可对关联此项目的工单进行编辑和人员指派)</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -214,14 +211,7 @@
                   v-for="(item, index) in projectTeams"
                   :key="index"
                   :value="item.projectGroupId"
-                  :label="
-                    item.projectGroupName +
-                    '(' +
-                    item.startDate +
-                    ' 至 ' +
-                    item.endDate +
-                    ')'
-                  "
+                  :label="item.projectGroupName+ '(' + item.startDate + ' 至 ' + item.endDate +')'"
                   :disabled="item.disabled"
                 ></el-option>
               </el-select>
@@ -237,18 +227,17 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="10" :offset="1">
+            <el-col :span="10" :offset="1">
             <el-form-item label="缺陷管理ID" prop="bugId">
-              <el-input v-model="formData.bugId" placeholder="缺陷管理ID"></el-input>
+              <el-input
+                v-model="formData.bugId"
+                placeholder="缺陷管理ID"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="10" :offset="1">
             <el-form-item label="成本上限" prop="costUp">
-              <el-input-number
-                v-model="formData.costUp"
-                placeholder="请输入成本上限"
-                :precision="2"
-              ></el-input-number>
+                <el-input-number v-model="formData.costUp" placeholder="请输入成本上限" :precision='2'></el-input-number>
             </el-form-item>
           </el-col>
         </el-row>
@@ -256,12 +245,8 @@
       <div class="titleBar">
         项目资源配置
         <div class="rightBox">
-          <el-button size="mini" @click="addUserListHandel" type="primary"
-            >添加人员配置</el-button
-          >
-          <el-button size="mini" @click="batchAddUserListHandel"
-            >批量添加人员配置</el-button
-          >
+          <el-button size="mini" @click="addUserListHandel" type="primary">添加人员配置</el-button>
+          <el-button size="mini" @click="batchAddUserListHandel" >批量添加人员配置</el-button>
         </div>
       </div>
       <div class="whiteBox UserListBox">
@@ -330,7 +315,7 @@
                   @change="(dates) => editNext('postNameId', dates, addUserListindex)"
                 >
                   <el-option
-                    v-for="(dict, index) in addUserList.postNameIdOptions"
+                    v-for="(dict, index) in postNameIdOptions"
                     :key="dict.postNameId"
                     :label="dict.postName"
                     :value="dict.postNameId"
@@ -353,7 +338,7 @@
                   @change="(dates) => editNext('postLevelId', dates, addUserListindex)"
                 >
                   <el-option
-                    v-for="(dict, index) in addUserList.postLevelIdOptions"
+                    v-for="(dict, index) in postLevelIdOptions"
                     :key="dict.postLevelId"
                     :label="dict.postLevelName"
                     :value="dict.postLevelId"
@@ -380,16 +365,16 @@
               <el-form-item
                 label="技能需求："
                 :prop="`projectUserList.${addUserListindex}.skillIdList`"
+               
               >
                 <el-select
                   v-model="addUserList.skillIdList"
                   multiple
                   placeholder="请选择技能需求"
-                  @change="changeTextColor($event, 'mySkillIdList', addUserListindex)"
+                  @change="changeTextColor($event, 'mySkillIdList',addUserListindex)"
                   ref="mySkillIdList"
                   :disabled="addUserList.nextActive"
                   :style="{ width: '100%' }"
-                  class="tagStyle"
                 >
                   <el-option
                     v-for="(dict, index) in techniqueOptions"
@@ -397,17 +382,13 @@
                     :label="dict.dictLabel"
                     :value="dict.dictCode"
                     :disabled="dict.disabled"
-                    
-                    
                   >
-                    <!-- v.classList && v.classList.add("skillcc"); // 添加类名
-              v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名 -->
                     <span>{{ dict.dictLabel }}</span>
                   </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+             <el-col :span="4">
               <el-form-item label="人选：">
                 <div class="colText2">
                   <span>
@@ -417,15 +398,11 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+            <el-row>
             <el-col :span="24">
-              <el-form-item label="选择人员：">
-                <div
-                  class="whiteBox"
-                  v-show="addUserList.recommendUserActive"
-                  style="padding: 1%"
-                >
-                  <!-- <b>| 人选推荐</b>
+                <el-form-item label="选择人员：">
+                  <div class="whiteBox" v-show="addUserList.recommendUserActive" style="padding: 1%">
+        <!-- <b>| 人选推荐</b>
         <p style="height: 10px"></p> -->
                   <el-table
                     :data="addUserList.recommendUserTableData"
@@ -453,9 +430,7 @@
                     <el-table-column prop="price" label="单价">
                       <template slot-scope="scope">
                         <span>{{
-                          scope.row.price || scope.row.price == 0
-                            ? moneyFormat(scope.row.price)
-                            : ""
+                          scope.row.price || scope.row.price == 0 ? moneyFormat(scope.row.price) : ""
                         }}</span>
                       </template>
                     </el-table-column>
@@ -475,22 +450,20 @@
                           <el-button
                             type="text"
                             size="mini"
-                            v-if="scope.row.showOrCancel == 1"
+                            v-if="scope.row.showOrCancel == 1 "
                           >
-                            <span
-                              class="color2"
-                              @click="addUserToProject(scope.row, addUserListindex)"
+                            <span class="color2" @click="addUserToProject(scope.row, addUserListindex)"
                               >添加
                             </span>
                           </el-button>
                           <el-button
                             type="text"
                             size="mini"
-                            v-if="scope.row.showOrCancel == 2"
+                            v-if="scope.row.showOrCancel == 2  "
                           >
                             <span
                               class="color1"
-                              @click="delUserToProject(scope.row, addUserListindex)"
+                              @click="delUserToProject(scope.row, addUserListindex)  "
                               >取消
                             </span>
                           </el-button>
@@ -504,8 +477,8 @@
                   price:"",//单价
                   allPrice:"",//总价 -->
                   </el-table>
-                </div>
-              </el-form-item>
+                  </div>
+                </el-form-item>
             </el-col>
           </el-row>
           <el-row>
@@ -526,7 +499,7 @@
                   end-placeholder="结束日期"
                   range-separator="至"
                   :picker-options="childDateArea"
-                  @change="(dates) => constAll(dates, addUserListindex, 'add')"
+                  @change="(dates) => constAll(dates, addUserListindex,'add')"
                 ></el-date-picker>
               </el-form-item>
             </el-col>
@@ -607,38 +580,37 @@
       </div>
     </el-form>
     <!-- 批量添加人员配置------------------>
-    <el-dialog title="批量添加人员配置" :visible.sync="batchUserFormVisible">
-      <el-form :model="batchUserForm" label-width="100px" style="height: 400px">
-        <el-form-item label="选择部门：">
-          <el-input
-            class="input-style"
-            v-model="filterText"
-            placeholder="搜索成员、部门、技能"
-            size="small"
-            prefix-icon="el-icon-search"
-          />
-          <el-tree
-            style="background: #f8f8f8"
-            :data="batchUserData"
-            :props="defaultProps"
-            node-key="id"
-            :expand-on-click-node="false"
-            :filter-node-method="filterNode"
-            ref="trees"
-            default-expand-all
-            highlight-current
-            @node-click="handleNodeClick"
-          >
-          </el-tree>
-        </el-form-item>
+    <el-dialog title="批量添加人员配置" :visible.sync="barchUserFormVisible">
+      <el-form :model="barchUserForm"  label-width="100px" style="height:400px">
+          <el-form-item label="选择部门：">
+            <el-input
+                class="input-style"
+                v-model="filterText"
+                placeholder="搜索成员、部门、技能"
+                size="small"
+                prefix-icon="el-icon-search"
+              />
+              <el-tree
+              style="background: #f8f8f8;"
+                :data="barchUserData"
+                :props="defaultProps"
+                node-key="id"
+                :expand-on-click-node="false"
+                :filter-node-method="filterNode"
+                ref="trees"
+                default-expand-all
+                highlight-current
+                @node-click="handleNodeClick"
+              >
+              </el-tree>
+          </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <div class="miaoshu">注：选定部门并确定后，将自动添加该部门下的所有人员</div>
-        <div class="tishi">
-          已选部门：
-          <span class="yellowFont">{{ checkedText }}</span>
+        <div class="tishi">已选部门：
+          <span class="yellowFont">{{checkedText}}</span>
         </div>
-        <el-button @click="batchUserFormVisible = false">取 消</el-button>
+        <el-button @click="barchUserFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="createBatchUser">确 定</el-button>
       </div>
     </el-dialog>
@@ -660,37 +632,36 @@ import {
 import { treeselect } from "@/api/system/dept";
 
 import { toProject, getChanceList } from "@/api/chanceManager/chanceManager";
-
-import { queryUserList, queryUserlistByRole } from "@/api/system/user";
+  
+import { queryUserList,queryUserlistByRole } from "@/api/system/user";
 import moment from "moment";
 import "moment/locale/zh-cn";
 
 export default {
-  name: "AddProject",
+  name:"AddProject",
   data() {
     const check = (rule, value, callback) => {
       if (!value) {
-        callback();
+        callback()
       } else {
         if (/^(\d+,?)+$/.test(value)) {
-          callback();
+          callback()
         } else {
-          callback(new Error("输入格式不正确"));
+          callback(new Error('输入格式不正确'))
         }
       }
-    };
+    }
     return {
-      tagStyleElem: "", // 临时存储的技能的字段
-      batchUser: [],
-      batchUserForm: {},
+      batchUser:[],
+      barchUserForm:{},
       defaultProps: {
-        children: "children",
-        label: "label",
-      },
-      batchUserData: [],
-      checkedText: "",
-      filterText: "",
-      batchUserFormVisible: false, // 批量添加资源配置
+          children: 'children',
+          label: 'label'
+        },
+      barchUserData:[],
+      checkedText:"",
+      filterText: '',
+      barchUserFormVisible:false, // 批量添加资源配置
       childDateArea: {
         // 项目成员安排的 可选时间区间
         disabledDate: (time) => {
@@ -737,22 +708,22 @@ export default {
         // tbProjectId: "",
         // costUp:"", /*成本上限*/
         //快速调试
-        priority: 3,
-        projectChance: 2,
-        projectCode: "周佩煌测试" + moment().format("YYYYMMDDhhmmss"),
-        projectEndTime: "2022-12-30",
-        projectGitUrl: "",
-        projectGroupId: "",
-        projectName: "周佩煌测试1208",
-        projectService: 1,
-        projectStage: 32,
-        projectStartTime: "2022-12-01",
+        priority:3,
+        projectChance:2,
+        projectCode:"周佩煌测试1208",
+        projectEndTime:"2022-12-30",
+        projectGitUrl:"",
+        projectGroupId:"",
+        projectName:"周佩煌测试1208",
+        projectService:1,
+        projectStage:32,
+        projectStartTime:"2022-12-01",
         projectTimeArea: ["2022-12-01", "2022-12-30"],
-        projectType: 31,
-        projectUserId: 143,
-        projectUserList: [] /**项目成员列表*/,
-        tbProjectId: "",
-        costUp: 12000,
+        projectType:31,
+        projectUserId:143,
+        projectUserList: [],/**项目成员列表*/
+        tbProjectId:"",
+        costUp:12000,
       },
       rules: {
         // 配置信息的
@@ -806,6 +777,7 @@ export default {
           },
         ],
 
+
         projectCode: [
           {
             required: true,
@@ -857,9 +829,9 @@ export default {
         ],
         projectGitUrl: [
           {
-            trigger: "blur",
-            validator: check,
-          },
+            trigger: 'blur',
+            validator: check
+          }
         ],
         projectTimeArea: [
           {
@@ -875,6 +847,7 @@ export default {
             trigger: "change",
           },
         ],
+        
       },
       // // 单独的 用户列表
       projectUserList: {
@@ -895,17 +868,17 @@ export default {
         postTypeActive: true,
         nextActive: true,
       },
-      recommendUserActive: false, // 是否展示人选推荐
-      recommendUserTableData: [
-        // {
-        //   nickName: "", //姓名
-        //   regionName: "", //区域
-        //   postName: "", //职位名称
-        //   postLevel: "", //等级
-        //   price: "", //单价
-        //   allPrice: "", //总价
-        // },
-      ],
+         recommendUserActive: false, // 是否展示人选推荐
+    recommendUserTableData: [
+      // {
+      //   nickName: "", //姓名
+      //   regionName: "", //区域
+      //   postName: "", //职位名称
+      //   postLevel: "", //等级
+      //   price: "", //单价
+      //   allPrice: "", //总价
+      // },
+    ],
       // projectUserScheduleList: {
       //   /**
       //    * 周期
@@ -955,20 +928,14 @@ export default {
       projectChanceOptions: [],
     };
   },
-
+  
   created() {
     // 表单数据回显
-    const formData = sessionStorage.getItem("addProject");
+    const formData = sessionStorage.getItem('addProject')
     if (formData) {
-      this.formData = JSON.parse(formData);
-      this.formData.projectUserList.map((item, i) => {
-      // console.log(JSON.stringify(item.skillIdList));// 4 6 3 1
-      //     // this.$nextTick(()=>{
-      this.changeTextColor(item.skillIdList, "mySkillIdList", i);
-      //   //  })
-    });
+      this.formData = JSON.parse(formData)
     }
-  },
+  }, 
 
   mounted() {
     this.getTreeselect();
@@ -987,28 +954,30 @@ export default {
     // 额外的判断  需要判断这个页面是不是从 机会跳转过来的
     if (this.$route.query.chanceId) {
       setTimeout(() => {
-        toProject(this.$route.query.chanceId).then((res) => {
-          res.data.projectUserList.map((item, i) => {
-            let parame = {
-              postTypeId: res.data.projectUserList[i].postTypeId,
-              postNameId: res.data.projectUserList[i].postNameId,
-              regionId: res.data.projectUserList[i].regionId,
-            };
-            getPostName(parame).then((res) => {
-              this.formData.projectUserList[i].postNameIdOptions = res.data;
-            });
-            getLevelCostNum(parame).then((res) => {
-              this.formData.projectUserList[i].postLevelIdOptions = res.data;
-            });
-            item.startEndTime = [item.startTime, item.endTime];
-          });
-          res.data.projectTimeArea = [res.data.projectStartTime, res.data.projectEndTime];
-          this.formData = res.data;
-          this.formData.projectChance = parseInt(this.$route.query.chanceId);
-        });
+          toProject(this.$route.query.chanceId).then((res) => {
+            res.data.projectUserList.map((item,i)=>{
+             let  parame = {
+                 postTypeId: res.data.projectUserList[i].postTypeId,
+                postNameId: res.data.projectUserList[i].postNameId,
+                regionId: res.data.projectUserList[i].regionId,
+              };
+              getPostName(parame).then((res) => {
+                this.postNameIdOptions = res.data;
+              });
+                getLevelCostNum(parame).then((res) => {
+                  this.postLevelIdOptions = res.data;
+                });
+              item.startEndTime = [item.startTime,item.endTime]
+              
+            })
+             res.data.projectTimeArea = [res.data.projectStartTime,res.data.projectEndTime]
+        this.formData = res.data;
+        this.formData.projectChance = parseInt(this.$route.query.chanceId)
+       
+      });
       }, 800);
     }
-    this.childDateArea = {
+     this.childDateArea = {
       // 项目成员安排的 可选时间区间
       disabledDate: (time) => {
         if (this.formData.projectEndTime != "" && this.formData.projectStartTime != "") {
@@ -1022,64 +991,44 @@ export default {
     };
     // this.addUserListHandel() // 自测用
   },
-  watch: {
-    filterText(val) {
-      this.$refs.trees.filter(val);
+    watch: {
+      filterText(val) {
+        this.$refs.trees.filter(val);
+      }
     },
-  },
   methods: {
     // 点击确定生成多条 资源配置
-    createBatchUser() {
-      this.batchUserFormVisible = false;
+    createBatchUser(){
+      this.barchUserFormVisible = false
 
-      this.batchUser.map((item) => {
+      this.batchUser.map(item=>{
         // cssClass:"color1"
         // skillId:48
         // skillName:"web前端"
-        let skillIdListTemp = [];
-        item.userSkills.map((skiItem) => {
-          skiItem.dictCode = skiItem.skillId;
-          skiItem.dictLabel = skiItem.skillName;
-          skillIdListTemp.push(skiItem.dictCode);
-        });
+        let skillIdListTemp =[]
+        item.userSkills.map(skiItem=>{
+            skiItem.dictCode =skiItem.skillId
+            skiItem.dictLabel =skiItem.skillName
+            skillIdListTemp.push(skiItem.dictCode)
+              })
 
-        item.skillIdList = skillIdListTemp;
-        // item.techniqueOptions = item.userSkills;
+        item.skillIdList = skillIdListTemp
+        item.techniqueOptions = item.userSkills
         item.startEndTime = this.formData.projectTimeArea;
 
-        item = Object.assign(this.projectUserList, item);
-      });
-      this.formData.projectUserList.push(...this.batchUser);
-      this.$nextTick(() => {
-        this.formData.projectUserList.map((oneUser, index) => {
-          let parame2 = {
-            regionId: oneUser.regionId,
-            postTypeId: oneUser.postTypeId,
-            postNameId: oneUser.postNameId,
-          };
-          // 职位的名称
-          getPostName(parame2).then((res) => {
-            // console.log(res.data,"getPostName");
-            oneUser.postNameIdOptions = res.data;
-            this.$forceUpdate();
-          });
-          // 职位的等级
-          getLevelCostNum(parame2).then((LevelCostNumres) => {
-            // console.log(LevelCostNumres.data,"getLevelCostNum");
-            oneUser.postLevelIdOptions = LevelCostNumres.data;
-            this.$forceUpdate();
-          });
-          this.constAll(oneUser.startEndTime, index, "add");
-        });
-      });
-      this.formData.projectUserList.map((item, i) => {
-        // console.log(JSON.stringify(item.skillIdList));// 4 6 3 1
-        //     // this.$nextTick(()=>{
-        this.changeTextColor(item.skillIdList, "mySkillIdList", i);
-        //   //  })
-      });
+        item= Object.assign(this.projectUserList,item)
+      })
+      this.formData.projectUserList.push(...this.batchUser)
+     this.$nextTick(()=>{
+        this.formData.projectUserList.map((oneUser,index)=>{
+          this.constAll(oneUser.startEndTime, index,"add");
+        })
+       
+     })
+
+
     },
-    /** 查询用户列表 */
+     /** 查询用户列表 */
     getList(deptId) {
       queryUserList({ deptId: deptId }).then((response) => {
         this.batchUser = response.data;
@@ -1089,39 +1038,36 @@ export default {
     /** 查询部门下拉树结构 */
     getTreeselect() {
       treeselect().then((response) => {
-        this.batchUserData = response.data;
+        this.barchUserData = response.data;
       });
     },
     // 过滤条件
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+     filterNode(value, data) {
+        if (!value) return true;
+        return data.label.indexOf(value) !== -1;
+      },
+      // 点击 节点的事件
+      handleNodeClick(data){
+         console.log(data, "data");
+         this.checkedText = data.label
+         this.getList(data.id);
+      },
+      // 点击批量 弹出批量导入
+    batchAddUserListHandel(){
+      this.barchUserFormVisible = true
     },
-    // 点击 节点的事件
-    handleNodeClick(data) {
-      console.log(data, "data");
-      this.checkedText = data.label;
-      this.getList(data.id);
-    },
-    // 点击批量 弹出批量导入
-    batchAddUserListHandel() {
-      this.batchUserFormVisible = true;
-    },
-    // 动态生成 表头样式
+         // 动态生成 表头样式
     headerUserClassName(row) {
       // console.log(row.column)
       // if(row.column.property=='total')
       return "recommendHeader";
     },
     // 选择技能之后 的变色逻辑
-    changeTextColor(listData, refName, index) {
-      // console.log("changeTextColor");
-      // console.log("changeTextColor",listData);
-      if (listData.length == 0) return;
+    changeTextColor(listData, refName,index) {
       this.$nextTick(() => {
         setTimeout(() => {
           let arr = []; // 对应数据对象数组
-          // 和所有的技能数组比对，拿到比对成功的，存入一个数组
+
           listData.map((ind) => {
             this.techniqueOptions.map((v) => {
               if (v.dictCode === +ind) {
@@ -1129,23 +1075,20 @@ export default {
               }
             });
           });
-          // 拿到外层的tag
-          let eles = this.$refs[refName][index].$el.querySelectorAll(
+
+          let eles = this.$refs[refName][0].$el.querySelectorAll(
             ".el-select__tags .el-tag"
           ); // 获取节点
-          // 外层的多选tags 会是一个数组，数组循环
-          // console.log(JSON.stringify(arr));
-          eles.forEach((v, i) => {
-          // console.log(eles.length+"----------"+JSON.stringify(arr) +"--------------"+ listData+"--------------"+ i);
 
+          eles.forEach((v, i) => {
             if (arr[i].dictCode === +listData[i]) {
               // 'skill' skillcc
               v.classList && v.classList.add("skillcc"); // 添加类名
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
-          this.getRecommendUserHandel(index, this.formData.projectUserList[index]);
-        }, 1000);
+           this.getRecommendUserHandel(index, this.formData.projectUserList[index]);
+        }, 100);
       });
     },
     /**
@@ -1167,8 +1110,8 @@ export default {
           this.formData.projectUserList[index].postNameId = ""; // 职位名称
           this.formData.projectUserList[index].postLevelId = ""; // 等级
           this.formData.projectUserList[index].expectedCost = "--"; //// 预计成本
-          this.formData.projectUserList[index].postNameIdOptions = []; // 清空下拉
-          this.formData.projectUserList[index].postLevelIdOptions = []; // 清空下拉
+          this.postNameIdOptions = []; // 清空下拉
+          this.postLevelIdOptions = []; // 清空下拉
           break;
         case "postType": // 选择 职位类型
           this.formData.projectUserList[index].postNameIdActive = false; // 初始化展示下一个
@@ -1177,15 +1120,14 @@ export default {
           this.formData.projectUserList[index].postNameId = ""; // 职位名称
           this.formData.projectUserList[index].postLevelId = ""; // 等级
           this.formData.projectUserList[index].expectedCost = "--"; //// 预计成本
-          this.formData.projectUserList[index].postNameIdOptions = [];
-          this.formData.projectUserList[index].postLevelIdOptions = [];
+          this.postNameIdOptions = [];
+          this.postLevelIdOptions = [];
           parame = {
             regionId: this.formData.projectUserList[index].regionId,
             postTypeId: this.formData.projectUserList[index].postTypeId,
           };
           getPostName(parame).then((res) => {
-            this.formData.projectUserList[index].postNameIdOptions = res.data;
-
+            this.postNameIdOptions = res.data;
           });
           break;
         case "postNameId": // 选择职位名称
@@ -1196,18 +1138,15 @@ export default {
           this.formData.projectUserList[index].postLevelId = ""; // 等级
           this.formData.projectUserList[index].expectedCost = "--"; //// 预计成本
           // this.postNameIdOptions= []
-          this.formData.projectUserList[index].postLevelIdOptions = [];
+          this.postLevelIdOptions = [];
           parame = {
             regionId: this.formData.projectUserList[index].regionId,
             postTypeId: this.formData.projectUserList[index].postTypeId,
             postNameId: this.formData.projectUserList[index].postNameId,
           };
           getLevelCostNum(parame).then((res) => {
-            this.formData.projectUserList[index].postLevelIdOptions = res.data;
-            this.$set(this.formData.projectUserList[index], "postLevelIdOptions", res.data)
+            this.postLevelIdOptions = res.data;
           });
-          this.$forceUpdate()
-
           break;
         case "postLevelId": // 选择职位等级
           this.formData.projectUserList[index].nextActive = false; // 初始化展示下面的所有
@@ -1218,55 +1157,46 @@ export default {
           // 2对外      // 1 对内
           if (costNumArry) {
             console.log(this.formData.projectUserList[index]);
-            if (this.formData.projectService == 2) {
-              this.formData.projectUserList[index].costNum = costNumArry.costOut;
-            } else {
-              this.formData.projectUserList[index].costNum = costNumArry.costIn;
+            if( this.formData.projectService == 2){
+              this.formData.projectUserList[index].costNum = costNumArry.costOut
+            }else{
+                this.formData.projectUserList[index].costNum =costNumArry.costIn;
             }
+
           } else {
             // 没有拿到成本 查找出来的数据返回的是undefined
             console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
           }
-          console.log(
-            `你好，我是第（${index})条资源配置，我的成本是 +${this.formData.projectUserList[index].costNum}`
-          );
-          let isUpdate = 1
-          // this.formData.projectUserList[index].projectUserScheduleList.some((item) => {
+          console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.formData.projectUserList[index].costNum}`);
+          let isUpdate = this.formData.projectUserList[index].projectUserScheduleList.some(item=>{
             // 只要里面有一项大于0 就证明编辑过，编辑过就 直接计算 成本即可
-            // return item.planLoad > 0;
-          // });
-
-          if (isUpdate) {
+            return item.planLoad>0
+          })
+          
+          if(isUpdate){
             // 我是被人编辑过的 计划符合 直接计算 成本就好
-            if (
-              this.formData.projectUserList[index].costNum == null ||
-              this.formData.projectUserList[index].costNum == undefined
-            ) {
+            if (this.formData.projectUserList[index].costNum==null||this.formData.projectUserList[index].costNum==undefined) {
               this.formData.projectUserList[index].expectedCost = "--";
             } else {
               this.formData.projectUserList[index].expectedCost = this.autoFixed(
                 // 预计成本
-                this.formData.projectUserList[index].workDay *
-                  this.formData.projectUserList[index].costNum
+                this.formData.projectUserList[index].workDay * this.formData.projectUserList[index].costNum
               );
             }
-          } else {
+          }else{
             // 我是没被编辑过的
-            this.constAll(
-              this.formData.projectUserList[index].startEndTime,
-              index,
-              "add"
-            );
+            this.constAll(this.formData.projectUserList[index].startEndTime, index,'add');
           }
-          setTimeout(() => {
-            // this.recommendUserActive = true; // 点击添加 人选需要隐藏
-            this.getRecommendUserHandel(index, this.formData.projectUserList[index]);
-          }, 500);
+               setTimeout(() => {
+                  // this.recommendUserActive = true; // 点击添加 人选需要隐藏
+                  this.getRecommendUserHandel(index, this.formData.projectUserList[index]);
+                }, 500);
+
 
           break;
       }
     },
-    // 拿到 并 显示 推荐人选
+      // 拿到 并 显示 推荐人选
     getRecommendUserHandel(index, row) {
       console.log(row, index);
       console.log(row.id);
@@ -1299,12 +1229,8 @@ export default {
         });
 
         // this.formData.projectUserList  [index].recommendUserTableData = res.data;
-        this.$set(
-          this.formData.projectUserList[index],
-          "recommendUserTableData",
-          res.data
-        );
-        this.$forceUpdate();
+        this.$set(this.formData.projectUserList[index], 'recommendUserTableData', res.data)
+        this.$forceUpdate()
       });
     },
     // 取消当前的人
@@ -1313,7 +1239,7 @@ export default {
       this.formData.projectUserList[index].userId = "";
       this.formData.projectUserList[index].userName = "";
       this.$forceUpdate();
-
+       
       // 点击添加成功后 显示取消按钮
       this.formData.projectUserList[index].recommendUserTableData.map((item) => {
         item.showOrCancel = 1; // 全部 显示添加
@@ -1322,17 +1248,17 @@ export default {
         }
       });
     },
-    //点击添加人员到 资源配置中 去 次方法要修改
+     //点击添加人员到 资源配置中 去 次方法要修改
     addUserToProject(row, index) {
       // 此处需要同样的判断 是否有id 辨别是否有id
       // 是否有id 代表是否为 新增和 已有的资源配置
-      // 我是新增 我没有资源配置化的2级的id
-      // this.formData.projectUserList[this.nowIndex].updateType = 1
-      console.log(row);
-      // this.formData.projectUserList[this.nowIndex].userList.push(row.userId);
-      this.formData.projectUserList[index].userId = row.userId;
-      this.formData.projectUserList[index].userName = row.nickName;
-      //  以上是展示
+        // 我是新增 我没有资源配置化的2级的id
+        // this.formData.projectUserList[this.nowIndex].updateType = 1
+         console.log(row);
+          // this.formData.projectUserList[this.nowIndex].userList.push(row.userId);
+          this.formData.projectUserList[index].userId = row.userId;
+          this.formData.projectUserList[index].userName = row.nickName;
+        //  以上是展示
       this.$forceUpdate();
       // 点击添加成功后 显示取消按钮
       this.formData.projectUserList[index].recommendUserTableData.map((item) => {
@@ -1347,7 +1273,7 @@ export default {
       this.formData.projectUserList.splice(index, 1);
     },
     // 选择职位之后的逻辑
-
+   
     /*修改每周计划负荷*/
     /*
      * number 计划负荷的百分比 总天数 父级的下标 和自己的下标
@@ -1395,11 +1321,11 @@ export default {
         ); //计划负荷 == 实际人日/计划的人日 *100%
       }
       console.log(totalDay, this.formData.projectUserList[fatherIndex].costNum);
-      if (!this.formData.projectUserList[fatherIndex].costNum) {
+      if(!this.formData.projectUserList[fatherIndex].costNum){
         // 如果没有成本
         // 则设置预计成本为"--"
-        this.formData.projectUserList[fatherIndex].expectedCost = "--";
-      } else {
+        this.formData.projectUserList[fatherIndex].expectedCost ="--"
+      }else{
         this.formData.projectUserList[fatherIndex].expectedCost = this.autoFixed(
           totalDay * this.formData.projectUserList[fatherIndex].costNum
         ); /**预计成本*/
@@ -1409,7 +1335,7 @@ export default {
     },
     // 修改配置安排
 
-    constAll(dates, index, action = "update") {
+    constAll(dates, index,action="update") {
       let params = {
         startDate: dates[0],
         endDate: dates[1],
@@ -1420,23 +1346,21 @@ export default {
         if (res.data.day === 0) {
           this.formData.projectUserList[index].planLoad = 0;
         } else {
-          if (action == "add") {
-            this.formData.projectUserList[index].planLoad = 0;
-          } else {
-            this.formData.projectUserList[index].planLoad = this.autoFixed(
-              ((8 * res.data.day) / (res.data.day * 8)) * 100
-            ); // 计划负荷
-          }
+            if(action=='add'){
+              this.formData.projectUserList[index].planLoad =0
+            }else{
+              this.formData.projectUserList[index].planLoad = this.autoFixed(
+                ((8 * res.data.day) / (res.data.day * 8)) * 100
+              ); // 计划负荷
+            }
         }
-        if (
-          this.formData.projectUserList[index].costNum == null ||
-          this.formData.projectUserList[index].costNum == undefined
-        ) {
+        if (this.formData.projectUserList[index].costNum==null||this.formData.projectUserList[index].costNum==undefined) {
           this.formData.projectUserList[index].expectedCost = "--";
         } else {
-          if ((action = "add")) {
-            this.formData.projectUserList[index].expectedCost = 0;
-          } else {
+          if (action="add") {
+             this.formData.projectUserList[index].expectedCost = 0
+          }else{
+
             this.formData.projectUserList[index].expectedCost = this.autoFixed(
               // 预计成本
               res.data.day * this.formData.projectUserList[index].costNum
@@ -1451,13 +1375,13 @@ export default {
         res.data.list.map((item) => {
           item.startTime = item.startDate;
           item.endTime = item.endDate;
-          // 期间计划负荷 =  每周工作日*8 除以 每周工作日*8 再乘以100
+          // 期间计划负荷 =  每周工作日*8 除以 每周工作日*8 再乘以100 
           // 有时候 因为
-          if (action == "add") {
+          if(action=='add'){
             item.workTime = 0; // 内部的每周时长
             item.workDay = 0; // 内部的每周人日
-            item.planLoad = 0;
-          } else {
+             item.planLoad =0
+          }else{
             item.workTime = item.weekDay != 0 ? "8" : 0; // 内部的每周时长
             item.workDay = item.weekDay; // 内部的每周人日
             item.planLoad = this.autoFixed(
@@ -1466,7 +1390,7 @@ export default {
           }
         });
         this.formData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
-        this.$forceUpdate();
+        this.$forceUpdate()
       });
     },
     // 点击 新增用户的
@@ -1485,9 +1409,9 @@ export default {
           this.formData.projectUserList.push(oneUser);
           this.$forceUpdate();
           let index = this.formData.projectUserList.length - 1;
-          this.constAll(oneUser.startEndTime, index, "add");
-          this.formData.projectUserList[index].recommendUserTableData = [];
-          this.formData.projectUserList[index].recommendUserActive = true;
+          this.constAll(oneUser.startEndTime, index,"add");
+          this.formData.projectUserList[index].recommendUserTableData =[]
+          this.formData.projectUserList[index].recommendUserActive=true
           // 依照产品要求 点击添加配置 就需要生产 具体计划
         }
       });
@@ -1671,8 +1595,7 @@ export default {
         }
         if (dictCode == "skill_type") {
           // 人员技能
-          let temp = this.class2color(res.data);
-          this.techniqueOptions = temp;
+          this.techniqueOptions = res.data;
         }
         if (dictCode == "project_phase") {
           this.projectStageOptions = res.data;
@@ -1694,13 +1617,12 @@ export default {
     //     this.postIdOptions = res.data; // 需要根据已经选择的人 来过滤
     //   });
     // },
-    /* 查询是项目主管的用户列表
-     * 2022.12.1 产品要求修改成全部人员
-     */
+    /* 查询是项目主管的用户列表 
+    * 2022.12.1 产品要求修改成全部人员
+    */
     queryUserlistByRole() {
       let data = {};
-      queryUserlist(data).then((res) => {
-        // 2022.12.1 产品要求修改成全部人员
+      queryUserlist(data).then((res) => { // 2022.12.1 产品要求修改成全部人员
         // 此接口不对
         // res.data.map((item) => {
         //   item.userNameAndPost = item.nickName + "（" + item.postName + "）";
@@ -1742,9 +1664,9 @@ export default {
         type: "warning",
       })
         .then(() => {
-          const obj = { path: "/projectManager/proManager" };
-          this.$tab.closeOpenPage(obj);
-          // this.$refs["elForm"].resetFields();
+           const obj = { path: "/projectManager/proManager" };
+              this.$tab.closeOpenPage(obj);
+              // this.$refs["elForm"].resetFields();
         })
         .catch(() => {});
     },
@@ -1759,29 +1681,29 @@ export default {
   beforeDestroy() {
     document.querySelector("body,html").removeAttribute("style");
     // 表单数据存储
-    sessionStorage.setItem("addProject", JSON.stringify(this.formData));
+    sessionStorage.setItem('addProject', JSON.stringify(this.formData))
   },
 };
 </script>
 <style lang="scss" scoped>
-.miaoshu {
+.miaoshu{
   display: block;
-  height: 30px;
-  border-bottom: 1px #e6e6e6 solid;
-  text-align: left;
-  line-height: 30px;
-  color: red;
-  margin-bottom: 15px;
+    height: 30px;
+    border-bottom: 1px #e6e6e6 solid;
+    text-align: left;
+    line-height: 30px;
+    color: red;
+    margin-bottom: 15px;
 }
-.tishi {
-  display: inline-block;
-  position: relative;
-  float: left;
-  height: 30px;
-  margin-top: 5px;
-  font-size: 14px;
+.tishi{
+    display: inline-block;
+    position: relative;
+    float: left;
+    height: 30px;
+    margin-top: 5px;
+    font-size: 14px;
 }
-.yellowFont {
+.yellowFont{
   color: #e6a23c;
   font-weight: bold;
 }
@@ -1850,38 +1772,40 @@ export default {
 }
 </style>
 <style>
-.myTable .el-table__header-wrapper .recommendHeader {
-  background: #5a7db9 !important;
-  height: 30px;
-  padding: 5px 0px;
-  color: white !important;
+
+.myTable   .el-table__header-wrapper  .recommendHeader {
+    background: #5a7db9 !important;
+    height: 30px;
+    padding: 5px 0px;
+    color: white !important;
+   
 }
 .skillcolor1 {
-  background: #0071bd !important;
+  background: rgb(0, 113, 189) !important;
   color: white !important;
 }
 .skillcolor2 {
-  background: #4dab77 !important;
+  background: rgb(77, 171, 119) !important;
   color: white !important;
 }
 .skillcolor3 {
-  background: #15cebe !important;
+  background: rgb(21, 206, 190) !important;
   color: white !important;
 }
 .skillcolor4 {
-  background: #936ab8 !important;
+  background: rgb(147, 106, 184) !important;
   color: white !important;
 }
 .skillcolor5 {
-  background: #fed51b !important;
+  background: rgb(254, 213, 27) !important;
   color: white !important;
 }
 .skillcolor6 {
-  background: #f6931c !important;
+  background: rgb(246, 147, 28) !important;
   color: white !important;
 }
 .skillcolor7 {
-  background: #ff4359 !important;
+  background: rgb(255, 67, 89) !important;
   color: white !important;
 }
 /* //   { cssClass: 'color1', color: 'rgb(0,113,189)' },

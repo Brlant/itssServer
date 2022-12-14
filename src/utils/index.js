@@ -1,5 +1,23 @@
 import { parseTime } from './ruoyi'
 
+export function  class2color  (skillIdList){
+
+  let bgColorMap = {
+      color1 : "#0071bd",
+      color2 : "#4dab77",
+      color3 : "#15cebe",
+      color4 : "#936ab8",
+      color5 : "#fed51b",
+      color6 : "#f6931c",
+      color7 : "#ff4359",
+  }
+  skillIdList.map(item=>{
+      delete item.createTime
+      delete item.updateTime
+      item.bgColor = bgColorMap[item.cssClass]
+  })
+  return skillIdList
+}
 /**
  * 时间日志转时间戳
  */
