@@ -23,3 +23,23 @@ export function queryUserlist() {
     
   })
 }
+
+// 导出excel - 部门
+export function exportExcel(data) {
+  return request({
+    url: '/workloadCensus/workload/exportOfficeWork',
+    method: 'post',
+    responseType: 'blob',
+    data
+  })
+}
+
+// 导出excel - 个人
+export function exportExcelPersonal(data) {
+  return request({
+    url: '/workloadCensus/workload/exportUserWork',
+    method: 'post',
+    responseType: 'blob',
+    data
+  })
+}

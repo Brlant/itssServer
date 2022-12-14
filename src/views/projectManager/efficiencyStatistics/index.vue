@@ -44,7 +44,7 @@
                             <el-col :span="4" >
                                 <el-form-item label="" align="center" justify="center">
                                  <!-- -->
-                                 <el-button @click="exportExcelHandel" type="success">导出Excel</el-button>
+                                 <el-button @click="exportExcelHandel" type="success" :loading="btnLoading">导出Excel</el-button>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -81,7 +81,7 @@
                         end-placeholder="结束日期"
                     />
                 </div>
-                <el-button type="primary" :loading="loading" @click="onClick">统计</el-button>
+                <el-button type="primary" :loading="btnLoading" @click="onClick">统计</el-button>
             </div>
         </div>
         <!-- 配置弹窗 -->
@@ -276,7 +276,8 @@ export default {
             dialogVisible: false,
             configInfo: '',
             data: null,
-            tableData: []
+            tableData: [],
+            btnLoading: false
         }
     },
     created(){
@@ -336,8 +337,9 @@ export default {
     //     });
         // /projectManage/project/export
         if (!this.tableData.length) {
-            return this.$message.warning('暂无可下载内容')
+            return this.$message.warning('暂无可导出内容')
         }
+        this.btnLoading = true
         exportExcel(this.data).then(res => {
             let blob = new Blob([res], {
               // type:"application/vnd.ms-excel",
@@ -354,6 +356,9 @@ export default {
             elink.click()
             URL.revokeObjectURL(elink.href) // 释放URL 对象
             document.body.removeChild(elink)
+            this.btnLoading = false
+        }).catch(() => {
+            this.btnLoading = false
         })
     },
         // 实时统计
