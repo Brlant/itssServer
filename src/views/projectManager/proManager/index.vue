@@ -732,7 +732,7 @@ export default {
 </style>
 <style>
  .isYellow{
-  background-color:#FAFAC8
+  background-color:#FFE7EA
   }
   .isPink{
      background-color:#FFE7EA

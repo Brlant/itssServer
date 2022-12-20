@@ -241,6 +241,16 @@
                 placeholder="缺陷管理ID"
               ></el-input>
             </el-form-item>
+            
+          </el-col>
+            <el-col :span="10" :offset="1">
+              <el-form-item label="成本上限" prop="costUp">
+              <el-input-number
+                v-model="formData.costUp"
+                placeholder="请输入成本上限"
+                :precision="2"
+              ></el-input-number>
+            </el-form-item>
           </el-col>
 
         </el-row>
@@ -760,6 +770,14 @@ export default {
           {
             required: true,
             message: "项目有效期不能为空",
+            trigger: "change",
+          },
+        ],
+        
+        costUp: [
+          {
+            required: true,
+            message: "请输入成本上限",
             trigger: "change",
           },
         ],

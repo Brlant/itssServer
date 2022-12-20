@@ -546,10 +546,8 @@ export function formatAmount(value) {
     list.unshift(integerNum)
     let stringtemp = ""
     if(values[1]){
-        console.log(1111)
         stringtemp = `${list.join(',')}.${decimalNum}`
     }else{
-       console.log(2222)
        stringtemp = `${list.join(',')}`
     }
     return stringtemp
