@@ -114,6 +114,11 @@
               {{ formData.bugId }}
             </el-form-item>
           </el-col>
+          <el-col :span="7" :offset="1">
+            <el-form-item label="成本上限" prop="costUp">
+              {{ formData.costUp }}
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <!--------------------------------------------------------------------------->
@@ -206,7 +211,7 @@
     </div>
     <!---项目成员安排--------------------------------------------->
     <div class="whiteBox" style="padding: 1%">
-      <b>| 项目资源配置</b>
+      <b>| 项目资源配置111</b>
       <p style="height: 20px"></p>
       <!-- <p
         v-show="projectTable.projectUserList && projectTable.projectUserList.length == 0"
@@ -879,6 +884,11 @@
         <el-table-column prop="updateContent" label="修改内容">
           <template slot-scope="scope">
             <div v-html="scope.row.updateContent"></div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="remark" label="备注">
+          <template slot-scope="scope">
+            <div v-html="scope.row.remark"></div>
           </template>
         </el-table-column>
         <el-table-column prop="status" label="状态" width="150">
@@ -2484,6 +2494,7 @@ export default {
         }
         //------------------------------
         this.formData = this.deepClone(res.data); // 填充详情的
+
         this.formData.projectTimeArea =
           res.data.projectStartTime + "-" + res.data.projectEndTime;
       });

@@ -179,6 +179,16 @@ export function positionName(data) {
     data
   })
 }
+
+// 获取 批量添加部门成员
+export function someDeptMember(data) {
+  return request({
+    url: '/projectManage/project/listByDeptId',
+    method: 'post',
+    data
+  })
+}
+
 //等级
 export function levelList(data) {
   return request({

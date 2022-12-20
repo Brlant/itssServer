@@ -411,7 +411,8 @@
               <el-form-item label="人选：">
                 <div class="colText2">
                   <span>
-                    {{ addUserList.userName ? addUserList.userName : "无" }}
+                    {{ addUserList.nickName ? addUserList.nickName : "无" }}
+                    <!-- 之前字段 {{ addUserList.userName ? addUserList.userName : "无" }} -->
                   </span>
                 </div>
               </el-form-item>
@@ -661,7 +662,7 @@ import { treeselect } from "@/api/system/dept";
 
 import { toProject, getChanceList } from "@/api/chanceManager/chanceManager";
 
-import { queryUserList, queryUserlistByRole } from "@/api/system/user";
+import { queryUserList, someDeptMember, queryUserlistByRole } from "@/api/system/user";
 import moment from "moment";
 import "moment/locale/zh-cn";
 
@@ -736,23 +737,43 @@ export default {
         // projectUserList: [] /**项目成员列表*/,
         // tbProjectId: "",
         // costUp:"", /*成本上限*/
-        //快速调试
+
         priority: 3,
-        projectChance: 2,
-        projectCode: "周佩煌测试" + moment().format("YYYYMMDDhhmmss"),
-        projectEndTime: "2022-12-30",
+        projectChance: '',
+        projectCode: '',
+        projectEndTime: "",
         projectGitUrl: "",
         projectGroupId: "",
-        projectName: "周佩煌测试1208",
-        projectService: 1,
-        projectStage: 32,
-        projectStartTime: "2022-12-01",
-        projectTimeArea: ["2022-12-01", "2022-12-30"],
-        projectType: 31,
-        projectUserId: 143,
+        projectName: "",
+        projectService: '',
+        projectStage: '',
+        projectStartTime: "",
+        projectTimeArea: [],
+        projectType: '',
+        projectUserId: '',
         projectUserList: [] /**项目成员列表*/,
         tbProjectId: "",
-        costUp: 12000,
+        costUp: '',
+        
+        /*
+          //快速调试
+          priority: 3,
+          projectChance: 2,
+          projectCode: "周佩煌测试" + moment().format("YYYYMMDDhhmmss"),
+          projectEndTime: "2022-12-30",
+          projectGitUrl: "",
+          projectGroupId: "",
+          projectName: "周佩煌测试1208",
+          projectService: 1,
+          projectStage: 32,
+          projectStartTime: "2022-12-01",
+          projectTimeArea: ["2022-12-01", "2022-12-30"],
+          projectType: 31,
+          projectUserId: 143,
+          projectUserList: [] //项目成员列表,
+          tbProjectId: "",
+          costUp: 12000,
+        */
       },
       rules: {
         // 配置信息的
@@ -1081,10 +1102,16 @@ export default {
     },
     /** 查询用户列表 */
     getList(deptId) {
-      queryUserList({ deptId: deptId }).then((response) => {
+      someDeptMember({ startTime : this.formData.projectTimeArea[0] , endTime :  this.formData.projectTimeArea[0], deptId: deptId }).then((response) => {
         this.batchUser = response.data;
-        console.log(this.batchUser);
       });
+      /*
+        之前逻辑
+        // queryUserList({ deptId: deptId }).then((response) => {
+        //   this.batchUser = response.data;
+        //   console.log(this.batchUser);
+        // });
+      */
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
@@ -1099,13 +1126,23 @@ export default {
     },
     // 点击 节点的事件
     handleNodeClick(data) {
-      console.log(data, "data");
+      // console.error(data, "data", this.formData.projectTimeArea);
       this.checkedText = data.label;
       this.getList(data.id);
     },
     // 点击批量 弹出批量导入
     batchAddUserListHandel() {
-      this.batchUserFormVisible = true;
+      this.$refs["elForm"].validate((valid) => {
+        if (valid) {
+          this.batchUserFormVisible = true;
+        }
+      });
+
+      /*
+        之前逻辑
+        this.batchUserFormVisible = true;
+      */
+      
     },
     // 动态生成 表头样式
     headerUserClassName(row) {
@@ -1137,8 +1174,7 @@ export default {
           // console.log(JSON.stringify(arr));
           eles.forEach((v, i) => {
           // console.log(eles.length+"----------"+JSON.stringify(arr) +"--------------"+ listData+"--------------"+ i);
-
-            if (arr[i].dictCode === +listData[i]) {
+            if (arr[i] && arr[i].dictCode === +listData[i]) {
               // 'skill' skillcc
               v.classList && v.classList.add("skillcc"); // 添加类名
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
@@ -1268,8 +1304,8 @@ export default {
     },
     // 拿到 并 显示 推荐人选
     getRecommendUserHandel(index, row) {
-      console.log(row, index);
-      console.log(row.id);
+      // console.log(row, index);
+      // console.log(row.id);
       let params = {
         postNameId: row.postNameId, //职位id
         regionId: row.regionId, //区域id
