@@ -259,7 +259,7 @@
         项目资源配置
         <div class="rightBox">
           <el-button size="mini" @click="addUserListHandel" type="primary"
-            >添加配置</el-button
+            >添加人员配置</el-button
           >
         </div>
       </div>
@@ -1009,13 +1009,16 @@ export default {
 
         this.formData = res.data; // 填充详情的 projectTimeArea
 
+
         this.team();
         this.$set(this.formData, "projectTimeArea", [
           res.data.projectStartTime,
           res.data.projectEndTime,
         ]);
         });
-        this.formData.map(item=>{
+
+        // this.formData.map(item=>{ // 之前逻辑
+        this.formData.projectUserList.map(item=>{
             this.$nextTick(()=>{
               this.changeTextColor(item.skillIdList, "mySkillIdList");
            })
@@ -1133,6 +1136,7 @@ export default {
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.formData.projectUserList[index].costNum}`);
           this.constAll(this.formData.projectUserList[index].startEndTime, index,'add');
+
 
           break;
       }
@@ -1298,6 +1302,9 @@ export default {
           oneUser.startTime = this.formData.projectStartTime;
           oneUser.endTime = this.formData.projectEndTime;
           oneUser.startEndTime = this.formData.projectTimeArea;
+
+          oneUser.recommendUserActive = true ;
+
           // 修改类型（1.新增,2.删除,3.修改原数据）
           oneUser.updateType = 1;
           this.formData.projectUserList.push(oneUser);

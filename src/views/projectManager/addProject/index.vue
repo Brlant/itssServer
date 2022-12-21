@@ -1220,9 +1220,11 @@ export default {
             postTypeId: this.formData.projectUserList[index].postTypeId,
           };
           getPostName(parame).then((res) => {
-            this.formData.projectUserList[index].postNameIdOptions = res.data;
+            // this.formData.projectUserList[index].postNameIdOptions = res.data;
+            this.$set( this.formData.projectUserList[index], 'postNameIdOptions', res.data ) ;
 
           });
+          this.$forceUpdate() ;
           break;
         case "postNameId": // 选择职位名称
           this.formData.projectUserList[index].postLevelIdActive = false; // 初始化展示下一个
@@ -1239,7 +1241,7 @@ export default {
             postNameId: this.formData.projectUserList[index].postNameId,
           };
           getLevelCostNum(parame).then((res) => {
-            this.formData.projectUserList[index].postLevelIdOptions = res.data;
+            // this.formData.projectUserList[index].postLevelIdOptions = res.data;
             this.$set(this.formData.projectUserList[index], "postLevelIdOptions", res.data)
           });
           this.$forceUpdate()
@@ -1759,6 +1761,14 @@ export default {
               // carrierId:this.temData.carrierId,
               // status:0
             };
+
+            // 如果 expectedCost 为 -- 则默认提交为 0 只能为数值型
+            if( parame.projectUserList && parame.projectUserList.length ){
+              parame.projectUserList.map( v => {
+                v.expectedCost = v.expectedCost === '--' ? 0 : v.expectedCost ;
+              } ) ;
+            }
+
             addProjectList(parame).then((res) => {
               let { code, msg } = res;
               this.$message.success(msg);
