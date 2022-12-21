@@ -887,8 +887,8 @@
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注">
-          <template slot-scope="scope">
-            <div v-html="scope.row.remark"></div>
+          <template slot-scope="{ row }">
+            {{ getVal( row.remark ) }}
           </template>
         </el-table-column>
         <el-table-column prop="status" label="状态" width="150">
@@ -1192,6 +1192,12 @@ export default {
   },
 
   methods: {
+
+    getVal( val ){
+      return val !== undefined && val !== null && !/^(\s+)?$/.test(val) ? val : '-' ;
+    },
+
+
     // 根据ID 拿到 字典名字
     getDictname(dictData, code, value, label) {
       let dictItem = dictData.find((item) => {
