@@ -974,6 +974,9 @@ export default {
         },
       ],
       projectChanceOptions: [],
+
+      userObj : {} 
+      
     };
   },
 
@@ -1052,11 +1055,17 @@ export default {
     // 点击确定生成多条 资源配置
     createBatchUser() {
       this.batchUserFormVisible = false;
+      
+      // 赋值默认
+      this.formData.projectUserList.forEach( item => {
+        this.userObj[ `${ item.deptId }-${ item.deptName }-${item.userId}-${ item.nickName }-${item.phonenumber}` ] = item ;
+      } ) ;
 
       this.batchUser.map((item) => {
         // cssClass:"color1"
         // skillId:48
         // skillName:"web前端"
+        
         let skillIdListTemp = [];
         item.userSkills.map((skiItem) => {
           skiItem.dictCode = skiItem.skillId;
@@ -1068,9 +1077,23 @@ export default {
         // item.techniqueOptions = item.userSkills;
         item.startEndTime = this.formData.projectTimeArea;
 
-        item = Object.assign(this.projectUserList, item);
+        // console.error( 11, item, `${ item.deptId }-${ item.deptName }-${item.userId}-${ item.nickName }-${item.phonenumber}`, this.projectUserList ) ;
+        
+        // item = Object.assign(this.projectUserList, item); // 之前逻辑
+
+        // 赋值 key
+        this.userObj[ `${ item.deptId }-${ item.deptName }-${item.userId}-${ item.nickName }-${item.phonenumber}` ] = item ;
       });
-      this.formData.projectUserList.push(...this.batchUser);
+      // console.error( 22, this.batchUser, this.userObj, Object.keys(this.userObj).length ) ;
+      
+      // 之前逻辑
+      // this.formData.projectUserList.push(...this.batchUser); 
+   
+      // 提取数据
+      this.formData.projectUserList = [ ...Object.values( this.userObj ) ];
+
+      // console.error( 33, this.formData.projectUserList ) ;
+
       this.$nextTick(() => {
         this.formData.projectUserList.map((oneUser, index) => {
           let parame2 = {
@@ -1678,6 +1701,7 @@ export default {
     // },
     /*选择项目有效期  备用*/
     getProjectTimeArea(dates) {
+      if( !dates ){ return ; }
       this.formData.projectStartTime = dates[0];
       this.formData.projectEndTime = dates[1];
       this.team();
@@ -1765,6 +1789,11 @@ export default {
             // 如果 expectedCost 为 -- 则默认提交为 0 只能为数值型
             if( parame.projectUserList && parame.projectUserList.length ){
               parame.projectUserList.map( v => {
+                // createBy、 createTime、updateTime
+                delete v.createBy ;
+                delete v.createTime ;
+                delete v.updateTime ;
+                delete v.inTime ;
                 v.expectedCost = v.expectedCost === '--' ? 0 : v.expectedCost ;
               } ) ;
             }
