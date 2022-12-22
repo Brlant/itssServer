@@ -79,6 +79,7 @@
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
+                        @change="type = '0'"
                     />
                 </div>
                 <el-button 
@@ -251,6 +252,7 @@ import {
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import { Message } from 'element-ui'
 
 export default {
   components: { Treeselect },
@@ -390,30 +392,17 @@ export default {
                 endDate: this.times[1],
                 type: this.type
             }
-            this.handleStatJOb(params)
-            // statJob(params).then(res => {
-            //     if (res.code === 200) {
-            //         this.$message.success(res.msg)
-            //         if(this.mangerJurisdiction){
-            //             this.queryTable()
-            //             // this.queryTablehasYieldNum()
-            //         }else if(this.selfJurisdiction && this.drillDowm){
 
-            //             this.userId=this.form.userId
-            //             this.queryTableBySelf()
-            //         }else{
-            //             this.userId=this.userInfo.userId
-            //             this.queryTableBySelf()
-            //         }
-            //     }
-            // })
-        },
-        handleStatJOb(params) {
             this.disabled = true
             this.btnTxt = '正在统计...'
             if (this.flag === true) {
                 this.progress = 0
             }
+
+            statJob(params)
+            this.handleStatJob(params)
+        },
+        handleStatJob(params) {
             statJob(params).then(res => {
                 if (res.data === true) {
                     this.flag = true
@@ -439,14 +428,16 @@ export default {
                         }
                     }
                 }
-                // 递归
-                if (res.data !== true && res.data !== 100) {
-                    this.handleStatJOb(params)
+                if (res.data !== true && res.data !== 100 && res.data !== null) {
+                    if (this.$route.path == '/projectManager/efficiencyStatistics') {
+                        this.handleStatJob(params)
+                    }
                 }
-            }).catch(() => {
+            }).catch(res => {
                 this.disabled = false
                 this.btnTxt = '统计'
-                this.$message.error(res.msg)
+                // this.$message.error(res.msg)
+                console.log('111', res)
             })
         },
         // 查询配置

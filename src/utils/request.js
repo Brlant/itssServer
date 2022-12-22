@@ -7,6 +7,7 @@ import errorCode from '@/utils/errorCode'
 import { tansParams, blobValidate } from "@/utils/ruoyi";
 import cache from '@/plugins/cache'
 import { saveAs } from 'file-saver'
+let msgTxt
 let count = 0
 let downloadLoadingInstance;
 // 是否显示重新登录
@@ -107,6 +108,8 @@ service.interceptors.response.use(res => {
       return Promise.reject(msg)
       // return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
     } else if (code === 500) {
+      if (msg === msgTxt) return
+      msgTxt = msg
       Message({
         message: msg,
         type: 'error'
