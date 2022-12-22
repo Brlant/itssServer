@@ -81,7 +81,16 @@
                         end-placeholder="结束日期"
                     />
                 </div>
-                <el-button type="primary" :loading="btnLoading" @click="onClick">统计</el-button>
+                <el-button 
+                    type="primary"
+                    :disabled="disabled"
+                    @click="onClick"
+                >
+                {{ btnTxt }}
+                <span v-if="this.progress">
+                    {{ this.progress }}%
+                </span>
+                </el-button>
             </div>
         </div>
         <!-- 配置弹窗 -->
@@ -249,7 +258,6 @@ export default {
     data(){
         return {
             times: null,
-            loading: false,
             dateRange:'',//时间范围
             form:{
                 userId:null,
@@ -277,7 +285,13 @@ export default {
             configInfo: '',
             data: null,
             tableData: [],
-            btnLoading: false
+            btnLoading: false,
+            type: '0',
+            progress: 0,
+            timer: null,
+            disabled: false,
+            btnTxt: '统计',
+            flag: false
         }
     },
     created(){
@@ -299,6 +313,11 @@ export default {
         }
         //   this.mangerJurisdiction=this.isJurisdiction('admin') || this.isJurisdiction('operatemanage')
         this.defaultDate()
+    },
+    beforeDestroy() {
+        if (this.timer) {
+            clearInterval(this.timer)
+        }
     },
     methods:{
 
@@ -366,29 +385,68 @@ export default {
             if (!this.times) {
                 return this.$message.warning('请选择时间范围')
             }
-            this.loading = true
             const params = {
                 startDate: this.times[0],
-                endDate: this.times[1]
+                endDate: this.times[1],
+                type: this.type
+            }
+            this.handleStatJOb(params)
+            // statJob(params).then(res => {
+            //     if (res.code === 200) {
+            //         this.$message.success(res.msg)
+            //         if(this.mangerJurisdiction){
+            //             this.queryTable()
+            //             // this.queryTablehasYieldNum()
+            //         }else if(this.selfJurisdiction && this.drillDowm){
+
+            //             this.userId=this.form.userId
+            //             this.queryTableBySelf()
+            //         }else{
+            //             this.userId=this.userInfo.userId
+            //             this.queryTableBySelf()
+            //         }
+            //     }
+            // })
+        },
+        handleStatJOb(params) {
+            this.disabled = true
+            this.btnTxt = '正在统计...'
+            if (this.flag === true) {
+                this.progress = 0
             }
             statJob(params).then(res => {
-                this.loading = false
-                if (res.code === 200) {
-                    this.$message.success(res.msg)
-                    if(this.mangerJurisdiction){
-                        this.queryTable()
-                        // this.queryTablehasYieldNum()
-                    }else if(this.selfJurisdiction && this.drillDowm){
-
-                        this.userId=this.form.userId
-                        this.queryTableBySelf()
-                    }else{
-                        this.userId=this.userInfo.userId
-                        this.queryTableBySelf()
+                if (res.data === true) {
+                    this.flag = true
+                    this.disabled = false
+                    this.progress = 100
+                    this.btnTxt = '统计成功'
+                    this.type = '1'
+                } else {
+                    this.progress = res.data
+                    if (this.progress == 100) {
+                        this.flag = true
+                        this.disabled = false
+                        this.btnTxt = '统计成功'    
+                        this.type = '1'
+                        if (this.mangerJurisdiction) {
+                            this.queryTable()
+                        } else if (this.selfJurisdiction && this.drillDowm) {
+                            this.userId=this.form.userId
+                            this.queryTableBySelf()
+                        } else {
+                            this.userId=this.userInfo.userId
+                            this.queryTableBySelf()
+                        }
                     }
                 }
+                // 递归
+                if (res.data !== true && res.data !== 100) {
+                    this.handleStatJOb(params)
+                }
             }).catch(() => {
-                this.loading = false
+                this.disabled = false
+                this.btnTxt = '统计'
+                this.$message.error(res.msg)
             })
         },
         // 查询配置
