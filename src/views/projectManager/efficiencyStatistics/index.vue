@@ -432,9 +432,7 @@ export default {
                 }
                 if (res.data !== true && res.data !== 100 && res.data !== null) {
                     if (this.$route.path == '/projectManager/efficiencyStatistics') {
-                        setTimeout(() => {
-                            this.handleStatJob(params)
-                        }, 3000)
+                        this.handleStatJob(params)
                     }
                 }
             }).catch(res => {
