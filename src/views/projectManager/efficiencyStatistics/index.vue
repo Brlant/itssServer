@@ -82,7 +82,7 @@
                         @change="type = '0'"
                     />
                 </div>
-                <el-button 
+                <el-button
                     type="primary"
                     :disabled="disabled"
                     @click="onClick"
@@ -240,7 +240,7 @@
 <script>
 import moment from "moment";
 import "moment/locale/zh-cn";
-import { 
+import {
     departmentQuery,
     queryUserlist,
     userQuery,
@@ -298,7 +298,7 @@ export default {
     },
     created(){
         console.log(this.$store.state.user.user.userId)
-        
+
         // this.drillDowm=this.isJurisdiction('common') ? false : true
         // this.selfJurisdiction=this.isJurisdiction('common')
         // this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')
@@ -354,7 +354,7 @@ export default {
     //         URL.revokeObjectURL(elink.href) // 释放URL 对象
     //         document.body.removeChild(elink)
     //       this.$message.success("导出成功！");
-         
+
     //     });
         // /projectManage/project/export
         if (!this.tableData.length) {
@@ -399,10 +399,12 @@ export default {
                 this.progress = 0
             }
 
+            params.type = 1
             statJob(params)
             this.handleStatJob(params)
         },
         handleStatJob(params) {
+            params.type = 0
             statJob(params).then(res => {
                 if (res.data === true) {
                     this.flag = true
@@ -415,7 +417,7 @@ export default {
                     if (this.progress == 100) {
                         this.flag = true
                         this.disabled = false
-                        this.btnTxt = '统计成功'    
+                        this.btnTxt = '统计成功'
                         this.type = '1'
                         if (this.mangerJurisdiction) {
                             this.queryTable()
@@ -430,7 +432,9 @@ export default {
                 }
                 if (res.data !== true && res.data !== 100 && res.data !== null) {
                     if (this.$route.path == '/projectManager/efficiencyStatistics') {
-                        this.handleStatJob(params)
+                        setTimeout(() => {
+                            this.handleStatJob(params)
+                        }, 3000)
                     }
                 }
             }).catch(res => {
