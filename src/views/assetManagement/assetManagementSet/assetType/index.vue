@@ -5,6 +5,63 @@
         <div class="type-title">资产类型列表</div>
         <div>
           <!-- 分类树 -->
+          <!-- <el-tree
+            :data="typeOptions"
+            :props="defaultProps"
+            node-key="id"
+            :expand-on-click-node="false"
+            :filter-node-method="filterNode"
+            ref="trees"
+            default-expand-all
+            highlight-current
+            @node-click="handleNodeClick"
+          >
+            <span slot-scope="{ node }"
+              >{{ node.label
+              }}<i class="el-icon-more" style="margin-left: 100px"></i
+            ></span>
+          </el-tree> -->
+          <el-tree
+            :data="typeOptions"
+            node-key="id"
+            default-expand-all
+            :expand-on-click-node="false"
+            @node-click="handleNodeClick"
+          >
+            <span
+              class="custom-tree-node"
+              slot-scope="{ data }"
+              style="width: 100%"
+            >
+              <span>{{ data.typeName }}</span>
+              <span v-if="data.id == n" style="float: right">
+                <el-button type="text" size="mini" @click.stop="oper(data)">
+                  <i class="el-icon-more"></i>
+                </el-button>
+              </span>
+              <div
+                v-if="data.id == n && isshow"
+                style="
+                  margin-left: 100px;
+                  position: absolute;
+                  width: 100px;
+                  border: 1px solid #ddd;
+                  background: #ffffff;
+                "
+              >
+                <div class="select-list" @click.stop="editOrAdd('1', data)">
+                  编辑分类
+                </div>
+                <div class="select-list" @click.stop="editOrAdd('2', data)">
+                  新增分类
+                </div>
+                <div class="select-list" @click.stop="editOrAdd('3', data)">
+                  新增子分类
+                </div>
+                <div class="select-list">删除分类</div>
+              </div>
+            </span>
+          </el-tree>
         </div>
       </div>
       <div class="type-right">
@@ -15,15 +72,29 @@
           </div>
         </div>
 
-        <el-table :data="user" @row-click="showRowDetail">
+        <el-table :data="typeData">
           <!-- <el-table-column type="selection" width="50" align="center" /> -->
-          <el-table-column label="类型ID" align="center" prop="typeId" />
-          <el-table-column label="序列编号" align="center" prop="num" />
+          <el-table-column
+            sortable
+            label="类型ID"
+            align="center"
+            prop="typeId"
+          />
+          <el-table-column
+            sortable
+            label="序列编号"
+            align="center"
+            prop="typeNo"
+          />
           <el-table-column label="类型名称" align="center" prop="typeName" />
-          <el-table-column label="拼音缩写" align="center" prop="pinyin" />
+          <el-table-column
+            label="拼音缩写"
+            align="center"
+            prop="typePinyinAbbr"
+          />
           <el-table-column label="创建时间" align="center" prop="createTime" />
-          <el-table-column label="管理方式" align="center" prop="manage" />
-          <el-table-column label="备注" align="center" prop="" />
+          <el-table-column label="管理方式" align="center" prop="manageType" />
+          <el-table-column label="备注" align="center" prop="remark" />
           <el-table-column
             label="操作"
             align="center"
@@ -31,7 +102,6 @@
             class-name="small-padding fixed-width"
           >
             <template slot-scope="scope">
-        
               <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
                 <el-button
                   size="mini"
@@ -60,7 +130,7 @@
     <el-dialog
       :title="title"
       class="dialogForm"
-      width="30%"
+      width="50%"
       :visible.sync="addEdit"
     >
       <el-form
@@ -72,51 +142,288 @@
         class="dialogFormInfo"
       >
         <el-row>
-          <el-col>
+          <el-col :span="24">
             <el-form-item label="类型名称" prop="typeName">
+              <el-input
+                v-model="diaForm.typeName"
+                size="medium"
+                clearable
+                placeholder="请输入类型名称"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="序列编号" prop="typeNo">
+              <el-input
+                v-model="diaForm.typeNo"
+                size="medium"
+                clearable
+                placeholder="请输入序列编号"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="拼音缩写" prop="typePinyinAbbr">
+              <el-input
+                v-model="diaForm.typePinyinAbbr"
+                size="medium"
+                clearable
+                placeholder="请输入拼音缩写"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="管理方式" prop="manageType">
+              <el-radio-group v-model="diaForm.manageType">
+                <el-radio
+                  v-for="item in manageSelect"
+                  :key="item.value"
+                  :label="item.value"
+                  >{{ item.label }}</el-radio
+                >
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="计算折旧" prop="hasDepreciation">
+              <el-radio-group v-model="diaForm.hasDepreciation">
+                <el-radio
+                  v-for="item in depreciationSelect"
+                  :key="item.value"
+                  :label="item.value"
+                  >{{ item.label }}</el-radio
+                >
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="详情模板" prop="infoTemplateId">
               <el-select
-                v-model="diaForm.commander"
+                v-model="diaForm.infoTemplateId"
                 :collapse-tags="true"
                 filterable
                 clearable
                 size="medium"
               >
-                <el-option
-                  v-for="user in projectUserIdOptions"
+                <!-- <el-option
+                  v-for="item in detailTemplates"
                   :key="user.userId"
                   :label="user.nickName"
                   :value="user.userId"
                   :disabled="user.disabled"
                 >
-                </el-option>
+                </el-option> -->
               </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="审批流程" prop="flowId">
+              <el-select
+                v-model="diaForm.flowId"
+                :collapse-tags="true"
+                filterable
+                clearable
+                size="medium"
+              >
+                <!-- <el-option
+                  v-for="item in detailTemplates"
+                  :key="user.userId"
+                  :label="user.nickName"
+                  :value="user.userId"
+                  :disabled="user.disabled"
+                >
+                </el-option> -->
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="保养管理" prop="hasMaintainExpire">
+              <el-radio-group v-model="diaForm.hasMaintainExpire">
+                <el-radio
+                  v-for="item in closeSelect"
+                  :key="item.value"
+                  :label="item.value"
+                  >{{ item.label }}</el-radio
+                >
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="使用期限提醒" prop="hasUserfulExpire">
+              <el-radio-group v-model="diaForm.hasUserfulExpire">
+                <el-radio
+                  v-for="item in closeSelect"
+                  :key="item.value"
+                  :label="item.value"
+                  >{{ item.label }}</el-radio
+                >
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="证书管理" prop="hasCertificate">
+              <el-radio-group v-model="diaForm.hasCertificate">
+                <el-radio
+                  v-for="item in closeSelect"
+                  :key="item.value"
+                  :label="item.value"
+                  >{{ item.label }}</el-radio
+                >
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div class="txtAlignC dialogBtnInfo">
         <el-button type="primary" @click="sureEdit">确定</el-button>
-        <!-- <el-button @click="cancelFn">取消</el-button> -->
+        <el-button @click="cancelFn">取消</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
+import {
+  getTypeData,
+  newAddAsset,
+  editAsset,
+} from "@/api/assetManagement/assetManagementSet";
 export default {
-    data(){
-        return{
-            addEdit:true,
-            titie:'',
-            diaForm:{}
-        }
+  data() {
+    return {
+      defaultProps: {
+        children: "children",
+        label: "typeName",
+      },
+      typeOptions: undefined,
+      addEdit: false,
+      title: "",
+      typeData: [],
+      diaForm: {},
+      n: -1,
+      isEdit: true,
+      isshow: false,
+      parentId: null,
+      manageSelect: [
+        { value: 1, label: "按耗材" },
+        { value: 2, label: "按固定资产" },
+      ],
+      depreciationSelect: [
+        { value: 1, label: "是" },
+        { value: 0, label: "否" },
+      ],
+      closeSelect: [
+        { value: 1, label: "开启" },
+        { value: 0, label: "关闭" },
+      ],
+      dialogRules: {
+        typeName: [
+          {
+            required: true,
+            message: "类型名称不能为空",
+            trigger: "blur",
+          },
+        ],
+        manageType: [
+          {
+            required: true,
+            message: "管理方式不能为空",
+            trigger: "blur",
+          },
+        ],
+        hasDepreciation: [
+          {
+            required: true,
+            message: "计算折旧不能为空",
+            trigger: "blur",
+          },
+        ],
+      },
+    };
+  },
+  created() {
+    this.getTreeselect();
+  },
+  methods: {
+    // 筛选节点
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
     },
-    methods:{
-        //禁用启用
-        stopOrUse(){
-
-        }
-    }
-}
+    handleNodeClick(data) {
+      this.n = data.id;
+      this.isshow = false;
+      console.log(data, "data1111111111");
+    },
+    /** 查询分类下拉树结构 */
+    getTreeselect() {
+      getTypeData().then((response) => {
+        this.typeOptions = response.data;
+        console.log(this.typeOptions);
+      });
+    },
+    add() {
+      this.addEdit = true;
+    },
+    // 新增或者编辑分类
+    editOrAdd(item, data) {
+      this.addEdit = true;
+      console.log(data, "sssss");
+      if (item == 1) {
+        //编辑分类
+        this.isEdit = true;
+      } else if (item == 2) {
+        //新增分类
+        this.parentId = data.parentId;
+        this.isEdit = false;
+      } else {
+        //新增子分类
+        this.parentId = data.id;
+        this.isEdit = false;
+      }
+    },
+    //新增的方法
+    newAdd() {
+      let data = { ...this.diaForm, parentId: this.parentId };
+      console.log(data, "dddddddddddddd");
+      return;
+      newAddAsset(data).then((res) => {});
+    },
+    //编辑的方法
+    edit() {
+      editAsset().then((res) => {});
+    },
+    oper(data) {
+      console.log(data, "data");
+      this.isshow = true;
+    },
+    //禁用启用
+    stopOrUse() {},
+    //弹窗确认按钮
+    sureEdit() {
+      if (this.isEdit) {
+        this.edit();
+        console.log("bianji");
+      } else {
+        console.log("新增");
+        this.newAdd();
+      }
+    },
+    //弹窗取消按钮
+    cancelFn() {},
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -133,5 +440,10 @@ export default {
       justify-content: space-between;
     }
   }
+}
+.select-list {
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
 }
 </style>
