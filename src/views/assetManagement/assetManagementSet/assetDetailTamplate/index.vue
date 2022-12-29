@@ -69,7 +69,7 @@
 <script  >
 // import { IdialogObject } from '@/utils/interface/Index'
 // import Dialog from "@/components/dialog.vue";
-import api from '@/api/components/assetManagement';
+import api from '@/api/assetManagement';
  
 export default  {
   data() {
