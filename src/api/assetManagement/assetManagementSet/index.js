@@ -1,8 +1,17 @@
 import request from '@/utils/request'
+
 export function getTypeData() {
     return request({
       url: '/asset/assetType/listTwoClass',
       method: 'get',
+    })
+  }
+  //查询子分类
+  export function querySubcategory(query) {
+    return request({
+      url: '/asset/assetType/listByParentId/'+query.id,
+      method: 'get',
+      params:query
     })
   }
   //新增资产
@@ -19,5 +28,20 @@ export function getTypeData() {
       url: '/asset/assetType',
       method: 'put',
       data
+    })
+  }
+  //禁用启用
+  export function disableEnable(data) {
+    return request({
+      url: '/asset/assetType/enable',
+      method: 'post',
+      data
+    })
+  }
+  //删除
+  export function deleteAsset(id) {
+    return request({
+      url: '/asset/assetType/'+id,
+      method: 'delete'
     })
   }

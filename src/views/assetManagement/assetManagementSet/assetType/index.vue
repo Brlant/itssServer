@@ -31,16 +31,17 @@
             <span
               class="custom-tree-node"
               slot-scope="{ data }"
-              style="width: 100%"
+              style="width: 100%;display:flex;justify-content:space-between;height:20px;line-height:20px;"
             >
               <span>{{ data.typeName }}</span>
-              <span v-if="data.id == n" style="float: right">
+              <span v-if="data.id == n">
                 <el-button type="text" size="mini" @click.stop="oper(data)">
                   <i class="el-icon-more"></i>
                 </el-button>
               </span>
               <div
                 v-if="data.id == n && isshow"
+                @mouseleave="leaveOne"
                 style="
                   margin-left: 100px;
                   position: absolute;
@@ -58,7 +59,7 @@
                 <div class="select-list" @click.stop="editOrAdd('3', data)">
                   新增子分类
                 </div>
-                <div class="select-list">删除分类</div>
+                <div class="select-list" @click='delAsset(data)'>删除分类</div>
               </div>
             </span>
           </el-tree>
@@ -66,7 +67,7 @@
       </div>
       <div class="type-right">
         <div class="right-header">
-          <div>xx二级分类名称</div>
+          <div>{{rightTitle}}</div>
           <div>
             <el-button type="text" @click="add">添加</el-button>
           </div>
@@ -78,7 +79,7 @@
             sortable
             label="类型ID"
             align="center"
-            prop="typeId"
+            prop="id"
           />
           <el-table-column
             sortable
@@ -107,7 +108,7 @@
                   size="mini"
                   type="text"
                   style="color: red"
-                  @click="stopOrUse(scope.row.userId, 1)"
+                  @click="stopOrUse(scope.row.id, 1)"
                   v-if="scope.row.status == 0"
                   >停用</el-button
                 >
@@ -116,7 +117,7 @@
                 <el-button
                   size="mini"
                   type="text"
-                  @click="stopOrUse(scope.row.userId, 0)"
+                  @click="stopOrUse(scope.row.id, 0)"
                   v-if="scope.row.status == 1"
                   >启用</el-button
                 >
@@ -124,6 +125,13 @@
             </template>
           </el-table-column>
         </el-table>
+         <pagination
+      v-show="total > 0"
+      :total="total"
+      :page.sync="page.pageNum"
+      :limit.sync="page.pageSize"
+      @pagination="getList"
+    />
       </div>
     </div>
     <!-- 新建或编辑弹窗 -->
@@ -298,6 +306,9 @@ import {
   getTypeData,
   newAddAsset,
   editAsset,
+  deleteAsset,
+  disableEnable,
+  querySubcategory
 } from "@/api/assetManagement/assetManagementSet";
 export default {
   data() {
@@ -312,6 +323,13 @@ export default {
       typeData: [],
       diaForm: {},
       n: -1,
+      total:0,
+      page:{
+        pageSize:10,
+        pageNum:1
+      },
+      typeId:null,
+      rightTitle:'',
       isEdit: true,
       isshow: false,
       parentId: null,
@@ -349,6 +367,27 @@ export default {
             trigger: "blur",
           },
         ],
+        infoTemplateId:[
+           {
+            required: true,
+            message: "详情模板不能为空",
+            trigger: "blur",
+          },
+        ],
+        flowId:[
+           {
+            required: true,
+            message: "审批流程不能为空",
+            trigger: "blur",
+          },
+        ],
+        hasMaintainExpire:[
+          {
+            required: true,
+            message: "保养管理不能为空",
+            trigger: "blur",
+          },
+        ]
       },
     };
   },
@@ -365,6 +404,23 @@ export default {
       this.n = data.id;
       this.isshow = false;
       console.log(data, "data1111111111");
+      if(data.parentId != 0){
+        console.log('ffff')
+        this.typeId=data.id;
+        this.rightTitle=data.typeName
+        this.getList()
+      }else{
+        return;
+      }
+    },
+    getList(){
+      querySubcategory({id: this.typeId,pageNum:this.page.pageNum,pageSize:this.page.pageSize}).then(res=>{
+            this.typeData=res.rows  
+            this.total=res.total  
+        })
+    },
+    leaveOne(){
+      this.isshow=false
     },
     /** 查询分类下拉树结构 */
     getTreeselect() {
@@ -383,15 +439,24 @@ export default {
       if (item == 1) {
         //编辑分类
         this.isEdit = true;
+        this.diaForm=data
       } else if (item == 2) {
         //新增分类
+        this.diaForm={}
         this.parentId = data.parentId;
         this.isEdit = false;
       } else {
         //新增子分类
+        this.diaForm={}
         this.parentId = data.id;
         this.isEdit = false;
       }
+    },
+    //删除资产分类
+    delAsset(data){
+      deleteAsset(data.id).then(res=>{
+
+      })
     },
     //新增的方法
     newAdd() {
@@ -409,7 +474,26 @@ export default {
       this.isshow = true;
     },
     //禁用启用
-    stopOrUse() {},
+    stopOrUse(id,item) {
+      let data
+      if(item==0){
+        data={
+          id,
+          status:0
+        }
+      }else{
+         data={
+          id,
+          status:1
+        }
+      }
+      disableEnable(data).then(res=>{
+        if(res.code==200){
+          this.$message.success('操作成功')
+          this.getList()
+        }
+      })
+    },
     //弹窗确认按钮
     sureEdit() {
       if (this.isEdit) {
@@ -421,7 +505,9 @@ export default {
       }
     },
     //弹窗取消按钮
-    cancelFn() {},
+    cancelFn() {
+      this.addEdit=false
+    },
   },
 };
 </script>
@@ -432,6 +518,9 @@ export default {
   justify-content: space-between;
   .type-left {
     width: 20%;
+    .type-title{
+      margin-bottom:15px;
+    }
   }
   .type-right {
     width: 79%;
