@@ -45,3 +45,11 @@ export function getTypeData() {
       method: 'delete'
     })
   }
+  //详情模板
+  export function getAssetTemplate(query) {
+    return request({
+      url: '/asset/assetTemplate/list',
+      method: 'get',
+      params:query
+    })
+  }

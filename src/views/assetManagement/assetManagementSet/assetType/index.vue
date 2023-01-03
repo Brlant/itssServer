@@ -25,26 +25,35 @@
             :data="typeOptions"
             node-key="id"
             default-expand-all
+            highlight-current
+             ref="trees"
             :expand-on-click-node="false"
             @node-click="handleNodeClick"
           >
             <span
               class="custom-tree-node"
               slot-scope="{ data }"
-              style="width: 100%;display:flex;justify-content:space-between;height:20px;line-height:20px;"
+              style="
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                height: 20px;
+                line-height: 20px;
+              "
             >
               <span>{{ data.typeName }}</span>
               <span v-if="data.id == n">
                 <el-button type="text" size="mini" @click.stop="oper(data)">
-                  <i class="el-icon-more"></i>
+                  <i class="el-icon-more" style="transform: rotate(90deg)"></i>
                 </el-button>
               </span>
               <div
                 v-if="data.id == n && isshow"
                 @mouseleave="leaveOne"
                 style="
-                  margin-left: 100px;
+                  
                   position: absolute;
+                  right:35px;
                   width: 100px;
                   border: 1px solid #ddd;
                   background: #ffffff;
@@ -59,7 +68,7 @@
                 <div class="select-list" @click.stop="editOrAdd('3', data)">
                   新增子分类
                 </div>
-                <div class="select-list" @click='delAsset(data)'>删除分类</div>
+                <div class="select-list" @click="delAsset(data)">删除分类</div>
               </div>
             </span>
           </el-tree>
@@ -67,7 +76,7 @@
       </div>
       <div class="type-right">
         <div class="right-header">
-          <div>{{rightTitle}}</div>
+          <div>{{ rightTitle }}</div>
           <div>
             <el-button type="text" @click="add">添加</el-button>
           </div>
@@ -75,12 +84,7 @@
 
         <el-table :data="typeData">
           <!-- <el-table-column type="selection" width="50" align="center" /> -->
-          <el-table-column
-            sortable
-            label="类型ID"
-            align="center"
-            prop="id"
-          />
+          <el-table-column sortable label="类型ID" align="center" prop="id" />
           <el-table-column
             sortable
             label="序列编号"
@@ -103,6 +107,24 @@
             class-name="small-padding fixed-width"
           >
             <template slot-scope="scope">
+               <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+                <el-button
+                  size="mini"
+                  type="text"
+                 
+                  @click="editOrAdd('1', scope.row)"
+                  >编辑</el-button
+                >
+              </span>
+               <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+                <el-button
+                  size="mini"
+                  type="text"
+                  style="color: red"
+                  @click="delAsset(scope.row)"
+                  >删除</el-button
+                >
+              </span>
               <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
                 <el-button
                   size="mini"
@@ -125,13 +147,13 @@
             </template>
           </el-table-column>
         </el-table>
-         <pagination
-      v-show="total > 0"
-      :total="total"
-      :page.sync="page.pageNum"
-      :limit.sync="page.pageSize"
-      @pagination="getList"
-    />
+        <pagination
+          v-show="total > 0"
+          :total="total"
+          :page.sync="page.pageNum"
+          :limit.sync="page.pageSize"
+          @pagination="getList"
+        />
       </div>
     </div>
     <!-- 新建或编辑弹窗 -->
@@ -219,14 +241,13 @@
                 clearable
                 size="medium"
               >
-                <!-- <el-option
+                <el-option
                   v-for="item in detailTemplates"
-                  :key="user.userId"
-                  :label="user.nickName"
-                  :value="user.userId"
-                  :disabled="user.disabled"
+                  :key="item.id"
+                  :label="item.templateName"
+                  :value="item.id"
                 >
-                </el-option> -->
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -308,7 +329,8 @@ import {
   editAsset,
   deleteAsset,
   disableEnable,
-  querySubcategory
+  querySubcategory,
+  getAssetTemplate,
 } from "@/api/assetManagement/assetManagementSet";
 export default {
   data() {
@@ -323,16 +345,18 @@ export default {
       typeData: [],
       diaForm: {},
       n: -1,
-      total:0,
-      page:{
-        pageSize:10,
-        pageNum:1
+      total: 0,
+      page: {
+        pageSize: 10,
+        pageNum: 1,
       },
-      typeId:null,
-      rightTitle:'',
+      detailTemplates: [],
+      typeId: null,
+      rightTitle: "",
       isEdit: true,
       isshow: false,
       parentId: null,
+      curren:'',
       manageSelect: [
         { value: 1, label: "按耗材" },
         { value: 2, label: "按固定资产" },
@@ -367,66 +391,89 @@ export default {
             trigger: "blur",
           },
         ],
-        infoTemplateId:[
-           {
+        infoTemplateId: [
+          {
             required: true,
             message: "详情模板不能为空",
             trigger: "blur",
           },
         ],
-        flowId:[
-           {
-            required: true,
-            message: "审批流程不能为空",
-            trigger: "blur",
-          },
-        ],
-        hasMaintainExpire:[
+        // flowId:[
+        //    {
+        //     required: true,
+        //     message: "审批流程不能为空",
+        //     trigger: "blur",
+        //   },
+        // ],
+        hasMaintainExpire: [
           {
             required: true,
             message: "保养管理不能为空",
             trigger: "blur",
           },
-        ]
+        ],
       },
     };
   },
   created() {
     this.getTreeselect();
+    this.getTemplate();
   },
   methods: {
+     defaultData() {
+      // console.log(this.$refs.tree,'this.$refs.tree')
+      this.$refs.trees.setCurrentKey(this.curren)
+      
+      this.$nextTick(function () {
+        console.log(this.curren,'gggggggggg')
+        this.$refs.trees.setCurrentKey(this.curren); //data[0].id为默认选中的节点
+      });
+    },
+    getTemplate() {
+      getAssetTemplate({}).then((res) => {
+        this.detailTemplates = res.rows;
+      });
+    },
     // 筛选节点
     filterNode(value, data) {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
     },
     handleNodeClick(data) {
+      this.curren=data.id
       this.n = data.id;
       this.isshow = false;
       console.log(data, "data1111111111");
-      if(data.parentId != 0){
-        console.log('ffff')
-        this.typeId=data.id;
-        this.rightTitle=data.typeName
-        this.getList()
-      }else{
+      if (data.parentId != 0) {
+        console.log("ffff");
+        this.typeId = data.id;
+        this.rightTitle = data.typeName;
+        this.getList();
+      } else {
         return;
       }
     },
-    getList(){
-      querySubcategory({id: this.typeId,pageNum:this.page.pageNum,pageSize:this.page.pageSize}).then(res=>{
-            this.typeData=res.rows  
-            this.total=res.total  
-        })
+    getList() {
+      querySubcategory({
+        id: this.typeId,
+        pageNum: this.page.pageNum,
+        pageSize: this.page.pageSize,
+      }).then((res) => {
+        this.typeData = res.rows;
+        this.total = res.total;
+      });
     },
-    leaveOne(){
-      this.isshow=false
+    leaveOne() {
+      this.isshow = false;
+      console.log(this.curren,'curren')
     },
     /** 查询分类下拉树结构 */
     getTreeselect() {
+      console.log(this.curren,'curren')
       getTypeData().then((response) => {
         this.typeOptions = response.data;
         console.log(this.typeOptions);
+         this.defaultData()
       });
     },
     add() {
@@ -439,60 +486,84 @@ export default {
       if (item == 1) {
         //编辑分类
         this.isEdit = true;
-        this.diaForm=data
+        this.diaForm = data;
       } else if (item == 2) {
         //新增分类
-        this.diaForm={}
+        this.diaForm = {};
         this.parentId = data.parentId;
         this.isEdit = false;
       } else {
         //新增子分类
-        this.diaForm={}
+        this.diaForm = {};
         this.parentId = data.id;
         this.isEdit = false;
       }
     },
     //删除资产分类
-    delAsset(data){
-      deleteAsset(data.id).then(res=>{
-
-      })
+    delAsset(data) {
+      deleteAsset(data.id).then((res) => {
+        if (res.code == 200) {
+          this.$message.success("删除成功");
+          this.getTreeselect();
+          this.getList();
+        }
+      });
     },
     //新增的方法
     newAdd() {
       let data = { ...this.diaForm, parentId: this.parentId };
       console.log(data, "dddddddddddddd");
-      return;
-      newAddAsset(data).then((res) => {});
+      // return;
+      newAddAsset(data).then((res) => {
+        if (res.code == 200) {
+          this.$message.success("新增成功");
+          this.getTreeselect();
+          this.getList();
+          this.defaultData()
+          console.log(this.curren,'cirren')
+          this.addEdit = false;
+        }
+      });
     },
     //编辑的方法
     edit() {
-      editAsset().then((res) => {});
+        let data = { ...this.diaForm };
+      editAsset(data).then((res) => {
+        if (res.code == 200) {
+          this.$message.success("编辑成功");
+          this.addEdit = false;
+          this.getTreeselect();
+           this.getList();
+          this.defaultData()
+        }
+      });
     },
     oper(data) {
       console.log(data, "data");
+      this.curren=data.id
+      this.defaultData()
       this.isshow = true;
     },
     //禁用启用
-    stopOrUse(id,item) {
-      let data
-      if(item==0){
-        data={
+    stopOrUse(id, item) {
+      let data;
+      if (item == 0) {
+        data = {
           id,
-          status:0
-        }
-      }else{
-         data={
+          status: 0,
+        };
+      } else {
+        data = {
           id,
-          status:1
-        }
+          status: 1,
+        };
       }
-      disableEnable(data).then(res=>{
-        if(res.code==200){
-          this.$message.success('操作成功')
-          this.getList()
+      disableEnable(data).then((res) => {
+        if (res.code == 200) {
+          this.$message.success("操作成功");
+          this.getList();
         }
-      })
+      });
     },
     //弹窗确认按钮
     sureEdit() {
@@ -506,7 +577,7 @@ export default {
     },
     //弹窗取消按钮
     cancelFn() {
-      this.addEdit=false
+      this.addEdit = false;
     },
   },
 };
@@ -518,8 +589,8 @@ export default {
   justify-content: space-between;
   .type-left {
     width: 20%;
-    .type-title{
-      margin-bottom:15px;
+    .type-title {
+      margin-bottom: 15px;
     }
   }
   .type-right {
