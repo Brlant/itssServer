@@ -25,12 +25,12 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="assetDetailTemplateList" @row-click="goDetail" >
+    <el-table v-loading="loading" :data="tableData" @row-click="goDetail" >
       <el-table-column label="模板ID" align="center" prop="id" />
-      <el-table-column label="模板名称" align="center" prop="templateName" />
-      <el-table-column label="创建时间" align="center" prop="createTime" />
-      <el-table-column label="描述" align="center" prop="describe" />
-      <el-table-column label="创建人" align="center" prop="creatorName" />
+      <el-table-column label="适用资产类型" align="left" prop="assetTypeName" />
+      <el-table-column label="品牌" align="center" prop="brand" />
+      <el-table-column label="型号" align="center" prop="model" />
+      <el-table-column label="操作系统" align="center" prop="os" />
           <!-- /// 状态 0停用 1启用 -->
      
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -40,21 +40,21 @@
             type="text"
             @click.native.stop="handleUpdate(scope.row)"
           >修改</el-button>
-            <el-button
+            <!-- <el-button
             size="mini"
             type="text"
             @click.native.stop="handleActive(scope.row)"
             :class="[scope.row.status=='1'?'tingyong':'qiyong']"
           >
           {{scope.row.status=='1'?'停用':'启用'}} 
-          </el-button>
-          <el-button
+          </el-button> -->
+          <!-- <el-button
             size="mini"
             type="text"
             @click.native.stop="handleDelete(scope.row)"
             class="tingyong"
           >
-          删除</el-button>
+          删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -72,7 +72,8 @@
 </template>
 
 <script>
-import { createDictionary,queryAll,updateOrDelete } from "@/api/assetManagement/assetDetailTemplate";
+import {queryAll,searchDetail,createInfo,updateOrDelete}  from '@/api/assetManagement/quickAssetDetail'
+
 
 export default {
   name: "User",
@@ -91,22 +92,7 @@ export default {
       // 总条数
       total: 0,
       // 用户信息表格数据
-      assetDetailTemplateList: [{
-        
-          /// 创建时间
-           createTime:"",
-          /// 创建人
-           creatorName:"",
-          /// 描述
-           describe:"",
-          /// 模版id
-           id:"",
-          /// 状态 0停用 1启用
-           status:"",
-          /// 模板名称
-           templateName:"",
-      }
-      ],
+      tableData: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -145,30 +131,39 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询用户信息列表 */
+    /** 
+     * 查询用户信息列表
+     *  */
     getList() {
       this.loading = true;
       queryAll(this.queryParams).then(res => {
-        this.assetDetailTemplateList = res.rows;
+        this.tableData = res.rows;
         this.total = res.total;
         this.loading = false;
       });
     },
-    /**查看详情页面*/
+    /**
+     * 查看详情页面
+     * */
     goDetail(row){
-       const obj = { path: "/assetManagement/assetManagementSet/assetDetailTamplateDetail",query:{"id":row.id} };
+       const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailDetail",query:{"id":row.id} };
       this.$tab.closeOpenPage(obj);
     },
       
-    /** 新增按钮操作 */
+    /**
+     *  新增按钮操作
+     * 
+     */
     handleAdd() {
       // this.reset();
       // this.open = true;
       // this.title = "添加用户信息";
-      const obj = { path: "/assetManagement/assetManagementSet/assetDetailTamplateAdd",query:{"action":'add'} };
+      const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailAdd",query:{"action":'add'} };
       this.$tab.closeOpenPage(obj);
     },
-        /** 修改按钮操作 */
+    /** 
+     * 修改按钮操作
+     *  */
     handleAcitce(row) {
       this.reset();
       const userId = row.userId || this.ids
@@ -178,12 +173,16 @@ export default {
         this.title = "修改用户信息";
       });
     },
-    /** 修改按钮操作 */
+    /** 
+     * 修改按钮操作
+     *  */
     handleUpdate(row) {
-      const obj = { path: "/assetManagement/assetManagementSet/assetDetailTamplateEdit",query:{"id":row.id} };
+      const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailedit",query:{"id":row.id} };
       this.$tab.closeOpenPage(obj);
     },
-    /** 提交按钮 */
+    /** 
+     * 提交按钮
+     *  */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
@@ -203,7 +202,9 @@ export default {
         }
       });
     },
-    // 启用或者激活
+    /**
+     *  启用或者激活
+    */
     handleActive(row){
       // 0停用 1启用 2删除
       let parems = this.deepClone(row)
@@ -223,7 +224,9 @@ export default {
       //   this.$modal.msgSuccess("删除成功");
       // }).catch(() => {});
     },
-    /** 删除按钮操作 */
+    /** 
+     * 删除按钮操作
+     *  */
     handleDelete(row) {
       // const userIds = row.userId || this.ids;
       let parems = this.deepClone(row)
@@ -235,7 +238,9 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    /** 导出按钮操作 */
+    /** 
+     * 导出按钮操作
+     *  */
     handleExport() {
       this.download('system/user/export', {
         ...this.queryParams

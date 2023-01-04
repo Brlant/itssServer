@@ -10,109 +10,72 @@
             <p>
               <i class="el-icon-arrow-left"></i>
             </p>
-            <p class="title2">资产详情模板详情</p>
+            <p class="title2">编辑资产详情模板</p>
           </div>
         </div>
       </el-col>
       <el-col :span="12" >
         <div class="grid-content bg-purple-light">
           <div class="right-button">
-            <el-button type="primary" @click="copyAndCreate">复制并新建</el-button>
-            <el-button type="primary" @click="goEdit">编辑</el-button>
-            <el-button    @click.native.stop="handleActive(assetTemplate)"
-            :type="(assetTemplate.status=='1'?'danger':'success')"
-          >
-          {{assetTemplate.status=='1'?'停用':'启用'}}</el-button>
+            <el-button type="primary" @click="saveAseet">保存</el-button>
+            <el-button type="info" @click="cancelDetail">取消</el-button>
           </div>
         </div>
       </el-col>
     </el-row>
     <!-- 内容主体开始 -->
     <div>
-      <el-form ref="form" :model="assetTemplate" label-width="90px">
-        <div class="base-row">
-          <div class="title">
-            <span class="title-name c333">模板信息</span>
-           
-          </div>
-          <br />
-          <div class="base">
-            <el-row :gutter="15">
-              <el-form-item label="模板名称：">
-                {{assetTemplate.templateName}}
-              </el-form-item>
-              <el-form-item label="模板表述：">
-              {{assetTemplate.describe}}
-              </el-form-item>
-                <el-form-item label="当前在用：">
-                {{assetTemplate.useType}}
-              </el-form-item>
-            </el-row>
-          </div>
-        </div>
-        <div class="base-row">
-          <div class="title">
-            <span class="title-name c333">基础信息</span>
-            <span class="greenFont">必要字段不支持自定义</span>
-          </div>
-          <div class="base">
-            <el-radio-group v-for="(item, index) in basicInformation" :key="index">
-              <el-radio disabled v-model="item.name" :label="item.label"
-                >{{ item.name }}
-              </el-radio>
-            </el-radio-group>
-          </div>
-        </div>
-        
-        <div class="base-row">
-          <div class="title">
-            <span class="title-name c333">折旧信息</span>
-            <span class="greenFont">依据资产类型是否计算折旧，判断是否显示信息，不支持自定义</span>
-          </div>
-          <div class="base">
-            <el-radio-group v-for="(item, index) in depreciationInformation1" :key="index">
-              <el-radio disabled v-model="item.name" :label="item.label"
-                >{{ item.name }}
-              </el-radio>
-            </el-radio-group>
-          </div>
-        </div>
-         <div class="base-row">
-          <div class="title1">
-            <span class="greenFont">无需填写，由系统自动计算</span>
-          </div>
-          <div class="base">
-            <el-radio-group v-for="(item, index) in depreciationInformation" :key="index">
-              <el-radio disabled v-model="item.name" :label="item.label"
-                >{{ item.name }}
-              </el-radio>
-            </el-radio-group>
-          </div>
-        </div>
-        <div class="detail-row">
-          <div class="title">
-            <span class="title-name  c333">详细信息</span>
-            <span class="greenFont">勾选后，会在资产详情中出现的信息</span>
-          </div>
-          <div class="detail-group">
-            <el-checkbox-group
-              v-model="assetTemplate.detailRadius"
-              @change="handleCheckedCitiesChange"
-            >
-                  <!-- :disabled="$route.query.id ? true : false" -->
-              <span v-for="(item, index) in detailInformation" :key="index">
-                <el-checkbox
-                  v-if="item.status !== 'belongDepartmentId'" disabled
-                  :class="$route.query.id ? 'custom-disable-class' : ''"
-                  :label="item.status"
-                  :value="item.status"
-                  >{{ item.label }}
-                </el-checkbox>
-              </span>
-            </el-checkbox-group>
-          </div>
-        </div>
-      </el-form>
+       <el-form :model="dataForm" ref="dataForm" label-width="110px" style="line-height: normal; margin: 20px">
+                <el-form-item label="选择设备分类" prop="classThreeId"
+                    :rules="{ required: true, message: '请选择设备分类', trigger: 'blur' }">
+                    <el-cascader ref="cascader" :placeholder="classThreeNamePlaceholder"  clearable :show-all-levels="false" v-model="classThreeNameIds"
+                        :options="dictClassList" :props="{ value: 'id' }" @change="selectTypeChange"></el-cascader>
+                </el-form-item>
+                <el-form-item label="品牌" prop="brand" :rules="{ required: true, message: '请输入品牌', trigger: 'blur' }">
+                    <el-input v-model="dataForm.brand" maxlength="32" show-word-limit></el-input>
+                </el-form-item>
+                <el-form-item label="型号" prop="model" :rules="{ required: true, message: '请输入型号', trigger: 'blur' }">
+                    <el-input v-model="dataForm.model" maxlength="32" show-word-limit></el-input>
+                </el-form-item>
+                <el-form-item label="购入时间">
+                    <el-date-picker v-model="dataForm.purchasingDate" type="date" value-format="yyyy-MM-dd"
+                        placeholder="选择时间"> </el-date-picker>
+                </el-form-item>
+                <!-- 动态显示选项 -->
+                <div v-for="(e, eIndex) in dictionarytemplat" :key="eIndex">
+                    <div v-for="(item, index) in detailInformation" :key="index">
+                        <el-form-item
+                            v-if="e == item.name && e !== 'departmentName' && e !== 'purchasePrice' && e !== 'purchaseTaxPrice' && e !== 'depreciableLife'"
+                            :label="item.label">
+                            <el-input v-model="item.value" maxlength="50" show-word-limit></el-input>
+                        </el-form-item>
+                        <!-- 购入价格(不含税) -->
+                        <el-form-item v-if="e == item.name && e == 'purchasePrice'" :label="item.label">
+                            <el-input type="text" v-model="item.value" maxlength="50" show-word-limit
+                                @keyup.native="item.value = regular.decimalPointvalidation(item.value, 5)"></el-input>
+                        </el-form-item>
+                        <!-- 购入价格(含税) -->
+                        <el-form-item v-if="e == item.name && e == 'purchaseTaxPrice'" :label="item.label">
+                            <el-input type="text" v-model="item.value" maxlength="50" show-word-limit
+                                @keyup.native="item.value = regular.decimalPointvalidation(item.value, 5)"></el-input>
+                        </el-form-item>
+                        <!-- 折旧年限 -->
+                        <el-form-item v-if="e == item.name && e == 'depreciableLife'" :label="item.label">
+                            <el-input type="number" v-model="item.value" maxlength="50" show-word-limit
+                                onkeyup="this.value=this.value.replace(/\D/g,'')"
+                                onafterpaste="this.value=this.value.replace(/\D/g,'')"></el-input>
+                        </el-form-item>
+                        <!-- belongDepartmentName -->
+                        <el-form-item v-if="e == item.name && e == 'departmentName'" :label="item.label">
+                            <el-select v-model="item.value" default-first-option value-key="id" placeholder="请选择归属部门"
+                                @change="selectAllOrgs">
+                                <el-option v-for="item in attributionList" :key="item.departmentId"
+                                    :label="item.departmentName" :value="item.departmentId"> </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </div>
+                </div>
+            </el-form>
     </div>
     <!-- 取消二级对话框 -->
     <!-- <Dialog :dialogObject="dialogObject" @changeValueFromModel="dialogChange">
@@ -419,44 +382,6 @@ export default {
   },
 
   methods: {
-      // 启用或者激活
-    handleActive(row){
-      // 0停用 1启用 2删除
-      let parems = this.deepClone(row)
-      console.log(row);
-      if(row.status=='1'){
-        parems.status = '0'
-      }else{
-        parems.status = '1'
-      }
-      parems.id= this.$route.query.id
-      updateOrDelete(parems).then(res=>{
-          this.$modal.msgSuccess("状态修改成功");
-          // 修改成功 之后 刷新一下
-         this.gettemplateDetail();
-
-      })
-      // parems.status =2
-      // this.$modal.confirm('您确定删除"' + row.templateName + '"吗？').then(function() {
-      //   return updateOrDelete(parems);
-      // }).then(() => {
-      //   this.$modal.msgSuccess("删除成功");
-      // }).catch(() => {});
-    },
-    /**
-     * 复制并新建
-    */
-    copyAndCreate(){
-      const obj = { path: "/assetManagement/assetManagementSet/assetDetailTamplateAdd",query:{"id":this.$route.query.id,"bf":'copy'} };
-      this.$tab.closeOpenPage(obj);
-    },
-    /**
-     * 去编辑页面
-    */
-    goEdit(){
-      const obj = { path: "/assetManagement/assetManagementSet/assetDetailTamplateEdit",query:{"id":this.$route.query.id} };
-      this.$tab.closeOpenPage(obj);
-    },
     /**
      * @description 根据路由传参信息，进行回显
      */
@@ -465,15 +390,12 @@ export default {
         searchDetail(this.$route.query.id).then((res) => {
           this.assetTemplate.templateName =res.data.templateName
           this.assetTemplate.describe = res.data.describe
-            this.assetTemplate = res.data
-            this.assetTemplate.detailRadius =[];
         // 获取选择的详细信息，1选中，0不选择
           for (let key in res.data) {
             if (res.data[key] == 1) {
               this.assetTemplate.detailRadius.push(key);
             }
           }
-
         });
       }
     },
@@ -493,7 +415,7 @@ export default {
      * @description 返回上一层
      */
     backPreviousLayer() {
-        const obj = { path: "/assetManagement/assetManagementSet/list" };
+       const obj = { path: "/assetManagement/assetManagementSet/list" };
         this.$tab.closeOpenPage(obj);
     },
     /**
@@ -536,6 +458,7 @@ export default {
       console.log(params);
       if(this.$route.query.id){
         // 有id 则说明是修改
+        params.id= this.$route.query.id
         updateOrDelete(params).then((res) => {
           if (res.code == 200) {
             this.$message({
@@ -565,13 +488,6 @@ export default {
 </script>
 
 <style scoped>
-.qiyong{
-  color: cornflowerblue;
-}
-.tingyong{
-  color: crimson;
-}
- 
 p {
   margin: 0%;
   padding: 0;

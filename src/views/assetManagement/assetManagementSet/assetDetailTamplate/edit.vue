@@ -10,7 +10,7 @@
             <p>
               <i class="el-icon-arrow-left"></i>
             </p>
-            <p class="title2">新建资产详情模板</p>
+            <p class="title2">编辑资产详情模板</p>
           </div>
         </div>
       </el-col>
@@ -35,9 +35,9 @@
           <div class="base">
             <el-row :gutter="15">
               <el-form-item label="模板名称">
+                  <!-- :disabled="$route.query.id ? true : false" -->
                 <el-input
                   v-model="assetTemplate.templateName"
-                  :disabled="$route.query.id ? true : false"
                   maxlength="32"
                   placeholder="请输入模板名称"
                 ></el-input>
@@ -454,7 +454,8 @@ export default {
      * @description 返回上一层
      */
     backPreviousLayer() {
-      this.$router.go(-1);
+       const obj = { path: "/assetManagement/assetManagementSet/list" };
+        this.$tab.closeOpenPage(obj);
     },
     /**
      * @description 取消按钮
@@ -496,6 +497,7 @@ export default {
       console.log(params);
       if(this.$route.query.id){
         // 有id 则说明是修改
+        params.id= this.$route.query.id
         updateOrDelete(params).then((res) => {
           if (res.code == 200) {
             this.$message({

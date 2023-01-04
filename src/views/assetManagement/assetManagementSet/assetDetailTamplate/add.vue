@@ -33,11 +33,11 @@
           </div>
           <br />
           <div class="base">
-            <el-row :gutter="15">
+            <el-row :gutter="15" >
               <el-form-item label="模板名称">
+                  <!-- :disabled="$route.query.id ? true : false" -->
                 <el-input
-                  v-model="assetTemplate.templateName"
-                  :disabled="$route.query.id ? true : false"
+                  v-model="assetTemplate.templateName" :required="true"
                   maxlength="32"
                   placeholder="请输入模板名称"
                 ></el-input>
@@ -132,8 +132,8 @@ export default {
   data() {
     return {
       assetTemplate: {
-        templateName: "周测试1",
-        describe: "周测试1描述",
+        templateName: "",
+        describe: "",
         detailRadius: [],
       },
       // dialog控制参数
@@ -427,8 +427,8 @@ export default {
     gettemplateDetail() {
       if (this.$route.query.id) {
         searchDetail(this.$route.query.id).then((res) => {
-          this.assetTemplate.templateName =res.data.templateName
-          this.assetTemplate.describe = res.data.describe
+          this.assetTemplate.templateName ="" //res.data.templateName
+          this.assetTemplate.describe = ""//res.data.describe
         // 获取选择的详细信息，1选中，0不选择
           for (let key in res.data) {
             if (res.data[key] == 1) {
@@ -454,7 +454,8 @@ export default {
      * @description 返回上一层
      */
     backPreviousLayer() {
-      this.$router.go(-1);
+     const obj = { path: "/assetManagement/assetManagementSet/list" };
+        this.$tab.closeOpenPage(obj);
     },
     /**
      * @description 取消按钮
@@ -525,6 +526,12 @@ export default {
 </script>
 
 <style scoped>
+.qiyong{
+  color: cornflowerblue;
+}
+.tingyong{
+  color: crimson;
+}
 p {
   margin: 0%;
   padding: 0;
