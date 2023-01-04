@@ -51,10 +51,12 @@
         <span class="box"></span><span class="title-name">规则设置</span>
       </div>
       <el-row style="margin-left: 33px;margin-bottom:20px;">
+        {{ruleForm.ruleList}}
         <div v-for="(item, index) in ruleForm.ruleList" :key="index">
           <el-col :span="6">
             <el-form-item v-if="item.type==1" prop="field105" :label="item.label" label-width="120px">
-              <el-input
+              {{item}}
+              <!-- <el-input
                 v-model="item.value"
                 placeholder="请输入"
                 clearable
@@ -62,7 +64,7 @@
                 <template slot="append">
                <i class="el-icon-remove red" @click="delThis(item,index)"></i>
               </template>
-              </el-input>
+              </el-input> -->
             </el-form-item>
             <el-form-item  v-if="item.type==5" prop="field105" :label="item.label" label-width="120px">
               <el-input
@@ -271,11 +273,6 @@ export default {
       ruleForm: {
         ruleName: undefined,
         ruleList: [],
-        field102: undefined,
-        field105: undefined,
-        field106: undefined,
-        field107: undefined,
-        field108: undefined,
       },
       //1级，2级，3级分类
       types: [
@@ -368,7 +365,7 @@ export default {
     },
     getType(){
       queryType().then(res=>{
-        this.assetTypes=res.data
+        this.assetTypes=res.data||[]
       })
     },
     change() {
@@ -398,8 +395,10 @@ export default {
       let checkedNum = parseInt(this.diaForm.radioSelect)
       switch (checkedNum) {
         case 1:
-          let params = this.deepClone(this.value1)
-          console.log(params,'params')
+          let params = this.value1
+
+          console.log(this.value1);
+          console.log(params)
           this.ruleForm.ruleList.push(params)
           break;
         case 2:
