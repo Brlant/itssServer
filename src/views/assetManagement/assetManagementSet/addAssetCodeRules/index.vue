@@ -43,7 +43,7 @@
       <el-row style="margin-left: 33px">
         {{ ruleForm.ruleList }}
         <div v-for="(item, index) in ruleForm.ruleList" :key="index">
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item v-if="item.type==1" prop="field105" :label="item.label" label-width="120px">
               <el-input
                 v-model="item.value"
@@ -59,7 +59,7 @@
               <el-input
                 v-model="item.ruleLable.label"
                 placeholder="请输入"
-                clearable
+                disabled
               >
               <template slot="append">
                <i class="el-icon-remove red" @click="delThis(item,index)"></i>
@@ -73,7 +73,7 @@
         </div>
 
         <el-col :span="4" style="margin-left: 20px">
-          <el-button type="primary" @click="dialogShow=true"> + </el-button>
+          <el-button type="primary" @click="addNode"> + </el-button>
         </el-col>
       </el-row>
       <el-row>
@@ -122,7 +122,7 @@
               <el-col :span="24">
                 <el-radio label="1">
                   <span class="name">固定前、后缀</span>
-                  <el-input v-model="value1.value"></el-input>
+                  <el-input v-model="value1.value" @change="checkedRadio($event,'1')"></el-input>
                 </el-radio>
               </el-col>
             </el-row>
@@ -130,7 +130,7 @@
               <el-col :span="24">
                 <el-radio label="2">
                   <span class="name">使用1级分类</span>
-                  <el-select v-model="value2.value">
+                  <el-select v-model="value2.value" @change="checkedRadio($event,'2')">
                     <el-option
                       v-for="(item, index) in types"
                       :key="index"
@@ -146,7 +146,7 @@
               <el-col :span="24">
                 <el-radio label="3">
                   <span class="name">使用2级分类</span>
-                  <el-select v-model="value3.value">
+                  <el-select v-model="value3.value" @change="checkedRadio($event,'3')">
                     <el-option
                       v-for="(item, index) in types"
                       :key="index"
@@ -162,7 +162,7 @@
               <el-col :span="24">
                 <el-radio label="4">
                   <span class="name">使用3级分类</span>
-                  <el-select v-model="value4.value">
+                  <el-select v-model="value4.value" @change="checkedRadio($event,'4')">
                     <el-option
                       v-for="(item, index) in types"
                       :key="index"
@@ -178,7 +178,7 @@
               <el-col :span="24">
                 <el-radio label="5">
                   <span class="name">当天日期</span>
-                  <el-select v-model="value5.value" multiple>
+                  <el-select v-model="value5.value" multiple @change="checkedRadio($event,'5')">
                     <el-option
                       v-for="(item, index) in dates"
                       :key="index"
@@ -192,9 +192,9 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <el-radio label="6" style="margin-left: 20px" @change="change">
+                <el-radio label="6" style="margin-left: 20px"  >
                   <span class="name">子序列号</span>
-                  <el-select v-model="value6.value" @change="checked6">
+                  <el-select v-model="value6.value" @change="checkedRadio($event,'6')">
                     <el-option
                       v-for="(item, index) in childNo"
                       :key="index"
@@ -210,7 +210,7 @@
               <el-col :span="24">
                 <el-radio label="7">
                   <span class="name">使用序列号</span>
-                  <el-select v-model="value7.value">
+                  <el-select v-model="value7.value" @change="checkedRadio($event,'7')">
                     <el-option
                       v-for="(item, index) in childNo"
                       :key="index"
@@ -329,12 +329,23 @@ export default {
     resetForm() {
       this.$refs["elForm"].resetFields();
     },
+    addNode(){
+      this.dialogShow = true
+      this.value1.value=""
+      this.value2.value=""
+      this.value3.value=""
+      this.value4.value=""
+      this.value5.value=[]
+      this.value6.value=""
+      this.value7.value=""
+    },
     sureEdit() {
       console.log(this.diaForm.radioSelect);
       let checkedNum = parseInt(this.diaForm.radioSelect)
       switch (checkedNum) {
         case 1:
-          this.ruleForm.ruleList.push(this.value1)
+          let params = this.deepClone(this.value1)
+          this.ruleForm.ruleList.push(params)
           break;
         case 2:
           this.value2.ruleLable = this.types.find(item=>{
@@ -363,6 +374,7 @@ export default {
 
           break;
         case 5:
+          console.log(this.value5);
           this.value5.ruleLable = this.dates.find(item=>{if(item.value==this.value5.value){
               return item.label
             }})
@@ -394,8 +406,22 @@ export default {
       }
       this.dialogShow=false
     },
-    checked6(){
-       this.value5.value = [1] // 默认选择第一项
+    checkedRadio(value,who){
+      console.log(value);
+      this.value1.value=""
+      this.value2.value=""
+      this.value3.value=""
+      this.value4.value=""
+      this.value5.value=[]
+      this.value6.value=""
+      this.value7.value=""
+      let pj = 'this.value'+who
+      console.log(pj);
+      eval(pj).value = value
+      this.diaForm.radioSelect = who+""
+      if(who==6){
+        this.value5.value = [1] // 默认选择第一项
+      }
     },
     delThis(item,i){
       //item 暂时用不着，留着
