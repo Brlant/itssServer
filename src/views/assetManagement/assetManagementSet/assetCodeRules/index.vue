@@ -86,7 +86,7 @@ disableEnable
 export default {
   data() {
     return {
-      processData: [{ id: 1, status: 0 }],
+      processData: [],
       page:{
         pageSize: 10,
         pageNum: 1,
@@ -122,10 +122,10 @@ export default {
       this.$tab.closeOpenPage(obj);
     },
     //详情
-    detail(){
+    detail(data){
          const obj = {
         path: "/assetManagement/assetManagementSet/process/detailAssetCodeRules",
-        query:{ detailData:this.processData}
+        query:{ detailData:data}
       };
       // getToday()
       this.$tab.closeOpenPage(obj);

@@ -13,7 +13,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="规则名称：">
-           {{ruleName}}
+           {{ruleForm.ruleName}}
           </el-form-item>
         </el-col>
       </el-row>
@@ -21,7 +21,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="使用范围描述：">
-           {{description}}
+           {{ruleForm.description}}
           </el-form-item>
         </el-col>
       </el-row>
@@ -29,13 +29,17 @@
         <span class="box"></span><span class="title-name">规则设置</span>
       </div>
       <el-row style="margin-left: 33px">
-      
+      <div v-for="(item,index) in ruleForm.ruleCopy" :key='index'>
+        <span>{{item.label+':'}}</span>
+        <span>{{item.ruleLable.label}}</span>
+        <i class='el-icon-minus'></i>
+      </div>
       
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="适用资产类型：" prop="assetTypeList">
-             <span v-for='(item,index) in assetTypeList' :key='index'>{{item.typeName + ';'}}</span>
+          <el-form-item label="适用资产类型：">
+             <span v-for='(item,index) in ruleForm.assetTypeList' :key='index'>{{item.typeName + ';'}}</span>
           </el-form-item>
         </el-col>
       </el-row>
@@ -48,13 +52,21 @@ export default {
   props: [],
   data() {
     return {
-     ruleForm:this.$route.query.detailData
+     ruleForm:{}
      
     };
   },
   computed: {},
   watch: {},
-  created() {},
+  created() {
+    console.log(this.ruleForm)
+    this.ruleForm=this.$route.query.detailData
+  var ruleCopy=JSON.parse(this.ruleForm.rule)
+  
+    this.ruleForm.ruleCopy=ruleCopy
+    
+      console.log(this.ruleForm,'SSSSSSSSSS')
+  },
   mounted() {},
   methods: {
   
