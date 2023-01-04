@@ -194,7 +194,7 @@
               <el-col :span="24">
                 <el-radio label="6" style="margin-left: 20px" @change="change">
                   <span class="name">子序列号</span>
-                  <el-select v-model="value6.value">
+                  <el-select v-model="value6.value" @change="checked6">
                     <el-option
                       v-for="(item, index) in childNo"
                       :key="index"
@@ -393,6 +393,9 @@ export default {
           break;
       }
       this.dialogShow=false
+    },
+    checked6(){
+       this.value5.value = [1] // 默认选择第一项
     },
     delThis(item,i){
       //item 暂时用不着，留着
