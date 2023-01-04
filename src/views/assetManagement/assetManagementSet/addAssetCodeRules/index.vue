@@ -55,6 +55,17 @@
               </template>
               </el-input>
             </el-form-item>
+            <el-form-item  v-if="item.type==5" prop="field105" :label="item.label" label-width="120px">
+              <el-input
+                v-model="item.ruleLable"
+                placeholder="请输入"
+                disabled
+              >
+              <template slot="append">
+               <i class="el-icon-remove red" @click="delThis(item,index)"></i>
+              </template>
+              </el-input>
+            </el-form-item>
             <el-form-item v-else prop="field105" :label="item.label" label-width="120px">
               <el-input
                 v-model="item.ruleLable.label"
@@ -375,18 +386,30 @@ export default {
           break;
         case 5:
           console.log(this.value5);
-          this.value5.ruleLable = this.dates.find(item=>{if(item.value==this.value5.value){
-              return item.label
-            }})
+          let ruleList5 = []
+          this.value5.value.map(codes=>{
+              this.dates.map(item=>{
+                if(codes==item.value){
+                  ruleList5 +=item.label+"-"
+                  }
+              })
+          })
+          this.value5.ruleLable =  ruleList5.toString().substring(0,ruleList5.length-1)
 
           this.ruleForm.ruleList.push(this.value5)
 
           break;
         case 6:
           this.value5.value = [1] // 默认选择第一项
-          this.value5.ruleLable = this.dates.find(item=>{if(item.value==this.value5.value){
-              return item.label
-            }})
+          let ruleList55 = []
+          this.value5.value.map(codes=>{
+              this.dates.map(item=>{
+                if(codes==item.value){
+                  ruleList55 +=item.label+"-"
+                  }
+              })
+          })
+          this.value5.ruleLable =  ruleList55.toString().substring(0,ruleList55.length-1)
           this.value6.ruleLable = this.childNo.find(item=>{if(item.value==this.value6.value){
               return item.label
             }})
@@ -396,7 +419,8 @@ export default {
 
           break;
         case 7:
-          this.value7.ruleLable = this.childNo.find(item=>{if(item.value==this.value7.value){
+          this.value7.ruleLable = this.childNo.find(item=>{
+            if(item.value==this.value7.value){
               return item.label
             }})
 
@@ -413,13 +437,19 @@ export default {
       this.value3.value=""
       this.value4.value=""
       this.value5.value=[]
-      this.value6.value=""
+       if(who==5&&this.value6.value==""){
+        // 如果我选择了 当天日期 且 子项目没有有值 不清空
+          this.value6.value=""
+      }
       this.value7.value=""
       let pj = 'this.value'+who
       console.log(pj);
       eval(pj).value = value
       this.diaForm.radioSelect = who+""
+     
       if(who==6){
+        // 如果选择了 当天日期的子项目
+        // 自动选择和填充  当天日期的第一条
         this.value5.value = [1] // 默认选择第一项
       }
     },
