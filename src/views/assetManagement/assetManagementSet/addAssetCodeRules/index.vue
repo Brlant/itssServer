@@ -53,7 +53,7 @@
       <el-row style="margin-left: 33px;margin-bottom:20px;">
         <div v-for="(item, index) in ruleForm.ruleList" :key="index">
           <el-col :span="6">
-            <el-form-item v-if="item.type==1" prop="field105" :label="item.label" label-width="120px">
+            <el-form-item v-if="item.type==1" :label="item.label" label-width="120px">
               <el-input
                 v-model="item.value"
                 placeholder="请输入"
@@ -64,7 +64,7 @@
               </template>
               </el-input>
             </el-form-item>
-            <el-form-item  v-if="item.type==5" prop="field105" :label="item.label" label-width="120px">
+            <el-form-item  v-if="item.type==5" :label="item.label" label-width="120px">
               <el-input
                 v-model="item.ruleLable"
                 placeholder="请输入"
@@ -75,7 +75,7 @@
               </template>
               </el-input>
             </el-form-item>
-            <el-form-item v-else prop="field105" :label="item.label" label-width="120px">
+            <el-form-item v-else :label="item.label" label-width="120px">
               <el-input
                 v-model="item.ruleLable.label"
                 placeholder="请输入"
@@ -141,7 +141,7 @@
               <el-col :span="24">
                 <el-radio label="1">
                   <span class="name">固定前、后缀</span>
-                  <el-input v-model="value1.value" @change="checkedRadio($event,'1')"></el-input>
+                  <el-input v-model="value1.value" @input="checkedRadio($event,'1')"></el-input>
                 </el-radio>
               </el-col>
             </el-row>
@@ -384,6 +384,8 @@ export default {
       this.$refs["elForm"].resetFields();
     },
     addNode(){
+      this.diaForm.radioSelect1=''
+      this.diaForm.radioSelect=''
       this.dialogShow = true
       this.value1.value=""
       this.value2.value=""
@@ -497,10 +499,8 @@ export default {
       let pj = 'this.value'+who
       console.log(pj);
       eval(pj).value = value
-     
       this.diaForm.radioSelect = who+""
-    
-     
+      console.log(who,'ffff')
       if(who==6){
         // 如果选择了 当天日期的子项目
         // 自动选择和填充  当天日期的第一条
