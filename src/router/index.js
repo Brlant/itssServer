@@ -492,7 +492,21 @@ export const dynamicRoutes = [
         path: 'addAssetCodeRules',
         component: () => import('@/views/assetManagement/assetManagementSet/addAssetCodeRules'),
         name: 'addAssetCodeRules',
-        meta: { title: '审批流程管理详情',noCache:false  }
+        meta: { title: '新增资产编号规则',noCache:false  }
+      }
+    ]
+  }, 
+  {
+    path: '/assetManagement/assetManagementSet/process',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:duty'],
+    children: [
+      {
+        path: 'detailAssetCodeRules',
+        component: () => import('@/views/assetManagement/assetManagementSet/detailAssetCodeRules'),
+        name: 'detailAssetCodeRules',
+        meta: { title: '资产编号规则详情',noCache:false  }
       }
     ]
   }, 

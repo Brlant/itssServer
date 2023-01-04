@@ -1,5 +1,15 @@
 <template>
   <div class="app-container">
+    <div class="process-title">
+      <div style="font-size: 18px">
+        <i class="el-icon-arrow-left"></i>
+        <span>资产编号规则</span>
+      </div>
+      <div>
+        <el-button type="primary" @click='sureSave'>保存</el-button>
+        <el-button>取消</el-button>
+      </div>
+    </div>
     <el-form
       ref="elForm"
       :model="ruleForm"
@@ -40,8 +50,7 @@
       <div class="title">
         <span class="box"></span><span class="title-name">规则设置</span>
       </div>
-      <el-row style="margin-left: 33px">
-        {{ ruleForm.ruleList }}
+      <el-row style="margin-left: 33px;margin-bottom:20px;">
         <div v-for="(item, index) in ruleForm.ruleList" :key="index">
           <el-col :span="6">
             <el-form-item v-if="item.type==1" prop="field105" :label="item.label" label-width="120px">
@@ -89,31 +98,30 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="适用资产类型：" prop="field102">
+          <el-form-item label="适用资产类型：" prop="assetTypeIdList">
             <el-select
-              v-model="ruleForm.field102"
+              v-model="ruleForm.assetTypeIdList"
               :collapse-tags="true"
               filterable
               clearable
+              multiple
               size="medium"
+              @change='changeAll'
             >
-              <!-- <el-option
-                  v-for="item in detailTemplates"
-                  :key="user.userId"
-                  :label="user.nickName"
-                  :value="user.userId"
-                  :disabled="user.disabled"
+              <el-option
+                  v-for="(item,index) in assetTypes"
+                  :key="index"
+                  :label="item.allName"
+                  :value="item.id"
+                  :disabled="item.disabled"
                 >
-                </el-option> -->
+                </el-option>
             </el-select>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item size="large">
-        <el-button type="primary" @click="submitForm">提交</el-button>
-        <el-button @click="resetForm">重置</el-button>
-      </el-form-item>
     </el-form>
+  
     <el-dialog
       title="新增/编辑编号规则"
       class="dialogForm"
@@ -201,6 +209,8 @@
                 </el-radio>
               </el-col>
             </el-row>
+          </el-radio-group>
+            <el-radio-group v-model="diaForm.radioSelect1">
             <el-row>
               <el-col :span="24">
                 <el-radio label="6" style="margin-left: 20px"  >
@@ -217,6 +227,8 @@
                 </el-radio>
               </el-col>
             </el-row>
+            </el-radio-group>
+            <el-radio-group v-model="diaForm.radioSelect">
             <el-row>
               <el-col :span="24">
                 <el-radio label="7">
@@ -244,12 +256,17 @@
   </div>
 </template>
 <script>
+import {
+queryType,
+newAddRule
+} from "@/api/assetManagement/addAssetCodeRules";
 export default {
   components: {},
   props: [],
   data() {
     return {
-      dialogShow: true,
+      assetTypes:[],
+      dialogShow: false,
       diaForm: {},
       ruleForm: {
         ruleName: undefined,
@@ -326,8 +343,34 @@ export default {
   computed: {},
   watch: {},
   created() {},
-  mounted() {},
+  mounted() {
+    this.getType()
+  },
   methods: {
+    changeAll(index){
+     
+     if(index.includes(0)){
+     
+      this.assetTypes.forEach(item=>{
+              if(item.id!=0){
+                item.disabled=true
+              }
+      })
+
+      this.ruleForm.assetTypeIdList = [0]
+     }else{
+      this.assetTypes.forEach(item=>{
+              if(item.id!=0){
+                item.disabled=false
+              }
+      })
+     }
+    },
+    getType(){
+      queryType().then(res=>{
+        this.assetTypes=res.data
+      })
+    },
     change() {
       console.log(this.diaForm.radioSelect, "aaaaaa");
     },
@@ -356,6 +399,7 @@ export default {
       switch (checkedNum) {
         case 1:
           let params = this.deepClone(this.value1)
+          console.log(params,'params')
           this.ruleForm.ruleList.push(params)
           break;
         case 2:
@@ -395,9 +439,11 @@ export default {
               })
           })
           this.value5.ruleLable =  ruleList5.toString().substring(0,ruleList5.length-1)
-
+           this.value6.ruleLable = this.childNo.find(item=>{if(item.value==this.value6.value){
+              return item.label
+            }})
           this.ruleForm.ruleList.push(this.value5)
-
+          this.ruleForm.ruleList.push(this.value6)
           break;
         case 6:
           this.value5.value = [1] // 默认选择第一项
@@ -437,20 +483,30 @@ export default {
       this.value3.value=""
       this.value4.value=""
       this.value5.value=[]
+      console.log(who,'who')
+      if(who!=5 &&who!=6){
+        this.diaForm.radioSelect1='';
+         this.value6.value=""
+      }
        if(who==5&&this.value6.value==""){
         // 如果我选择了 当天日期 且 子项目没有有值 不清空
           this.value6.value=""
       }
+     
       this.value7.value=""
       let pj = 'this.value'+who
       console.log(pj);
       eval(pj).value = value
+     
       this.diaForm.radioSelect = who+""
+    
      
       if(who==6){
         // 如果选择了 当天日期的子项目
         // 自动选择和填充  当天日期的第一条
         this.value5.value = [1] // 默认选择第一项
+         this.diaForm.radioSelect1 = who+""
+           this.diaForm.radioSelect = 5+""
       }
     },
     delThis(item,i){
@@ -460,10 +516,25 @@ export default {
     cancelFn() {
       this.dialogShow = false
     },
+    //保存
+    sureSave(){
+      let data={
+        ...this.ruleForm,
+        rule:this.ruleForm.ruleList
+      }
+      newAddRule(data).then(res=>{
+
+      })
+    }
   },
 };
 </script>
 <style lang="scss" scoped>
+.process-title {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
 .title {
   position: relative;
   display: flex;
@@ -503,5 +574,8 @@ export default {
 }
 .red{
   color: red;
+}
+.el-radio-group{
+display:block!important;
 }
 </style>

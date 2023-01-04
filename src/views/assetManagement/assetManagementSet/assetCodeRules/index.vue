@@ -5,16 +5,20 @@
       <div style="color: #1c6cf7" @click="add">+添加</div>
     </div>
     <el-table :data="processData">
-      <el-table-column label="流程组ID" align="center" prop="id" />
-      <el-table-column label="流程组名称" align="center" prop="typeName" />
+      <el-table-column label="规则ID" align="center" prop="id" />
+      <el-table-column label="规则名称" align="center" prop="ruleName" />
       <el-table-column
         label="适用范围描述"
         align="center"
-        prop="typePinyinAbbr"
+        prop="description"
       />
-      <el-table-column label="当前在用类型" align="center" prop="createTime" />
-      <el-table-column label="上次修改时间" align="center" prop="manageType" />
-      <el-table-column label="上次修改人" align="center" prop="remark" />
+      <el-table-column label="适用资产类型" align="center" prop="assetTypeList">
+        <template slot-scope="scope">
+          <span v-for='(item,index) in scope.row.assetTypeList' :key='index'>{{item.typeName + ';'}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="上次修改时间" align="center" prop="updateTime" />
+      <el-table-column label="上次修改人" align="center" prop="updatorName" />
       <el-table-column
         label="操作"
         align="center"
@@ -22,22 +26,22 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <span style="margin-left: 10px">
             <el-button size="mini" type="text" @click="copy(scope.row)"
               >复制</el-button
             >
           </span>
-          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <span style="margin-left: 10px">
             <el-button size="mini" type="text" @click="edit(scope.row)"
               >编辑</el-button
             >
           </span>
-           <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+           <span style="margin-left: 10px">
             <el-button size="mini" type="text" @click="detail(scope.row)"
               >详情</el-button
             >
           </span>
-          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <span style="margin-left: 10px">
             <el-button
               size="mini"
               type="text"
@@ -47,7 +51,7 @@
               >停用</el-button
             >
           </span>
-          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <span style="margin-left: 10px">
             <el-button
               size="mini"
               type="text"
@@ -56,24 +60,51 @@
               >启用</el-button
             >
           </span>
-          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
-            <el-button size="mini" type="text" @click="del(scope.row.id, 0)"
+          <span style="margin-left: 10px">
+            <el-button size="mini" type="text" @click="del(scope.row.id)"
               >删除</el-button
             >
           </span>
         </template>
       </el-table-column>
     </el-table>
+      <pagination
+          v-show="total > 0"
+          :total="total"
+          :page.sync="page.pageNum"
+          :limit.sync="page.pageSize"
+          @pagination="initPage"
+        />
   </div>
 </template>
 <script>
+import {
+queryAssetCodeRule,
+deleteAssetRule,
+disableEnable
+} from "@/api/assetManagement/addAssetCodeRules";
 export default {
   data() {
     return {
       processData: [{ id: 1, status: 0 }],
+      page:{
+        pageSize: 10,
+        pageNum: 1,
+      },
+    total:0
     };
   },
+  created(){
+    this.initPage()
+  },
   methods: {
+    //分页查询
+    initPage(){
+      queryAssetCodeRule(this.page).then(res=>{
+        this.processData=res.rows
+        this.total=res.total
+      })
+    },
     //添加
     add() {
       const obj = {
@@ -85,7 +116,7 @@ export default {
     //复制
     copy() {
         const obj = {
-        path: "/assetManagement/assetManagementSet/process/addApprovalProcess",
+        path: "/assetManagement/assetManagementSet/process/addAssetCodeRules",
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
@@ -93,7 +124,8 @@ export default {
     //详情
     detail(){
          const obj = {
-        path: "/assetManagement/assetManagementSet/process/detailApprovalProcess",
+        path: "/assetManagement/assetManagementSet/process/detailAssetCodeRules",
+        query:{ detailData:this.processData}
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
@@ -101,15 +133,41 @@ export default {
     //编辑
     edit() {
       const obj = {
-        path: "/assetManagement/assetManagementSet/process/editApprovalProcess",
+        path: "/assetManagement/assetManagementSet/process/editAssetCodeRules",
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
     //停用启用
-    stopOrUse() {},
+    stopOrUse(id,item) {
+        let data;
+      if (item == 0) {
+        data = {
+          id,
+          status: 0,
+        };
+      } else {
+        data = {
+          id,
+          status: 1,
+        };
+      }
+      disableEnable(data).then(res=>{
+        if(res.code==200){
+           this.$message.success("操作成功");
+          this.initPage();
+        }
+      })
+    },
     //删除
-    del() {},
+    del(id) {
+      deleteAssetRule(id).then(res=>{
+        if(res.code==200){
+          this.$message.success('删除成功')
+           this.initPage();
+        }
+      })
+    },
   },
 };
 </script>
