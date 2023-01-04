@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="process-title">
-      <div style="font-size: 18px">资产管理规则</div>
+      <div style="font-size: 18px">审批流程管理</div>
       <div style="color: #1c6cf7" @click="add">+添加</div>
     </div>
     <el-table :data="processData">
@@ -77,7 +77,7 @@ export default {
     //添加
     add() {
       const obj = {
-        path: "/assetManagement/assetManagementSet/process/addAssetCodeRules",
+        path: "/assetManagement/assetManagementSet/process/addApprovalProcess",
       };
       // getToday()
       this.$tab.closeOpenPage(obj);

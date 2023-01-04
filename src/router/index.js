@@ -439,6 +439,63 @@ export const dynamicRoutes = [
       }
     ]
   },
+  {
+    path: '/assetManagement/assetManagementSet/process',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:duty'],
+    children: [
+      {
+        path: 'addApprovalProcess',
+        component: () => import('@/views/assetManagement/assetManagementSet/addApprovalProcess'),
+        name: 'AddApprovalProcess',
+        meta: { title: '新增审批流程管理',noCache:false  }
+      }
+    ]
+  },
+  {
+    path: '/assetManagement/assetManagementSet/process',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:duty'],
+    children: [
+      {
+        path: 'editApprovalProcess',
+        component: () => import('@/views/assetManagement/assetManagementSet/editApprovalProcess'),
+        name: 'editApprovalProcess',
+        meta: { title: '编辑审批流程管理',noCache:false  }
+      }
+    ]
+  },
+ 
+  {
+    path: '/assetManagement/assetManagementSet/process',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:duty'],
+    children: [
+      {
+        path: 'detailApprovalProcess',
+        component: () => import('@/views/assetManagement/assetManagementSet/detailApprovalProcess'),
+        name: 'detailApprovalProcess',
+        meta: { title: '审批流程管理详情',noCache:false  }
+      }
+    ]
+  },
+  {
+    path: '/assetManagement/assetManagementSet/process',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:duty'],
+    children: [
+      {
+        path: 'addAssetCodeRules',
+        component: () => import('@/views/assetManagement/assetManagementSet/addAssetCodeRules'),
+        name: 'addAssetCodeRules',
+        meta: { title: '审批流程管理详情',noCache:false  }
+      }
+    ]
+  }, 
 
 ]
 
