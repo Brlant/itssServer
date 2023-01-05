@@ -36,9 +36,9 @@
 
       <el-row>
         <el-col :span="12">
-          <el-form-item label="使用范围描述：" prop="field102">
+          <el-form-item label="使用范围描述：" prop="description">
             <el-input
-              v-model="ruleForm.field102"
+              v-model="ruleForm.description"
               placeholder="请输入使用范围描述："
               clearable
               :style="{ width: '100%' }"
@@ -51,12 +51,10 @@
         <span class="box"></span><span class="title-name">规则设置</span>
       </div>
       <el-row style="margin-left: 33px;margin-bottom:20px;">
-        {{ruleForm.ruleList}}
-        <div v-for="(item, index) in ruleForm.ruleList" :key="index">
+        <div v-for="(item, index) in ruleForm.rule" :key="index">
           <el-col :span="6">
-            <el-form-item v-if="item.type==1" prop="field105" :label="item.label" label-width="120px">
-              {{item}}
-              <!-- <el-input
+            <el-form-item v-if="item.type==1" :label="item.label" label-width="120px">
+              <el-input
                 v-model="item.value"
                 placeholder="请输入"
                 clearable
@@ -64,9 +62,9 @@
                 <template slot="append">
                <i class="el-icon-remove red" @click="delThis(item,index)"></i>
               </template>
-              </el-input> -->
+              </el-input>
             </el-form-item>
-            <el-form-item  v-if="item.type==5" prop="field105" :label="item.label" label-width="120px">
+            <el-form-item  v-if="item.type==5" :label="item.label" label-width="120px">
               <el-input
                 v-model="item.ruleLable"
                 placeholder="请输入"
@@ -77,7 +75,7 @@
               </template>
               </el-input>
             </el-form-item>
-            <el-form-item v-else prop="field105" :label="item.label" label-width="120px">
+            <el-form-item v-else :label="item.label" label-width="120px">
               <el-input
                 v-model="item.ruleLable.label"
                 placeholder="请输入"
@@ -143,7 +141,7 @@
               <el-col :span="24">
                 <el-radio label="1">
                   <span class="name">固定前、后缀</span>
-                  <el-input v-model="value1.value" @change="checkedRadio($event,'1')"></el-input>
+                  <el-input v-model="value1.value" @input="checkedRadio($event,'1')"></el-input>
                 </el-radio>
               </el-col>
             </el-row>
@@ -272,7 +270,12 @@ export default {
       diaForm: {},
       ruleForm: {
         ruleName: undefined,
-        ruleList: [],
+        rule: [],
+        field102: undefined,
+        field105: undefined,
+        field106: undefined,
+        field107: undefined,
+        field108: undefined,
       },
       //1级，2级，3级分类
       types: [
@@ -297,12 +300,12 @@ export default {
         { value: 4, label: "5位自然数(如00001)" },
       ],
       value1: {type:'1',value:'',label:"固定前、后缀"},
-      value2: {type:'2',value:'',label:"使用1级分类"},
-      value3: {type:'3',value:'',label:"使用2级分类"},
-      value4: {type:'4',value:'',label:"使用3级分类"},
+      value2: {type:'2',value:'',label:"1级分类"},
+      value3: {type:'3',value:'',label:"2级分类"},
+      value4: {type:'4',value:'',label:"3级分类"},
       value5: {type:'5',value:'',label:"当天日期"},
       value6: {type:'6',value:'',label:"子序列号"},
-      value7: {type:'7',value:'',label:"使用序列号"},
+      value7: {type:'7',value:'',label:"序列号"},
       rules: {
         ruleName: [],
         field102: [],
@@ -365,7 +368,7 @@ export default {
     },
     getType(){
       queryType().then(res=>{
-        this.assetTypes=res.data||[]
+        this.assetTypes=res.data
       })
     },
     change() {
@@ -381,6 +384,8 @@ export default {
       this.$refs["elForm"].resetFields();
     },
     addNode(){
+      this.diaForm.radioSelect1=''
+      this.diaForm.radioSelect=''
       this.dialogShow = true
       this.value1.value=""
       this.value2.value=""
@@ -395,11 +400,9 @@ export default {
       let checkedNum = parseInt(this.diaForm.radioSelect)
       switch (checkedNum) {
         case 1:
-          let params = this.value1
-
-          console.log(this.value1);
-          console.log(params)
-          this.ruleForm.ruleList.push(params)
+          let params = this.deepClone(this.value1)
+          console.log(params,'params')
+          this.ruleForm.rule.push(params)
           break;
         case 2:
           this.value2.ruleLable = this.types.find(item=>{
@@ -408,7 +411,7 @@ export default {
               return item.label
             }
           })
-          this.ruleForm.ruleList.push(this.value2)
+          this.ruleForm.rule.push(this.value2)
 
           break;
         case 3:
@@ -416,7 +419,7 @@ export default {
               return item.label
             }})
 
-          this.ruleForm.ruleList.push(this.value3)
+          this.ruleForm.rule.push(this.value3)
 
           break;
         case 4:
@@ -424,43 +427,43 @@ export default {
               return item.label
             }})
 
-          this.ruleForm.ruleList.push(this.value4)
+          this.ruleForm.rule.push(this.value4)
 
           break;
         case 5:
           console.log(this.value5);
-          let ruleList5 = []
+          let rule5 = []
           this.value5.value.map(codes=>{
               this.dates.map(item=>{
                 if(codes==item.value){
-                  ruleList5 +=item.label+"-"
+                  rule5 +=item.label+"-"
                   }
               })
           })
-          this.value5.ruleLable =  ruleList5.toString().substring(0,ruleList5.length-1)
+          this.value5.ruleLable =  rule5.toString().substring(0,rule5.length-1)
            this.value6.ruleLable = this.childNo.find(item=>{if(item.value==this.value6.value){
               return item.label
             }})
-          this.ruleForm.ruleList.push(this.value5)
-          this.ruleForm.ruleList.push(this.value6)
+          this.ruleForm.rule.push(this.value5)
+          this.ruleForm.rule.push(this.value6)
           break;
         case 6:
           this.value5.value = [1] // 默认选择第一项
-          let ruleList55 = []
+          let rule55 = []
           this.value5.value.map(codes=>{
               this.dates.map(item=>{
                 if(codes==item.value){
-                  ruleList55 +=item.label+"-"
+                  rule55 +=item.label+"-"
                   }
               })
           })
-          this.value5.ruleLable =  ruleList55.toString().substring(0,ruleList55.length-1)
+          this.value5.ruleLable =  rule55.toString().substring(0,rule55.length-1)
           this.value6.ruleLable = this.childNo.find(item=>{if(item.value==this.value6.value){
               return item.label
             }})
 
-          this.ruleForm.ruleList.push(this.value5)
-          this.ruleForm.ruleList.push(this.value6)
+          this.ruleForm.rule.push(this.value5)
+          this.ruleForm.rule.push(this.value6)
 
           break;
         case 7:
@@ -469,7 +472,7 @@ export default {
               return item.label
             }})
 
-          this.ruleForm.ruleList.push(this.value7)
+          this.ruleForm.rule.push(this.value7)
 
           break;
       }
@@ -496,10 +499,8 @@ export default {
       let pj = 'this.value'+who
       console.log(pj);
       eval(pj).value = value
-     
       this.diaForm.radioSelect = who+""
-    
-     
+      console.log(who,'ffff')
       if(who==6){
         // 如果选择了 当天日期的子项目
         // 自动选择和填充  当天日期的第一条
@@ -510,7 +511,7 @@ export default {
     },
     delThis(item,i){
       //item 暂时用不着，留着
-      this.ruleForm.ruleList.splice(i,1)
+      this.ruleForm.rule.splice(i,1)
     },
     cancelFn() {
       this.dialogShow = false
@@ -518,9 +519,9 @@ export default {
     //保存
     sureSave(){
       let data={
-        ...this.ruleForm,
-        rule:this.ruleForm.ruleList
+        ...this.ruleForm
       }
+      data.rule = JSON.stringify(data.rule)
       newAddRule(data).then(res=>{
 
       })
