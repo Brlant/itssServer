@@ -22,24 +22,60 @@
           @click="handleExport"
           v-hasPermi="['system:user:export']"
         >导出</el-button> -->
-      </el-col>
+      <!-- </el-col> -->
     </el-row>
 
-    <el-table v-loading="loading" :data="tableData" @row-click="goDetail" >
-      <el-table-column label="模板ID" align="center" prop="id" />
-      <el-table-column label="适用资产类型" align="left" prop="assetTypeName" />
-      <el-table-column label="品牌" align="center" prop="brand" />
-      <el-table-column label="型号" align="center" prop="model" />
-      <el-table-column label="操作系统" align="center" prop="os" />
+    <el-table 
+      v-loading="loading" 
+      :data="tableData" 
+      @row-click="goDetail"
+    >
+      <el-table-column 
+        label="模板ID" 
+        align="center"
+        width="100"
+        prop="id" 
+      />
+      <el-table-column 
+        label="模板名称" 
+        align="center"
+        prop="templateName"
+      />
+      <el-table-column 
+        label="适用资产类型" 
+        align="center" 
+        prop="assetTypeName" 
+      />
+      <el-table-column 
+        label="品牌" 
+        align="center" 
+        prop="brand" 
+      />
+      <el-table-column 
+        label="型号" 
+        align="center" 
+        prop="model" 
+      />
+      <el-table-column 
+        label="操作系统" 
+        align="center" 
+        prop="os" 
+      />
           <!-- /// 状态 0停用 1启用 -->
      
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column 
+        label="操作" 
+        align="center" 
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             @click.native.stop="handleUpdate(scope.row)"
-          >修改</el-button>
+          >
+            编辑
+          </el-button>
             <!-- <el-button
             size="mini"
             type="text"
@@ -72,8 +108,12 @@
 </template>
 
 <script>
-import {queryAll,searchDetail,createInfo,updateOrDelete}  from '@/api/assetManagement/quickAssetDetail'
-
+import {
+  queryAll,
+  searchDetail,
+  createInfo,
+  updateOrDelete
+}  from '@/api/assetManagement/quickAssetDetail'
 
 export default {
   name: "User",

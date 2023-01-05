@@ -1,594 +1,334 @@
 <template>
-  <!-- 新建资产详情模板 -->
-  <div class="app-container">
-
-    <!-- 顶部返回左侧和右侧按钮 -->
-    <el-row>
-      <el-col :span="12">
-        <div class="grid-content bg-purple">
-          <div class="bg-purple-left-title" @click="backPreviousLayer">
-            <p>
-              <i class="el-icon-arrow-left"></i>
-            </p>
-            <p class="title2">编辑资产详情模板</p>
+  <div class="wrap">
+    <header>
+      <div 
+        class="left" 
+        @click="$router.go(-1)"
+      >
+        <i class="el-icon-arrow-left"></i>
+        <span>快速填充模板编辑</span>
+      </div>
+      <div class="btns">
+        <el-button type="primary" size="small" @click="save">
+          保存
+        </el-button>
+        <el-button size="small" @click="$router.go(-1)">
+          取消
+        </el-button>
+      </div>
+    </header>
+    <main>
+      <el-form 
+        :model="formData"
+        :rules="rules"
+        ref="elForm" 
+        label-width="120px"
+      >
+        <el-row>
+          <el-col :span="span">
+            <el-form-item label="模板名称:" prop="templateName">
+              <el-input v-model.trim="formData.templateName" :style="style" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="span">
+            <el-form-item label="资产类型:" prop="assetTypeId">
+              <el-cascader
+                v-model="formData.assetTypeId"
+                :options="asset"
+                ref="assetCas"
+                :props="{ label: 'typeName', value: 'id' }"
+                clearable
+                :style="style"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <div class="section">
+          <div class="heading">
+            <span class="bar"></span>
+            <b>基础信息</b>
           </div>
+          <el-row>
+            <el-col :span="span">
+              <el-form-item label="品牌:" prop="brand">
+                <el-input v-model.trim="formData.brand" :style="style" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="span">
+              <el-form-item label="型号:" prop="model">
+                <el-input v-model.trim="formData.model" :style="style" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="span">
+              <el-form-item label="保修期:" prop="maintenanceTime">
+                <el-input v-model.trim="formData.maintenanceTime" :style="style" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="span">
+              <el-form-item label="购入时间:" prop="purchasingDate">
+                <el-date-picker
+                  v-model="formData.purchasingDate"
+                  value-format="yyyy-MM-dd"
+                  type="date"
+                  placeholder="请选择"
+                  :style="style"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="span">
+              <el-form-item label="税后价格:" prop="afterTaxPrice">
+                <el-input v-model.trim="formData.afterTaxPrice" :style="style" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="span">
+              <el-form-item label="数量:" prop="amount">
+                <el-input v-model.trim="formData.amount" :style="style" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="span">
+              <el-form-item label="存放地点:" prop="storageAddress">
+                <el-input v-model.trim="formData.storageAddress" :style="style" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="span">
+              <el-form-item label="归属部门:" prop="departmentId">
+                <treeselect
+                  v-model="formData.departmentId"
+                  :options="dept"
+                  ref="deptTree"
+                  :show-count="true"
+                  placeholder="请选择"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="span">
+              <el-form-item label="保管员:" prop="keeper">
+                <el-input v-model.trim="formData.keeper" :style="style" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="span">
+              <el-form-item label="备注:" prop="remark">
+                <el-input v-model="formData.remark" type="textarea" :style="style" />
+              </el-form-item>
+            </el-col>
+          </el-row>
         </div>
-      </el-col>
-      <el-col :span="12" >
-        <div class="grid-content bg-purple-light">
-          <div class="right-button">
-            <el-button type="primary" @click="saveAseet">保存</el-button>
-            <el-button type="info" @click="cancelDetail">取消</el-button>
+        <div class="section">
+          <div class="heading">
+            <span class="bar"></span>
+            <b>折旧信息</b>
           </div>
+          <el-row>
+            <el-col :span="span">
+              <el-form-item label="折旧年限:" prop="depreciableLife">
+                <el-input v-model.trim="formData.depreciableLife" :style="style">
+                  <span slot="suffix">年</span>
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </div>
-      </el-col>
-    </el-row>
-    <!-- 内容主体开始 -->
-    <div>
-       <el-form :model="dataForm" ref="dataForm" label-width="110px" style="line-height: normal; margin: 20px">
-                <el-form-item label="选择设备分类" prop="classThreeId"
-                    :rules="{ required: true, message: '请选择设备分类', trigger: 'blur' }">
-                    <el-cascader ref="cascader" :placeholder="classThreeNamePlaceholder"  clearable :show-all-levels="false" v-model="classThreeNameIds"
-                        :options="dictClassList" :props="{ value: 'id' }" @change="selectTypeChange"></el-cascader>
-                </el-form-item>
-                <el-form-item label="品牌" prop="brand" :rules="{ required: true, message: '请输入品牌', trigger: 'blur' }">
-                    <el-input v-model="dataForm.brand" maxlength="32" show-word-limit></el-input>
-                </el-form-item>
-                <el-form-item label="型号" prop="model" :rules="{ required: true, message: '请输入型号', trigger: 'blur' }">
-                    <el-input v-model="dataForm.model" maxlength="32" show-word-limit></el-input>
-                </el-form-item>
-                <el-form-item label="购入时间">
-                    <el-date-picker v-model="dataForm.purchasingDate" type="date" value-format="yyyy-MM-dd"
-                        placeholder="选择时间"> </el-date-picker>
-                </el-form-item>
-                <!-- 动态显示选项 -->
-                <div v-for="(e, eIndex) in dictionarytemplat" :key="eIndex">
-                    <div v-for="(item, index) in detailInformation" :key="index">
-                        <el-form-item
-                            v-if="e == item.name && e !== 'departmentName' && e !== 'purchasePrice' && e !== 'purchaseTaxPrice' && e !== 'depreciableLife'"
-                            :label="item.label">
-                            <el-input v-model="item.value" maxlength="50" show-word-limit></el-input>
-                        </el-form-item>
-                        <!-- 购入价格(不含税) -->
-                        <el-form-item v-if="e == item.name && e == 'purchasePrice'" :label="item.label">
-                            <el-input type="text" v-model="item.value" maxlength="50" show-word-limit
-                                @keyup.native="item.value = regular.decimalPointvalidation(item.value, 5)"></el-input>
-                        </el-form-item>
-                        <!-- 购入价格(含税) -->
-                        <el-form-item v-if="e == item.name && e == 'purchaseTaxPrice'" :label="item.label">
-                            <el-input type="text" v-model="item.value" maxlength="50" show-word-limit
-                                @keyup.native="item.value = regular.decimalPointvalidation(item.value, 5)"></el-input>
-                        </el-form-item>
-                        <!-- 折旧年限 -->
-                        <el-form-item v-if="e == item.name && e == 'depreciableLife'" :label="item.label">
-                            <el-input type="number" v-model="item.value" maxlength="50" show-word-limit
-                                onkeyup="this.value=this.value.replace(/\D/g,'')"
-                                onafterpaste="this.value=this.value.replace(/\D/g,'')"></el-input>
-                        </el-form-item>
-                        <!-- belongDepartmentName -->
-                        <el-form-item v-if="e == item.name && e == 'departmentName'" :label="item.label">
-                            <el-select v-model="item.value" default-first-option value-key="id" placeholder="请选择归属部门"
-                                @change="selectAllOrgs">
-                                <el-option v-for="item in attributionList" :key="item.departmentId"
-                                    :label="item.departmentName" :value="item.departmentId"> </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </div>
-                </div>
-            </el-form>
-    </div>
-    <!-- 取消二级对话框 -->
-    <!-- <Dialog :dialogObject="dialogObject" @changeValueFromModel="dialogChange">
-        </Dialog> -->
-    <!-- 内容主体结束 -->
+        <div class="section">
+          <div class="heading">
+            <span class="bar"></span>
+            <b>详细信息</b>
+          </div>
+          <el-row>
+            <!-- 动态渲染表单 -->
+            <el-col
+              v-for="(item, index) in formItems"
+              :key="index"
+              :span="span"
+            >
+              <el-form-item :label="item.label" :prop="item.name">
+                <el-input 
+                  v-model.trim="formData[item.name]"
+                  :style="style"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+      </el-form>
+    </main>
   </div>
 </template>
 
 <script>
-// import Dialog from "@/components/dialog.vue";
-import { createDictionary,queryAll,updateOrDelete,searchDetail } from "@/api/assetManagement/assetDetailTemplate";
-
+import { treeselect } from "@/api/system/dept"
+import { 
+  searchDetail, 
+  queryAsset,
+  updateOrDelete
+} from '@/api/assetManagement/quickAssetDetail'
+import Treeselect from "@riophae/vue-treeselect"
+import "@riophae/vue-treeselect/dist/vue-treeselect.css"
+import recursion from '@/utils/recursion'
+import { detailInformation } from './option'
 
 export default {
-  data() {
-    return {
-      assetTemplate: {
-        templateName: "周测试1",
-        describe: "周测试1描述",
-        detailRadius: [],
-      },
-      // dialog控制参数
-      dialogObject: {
-        dialogVisible: false,
-        dataSourceList: "此次编辑内容未被保存，是否确认退出？",
-        sure: "",
-        center: "",
-      },
-      // 基础信息
-      basicInformation: [
-        {
-          id: 1,
-          name: "资产编号",
-        },
-
-        {
-          id: 2,
-          name: "资产条码",
-        },
-        {
-          id: 3,
-          name: "财务编号",
-        },
-        {
-          id: 4,
-          name: "资产名称",
-        },
-        {
-          id: 5,
-          name: "资产类型",
-        },
-        {
-          id: 6,
-          name: "品牌",
-        },
-        {
-          id: 7,
-          name: "型号",
-        },
-        {
-          id: 9,
-          name: "保修期",
-        },
-        {
-          id: 10,
-          name: "购入时间",
-        },
-         {
-          id: 11,
-          name: "税后价格",
-        },
-        
-        {
-          id: 12,
-          name: "数量",
-        },
-        {
-          id: 13,
-          name: "存放地点",
-        },
-        {
-          id: 14,
-          name: "归属部门",
-        },
-        {
-          id: 15,
-          name: "保管人",
-        },
-        {
-          id: 16,
-          name: "备注",
-        },
-        {
-          id: 17,
-          name: "报废日期（报废后才出现）",
-        },
-      ],
-      // 折旧信息
-      depreciationInformation1: [
-         {
-          name:"折旧年限",
-          id:1
-        },],
-      depreciationInformation: [
-        //  {
-        //   name:"折旧年限",
-        //   id:1
-        // },
-        {
-          name:"资产净值",
-          id:1
-        },
-        {
-          name:"每月折旧",
-          id:2
-        },
-        {
-          name:"累计折旧",
-          id:3
-        },
-        //-------------------------------------
-        // {
-        //   label: "折旧年限",
-        //   name: "depreciableLife",
-        //   value: "",
-        //   status: "depreciableLifeFlag",
-        // },
-        // {
-        //   label: "资产净值",
-        //   name: "surplusValue",
-        //   value: "",
-        //   status: "surplusValueFlag",
-        // },
-        // {
-        //   label: "每月折旧",
-        //   name: "monthDepreciation",
-        //   value: "",
-        //   status: "monthlyDepartmentFlag",
-        // },
-        // {
-        //   label: "累计折旧",
-        //   name: "cumulativeDepreciation",
-        //   value: "1",
-        //   status: "cumulativeDepreciationFlag",
-        // },
-      ],
-      // 详细信息
-      detailInformation: [
-        // {
-        //   label: "购入价格(不含税)",
-        //   name: "purchasePrice",
-        //   value: "",
-        //   status: "purchasePriceFlag",
-        // },
-        {
-          // label: "购入价格(含税)",
-          label: "税前价格",
-          name: "preTaxPrice",
-          value: "",
-          status: "preTaxPriceFlag",
-        },
-        {
-          label: "CPU",
-          name: "cpu",
-          value: "",
-          status: "cpuFlag",
-        },
-        {
-          label: "CPU主频",
-          name: "cpuHertz",
-          value: "",
-          status: "cpuHertzFlag",
-        },
-        {
-          label: "内存型号",
-          name: "memory",
-          value: "",
-          status: "memoryFlag",
-        },
-        {
-          label: "内存容量",
-          name: "memorySize",
-          value: "",
-          status: "memorySizeFlag",
-        },
-        {
-          label: "显卡型号",
-          name: "graphicsCard",
-          value: "",
-          status: "graphicsCardFlag",
-        },
-        {
-          label: "显卡容量",
-          name: "graphicsMemorySize",
-          value: "",
-          status: "graphicsMemorySizeFlag",
-        },
-        {
-          label: "硬盘型号",
-          name: "hardDisk",
-          value: "",
-          status: "hardDiskFlag",
-        },
-        {
-          label: "硬盘容量",
-          name: "hardDiskSize",
-          value: "",
-          status: "hardDiskSizeFlag",
-        },
-        {
-          label: "显示器分辨率",
-          name: "resolutionRadio",
-          value: "",
-          status: "resolutionRadioFlag",
-        },
-        {
-          label: "操作系统",
-          name: "os",
-          value: "",
-          status: "osFlag",
-        },
-        {
-          label: "杀毒软件",
-          name: "antivirus",
-          value: "",
-          status: "antivirusFlag",
-        },
-        {
-          label: "办公软件",
-          name: "office",
-          value: "",
-          status: "officeFlag",
-        },
-        {
-          label: "MAC地址",
-          name: "macAddress",
-          value: "",
-          status: "macAddressFlag",
-        },
-        {
-          label: "IP地址",
-          name: "ipAddress",
-          value: "",
-          status: "ipAddressFlag",
-        },
-        {
-          label: "序列号",
-          name: "serialNumber",
-          value: "",
-          status: "serialNumberFlag",
-        },
-        {
-          label: "测量范围",
-          name: "measuringRange",
-          value: "",
-          status: "measuringRangeFlag",
-        },
-        {
-          label: "使用范围",
-          name: "usableRange",
-          value: "",
-          status: "usableRangeFlag",
-        },
-        {
-          label: "采样频率",
-          name: "sampleFrequency",
-          value: "",
-          status: "sampleFrequencyFlag",
-        },
-        {
-          label: "相变材料",
-          name: "phaseChangeMaterial",
-          value: "",
-          status: "phaseChangeMaterialFlag",
-        },
-        {
-          label: "其他信息",
-          name: "additionalInfo",
-          value: "",
-          status: "additionalInfoFlag",
-        },
-
-        // {
-        //   label: "归属部门",
-        //   name: "departmentName",
-        //   value: "",
-        //   status: "belongDepartmentFlag",
-        // },
-        // {
-        //   label: "归属部门id",
-        //   name: "departmentId",
-        //   value: "",
-        //   status: "belongDepartmentId",
-        // },
-      ],
-    };
-  },
   components: {
-    // Dialog
+    Treeselect
   },
-
+  data() {
+    const checkNumber = (rule, value, callback) => {
+      if (!value) {
+        callback()
+        return
+      }
+      if (String(Number(value)) === 'NaN') {
+        callback(new Error('输入内容不合规'))
+      } else {
+        if (value < 0) {
+          callback(new Error('输入内容不合规'))
+        } else {
+          callback()
+        }
+      }
+    }
+    return {
+      id: this.$route.query.id,
+      span: 6,
+      style: {width: '100%'},
+      asset: [],
+      dept: [],
+      formData: {
+        assetTypeId: []
+      },
+      formItems: [],
+      rules: {
+        templateName: [
+          { required: true, trigger: 'blur', message: '请输入模板名称' }
+        ],
+        assetTypeId: [
+          { required: true, trigger: 'blur', message: '请选择资产类型' }
+        ],
+        model: [
+          { required: true, trigger: 'blur', message: '请输入型号' }
+        ],
+        afterTaxPrice: [
+          { validator: checkNumber, trigger: 'blur' }
+        ],
+        amount: [
+          { validator: checkNumber, trigger: 'blur' }
+        ],
+        depreciableLife: [
+          { validator: checkNumber, trigger: 'blur' }
+        ],
+        preTaxPrice: [
+          { validator: checkNumber, trigger: 'blur' }
+        ]
+      }
+    }
+  },
   mounted() {
-    this.gettemplateDetail();
+    this.getDept()
+    this.getAsset()
   },
-
-  methods: {
-    /**
-     * @description 根据路由传参信息，进行回显
-     */
-    gettemplateDetail() {
-      if (this.$route.query.id) {
-        searchDetail(this.$route.query.id).then((res) => {
-          this.assetTemplate.templateName =res.data.templateName
-          this.assetTemplate.describe = res.data.describe
-        // 获取选择的详细信息，1选中，0不选择
-          for (let key in res.data) {
-            if (res.data[key] == 1) {
-              this.assetTemplate.detailRadius.push(key);
+  watch: {
+    'formData.assetTypeId': {
+      deep: true,
+      // 动态渲染详细信息的表单
+      handler(value) {
+        if (!value.length) {
+          this.formItems = []
+          return
+        }
+        this.$nextTick(() => {
+          let formItems = []
+          const { assetTemplate } = this.$refs.assetCas.getCheckedNodes()[0].data
+          detailInformation.forEach(item => {
+            for (let i in assetTemplate) {
+              if (item.status === i) {
+                if (assetTemplate[i] === 1) {
+                  formItems.push(item)
+                }
+              }
             }
-          }
-        });
+          })
+          this.formItems = formItems
+        })
       }
-    },
-    /**
-     * @description 父组件接收子组件的函数
-     * @param data { Boolean } dialog传过来的params
-     */
-    dialogChange(data) {
-      data.status ? this.backPreviousLayer() : (this.dialogObject.dialogVisible = false);
-    },
-    /**
-     * @description 选择详细信息
-     * @params data { Object } 选中的信息
-     */
-    handleCheckedCitiesChange(data) {},
-    /**
-     * @description 返回上一层
-     */
-    backPreviousLayer() {
-       const obj = { path: "/assetManagement/assetManagementSet/list" };
-        this.$tab.closeOpenPage(obj);
-    },
-    /**
-     * @description 取消按钮
-     */
-    cancelDetail() {
-      // this.dialogObject.dataSourceList = "此次编辑内容未被保存，是否确认退出？";
-      // this.dialogObject.dialogVisible = true;
-      // this.dialogObject.sure = "退出";
-      // this.dialogObject.center = "取消";
-       const obj = { path: "/assetManagement/assetManagementSet/list" };
-        this.$tab.closeOpenPage(obj);
-
-    },
-    /**
-     * @description 保存按钮
-     */
-    saveAseet() {
-      if (this.assetTemplate.templateName === "") {
-        this.$message.error("请输入标题名称!");
-        return;
-      }
-      if (this.assetTemplate.detailRadius=="") {
-        this.$message.error("请选择详细信息!");
-        return;
-      }
-
-      let params = {
-        templateName: this.assetTemplate.templateName,
-        describe:this.assetTemplate.describe,
-        // creator: JSON.parse(localStorage.getItem("user") || "").userId,
-        // creatorName: JSON.parse(localStorage.getItem("user") || "").userName,
-      };
-      for (let i in this.assetTemplate.detailRadius) {
-        let key = this.assetTemplate.detailRadius[i];
-        console.log(key);
-        // 获取选择的详细信息，1选中，0不选择
-        params[key] = 1;
-      }
-      console.log(params);
-      if(this.$route.query.id){
-        // 有id 则说明是修改
-        params.id= this.$route.query.id
-        updateOrDelete(params).then((res) => {
-          if (res.code == 200) {
-            this.$message({
-              message: "修改成功！",
-              type: "success",
-            });
-            const obj = { path: "/assetManagement/assetManagementSet/list" };
-        this.$tab.closeOpenPage(obj);
-          }
-        });
-      }else{
-
-        createDictionary(params).then((res) => {
-          // if (res.code == 200) {
-            this.$message({
-              message: "新增成功！",
-              type: "success",
-            });
-            const obj = { path: "/assetManagement/assetManagementSet/list" };
-        this.$tab.closeOpenPage(obj);
-          // }
-        });
-      }
-    },
+    }
   },
-};
+  methods: {
+    // 部门查询
+    getDept() {
+      treeselect().then(res => {
+        this.dept = res.data
+      })
+    },
+    // 资产类型查询
+    getAsset() {
+      queryAsset().then(res => {
+        this.asset = res.data
+        // 填充表单
+        searchDetail(this.id).then(resp => {
+          let formData = resp.data
+          // 为了el-cascader的回显而反推完整的id数组
+          formData.assetTypeId = recursion(this.asset, formData.assetTypeId)
+          this.formData = this.deepClone(formData)
+        })
+      })
+    },
+    // 提交表单
+    save() {
+      this.$refs.elForm.validate(valid => {
+        if (!valid) {
+          return
+        }
+        // 传参格式的一些处理
+        let data = this.deepClone(this.formData)
+        delete data.assetTypeName
+        const assetTypeId = data.assetTypeId
+        data.assetTypeId = assetTypeId[assetTypeId.length - 1]
+        if (this.formData.departmentId) {
+          data.departmentName = this.$refs.deptTree.getNode(this.formData.departmentId).label
+        } else {
+          data.departmentName = null
+        }
+        updateOrDelete(data).then(res => {
+          this.$message.success(res.msg)
+          this.$router.go(-1)
+        })
+      })
+    }
+  }
+}
 </script>
 
-<style scoped>
-p {
-  margin: 0%;
-  padding: 0;
-}
-
-.main {
-  margin: 10px 0px 10px 15px;
-}
-
-/* 顶部导航栏样式开始 */
-.bg-purple-left-title {
-  display: inline-block;
-  font-size: 18px;
-  color: #409eff;
-  cursor: pointer;
-}
-.bg-purple-left-title .el-icon-arrow-left:before {
-  font-weight: bold;
-}
-.bg-purple-left-title p {
-  display: inline-block;
-}
-.bg-purple-left-title .title {
-  font-weight: bold;
-}
-
-.bg-purple-light {
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* 顶部导航栏样式结束 */
-.template-row,
-.base-row,
-.detail-row {
-  margin-top: 40px;
-}
-.title1 {
- position: relative;
-    /* border: 1px red solid; */
-    min-height: 20px;
-    /* border-left: 4px #999999 solid; */
-  padding-left: 12px;
-}
-.title {
- position: relative;
-    /* border: 1px red solid; */
-    min-height: 20px;
-    border-left: 4px #999999 solid;
-  padding-left: 12px;
-}
- 
-.title-name {
-  font-size: 18px;
-  font-weight: bold;
-  line-height: 20px;
-}
-.c333{
-  color: #333;
-}
-.c999{
-  color: #999;
-}
-.template-row {
-  display: flex;
-  flex-direction: row;
-}
-.template-row .title-item {
-  margin-bottom: 0;
-}
-.template-row .title-item .el-form-item__content {
-  margin-left: 20px !important;
-}
-.base-row .base {
-  width: 80%;
-  /* display: flex;
-    align-content:space-around; */
-}
-.base-row .base .el-radio-group {
-  margin-left: 14px;
-  margin-top: 20px;
-  display: inline-block;
-  width: 10%;
-}
-/* 详细信息 */
-.detail-row .detail-group {
-  width: 90%;
-}
-.detail-row .detail-group .custom-disable-class .is-checked .el-checkbox__inner {
-  background-color: #909399;
-}
-.detail-row .detail-group .el-checkbox {
-  margin-left: 14px;
-  margin-top: 20px;
-  width: 12%;
-}
-.greenFont{
-  display: block;
-    width: 100%;
-    position: relative;
-    font-size: 14px;
-    color: #45c7a7;
+<style lang="scss" scoped>
+.wrap {
+  header {
+    background: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    .left {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+  }
+  main {
+    background: #fff;
+    padding: 10px;
+    .heading {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      .bar {
+        width: 4px;
+        height: 15px;
+        background: #333;
+        margin-right: 8px;
+      }
+      b {
+        font-size: 15px;
+      }
+    }
+  }
 }
 </style>
