@@ -395,6 +395,12 @@ export default {
       this.value6.value=""
       this.value7.value=""
     },
+    /**
+     * 弹出层的确定方法
+     * 内部会判断点击了谁，
+     * 并且赋值给页面
+     * 特殊处理的有 类型为 1   5  6 的
+    */
     sureEdit() {
       console.log(this.diaForm.radioSelect);
       let checkedNum = parseInt(this.diaForm.radioSelect)
