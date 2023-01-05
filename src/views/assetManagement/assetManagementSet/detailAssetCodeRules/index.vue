@@ -107,7 +107,12 @@ export default {
   },
     //复制新建
   copyAdd(){
-
+     const obj = {
+    path: "/assetManagement/assetManagementSet/process/addAssetCodeRules",
+    query:{detailData:this.$route.query.detailData}
+   };
+   // getToday()
+   this.$tab.closeOpenPage(obj);
   },
      //停用启用
   stopOrUse(id, item) {

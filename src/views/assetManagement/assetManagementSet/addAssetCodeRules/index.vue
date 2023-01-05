@@ -1,22 +1,13 @@
 <template>
   <div class="app-container">
     <div class="process-title">
-      <div 
-      style="font-size: 18px;cursor:pointer;"
-      @click='goBack'>
-      <i 
-      class="el-icon-arrow-left"
-      >
-      </i>
+      <div style="font-size: 18px; cursor: pointer" @click="goBack">
+        <i class="el-icon-arrow-left"> </i>
         <span>资产编号规则</span>
       </div>
       <div>
-        <el-button 
-        type="primary" 
-        @click='sureSave'>
-        保存
-        </el-button>
-        <el-button>取消</el-button>
+        <el-button type="primary" @click="sureSave"> 保存 </el-button>
+        <el-button @click="cancel">取消</el-button>
       </div>
     </div>
     <el-form
@@ -61,46 +52,58 @@
         <span class="box"></span>
         <span class="title-name">规则设置</span>
       </div>
-      <el-row style="margin-left: 33px;margin-bottom:20px;">
+      <el-row style="margin-left: 33px; margin-bottom: 20px">
         <div v-for="(item, index) in ruleForm.ruleList" :key="index">
           <el-col :span="6">
-            <el-form-item v-if="item.type==1" :label="item.label" label-width="120px">
-              <el-input
-                v-model="item.value"
-                placeholder="请输入"
-                clearable
-              >
+            <el-form-item
+              v-if="item.type == 1"
+              :label="item.label"
+              label-width="120px"
+            >
+              <el-input v-model="item.value" placeholder="请输入" disabled>
                 <template slot="append">
-               <i class="el-icon-remove red" @click="delThis(item,index)"></i>
-              </template>
+                  <i
+                    class="el-icon-remove red"
+                    @click="delThis(item, index)"
+                  ></i>
+                </template>
               </el-input>
             </el-form-item>
-            <el-form-item  v-if="item.type==5" :label="item.label" label-width="120px">
-              <el-input
-                v-model="item.ruleLable"
-                placeholder="请输入"
-                disabled
-              >
-              <template slot="append">
-               <i class="el-icon-remove red" @click="delThis(item,index)"></i>
-              </template>
+            <el-form-item
+              v-if="item.type == 5"
+              :label="item.label"
+              label-width="120px"
+            >
+              <el-input v-model="item.ruleLable" placeholder="请输入" disabled>
+                <template slot="append">
+                  <i
+                    class="el-icon-remove red"
+                    @click="delThis(item, index)"
+                  ></i>
+                </template>
               </el-input>
             </el-form-item>
-            <el-form-item v-if='item.type!=1 && item.type!=5' :label="item.label" label-width="120px">
+            <el-form-item
+              v-if="item.type != 1 && item.type != 5"
+              :label="item.label"
+              label-width="120px"
+            >
               <el-input
                 v-model="item.ruleLable.label"
                 placeholder="请输入"
                 disabled
               >
-              <template slot="append">
-               <i class="el-icon-remove red" @click="delThis(item,index)"></i>
-              </template>
+                <template slot="append">
+                  <i
+                    class="el-icon-remove red"
+                    @click="delThis(item, index)"
+                  ></i>
+                </template>
               </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="0.3" class="i-class">
-            <i class="el-icon-minus">
-            </i>
+            <i class="el-icon-minus"> </i>
           </el-col>
         </div>
 
@@ -118,22 +121,22 @@
               clearable
               multiple
               size="medium"
-              @change='changeAll'
+              @change="changeAll"
             >
               <el-option
-                  v-for="(item,index) in assetTypes"
-                  :key="index"
-                  :label="item.allName"
-                  :value="item.id"
-                  :disabled="item.disabled"
-                >
-                </el-option>
+                v-for="(item, index) in assetTypes"
+                :key="index"
+                :label="item.allName"
+                :value="item.id"
+                :disabled="item.disabled"
+              >
+              </el-option>
             </el-select>
           </el-form-item>
         </el-col>
       </el-row>
     </el-form>
-  
+
     <el-dialog
       title="新增/编辑编号规则"
       class="dialogForm"
@@ -153,7 +156,10 @@
               <el-col :span="24">
                 <el-radio label="1">
                   <span class="name">固定前、后缀</span>
-                  <el-input v-model="value1.value" @input="checkedRadio($event,'1')"></el-input>
+                  <el-input
+                    v-model="value1.value"
+                    @input="checkedRadio($event, '1')"
+                  ></el-input>
                 </el-radio>
               </el-col>
             </el-row>
@@ -161,7 +167,10 @@
               <el-col :span="24">
                 <el-radio label="2">
                   <span class="name">使用1级分类</span>
-                  <el-select v-model="value2.value" @change="checkedRadio($event,'2')">
+                  <el-select
+                    v-model="value2.value"
+                    @change="checkedRadio($event, '2')"
+                  >
                     <el-option
                       v-for="(item, index) in types"
                       :key="index"
@@ -177,7 +186,10 @@
               <el-col :span="24">
                 <el-radio label="3">
                   <span class="name">使用2级分类</span>
-                  <el-select v-model="value3.value" @change="checkedRadio($event,'3')">
+                  <el-select
+                    v-model="value3.value"
+                    @change="checkedRadio($event, '3')"
+                  >
                     <el-option
                       v-for="(item, index) in types"
                       :key="index"
@@ -193,7 +205,10 @@
               <el-col :span="24">
                 <el-radio label="4">
                   <span class="name">使用3级分类</span>
-                  <el-select v-model="value4.value" @change="checkedRadio($event,'4')">
+                  <el-select
+                    v-model="value4.value"
+                    @change="checkedRadio($event, '4')"
+                  >
                     <el-option
                       v-for="(item, index) in types"
                       :key="index"
@@ -209,7 +224,11 @@
               <el-col :span="24">
                 <el-radio label="5">
                   <span class="name">当天日期</span>
-                  <el-select v-model="value5.value" multiple @change="checkedRadio($event,'5')">
+                  <el-select
+                    v-model="value5.value"
+                    multiple
+                    @change="checkedRadio($event, '5')"
+                  >
                     <el-option
                       v-for="(item, index) in dates"
                       :key="index"
@@ -222,12 +241,15 @@
               </el-col>
             </el-row>
           </el-radio-group>
-            <el-radio-group v-model="diaForm.radioSelect1">
+          <el-radio-group v-model="diaForm.radioSelect1">
             <el-row>
               <el-col :span="24">
-                <el-radio label="6" style="margin-left: 20px"  >
+                <el-radio label="6" style="margin-left: 20px">
                   <span class="name">子序列号</span>
-                  <el-select v-model="value6.value" @change="checkedRadio($event,'6')">
+                  <el-select
+                    v-model="value6.value"
+                    @change="checkedRadio($event, '6')"
+                  >
                     <el-option
                       v-for="(item, index) in childNo"
                       :key="index"
@@ -239,13 +261,16 @@
                 </el-radio>
               </el-col>
             </el-row>
-            </el-radio-group>
-            <el-radio-group v-model="diaForm.radioSelect">
+          </el-radio-group>
+          <el-radio-group v-model="diaForm.radioSelect">
             <el-row>
               <el-col :span="24">
                 <el-radio label="7">
                   <span class="name">使用序列号</span>
-                  <el-select v-model="value7.value" @change="checkedRadio($event,'7')">
+                  <el-select
+                    v-model="value7.value"
+                    @change="checkedRadio($event, '7')"
+                  >
                     <el-option
                       v-for="(item, index) in childNo"
                       :key="index"
@@ -268,22 +293,20 @@
   </div>
 </template>
 <script>
-import {
-queryType,
-newAddRule
-} from "@/api/assetManagement/addAssetCodeRules";
+import { queryType, newAddRule } from "@/api/assetManagement/addAssetCodeRules";
 export default {
   components: {},
   props: [],
   data() {
     return {
-      assetTypes:[],
+      assetTypes: [],
       dialogShow: false,
       diaForm: {},
       ruleForm: {
         ruleName: undefined,
         ruleList: [],
         description: undefined,
+        assetTypeIdList:[]
       },
       //1级，2级，3级分类
       types: [
@@ -302,21 +325,21 @@ export default {
       ],
       //子序列号
       childNo: [
-        { 
-          value: 1, 
-          label: "自然数(如1、2、3)" 
+        {
+          value: 1,
+          label: "自然数(如1、2、3)",
         },
         { value: 2, label: "3位自然数(如001、002、003)" },
         { value: 3, label: "4位自然数(如0001、0002)" },
         { value: 4, label: "5位自然数(如00001)" },
       ],
-      value1: {type:'1',value:'',label:"固定前、后缀"},
-      value2: {type:'2',value:'',label:"1级分类"},
-      value3: {type:'3',value:'',label:"2级分类"},
-      value4: {type:'4',value:'',label:"3级分类"},
-      value5: {type:'5',value:'',label:"当天日期"},
-      value6: {type:'6',value:'',label:"子序列号"},
-      value7: {type:'7',value:'',label:"序列号"},
+      value1: { type: "1", value: "", label: "固定前、后缀" },
+      value2: { type: "2", value: "", label: "1级分类" },
+      value3: { type: "3", value: "", label: "2级分类" },
+      value4: { type: "4", value: "", label: "3级分类" },
+      value5: { type: "5", value: "", label: "当天日期" },
+      value6: { type: "6", value: "", label: "子序列号" },
+      value7: { type: "7", value: "", label: "序列号" },
       rules: {
         ruleName: [],
         field102: [],
@@ -353,34 +376,68 @@ export default {
   },
   computed: {},
   watch: {},
-  created() {},
+  created() {
+    if (this.$route.query.detailData) {
+      this.ruleForm = this.$route.query.detailData;
+      this.ruleForm.ruleName=''
+      this.ruleForm.assetTypeIdList=[]
+      let pushAssetType = [];
+      this.$route.query.detailData.assetTypeList.forEach((item) =>
+        pushAssetType.push(item.id)
+      );
+      // this.ruleForm.assetTypeIdList = pushAssetType;
+      console.log(this.ruleForm, "this.ruleForm.ruleList");
+      //将字符串转化为数组对象
+      var ruleCopy = JSON.parse(this.ruleForm.rule);
+      this.ruleForm.ruleList = ruleCopy;
+      console.log(this.ruleForm, " this.ruleForm.ruleList");
+    }else{
+      this.ruleForm = {
+        ruleName: undefined,
+        ruleList: [],
+        description: undefined,
+        assetTypeIdList:[]
+      };
+    }
+  },
   mounted() {
-    this.getType()
+    this.getType();
   },
   methods: {
-    changeAll(index){
-     
-     if(index.includes(0)){
-     
-      this.assetTypes.forEach(item=>{
-              if(item.id!=0){
-                item.disabled=true
-              }
+    //取消
+    cancel() {
+      this.$confirm(`当前页面修改内容尚未保存，是否确认退出？`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
       })
-
-      this.ruleForm.assetTypeIdList = [0]
-     }else{
-      this.assetTypes.forEach(item=>{
-              if(item.id!=0){
-                item.disabled=false
-              }
-      })
-     }
+        .then(() => {
+          // this.$refs["elForm"].resetFields();
+          this.$router.push('/assetManagement/assetManagementSet/assetCodeRules')
+        })
+        .catch(() => {});
     },
-    getType(){
-      queryType().then(res=>{
-        this.assetTypes=res.data
-      })
+    changeAll(index) {
+      if (index.includes(0)) {
+        this.assetTypes.forEach((item) => {
+          if (item.id != 0) {
+            item.disabled = true;
+          }
+        });
+
+        this.ruleForm.assetTypeIdList = [0];
+      } else {
+        this.assetTypes.forEach((item) => {
+          if (item.id != 0) {
+            item.disabled = false;
+          }
+        });
+      }
+    },
+    getType() {
+      queryType().then((res) => {
+        this.assetTypes = res.data;
+      });
     },
     change() {
       console.log(this.diaForm.radioSelect, "aaaaaa");
@@ -394,161 +451,191 @@ export default {
     resetForm() {
       this.$refs["elForm"].resetFields();
     },
-    addNode(){
-      this.diaForm.radioSelect1=''
-      this.diaForm.radioSelect=''
-      this.dialogShow = true
-      this.value1.value=""
-      this.value2.value=""
-      this.value3.value=""
-      this.value4.value=""
-      this.value5.value=[]
-      this.value6.value=""
-      this.value7.value=""
+    addNode() {
+      this.diaForm.radioSelect1 = "";
+      this.diaForm.radioSelect = "";
+      this.dialogShow = true;
+      this.value1.value = "";
+      this.value2.value = "";
+      this.value3.value = "";
+      this.value4.value = "";
+      this.value5.value = [];
+      this.value6.value = "";
+      this.value7.value = "";
     },
     sureEdit() {
       console.log(this.diaForm.radioSelect);
-      let checkedNum = parseInt(this.diaForm.radioSelect)
+      let checkedNum = parseInt(this.diaForm.radioSelect);
       switch (checkedNum) {
         case 1:
-          let params = this.deepClone(this.value1)
-          console.log(params,'params')
+          let params = this.deepClone(this.value1);
+          console.log(params, "params");
+         console.log(this.ruleForm.ruleList,'this.ruleForm.ruleList')
           this.ruleForm.ruleList.push(params)
+          // this.ruleForm.ruleList.push(params);
           break;
         case 2:
-          this.value2.ruleLable = this.types.find(item=>{
-            console.log(item.value,this.value2.value);
-            if(item.value==this.value2.value){
-              return item.label
+          this.value2.ruleLable = this.types.find((item) => {
+            console.log(item.value, this.value2.value);
+            if (item.value == this.value2.value) {
+              return item.label;
             }
-          })
-          this.ruleForm.ruleList.push(this.deepClone(this.value2))
+          });
+          this.ruleForm.ruleList.push(this.deepClone(this.value2));
 
           break;
         case 3:
-          this.value3.ruleLable = this.types.find(item=>{if(item.value==this.value3.value){
-              return item.label
-            }})
+          this.value3.ruleLable = this.types.find((item) => {
+            if (item.value == this.value3.value) {
+              return item.label;
+            }
+          });
 
-          this.ruleForm.ruleList.push(this.deepClone(this.value3))
+          this.ruleForm.ruleList.push(this.deepClone(this.value3));
 
           break;
         case 4:
-          this.value4.ruleLable = this.dates.find(item=>{if(item.value==this.value4.value){
-              return item.label
-            }})
+          this.value4.ruleLable = this.dates.find((item) => {
+            if (item.value == this.value4.value) {
+              return item.label;
+            }
+          });
 
-          this.ruleForm.ruleList.push(this.deepClone(this.value4))
+          this.ruleForm.ruleList.push(this.deepClone(this.value4));
 
           break;
         case 5:
           console.log(this.value5);
-          let ruleList5 = []
-          this.value5.value.map(codes=>{
-              this.dates.map(item=>{
-                if(codes==item.value){
-                  ruleList5 +=item.label+"-"
-                  }
-              })
-          })
-          this.value5.ruleLable =  ruleList5.toString().substring(0,ruleList5.length-1)
-         
-          this.ruleForm.ruleList.push(this.deepClone(this.value5))
-          if(this.value6.value){
-              this.value6.ruleLable = this.childNo.find(item=>{if(item.value==this.value6.value){
-              return item.label
-            }})
-          this.ruleForm.ruleList.push(this.deepClone(this.value6))
+          let ruleList5 = [];
+          this.value5.value.map((codes) => {
+            this.dates.map((item) => {
+              if (codes == item.value) {
+                ruleList5 += item.label + "-";
+              }
+            });
+          });
+          this.value5.ruleLable = ruleList5
+            .toString()
+            .substring(0, ruleList5.length - 1);
+
+          this.ruleForm.ruleList.push(this.deepClone(this.value5));
+          if (this.value6.value) {
+            this.value6.ruleLable = this.childNo.find((item) => {
+              if (item.value == this.value6.value) {
+                return item.label;
+              }
+            });
+            this.ruleForm.ruleList.push(this.deepClone(this.value6));
           }
-          
+
           break;
         case 6:
-          this.value5.value = [1] // 默认选择第一项
-          let ruleList55 = []
-          this.value5.value.map(codes=>{
-              this.dates.map(item=>{
-                if(codes==item.value){
-                  ruleList55 +=item.label+"-"
-                  }
-              })
-          })
-          this.value5.ruleLable =  ruleList55.toString().substring(0,ruleList55.length-1)
-          this.value6.ruleLable = this.childNo.find(item=>{if(item.value==this.value6.value){
-              return item.label
-            }})
+          this.value5.value = [1]; // 默认选择第一项
+          let ruleList55 = [];
+          this.value5.value.map((codes) => {
+            this.dates.map((item) => {
+              if (codes == item.value) {
+                ruleList55 += item.label + "-";
+              }
+            });
+          });
+          this.value5.ruleLable = ruleList55
+            .toString()
+            .substring(0, ruleList55.length - 1);
+          this.value6.ruleLable = this.childNo.find((item) => {
+            if (item.value == this.value6.value) {
+              return item.label;
+            }
+          });
 
-          this.ruleForm.ruleList.push(this.deepClone(this.value5))
-          this.ruleForm.ruleList.push(this.deepClone(this.value6))
+          this.ruleForm.ruleList.push(this.deepClone(this.value5));
+          this.ruleForm.ruleList.push(this.deepClone(this.value6));
 
           break;
         case 7:
-          this.value7.ruleLable = this.childNo.find(item=>{
-            if(item.value==this.value7.value){
-              return item.label
-            }})
+          this.value7.ruleLable = this.childNo.find((item) => {
+            if (item.value == this.value7.value) {
+              return item.label;
+            }
+          });
 
-          this.ruleForm.ruleList.push(this.deepClone(this.value7))
+          this.ruleForm.ruleList.push(this.deepClone(this.value7));
 
           break;
       }
-      this.dialogShow=false
+      this.dialogShow = false;
     },
-    checkedRadio(value,who){
+    checkedRadio(value, who) {
       console.log(value);
-      this.value1.value=""
-      this.value2.value=""
-      this.value3.value=""
-      this.value4.value=""
-      this.value5.value=[]
-      console.log(who,'who')
-      if(who!=5 &&who!=6){
-        this.diaForm.radioSelect1='';
-         this.value6.value=""
+      this.value1.value = "";
+      this.value2.value = "";
+      this.value3.value = "";
+      this.value4.value = "";
+      this.value5.value = [];
+      console.log(who, "who");
+      if (who != 5 && who != 6) {
+        this.diaForm.radioSelect1 = "";
+        this.value6.value = "";
       }
-       if(who==5&&this.value6.value==""){
+      if (who == 5 && this.value6.value == "") {
         // 如果我选择了 当天日期 且 子项目没有有值 不清空
-          this.value6.value=""
-      }
-     
-      this.value7.value=""
-      let pj = 'this.value'+who
-      console.log(pj);
-      eval(pj).value = value
-      this.diaForm.radioSelect = who+""
-      console.log(who,'ffff')
-      if(who==6){
-        // 如果选择了 当天日期的子项目
-        // 自动选择和填充  当天日期的第一条
-        this.value5.value = [1] // 默认选择第一项
-         this.diaForm.radioSelect1 = who+""
-           this.diaForm.radioSelect = 5+""
-      }
-    },
-    delThis(item,i){
-      //item 暂时用不着，留着
-      this.ruleForm.ruleList.splice(i,1)
-    },
-    cancelFn() {
-      this.dialogShow = false
-    },
-    //保存
-    sureSave(){
-      let data={
-        ...this.ruleForm,
-        rule:JSON.stringify(this.ruleForm.ruleList)
+        this.value6.value = "";
       }
 
-      newAddRule(data).then(res=>{
-          if(res.code==200){
-            this.$message.success('新增成功')
-            this.$router.go(-1)
-          }
-      })
+      this.value7.value = "";
+      let pj = "this.value" + who;
+      console.log(pj);
+      eval(pj).value = value;
+      this.diaForm.radioSelect = who + "";
+      console.log(who, "ffff");
+      if (who == 6) {
+        // 如果选择了 当天日期的子项目
+        // 自动选择和填充  当天日期的第一条
+        this.value5.value = [1]; // 默认选择第一项
+        this.diaForm.radioSelect1 = who + "";
+        this.diaForm.radioSelect = 5 + "";
+      }
     },
-     //返回
-  goBack(){
-     this.$router.go(-1)
-  },
+    delThis(item, i) {
+      //item 暂时用不着，留着
+      this.ruleForm.ruleList.splice(i, 1);
+      //强制刷新
+       this.$forceUpdate()
+    },
+    cancelFn() {
+      this.dialogShow = false;
+    },
+    //保存
+    sureSave() {
+      console.log(this.ruleForm,'this.ruleForm')
+      // return
+      let data={}
+      if(this.$route.query.detailData){
+        data={
+          rule: JSON.stringify(this.ruleForm.ruleList),
+          description:this.ruleForm.description,
+          ruleName:this.ruleForm.ruleName,
+          assetTypeIdList:this.ruleForm.assetTypeIdList
+        }
+      }else{
+        data = {
+        ...this.ruleForm,
+        rule: JSON.stringify(this.ruleForm.ruleList),
+      };
+      }
+   
+
+      newAddRule(data).then((res) => {
+        if (res.code == 200) {
+          this.$message.success("新增成功");
+           this.$router.push('/assetManagement/assetManagementSet/assetCodeRules')
+        }
+      });
+    },
+    //返回
+    goBack() {
+      this.$router.go(-1);
+    },
   },
 };
 </script>
@@ -595,10 +682,10 @@ export default {
 .el-radio-group .el-row {
   margin-bottom: 15px;
 }
-.red{
+.red {
   color: red;
 }
-.el-radio-group{
-display:block!important;
+.el-radio-group {
+  display: block !important;
 }
 </style>

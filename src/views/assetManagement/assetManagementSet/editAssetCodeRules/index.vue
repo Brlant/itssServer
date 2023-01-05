@@ -12,7 +12,7 @@
         <el-button type="primary" @click="sureSave"> 
             保存 
         </el-button>
-        <el-button>
+        <el-button @click='cancel'>
             取消
         </el-button>
       </div>
@@ -347,12 +347,12 @@ export default {
         { value: 4, label: "5位自然数(如00001)" },
       ],
       value1: { type: "1", value: "", label: "固定前、后缀" },
-      value2: { type: "2", value: "", label: "使用1级分类" },
-      value3: { type: "3", value: "", label: "使用2级分类" },
-      value4: { type: "4", value: "", label: "使用3级分类" },
+      value2: { type: "2", value: "", label: "1级分类" },
+      value3: { type: "3", value: "", label: "2级分类" },
+      value4: { type: "4", value: "", label: "3级分类" },
       value5: { type: "5", value: "", label: "当天日期" },
       value6: { type: "6", value: "", label: "子序列号" },
-      value7: { type: "7", value: "", label: "使用序列号" },
+      value7: { type: "7", value: "", label: "序列号" },
       rules: {
         ruleName: [],
         field102: [],
@@ -397,6 +397,7 @@ export default {
     );
     this.ruleForm.assetTypeIdList = pushAssetType;
     console.log(this.ruleForm, "this.ruleForm.ruleList");
+    //将字符串转化为数组对象
     var ruleCopy = JSON.parse(this.ruleForm.rule);
     this.ruleForm.ruleList = ruleCopy;
     console.log(this.ruleForm, " this.ruleForm.ruleList");
@@ -405,6 +406,18 @@ export default {
     this.getType();
   },
   methods: {
+     //取消
+    cancel(){
+       this.$confirm(`当前页面修改内容尚未保存，是否确认退出？`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+            this.$router.push('/assetManagement/assetManagementSet/assetCodeRules')
+        })
+        .catch(() => {});
+    },
     changeAll(index) {
       if (index.includes(0)) {
         this.assetTypes.forEach((item) => {
@@ -585,6 +598,7 @@ export default {
       //item 暂时用不着，留着
       console.log(this.ruleForm);
       this.ruleForm.ruleList.splice(i, 1);
+      //强制刷新
       this.$forceUpdate()
     },
     cancelFn() {
@@ -599,8 +613,8 @@ export default {
 
       editRule(data).then((res) => {
         if (res.code == 200) {
-          this.$message.success("新增成功");
-          this.$router.go(-1);
+          this.$message.success("编辑成功");
+            this.$router.push('/assetManagement/assetManagementSet/assetCodeRules')
         }
       });
     },

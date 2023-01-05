@@ -114,9 +114,10 @@ export default {
    this.$tab.closeOpenPage(obj);
   },
   //复制
-  copy() {
+  copy(data) {
     const obj = {
     path: "/assetManagement/assetManagementSet/process/addAssetCodeRules",
+    query:{detailData:data}
    };
    // getToday()
    this.$tab.closeOpenPage(obj);
