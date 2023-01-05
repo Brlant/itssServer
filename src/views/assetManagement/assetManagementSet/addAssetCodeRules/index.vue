@@ -411,7 +411,7 @@ export default {
               return item.label
             }
           })
-          this.ruleForm.ruleList.push(this.value2)
+          this.ruleForm.ruleList.push(this.deepClone(this.value2))
 
           break;
         case 3:
@@ -419,7 +419,7 @@ export default {
               return item.label
             }})
 
-          this.ruleForm.ruleList.push(this.value3)
+          this.ruleForm.ruleList.push(this.deepClone(this.value3))
 
           break;
         case 4:
@@ -427,7 +427,7 @@ export default {
               return item.label
             }})
 
-          this.ruleForm.ruleList.push(this.value4)
+          this.ruleForm.ruleList.push(this.deepClone(this.value4))
 
           break;
         case 5:
@@ -444,8 +444,8 @@ export default {
            this.value6.ruleLable = this.childNo.find(item=>{if(item.value==this.value6.value){
               return item.label
             }})
-          this.ruleForm.ruleList.push(this.value5)
-          this.ruleForm.ruleList.push(this.value6)
+          this.ruleForm.ruleList.push(this.deepClone(this.value5))
+          this.ruleForm.ruleList.push(this.deepClone(this.value6))
           break;
         case 6:
           this.value5.value = [1] // 默认选择第一项
@@ -462,8 +462,8 @@ export default {
               return item.label
             }})
 
-          this.ruleForm.ruleList.push(this.value5)
-          this.ruleForm.ruleList.push(this.value6)
+          this.ruleForm.ruleList.push(this.deepClone(this.value5))
+          this.ruleForm.ruleList.push(this.deepClone(this.value6))
 
           break;
         case 7:
@@ -472,7 +472,7 @@ export default {
               return item.label
             }})
 
-          this.ruleForm.ruleList.push(this.value7)
+          this.ruleForm.ruleList.push(this.deepClone(this.value7))
 
           break;
       }
