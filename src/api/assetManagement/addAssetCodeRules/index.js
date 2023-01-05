@@ -37,3 +37,11 @@ export function queryAssetCodeRule(query) {
       data
     })
   }
+   //编辑规则
+   export function editRule(data) {
+    return request({
+      url: '/asset/assetNoRule',
+      method: 'put',
+      data
+    })
+  }

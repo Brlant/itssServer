@@ -503,6 +503,20 @@ export const dynamicRoutes = [
     permissions: ['chanceManage:chance:duty'],
     children: [
       {
+        path: 'editAssetCodeRules',
+        component: () => import('@/views/assetManagement/assetManagementSet/editAssetCodeRules'),
+        name: 'editAssetCodeRules',
+        meta: { title: '资产编号规则编辑',noCache:false  }
+      }
+    ]
+  }, 
+  {
+    path: '/assetManagement/assetManagementSet/process',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:duty'],
+    children: [
+      {
         path: 'detailAssetCodeRules',
         component: () => import('@/views/assetManagement/assetManagementSet/detailAssetCodeRules'),
         name: 'detailAssetCodeRules',
