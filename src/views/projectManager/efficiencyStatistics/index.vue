@@ -155,6 +155,11 @@
                                 <span>{{scope.row.monthEfficiencyList[indexs].bugRerunRate}}%</span>
                             </template>
                         </el-table-column>
+                        <el-table-column label="问题数量" align="center">
+                             <template slot-scope="scope">
+                                <span>{{scope.row.monthEfficiencyList[indexs].mistakeNum}}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column label="出产量" align="center">
                             <template slot-scope="scope">
                                 <span>{{scope.row.monthEfficiencyList[indexs].yieldNum}}</span>

@@ -61,7 +61,13 @@
             </el-col>
             <el-col :span="span">
               <el-form-item label="保修期:" prop="maintenanceTime">
-                <el-input v-model.trim="formData.maintenanceTime" :style="style" />
+                <el-date-picker
+                  v-model="formData.maintenanceTime"
+                  value-format="yyyy-MM-dd"
+                  type="date"
+                  placeholder="请选择"
+                  :style="style"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="span">

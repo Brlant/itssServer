@@ -3,9 +3,11 @@
     <!-- 筛选项开始 -->
     <section class="search">
       <div class="heading">
-        <div class="left">
-          <span>展开筛选</span>
-          <i class="el-icon-arrow-down"></i>
+        <div class="left" @click="isExpand = !isExpand">
+          <span>
+            {{ isExpand ? '收起筛选' : '展开筛选' }}
+          </span>
+          <i :class="['el-icon-arrow-down', {up: isExpand}]"></i>
         </div>
         <div class="right">
           <el-button type="primary" size="small" >
@@ -17,7 +19,7 @@
           </el-button>
         </div>
       </div>
-      <div class="form">
+      <div :class="['form', {expand: isExpand}]">
         <el-form 
           :model="formData" 
           ref="elForm"
@@ -112,7 +114,7 @@
               <el-form-item label="到期提醒" prop="certificateType">
                 <el-select v-model="formData.certificateType" clearable :style="style">
                   <el-option value="1" label="证书到期" />
-                  <el-option value="2" label="保用期限到期" />
+                  <el-option value="2" label="使用期限到期" />
                   <el-option value="3" label="保养到期" />
                 </el-select>
               </el-form-item>
@@ -121,7 +123,7 @@
               <el-form-item label="折旧统计" prop="depreciation">
                 <el-date-picker
                   v-model="formData.depreciation"
-                  value-format="yyyy-MM-dd"
+                  value-format="yyyy-MM"
                   type="monthrange"
                   range-separator="至"
                   start-placeholder="开始月份"
@@ -130,31 +132,108 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="display:flex; justify-content:flex-end">
-              
+            <el-col :span="12" style="display:flex; justify-content:flex-end; align-items:center">
+              <el-button type="primary" size="small" @click="query">
+                查询
+              </el-button>
+              <el-button size="small" @click="reset">
+                重置
+              </el-button>
+              <!-- <el-button type="success" size="small">
+                导出Excel
+              </el-button> -->
             </el-col>
           </el-row>
         </el-form>
       </div>
     </section>
     <!-- 筛选项结束 -->
+    <!-- tab切换 -->
+    <div class="tabs">
+      <my-tabs 
+        v-model="tab"
+        :options="tabOptions"
+        @change="change"
+      />
+    </div>
+    <!-- 计算部分开始 -->
+    <div class="calc">
+      <div class="item">
+        <span class="label">总计(此处精确到小数点后两位)</span>
+      </div>
+      <div class="specific">
+        <div class="item">
+          <span class="label">税后价格</span>
+          <span class="value">
+            {{ calcData.afterTaxPriceTotal }}
+          </span>
+        </div>
+        <div class="item">
+          <span class="label">期间折旧</span>
+          <span class="value">
+            {{ calcData.periodDepreciationTotal }}
+          </span>
+        </div>
+        <div class="item">
+          <span class="label">
+            截止至{{ deadLine }}
+          </span>
+        </div>
+        <div class="item">
+          <span class="label">累计折旧</span>
+          <span class="value">
+            {{ calcData.depreciationTotal }}
+          </span>
+        </div>
+        <div class="item">
+          <span class="label">资产净值</span>
+          <span class="value">
+            {{ calcData.surplusValueTotal }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <!-- 计算部分结束 -->
+    <!-- 表格部分 -->
+    <asset-table 
+      :data="tableData"
+      :flag="tab"
+      ref="table"
+    />
+    <!-- 分页 -->
+    <pagination
+      v-show="total > 0"
+      :total="total"
+      :page.sync="queryParams.pageNum"
+      :limit.sync="queryParams.pageSize"
+      @pagination="getList"
+    />
   </div>
 </template>
 
 <script>
-import {
-  queryAsset
-} from '@/api/assetManagement/quickAssetDetail'
+import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
+import { 
+  queryAssetList, 
+  getTotal 
+} from '@/api/assetManagement/companyAssets'
 import { treeselect } from "@/api/system/dept"
 import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css"
+import MyTabs from '@/components/MyTabs'
+import { tabOptions } from './options'
+import AssetTable from './AssetTable'
+import moment from 'moment'
 
 export default {
   components: {
-    Treeselect
+    Treeselect,
+    MyTabs,
+    AssetTable
   },
   data() {
     return {
+      isExpand: false,
       span: 6,
       style: {width: '100%'},
       asset: [],
@@ -162,11 +241,32 @@ export default {
       formData: {
         assetTypeId: []
       },
+      tabOptions,
+      tab: 0,
+      tableData: [],
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10
+      },
+      total: 0,
+      paramData: {},
+      calcData: {}
+    }
+  },
+  computed: {
+    deadLine() {
+      if (this.paramData.endDate) {
+        return moment(this.paramData.endDate, 'YYYY-MM').format('YYYY年M月')
+      } else {
+        return moment().format('YYYY年M月')
+      }
     }
   },
   mounted() {
     this.getAsset()
     this.getDept()
+    this.getTableData()
+    this.calc()
   },
   methods: {
     // 资产类型查询
@@ -180,6 +280,73 @@ export default {
       treeselect().then(res => {
         this.dept = res.data
       })
+    },
+    // 表格数据
+    getTableData() {
+      this.$refs.table.startLoading()
+      // 传参数据的一些处理
+      let data = {
+        ...this.queryParams,
+        ...this.formData
+      }
+      if (data.purchasingDate) {
+        data.purchasingDateStart = data.purchasingDate[0]
+        data.purchasingDateEnd = data.purchasingDate[1]
+        delete data.purchasingDate
+      }
+      const assetTypeId = data.assetTypeId
+      if (assetTypeId.length) {
+        data.assetTypeId = assetTypeId[assetTypeId.length - 1]
+      } else {
+        delete data.assetTypeId
+      }
+      if (data.depreciation) {
+        data.startDate = data.depreciation[0]
+        data.endDate = data.depreciation[1]
+        delete data.depreciation
+      }
+      const tabData = tabOptions.find(v => {
+        return this.tab == v.name
+      })
+      if (tabData.type == 'status') {
+        data.status = tabData.value
+      } else if (tabData.type == 'specialStatus') {
+        data.specialStatus = tabData.value
+      }
+      this.paramData = data
+      queryAssetList(this.paramData).then(res => {
+        this.tableData = res.rows
+        this.total = res.total
+        this.$refs.table.endLoading()
+      }).catch(() => {
+        this.$refs.table.endLoading()
+      })
+    },
+    // 计算
+    calc() {
+      getTotal(this.paramData).then(res => {
+        this.calcData = res.data
+      })
+    },
+    // 点击查询
+    query() {
+      this.getTableData()
+      this.calc()
+    },
+    // 重置表单
+    reset() {
+      this.$refs.elForm.resetFields()
+      this.getTableData()
+      this.calc()
+    },
+    // tab切换
+    change() {
+      this.getTableData()
+      this.calc()
+    },
+    // 分页
+    getList() {
+      this.getTableData()
     }
   }
 }
@@ -197,15 +364,55 @@ export default {
       margin-bottom: 10px;
       .left {
         color: #037dff;
+        cursor: pointer;
         i {
           margin-left: 5px;
+          transition: all .4s;
+        }
+        .up {
+          transform: rotate(180deg);
         }
       }
+    }
+    .form {
+      height: 0;
+      overflow: hidden;
+      transition: all .4s;
+    }
+    .expand {
+      height: 234px;
+    }
+  }
+  .tabs {
+    padding: 10px;
+  }
+  .calc {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .item {
+      margin-right: 50px;
+      &:last-child {
+        margin-right: 0;
+      }
+      .label {
+        color: #A8B5C1;
+      }
+      .value {
+        margin-left: 5px;
+      }
+    }
+    .specific {
+      display: flex;
     }
   }
 }
 .el-row { 
   display:flex; 
   flex-wrap: wrap; 
+}
+.pagination-container {
+  background: transparent;
 }
 </style>
