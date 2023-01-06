@@ -306,11 +306,6 @@ export default {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
-    .left {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-    }
   }
   main {
     background: #fff;
