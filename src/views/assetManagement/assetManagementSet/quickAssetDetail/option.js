@@ -126,3 +126,58 @@ export const detailInformation = [
     status: "additionalInfoFlag",
   }
 ]
+
+export const information = [
+  {
+    label: "模板名称",
+    name: "templateName"
+  },
+  {
+    label: "资产类型",
+    name: "assetTypeId"
+  },
+  {
+    label: "品牌",
+    name: "brand"
+  },
+  {
+    label: "型号",
+    name: "model"
+  },
+  {
+    label: '保修期',
+    name: 'maintenanceTime'
+  },
+  {
+    label: '购入时间',
+    name: 'purchasingDate'
+  },
+  {
+    label: '税后价格',
+    name: 'afterTaxPrice'
+  },
+  {
+    label: '数量',
+    name: 'amount'
+  },
+  {
+    label: '存放点',
+    name: 'storageAddress'
+  },
+  {
+    label: '归属部门',
+    name: 'departmentId'
+  },
+  {
+    label: '保管员',
+    name: 'keeper'
+  },
+  {
+    label: '备注',
+    name: 'remark'
+  },
+  {
+    label: '折旧年限',
+    name: 'depreciableLife'
+  }
+]

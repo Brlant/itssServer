@@ -104,7 +104,12 @@ export default {
   methods: {
     // 修改
     edit(row) {
-
+      this.$router.push({
+        path: '/assetManagement/companyAssets/companyAssets-auth/edit',
+        query: {
+          id: row.id
+        }
+      })
     },
     // 删除
     del(row) {

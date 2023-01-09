@@ -450,6 +450,12 @@ export const dynamicRoutes = [
         component: () => import('@/views/assetManagement/companyAssets/add/index'),
         name: 'add',
         meta: { title: '录入资产', noCache:false  }
+      },
+      {
+        path: 'edit',
+        component: () => import('@/views/assetManagement/companyAssets/edit/index'),
+        name: 'edit',
+        meta: { title: '编辑资产', noCache:false  }
       }
     ]
   },

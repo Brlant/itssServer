@@ -170,7 +170,8 @@ import {
 import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css"
 import recursion from '@/utils/recursion'
-import { detailInformation } from './option'
+import { detailInformation, information } from './option'
+import matchData from '@/utils/matchData'
 
 export default {
   components: {
@@ -284,15 +285,15 @@ export default {
           return
         }
         // 传参格式的一些处理
-        let data = this.deepClone(this.formData)
-        delete data.assetTypeName
+        let data = matchData(this.formData, [...information, ...this.formItems])
         const assetTypeId = data.assetTypeId
         data.assetTypeId = assetTypeId[assetTypeId.length - 1]
-        if (this.formData.departmentId) {
-          data.departmentName = this.$refs.deptTree.getNode(this.formData.departmentId).label
+        if (data.departmentId) {
+          data.departmentName = this.$refs.deptTree.getNode(data.departmentId).label
         } else {
           data.departmentName = null
         }
+        data.id = this.id
         updateOrDelete(data).then(res => {
           this.$message.success(res.msg)
           this.$router.go(-1)
