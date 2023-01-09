@@ -6,7 +6,7 @@
         @click="$router.push('/assetManagement/assetManagementSet/quickAssetDetailIndex')"
       >
         <i class="el-icon-arrow-left"></i>
-        <span>快速填充模板新增</span>
+        <span>新增快速填充模板</span>
       </div>
       <div class="btns">
         <el-button type="primary" size="small" @click="save">
