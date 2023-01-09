@@ -43,7 +43,8 @@
             >
               <span>{{ data.typeName }}</span>
               <span v-if="data.id == n">
-                <el-button type="text" size="mini" @click.stop="oper(data)">
+                <el-button type="text" size="mini" 
+                @click.stop="oper(data)">
                   <i class="el-icon-more" style="transform: rotate(90deg)"></i>
                 </el-button>
               </span>
@@ -322,7 +323,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="使用期限提醒" prop="hasUserfulExpire">
+            <el-form-item 
+            label="使用期限提醒" 
+            prop="hasUserfulExpire">
               <el-radio-group v-model="diaForm.hasUserfulExpire">
                 <el-radio
                   v-for="item in closeSelect"
