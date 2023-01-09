@@ -89,7 +89,8 @@
     </el-row>
     <div>
       <el-table :data="repairData">
-        <el-table-column label="流程ID" align="center" prop="id" />
+        <el-table-column label="流程ID" align="center" prop="id">
+        </el-table-column>
 
         <el-table-column label="资产类型" align="center" prop="assetTypeList">
           <template slot-scope="scope">
@@ -105,14 +106,22 @@
           align="center"
           prop="updateTime"
         />
-        <el-table-column label="盘亏数量" align="center" prop="updatorName" />
-        <el-table-column label="税后价格" align="center" prop="ruleName" />
-        <el-table-column label="累计折旧" align="center" prop="ruleName" />
-        <el-table-column label="资产净值" align="center" prop="updatorName" />
-        <el-table-column label="折旧年限" align="center" prop="ruleName" />
-        <el-table-column label="申请日期" align="center" prop="ruleName" />
-        <el-table-column label="报废日期" align="center" prop="ruleName" />
-        <el-table-column label="备注" align="center" prop="remark" />
+        <el-table-column label="盘亏数量" align="center" prop="updatorName">
+        </el-table-column>
+        <el-table-column label="税后价格" align="center" prop="ruleName">
+        </el-table-column>
+        <el-table-column label="累计折旧" align="center" prop="ruleName">
+        </el-table-column>
+        <el-table-column label="资产净值" align="center" prop="updatorName">
+        </el-table-column>
+        <el-table-column label="折旧年限" align="center" prop="ruleName">
+        </el-table-column>
+        <el-table-column label="申请日期" align="center" prop="ruleName">
+        </el-table-column>
+        <el-table-column label="报废日期" align="center" prop="ruleName">
+        </el-table-column>
+        <el-table-column label="备注" align="center" prop="remark">
+        </el-table-column>
       </el-table>
     </div>
   </div>

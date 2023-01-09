@@ -53,3 +53,11 @@ export function getTypeData() {
       params:query
     })
   }
+  //流程组分页查询
+  export function getapprovalProcess(query) {
+    return request({
+      url: '/flowable/bizFlowGroup/page',
+      method: 'get',
+      params:query
+    })
+  }

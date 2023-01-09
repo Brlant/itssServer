@@ -439,20 +439,20 @@ export const dynamicRoutes = [
       }
     ]
   },
-  {
-    path: '/assetManagement/companyAssets/companyAssets-auth',
-    component: Layout,
-    hidden: true,
-    permissions: ['chanceManage:chance:duty'],
-    children: [
-      {
-        path: 'add',
-        component: () => import('@/views/assetManagement/companyAssets/add/index'),
-        name: 'add',
-        meta: { title: '录入资产', noCache:false  }
-      }
-    ]
-  },
+  // {
+  //   path: '/assetManagement/companyAssets/companyAssets-auth',
+  //   component: Layout,
+  //   hidden: true,
+  //   permissions: ['chanceManage:chance:duty'],
+  //   children: [
+  //     {
+  //       path: 'add',
+  //       component: () => import('@/views/assetManagement/companyAssets/add/index'),
+  //       name: 'add',
+  //       meta: { title: '录入资产', noCache:false  }
+  //     }
+  //   ]
+  // },
   {
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
@@ -538,6 +538,20 @@ export const dynamicRoutes = [
       }
     ]
   }, 
+  {
+    path: '/assetManagement/detailAssetProcess/process',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:duty'],
+    children: [
+      {
+        path: 'detailAssetProcess',
+        component: () => import('@/views/assetManagement/assetProcess/detailAssetProcess'),
+        name: 'detailAssetProcess',
+        meta: { title: '公司资产流程详情',noCache:false  }
+      }
+    ]
+  }, 
 
 ]
 
@@ -546,7 +560,6 @@ let routerPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
   return routerPush.call(this, location).catch(err => err)
 }
-
 
 export default new Router({
   mode: 'hash', //

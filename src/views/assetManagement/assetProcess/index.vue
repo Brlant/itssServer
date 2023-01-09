@@ -17,7 +17,7 @@
         <el-form
           ref="elForm"
           :model="formData"
-          :rules="rules"
+         
           size="medium"
           label-width="120px"
         >
@@ -134,28 +134,40 @@
       "
     >
       <div :class="['default', { currren: m == 0 }]" @click="checkActive(0)">
-        <span :class="[{ active: m == 0 }]">申请中（5）</span>
+        <span :class="[{ active: m == 0 }]">
+          申请中（5）
+        </span>
       </div>
       <div :class="['default', { currren: m == 1 }]" @click="checkActive(1)">
-        <span :class="[{ active: m == 1 }]">已完成</span>
+        <span :class="[{ active: m == 1 }]">
+          已完成
+        </span>
       </div>
       <div :class="['default', { currren: m == 2 }]" @click="checkActive(2)">
-        <span :class="[{ active: m == 2 }]">已取消</span>
+        <span :class="[{ active: m == 2 }]">
+          已取消
+        </span>
       </div>
       <div :class="['default', { currren: m == 3 }]" @click="checkActive(3)">
-        <span :class="[{ active: m == 3 }]">待处理</span>
+        <span :class="[{ active: m == 3 }]">
+          待处理
+        </span>
       </div>
       <div :class="['default', { currren: m == 4 }]" @click="checkActive(4)">
-        <span :class="[{ active: m == 4 }]">参与处理记录</span>
+        <span :class="[{ active: m == 4 }]">
+          参与处理记录
+        </span>
       </div>
     </div>
     <div style="margin-top: 20px;background:#ffffff;padding:5px;">
       <el-table :data="processData" @row-click="getDetail">
-        <el-table-column label="流程ID" align="center" prop="id" />
+        <el-table-column label="流程ID" align="center" prop="id">
+        </el-table-column>
 
         <el-table-column label="流程类型" align="center" prop="assetTypeList">
         </el-table-column>
-        <el-table-column label="流程组名称" align="center" prop="id" />
+        <el-table-column label="流程组名称" align="center" prop="id">
+        </el-table-column>
         <el-table-column label="申请人" align="center" prop="assetTypeList">
         </el-table-column>
         <el-table-column label="发起时间" align="center" prop="assetTypeList">
@@ -197,8 +209,10 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="数量" align="center" prop="ruleName" />
-        <el-table-column label="状态" align="center" prop="ruleName" />
+        <el-table-column label="数量" align="center" prop="ruleName">
+        </el-table-column>
+        <el-table-column label="状态" align="center" prop="ruleName">
+        </el-table-column>
         <el-table-column
           label="操作"
           align="center"
@@ -207,7 +221,10 @@
         >
           <template slot-scope="scope">
             <span style="margin-left: 10px">
-              <el-button size="mini" type="text">取消</el-button>
+              <el-button size="mini" type="text" @click='cancle(scope.row)'>取消</el-button>
+            </span>
+             <span style="margin-left: 10px">
+              <el-button size="mini" type="text" @click='detail(scope.row)'>详情</el-button>
             </span>
             <!-- <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
                 <el-button
@@ -262,6 +279,7 @@ export default {
       processData: [
         { assetcode: [{ typeName: "aaaa" }, { typeName: "bbbb" }] },
       ],
+      //表单校验
       rules: {
         field101: [
           {
@@ -332,6 +350,19 @@ export default {
     checkActive(index) {
       this.m = index;
     },
+    //详情
+    detail(data){
+       const obj = {
+        path: "/assetManagement/detailAssetProcess/process/detailAssetProcess",
+        query:{detailData:data}
+      };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
+    },
+  //取消
+  cancle(){
+
+  }
   },
 };
 </script>

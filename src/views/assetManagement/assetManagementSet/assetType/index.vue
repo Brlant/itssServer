@@ -90,16 +90,33 @@
             label="序列编号"
             align="center"
             prop="typeNo"
-          />
-          <el-table-column label="类型名称" align="center" prop="typeName" />
+          >
+          </el-table-column>
+          <el-table-column 
+            label="类型名称" 
+            align="center" 
+            prop="typeName">
+          </el-table-column>
           <el-table-column
             label="拼音缩写"
             align="center"
             prop="typePinyinAbbr"
           />
-          <el-table-column label="创建时间" align="center" prop="createTime" />
-          <el-table-column label="管理方式" align="center" prop="manageType" />
-          <el-table-column label="备注" align="center" prop="remark" />
+          <el-table-column 
+            label="创建时间" 
+            align="center" 
+            prop="createTime">
+          </el-table-column>
+          <el-table-column 
+            label="管理方式" 
+            align="center" 
+            prop="manageType">
+          </el-table-column>
+          <el-table-column 
+            label="备注" 
+            align="center" 
+            prop="remark">
+          </el-table-column>
           <el-table-column
             label="操作"
             align="center"
