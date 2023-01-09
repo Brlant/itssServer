@@ -26,3 +26,11 @@ export function addAssets(data) {
     data
   })
 }
+
+// 资产详情
+export function assetDetail(id) {
+  return request({
+    url: `/asset/asset/${id}`,
+    method: 'get',
+  })
+}
