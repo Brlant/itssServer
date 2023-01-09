@@ -350,8 +350,10 @@
         </el-row>
       </el-form>
       <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary" @click="sureEdit">确定</el-button>
-        <el-button @click="cancelFn">取消</el-button>
+        <el-button type="primary" 
+        @click="sureEdit">确定</el-button>
+        <el-button 
+        @click="cancelFn">取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -432,13 +434,13 @@ export default {
             trigger: "blur",
           },
         ],
-        // flowId:[
-        //    {
-        //     required: true,
-        //     message: "审批流程不能为空",
-        //     trigger: "blur",
-        //   },
-        // ],
+        flowId:[
+           {
+            required: true,
+            message: "审批流程不能为空",
+            trigger: "blur",
+          },
+        ],
         hasMaintainExpire: [
           {
             required: true,
