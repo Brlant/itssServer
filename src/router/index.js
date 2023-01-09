@@ -440,6 +440,20 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/assetManagement/companyAssets/companyAssets-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:duty'],
+    children: [
+      {
+        path: 'add',
+        component: () => import('@/views/assetManagement/companyAssets/add/index'),
+        name: 'add',
+        meta: { title: '录入资产', noCache:false  }
+      }
+    ]
+  },
+  {
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
     hidden: true,
