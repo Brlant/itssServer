@@ -41,10 +41,16 @@
                                     <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择部门" @input='searchDept'  @change='searchDept'/>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="4" >
+                            <el-col :span="4" v-if="mangerJurisdiction">
                                 <el-form-item label="" align="center" justify="center">
                                  <!-- -->
-                                 <el-button @click="exportExcelHandel" type="success" :loading="btnLoading">导出Excel</el-button>
+                                 <el-button 
+                                    @click="exportExcelHandel" 
+                                    type="success" 
+                                    :loading="btnLoading"
+                                 >
+                                    导出Excel
+                                 </el-button>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -67,7 +73,9 @@
 
         <div class="newRow" v-hasPermi="['threeInterface:gitlabAndTb:stat']">
             <!-- 配置相关 -->
-            <el-button type="success" @click="getConfig">修改配置</el-button>
+            <el-button type="success" @click="getConfig">
+                修改配置
+            </el-button>
             <!-- 实时统计 -->
             <div class="myWrap">
                 <div class="time">

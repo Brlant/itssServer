@@ -17,3 +17,12 @@ export function getTotal(data) {
     data
   })
 }
+
+// 资产录入
+export function addAssets(data) {
+  return request({
+    url: '/asset/asset/add',
+    method: 'post',
+    data
+  })
+}

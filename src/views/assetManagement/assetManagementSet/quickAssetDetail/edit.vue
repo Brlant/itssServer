@@ -270,7 +270,7 @@ export default {
         this.asset = res.data
         // 填充表单
         searchDetail(this.id).then(resp => {
-          let formData = resp.data
+          let formData = this.deepClone(resp.data)
           // 为了el-cascader的回显而反推完整的id数组
           formData.assetTypeId = recursion(this.asset, formData.assetTypeId)
           this.formData = this.deepClone(formData)

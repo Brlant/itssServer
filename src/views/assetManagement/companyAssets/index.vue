@@ -14,7 +14,11 @@
             批量管理
             <i class="el-icon-caret-bottom el-icon--right"></i>
           </el-button>
-          <el-button type="primary" size="small" >
+          <el-button 
+            type="primary" 
+            size="small"
+            @click="$router.push('/assetManagement/companyAssets/companyAssets-auth/add')"
+          >
             录入资产
           </el-button>
         </div>
@@ -252,6 +256,11 @@ export default {
       paramData: {},
       calcData: {}
     }
+  },
+  created() {
+    // tab回显
+    const { tab } = this.$route.query
+    this.tab = tab ? tab - 0 : 0
   },
   computed: {
     deadLine() {

@@ -3,16 +3,16 @@
     <header>
       <div 
         class="left" 
-        @click="$router.push('/assetManagement/assetManagementSet/quickAssetDetailIndex')"
+        @click="$router.push('/assetManagement/companyAssets')"
       >
         <i class="el-icon-arrow-left"></i>
-        <span>新增快速填充模板</span>
+        <span>录入资产</span>
       </div>
       <div class="btns">
         <el-button type="primary" size="small" @click="save">
           保存
         </el-button>
-        <el-button size="small" @click="$router.push('/assetManagement/assetManagementSet/quickAssetDetailIndex')">
+        <el-button size="small" @click="$router.push('/assetManagement/companyAssets')">
           取消
         </el-button>
       </div>
@@ -27,11 +27,6 @@
       >
         <el-row>
           <el-col :span="span">
-            <el-form-item label="模板名称:" prop="templateName">
-              <el-input v-model.trim="formData.templateName" :style="style" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="span">
             <el-form-item label="资产类型:" prop="assetTypeId">
               <el-cascader
                 v-model="formData.assetTypeId"
@@ -43,6 +38,23 @@
               />
             </el-form-item>
           </el-col>
+          <el-col :span="span">
+            <el-form-item label="填充模板:" prop="templateId">
+              <el-select 
+                v-model="formData.templateId" 
+                @change="change"
+                :style="style"
+                clearable
+              >
+                <el-option 
+                  v-for="(item, index) in template"
+                  :key="index"
+                  :label="item.templateName"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
         <div class="section">
           <div class="heading">
@@ -50,6 +62,21 @@
             <b>基础信息</b>
           </div>
           <el-row>
+            <el-col :span="span">
+              <el-form-item label="资产编号:" prop="assetId">
+                <el-input v-model.trim="formData.assetId" :style="style" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="span">
+              <el-form-item label="财务编号:" prop="financialNo">
+                <el-input v-model.trim="formData.financialNo" :style="style" />
+              </el-form-item>
+            </el-col>
+             <el-col :span="span">
+              <el-form-item label="资产名称:" prop="assetName">
+                <el-input v-model.trim="formData.assetName" :style="style" />
+              </el-form-item>
+            </el-col>
             <el-col :span="span">
               <el-form-item label="品牌:" prop="brand">
                 <el-input v-model.trim="formData.brand" :style="style" />
@@ -162,14 +189,15 @@
 </template>
 
 <script>
+import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
+import { queryAll } from '@/api/assetManagement/quickAssetDetail'
 import { treeselect } from "@/api/system/dept"
-import {
-  queryAsset,
-  createInfo
-} from '@/api/assetManagement/quickAssetDetail'
+import { addAssets } from '@/api/assetManagement/companyAssets'
 import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css"
-import { detailInformation } from './option'
+import { detailInformation, information } from '../options'
+import recursion from '@/utils/recursion'
+import matchData from '@/utils/matchData'
 
 export default {
   components: {
@@ -195,20 +223,20 @@ export default {
       span: 6,
       style: {width: '100%'},
       asset: [],
+      template: [],
       dept: [],
       formData: {
         assetTypeId: []
       },
-      formItems: [],
       rules: {
+        assetTypeId: [
+          { required: true, trigger: 'blur', message: '请选择资产类型' }
+        ],
         assetId: [
           { required: true, trigger: 'blur', message: '请输入资产编号' }
         ],
-        templateName: [
-          { required: true, trigger: 'blur', message: '请输入模板名称' }
-        ],
-        assetTypeId: [
-          { required: true, trigger: 'blur', message: '请选择资产类型' }
+        assetName: [
+          { required: true, trigger: 'blur', message: '请输入资产名称' }
         ],
         afterTaxPrice: [
           { validator: checkNumber, trigger: 'blur' }
@@ -222,12 +250,9 @@ export default {
         preTaxPrice: [
           { validator: checkNumber, trigger: 'blur' }
         ]
-      }
+      },
+      formItems: []
     }
-  },
-  mounted() {
-    this.getDept()
-    this.getAsset()
   },
   watch: {
     'formData.assetTypeId': {
@@ -255,38 +280,68 @@ export default {
       }
     }
   },
+  mounted() {
+    this.getAsset()
+    this.getTemplate()
+    this.getDept()
+  },
   methods: {
-    // 部门查询
-    getDept() {
-      treeselect().then(res => {
-        this.dept = res.data
-      })
-    },
     // 资产类型查询
     getAsset() {
       queryAsset().then(res => {
         this.asset = res.data
       })
     },
-    // 提交表单
+    // 模板查询
+    getTemplate() {
+      queryAll().then(res => {
+        this.template = res.rows
+      })
+    },
+    // 部门查询
+    getDept() {
+      treeselect().then(res => {
+        this.dept = res.data
+      })
+    },
+    // 填充表单
+    change(value) {
+      if (value) {
+        const template = this.template.find(item => {
+          return item.id === value
+        })
+        let formData = this.deepClone(template)
+        formData.templateId = this.formData.templateId
+        // 为了el-cascader的回显而反推完整的id数组
+        formData.assetTypeId = recursion(this.asset, formData.assetTypeId)
+        this.formData = this.deepClone(formData)
+      } else {
+        this.$refs.elForm.resetFields()
+      }
+    },
+    // 保存表单
     save() {
       this.$refs.elForm.validate(valid => {
         if (!valid) {
           return
         }
         // 传参格式的一些处理
-        let data = this.deepClone(this.formData)
-        delete data.assetTypeName
+        let data = matchData(this.formData, [...information, ...this.formItems])
         const assetTypeId = data.assetTypeId
         data.assetTypeId = assetTypeId[assetTypeId.length - 1]
-        if (this.formData.departmentId) {
-          data.departmentName = this.$refs.deptTree.getNode(this.formData.departmentId).label
+        if (data.departmentId) {
+          data.departmentName = this.$refs.deptTree.getNode(data.departmentId).label
         } else {
           data.departmentName = null
         }
-        createInfo(data).then(res => {
+        addAssets(data).then(res => {
           this.$message.success(res.msg)
-          this.$router.push('/assetManagement/assetManagementSet/quickAssetDetailIndex')
+          this.$router.push({
+            path: '/assetManagement/companyAssets',
+            query: {
+              tab: 9
+            }
+          })
         })
       })
     }
@@ -322,5 +377,9 @@ export default {
       }
     }
   }
+}
+.el-row {
+  display: flex;
+  flex-wrap: wrap;
 }
 </style>
