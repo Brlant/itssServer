@@ -59,16 +59,20 @@
                   background: #ffffff;
                 "
               >
-                <div class="select-list" @click.stop="editOrAdd('1', data)">
+                <div class="select-list" 
+                @click.stop="editOrAdd('1', data)">
                   编辑分类
                 </div>
-                <div class="select-list" @click.stop="editOrAdd('2', data)">
+                <div class="select-list" 
+                @click.stop="editOrAdd('2', data)">
                   新增分类
                 </div>
-                <div class="select-list" @click.stop="editOrAdd('3', data)">
+                <div class="select-list"
+                 @click.stop="editOrAdd('3', data)">
                   新增子分类
                 </div>
-                <div class="select-list" @click="delAsset(data)">删除分类</div>
+                <div class="select-list" 
+                @click="delAsset(data)">删除分类</div>
               </div>
             </span>
           </el-tree>
@@ -78,13 +82,18 @@
         <div class="right-header">
           <div>{{ rightTitle }}</div>
           <div>
-            <el-button type="text" @click="add">添加</el-button>
+            <el-button type="text" 
+            @click="add">添加</el-button>
           </div>
         </div>
 
         <el-table :data="typeData">
           <!-- <el-table-column type="selection" width="50" align="center" /> -->
-          <el-table-column sortable label="类型ID" align="center" prop="id" />
+          <el-table-column 
+            sortable 
+            label="类型ID" 
+            align="center" 
+            prop="id" />
           <el-table-column
             sortable
             label="序列编号"
@@ -124,7 +133,9 @@
             class-name="small-padding fixed-width"
           >
             <template slot-scope="scope">
-               <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+               <span 
+                  style="margin-left: 10px" 
+                  v-hasPermi="['system:user:add']">
                 <el-button
                   size="mini"
                   type="text"
@@ -133,7 +144,9 @@
                   >编辑</el-button
                 >
               </span>
-               <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+               <span 
+                  style="margin-left: 10px" 
+                  v-hasPermi="['system:user:add']">
                 <el-button
                   size="mini"
                   type="text"
@@ -142,7 +155,9 @@
                   >删除</el-button
                 >
               </span>
-              <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+              <span
+                style="margin-left: 10px" 
+                v-hasPermi="['system:user:add']">
                 <el-button
                   size="mini"
                   type="text"
@@ -152,7 +167,9 @@
                   >停用</el-button
                 >
               </span>
-              <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+              <span 
+                style="margin-left: 10px" 
+                v-hasPermi="['system:user:add']">
                 <el-button
                   size="mini"
                   type="text"
