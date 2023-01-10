@@ -295,7 +295,6 @@ export default {
       this.$refs.table.startLoading()
       // 传参数据的一些处理
       let data = {
-        ...this.queryParams,
         ...this.formData
       }
       if (data.purchasingDate) {
@@ -323,7 +322,7 @@ export default {
         data.specialStatus = tabData.value
       }
       this.paramData = data
-      queryAssetList(this.paramData).then(res => {
+      queryAssetList(this.paramData, this.queryParams).then(res => {
         this.tableData = res.rows
         this.total = res.total
         this.$refs.table.endLoading()

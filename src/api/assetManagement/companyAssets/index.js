@@ -1,11 +1,12 @@
 import request from '@/utils/request'
 
 // 公司资产列表
-export function queryAssetList(data) {
+export function queryAssetList(data, params) {
   return request({
     url: '/asset/asset/list',
     method: 'post',
-    data
+    data,
+    params
   })
 }
 

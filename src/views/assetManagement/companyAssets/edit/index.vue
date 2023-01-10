@@ -30,6 +30,7 @@
             <el-form-item label="资产类型:" prop="assetTypeId">
               <el-cascader
                 v-model="formData.assetTypeId"
+                @change="handleChange"
                 :options="asset"
                 ref="assetCas"
                 :props="{ label: 'typeName', value: 'id' }"
@@ -43,6 +44,7 @@
               <el-select 
                 v-model="formData.templateId" 
                 @change="change"
+                :disabled="!formData.assetTypeId.length"
                 :style="style"
                 clearable
               >
@@ -244,6 +246,7 @@ export default {
           { validator: checkNumber, trigger: 'blur' }
         ],
         amount: [
+          { required: true, trigger: 'blur', message: '请输入数量' },
           { validator: checkNumber, trigger: 'blur' }
         ],
         depreciableLife: [
@@ -259,60 +262,74 @@ export default {
   },
   mounted() {
     this.getAsset()
-    this.getTemplate()
     this.getDept()
-  },
-  watch: {
-    'formData.assetTypeId': {
-      deep: true,
-      // 动态渲染详细信息的表单
-      handler(value) {
-        if (!value.length) {
-          this.formItems = []
-          return
-        }
-        this.$nextTick(() => {
-          let formItems = []
-          const { assetTemplate } = this.$refs.assetCas.getCheckedNodes()[0].data
-          detailInformation.forEach(item => {
-            for (let i in assetTemplate) {
-              if (item.status === i) {
-                if (assetTemplate[i] === 1) {
-                  formItems.push(item)
-                }
-              }
-            }
-          })
-          this.formItems = formItems
-        })
-      }
-    }
   },
   methods: {
     // 资产类型查询
     getAsset() {
       queryAsset().then(res => {
         this.asset = res.data
-        // 在此处查询资产详情
+        // a - 查询资产详情，回显表单
         assetDetail(this.id).then(resp => {
           let detail = this.deepClone(resp.data)
           detail.assetTypeId = recursion(this.asset, detail.assetTypeId)
           this.formData = this.deepClone(detail)
-          // 存储一份数据，用于还原表单数据
-          this.formDataCopy = detail
+          // b - 动态渲染详细信息的表单
+          this.filterItems(this.formData.assetTypeId)
+          // c - 查询填充模板
+          this.getTemplate(resp.data.assetTypeId)
         })
       })
     },
     // 模板查询
-    getTemplate() {
-      queryAll().then(res => {
-        this.template = res.rows
+    getTemplate(assetTypeId) {
+      queryAll({ assetTypeId }).then(res => {
+        let rows = this.deepClone(res.rows)
+        rows.forEach(item => {
+          item.templateId = item.id
+          item.assetTypeId = recursion(this.asset, item.assetTypeId)
+        })
+        this.template = rows
       })
     },
     // 部门查询
     getDept() {
       treeselect().then(res => {
         this.dept = res.data
+      })
+    },
+    handleChange(value) {
+      this.formData = {
+        assetTypeId: value
+      }
+      if (!value.length) {
+        this.formItems = []
+        return
+      }
+      // 动态渲染详细信息的表单
+      this.filterItems(this.formData.assetTypeId)
+      // 控制填充模板
+      const assetTypeId = value[value.length - 1]
+      this.getTemplate(assetTypeId)
+    },
+    filterItems(value) {
+      if (!value.length) {
+        this.formItems = []
+        return
+      }
+      this.$nextTick(() => {
+        let formItems = []
+        const { assetTemplate } = this.$refs.assetCas.getCheckedNodes()[0].data
+        detailInformation.forEach(item => {
+          for (let i in assetTemplate) {
+            if (item.status === i) {
+              if (assetTemplate[i] === 1) {
+                formItems.push(item)
+              }
+            }
+          }
+        })
+        this.formItems = formItems
       })
     },
     // 保存表单
@@ -348,13 +365,12 @@ export default {
         const template = this.template.find(item => {
           return item.id === value
         })
-        let formData = this.deepClone(template)
-        formData.templateId = this.formData.templateId
-        // 为了el-cascader的回显而反推完整的id数组
-        formData.assetTypeId = recursion(this.asset, formData.assetTypeId)
-        this.formData = this.deepClone(formData)
+        this.formData = this.deepClone(template)
       } else {
-        this.formData = this.deepClone(this.formDataCopy)
+        const assetTypeId = this.formData.assetTypeId
+        this.formData = {
+          assetTypeId
+        }
       }
     }
   }

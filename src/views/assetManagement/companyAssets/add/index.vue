@@ -30,6 +30,7 @@
             <el-form-item label="资产类型:" prop="assetTypeId">
               <el-cascader
                 v-model="formData.assetTypeId"
+                @change="handleChange"
                 :options="asset"
                 ref="assetCas"
                 :props="{ label: 'typeName', value: 'id' }"
@@ -41,7 +42,8 @@
           <el-col :span="span">
             <el-form-item label="填充模板:" prop="templateId">
               <el-select 
-                v-model="formData.templateId" 
+                v-model="formData.templateId"
+                :disabled="!formData.assetTypeId.length"
                 @change="change"
                 :style="style"
                 clearable
@@ -242,6 +244,7 @@ export default {
           { validator: checkNumber, trigger: 'blur' }
         ],
         amount: [
+          { required: true, trigger: 'blur', message: '请输入数量' },
           { validator: checkNumber, trigger: 'blur' }
         ],
         depreciableLife: [
@@ -254,35 +257,8 @@ export default {
       formItems: []
     }
   },
-  watch: {
-    'formData.assetTypeId': {
-      deep: true,
-      // 动态渲染详细信息的表单
-      handler(value) {
-        if (!value.length) {
-          this.formItems = []
-          return
-        }
-        this.$nextTick(() => {
-          let formItems = []
-          const { assetTemplate } = this.$refs.assetCas.getCheckedNodes()[0].data
-          detailInformation.forEach(item => {
-            for (let i in assetTemplate) {
-              if (item.status === i) {
-                if (assetTemplate[i] === 1) {
-                  formItems.push(item)
-                }
-              }
-            }
-          })
-          this.formItems = formItems
-        })
-      }
-    }
-  },
   mounted() {
     this.getAsset()
-    this.getTemplate()
     this.getDept()
   },
   methods: {
@@ -292,17 +268,47 @@ export default {
         this.asset = res.data
       })
     },
-    // 模板查询
-    getTemplate() {
-      queryAll().then(res => {
-        this.template = res.rows
-      })
-    },
     // 部门查询
     getDept() {
       treeselect().then(res => {
         this.dept = res.data
       })
+    },
+    // 查询填充模板
+    getTemplate(assetTypeId) {
+      queryAll({ assetTypeId }).then(res => {
+        let rows = this.deepClone(res.rows)
+        rows.forEach(item => {
+          item.templateId = item.id
+          item.assetTypeId = recursion(this.asset, item.assetTypeId)
+        })
+        this.template = rows
+      })
+    },
+    handleChange(value) {
+      this.formData = {
+        assetTypeId: value
+      }
+      if (!value.length) {
+        this.formItems = []
+        return
+      }
+      // 动态渲染详细信息的表单
+      let formItems = []
+      const { assetTemplate } = this.$refs.assetCas.getCheckedNodes()[0].data
+      detailInformation.forEach(item => {
+        for (let i in assetTemplate) {
+          if (item.status === i) {
+            if (assetTemplate[i] === 1) {
+              formItems.push(item)
+            }
+          }
+        }
+      })
+      this.formItems = formItems
+      // 控制填充模板
+      const assetTypeId = value[value.length - 1]
+      this.getTemplate(assetTypeId)
     },
     // 填充表单
     change(value) {
@@ -310,13 +316,12 @@ export default {
         const template = this.template.find(item => {
           return item.id === value
         })
-        let formData = this.deepClone(template)
-        formData.templateId = this.formData.templateId
-        // 为了el-cascader的回显而反推完整的id数组
-        formData.assetTypeId = recursion(this.asset, formData.assetTypeId)
-        this.formData = this.deepClone(formData)
+        this.formData = this.deepClone(template)
       } else {
-        this.$refs.elForm.resetFields()
+        const assetTypeId = this.formData.assetTypeId
+        this.formData = {
+          assetTypeId
+        }
       }
     },
     // 保存表单

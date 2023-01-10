@@ -66,6 +66,7 @@
           </el-col>
           <el-col :span="span">
             <div class="item">
+              <span class="star">*</span>
               <span class="label">数量：</span>
               <span class="value">{{ info.amount }}</span>
             </div>

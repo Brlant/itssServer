@@ -217,6 +217,7 @@ export default {
           { validator: checkNumber, trigger: 'blur' }
         ],
         amount: [
+          { required: true, trigger: 'blur', message: '请输入数量' },
           { validator: checkNumber, trigger: 'blur' }
         ],
         depreciableLife: [
