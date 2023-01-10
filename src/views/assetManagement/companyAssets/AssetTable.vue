@@ -76,10 +76,18 @@
         label="操作"
       >
         <template slot-scope="{row}">
-          <span class="edit" @click="edit(row)">
+          <span
+            class="edit"
+            v-if="row.isApplying === 0 || row.isApplying === 3"
+            @click="edit(row)"
+          >
             修改
           </span>
-          <span class="del" @click="del(row)">
+          <span 
+            class="del"
+            v-if="row.isApplying === 0 || row.isApplying === 3"
+            @click="del(row)"
+          >
             删除
           </span>
         </template>

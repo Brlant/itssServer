@@ -18,7 +18,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="职位名称:" prop="postNameId">
-        <el-select v-model="form.postNameId" placeholder="请选择职位名称">
+        <el-select v-model="form.postNameId" placeholder="请选择职位名称" filterable>
           <el-option 
             v-for="(item, index) in post"
             :key="index"
@@ -121,7 +121,9 @@ export default {
     getPost() {
       const params = {
         dictType: 'post_name',
-        status: '0'
+        status: '0',
+        pageNum: 1,
+        pageSize: 500
       }
       dictData(params).then(res => {
         this.post = res.rows

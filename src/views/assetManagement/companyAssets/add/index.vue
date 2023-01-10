@@ -358,6 +358,9 @@ export default {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
+    .left {
+      cursor: pointer;
+    }
   }
   main {
     background: #fff;

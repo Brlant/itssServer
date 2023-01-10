@@ -25,6 +25,37 @@
         ref="elForm"
         label-width="120px"
       >
+        <el-row>
+          <el-col :span="span">
+            <el-form-item label="资产类型:" prop="assetTypeId">
+              <el-cascader
+                v-model="formData.assetTypeId"
+                :options="asset"
+                ref="assetCas"
+                :props="{ label: 'typeName', value: 'id' }"
+                clearable
+                :style="style"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="span">
+            <el-form-item label="填充模板:" prop="templateId">
+              <el-select 
+                v-model="formData.templateId" 
+                @change="change"
+                :style="style"
+                clearable
+              >
+                <el-option 
+                  v-for="(item, index) in template"
+                  :key="index"
+                  :label="item.templateName"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <div class="section">
           <div class="heading">
             <span class="bar"></span>
@@ -164,6 +195,8 @@ import { queryAll } from '@/api/assetManagement/quickAssetDetail'
 import { treeselect } from "@/api/system/dept"
 import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css"
+import recursion from '@/utils/recursion'
+import { detailInformation, information } from '../options'
 
 export default {
   components: {
@@ -192,6 +225,7 @@ export default {
       asset: [],
       template: [],
       dept: [],
+      detail: {},
       formData: {
         assetTypeId: []
       },
@@ -218,25 +252,54 @@ export default {
           { validator: checkNumber, trigger: 'blur' }
         ]
       },
-      formItems: []
+      formItems: [],
+      formDataCopy: {}
     }
   },
   mounted() {
-    // this.getDetail()
     this.getAsset()
     this.getTemplate()
     this.getDept()
   },
+  watch: {
+    'formData.assetTypeId': {
+      deep: true,
+      // 动态渲染详细信息的表单
+      handler(value) {
+        if (!value.length) {
+          this.formItems = []
+          return
+        }
+        this.$nextTick(() => {
+          let formItems = []
+          const { assetTemplate } = this.$refs.assetCas.getCheckedNodes()[0].data
+          detailInformation.forEach(item => {
+            for (let i in assetTemplate) {
+              if (item.status === i) {
+                if (assetTemplate[i] === 1) {
+                  formItems.push(item)
+                }
+              }
+            }
+          })
+          this.formItems = formItems
+        })
+      }
+    }
+  },
   methods: {
-    getDetail() {
-      assetDetail(this.id).then(res => {
-
-      })
-    },
     // 资产类型查询
     getAsset() {
       queryAsset().then(res => {
         this.asset = res.data
+        // 在此处查询资产详情
+        assetDetail(this.id).then(resp => {
+          let detail = this.deepClone(resp.data)
+          detail.assetTypeId = recursion(this.asset, detail.assetTypeId)
+          this.formData = this.deepClone(detail)
+          // 存储一份数据，用于还原表单数据
+          this.formDataCopy = this.deepClone(detail)
+        })
       })
     },
     // 模板查询
@@ -254,6 +317,10 @@ export default {
     // 保存表单
     save() {
 
+    },
+    // 填充表单
+    change() {
+
     }
   }
 }
@@ -268,6 +335,9 @@ export default {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
+    .left {
+      cursor: pointer;
+    }
   }
   main {
     background: #fff;
