@@ -34,3 +34,12 @@ export function assetDetail(id) {
     method: 'get',
   })
 }
+
+// 资产修改
+export function updateAssets(data) {
+  return request({
+    url: '/asset/asset/update',
+    method: 'put',
+    data
+  })
+}

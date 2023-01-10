@@ -189,7 +189,7 @@
 </template>
 
 <script>
-import { assetDetail } from '@/api/assetManagement/companyAssets'
+import { assetDetail, updateAssets } from '@/api/assetManagement/companyAssets'
 import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 import { queryAll } from '@/api/assetManagement/quickAssetDetail'
 import { treeselect } from "@/api/system/dept"
@@ -197,6 +197,7 @@ import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css"
 import recursion from '@/utils/recursion'
 import { detailInformation, information } from '../options'
+import matchData from '@/utils/matchData'
 
 export default {
   components: {
@@ -298,7 +299,7 @@ export default {
           detail.assetTypeId = recursion(this.asset, detail.assetTypeId)
           this.formData = this.deepClone(detail)
           // 存储一份数据，用于还原表单数据
-          this.formDataCopy = this.deepClone(detail)
+          this.formDataCopy = detail
         })
       })
     },
@@ -316,11 +317,45 @@ export default {
     },
     // 保存表单
     save() {
-
+      this.$refs.elForm.validate(valid => {
+        if (!valid) {
+          return
+        }
+        // 传参格式的一些处理
+        let data = matchData(this.formData, [...information, ...this.formItems])
+        const assetTypeId = data.assetTypeId
+        data.assetTypeId = assetTypeId[assetTypeId.length - 1]
+        if (data.departmentId) {
+          data.departmentName = this.$refs.deptTree.getNode(data.departmentId).label
+        } else {
+          data.departmentName = null
+        }
+        data.id = this.id
+        updateAssets(data).then(res => {
+          this.$message.success(res.msg)
+          this.$router.push({
+            path: '/assetManagement/companyAssets',
+            query: {
+              tab: 9
+            }
+          })
+        })
+      })
     },
     // 填充表单
-    change() {
-
+    change(value) {
+      if (value) {
+        const template = this.template.find(item => {
+          return item.id === value
+        })
+        let formData = this.deepClone(template)
+        formData.templateId = this.formData.templateId
+        // 为了el-cascader的回显而反推完整的id数组
+        formData.assetTypeId = recursion(this.asset, formData.assetTypeId)
+        this.formData = this.deepClone(formData)
+      } else {
+        this.formData = this.deepClone(this.formDataCopy)
+      }
     }
   }
 }
