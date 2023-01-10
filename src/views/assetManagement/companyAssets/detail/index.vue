@@ -23,7 +23,7 @@
         </div>
       </div>
     </header>
-    <main>
+    <div class="main">
       <div class="section">
         <div class="heading">
           <span class="bar"></span>
@@ -159,11 +159,22 @@
           </el-col>
         </el-row>
       </div>
-      <!-- tab切换部分 -->
-      <div class="tabs">
-        
+    </div>
+    <!-- tab切换部分 -->
+    <div class="tabs">
+      <easy-tabs
+        v-model="tab"
+        :options="tabOptions"
+        @change="change"
+      />
+      <div class="content">
+        <detail-info 
+          v-if="tab === 0"
+          :info="info"
+          :list="list"
+        />
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
@@ -172,14 +183,22 @@ import { assetDetail } from '@/api/assetManagement/companyAssets'
 import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 import findItemById from '@/utils/findItemById'
 import { detailInformation } from '../options'
+import EasyTabs from '@/components/EasyTabs'
+import DetailInfo from './DetailInfo'
 
 export default {
+  components: {
+    EasyTabs,
+    DetailInfo
+  },
   data() {
     return {
       span: 6,
       id: this.$route.query.id,
       info: {},
-      list: []
+      list: [],
+      tabOptions: ['详细信息', '使用记录', '维修记录', '保养记录', '证书记录'],
+      tab: 0
     }
   },
   created() {
@@ -206,6 +225,10 @@ export default {
           this.list = list
         })
       })
+    },
+    // tab切换
+    change() {
+
     },
     // 时间格式
     formatDate(date) {
@@ -246,7 +269,7 @@ export default {
       }
     }
   }
-  main {
+  .main {
     background: #fff;
     padding: 10px;
     font-size: 14px;
@@ -275,6 +298,12 @@ export default {
       b {
         font-size: 15px;
       }
+    }
+  }
+  .tabs {
+    .content {
+      background: #fff;
+      padding: 10px;
     }
   }
 }

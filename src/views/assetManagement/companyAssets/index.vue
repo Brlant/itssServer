@@ -338,17 +338,20 @@ export default {
     },
     // 点击查询
     query() {
+      this.queryParams.pageNum = 1
       this.getTableData()
       this.calc()
     },
     // 重置表单
     reset() {
+      this.queryParams.pageNum = 1
       this.$refs.elForm.resetFields()
       this.getTableData()
       this.calc()
     },
     // tab切换
     change() {
+      this.queryParams.pageNum = 1
       this.getTableData()
       this.calc()
     },
