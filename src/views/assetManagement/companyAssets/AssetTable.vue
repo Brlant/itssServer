@@ -2,6 +2,7 @@
   <div class="table">
     <el-table 
       :data="data"
+      @row-click="goDetail"
       border
       v-loading="loading"
     >
@@ -79,14 +80,14 @@
           <span
             class="edit"
             v-if="row.isApplying === 0 || row.isApplying === 3"
-            @click="edit(row)"
+            @click.stop="edit(row)"
           >
             修改
           </span>
           <span 
             class="del"
             v-if="row.isApplying === 0 || row.isApplying === 3"
-            @click="del(row)"
+            @click.stop="del(row)"
           >
             删除
           </span>
@@ -122,6 +123,15 @@ export default {
     // 删除
     del(row) {
 
+    },
+    // 进入详情页
+    goDetail(row) {
+      this.$router.push({
+        path: '/assetManagement/companyAssets/companyAssets-auth/detail',
+        query: {
+          id: row.id
+        }
+      })
     },
     // 状态处理
     statusFormatter(row) {
