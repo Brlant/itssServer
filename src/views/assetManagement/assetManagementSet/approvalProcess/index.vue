@@ -5,16 +5,39 @@
       <div style="color: #1c6cf7" @click="add">+添加</div>
     </div>
     <el-table :data="processData">
-      <el-table-column label="流程组ID" align="center" prop="id" />
-      <el-table-column label="流程组名称" align="center" prop="typeName" />
+      <el-table-column 
+        label="流程组ID" 
+        align="center" 
+        prop="id" />
+      <el-table-column 
+        label="流程组名称" 
+        align="center" 
+        prop="groupName" />
       <el-table-column
         label="适用范围描述"
         align="center"
-        prop="typePinyinAbbr"
+        prop="groupDescription"
       />
-      <el-table-column label="当前在用类型" align="center" prop="createTime" />
-      <el-table-column label="上次修改时间" align="center" prop="manageType" />
-      <el-table-column label="上次修改人" align="center" prop="remark" />
+      <el-table-column 
+        label="适用资产类型" 
+        align="center" 
+        prop="assetTypeList">
+        <template slot-scope="scope">
+          <span v-for="(item, index) in scope.row.assetTypeList" :key="index">{{
+            item.typeName + "；"
+          }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column 
+        label="上次修改时间" 
+        align="center" 
+        prop="updatorName">
+      </el-table-column>
+      <el-table-column 
+        label="上次修改人" 
+        align="center" 
+        prop="updatorName">
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -32,7 +55,7 @@
               >编辑</el-button
             >
           </span>
-           <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
             <el-button size="mini" type="text" @click="detail(scope.row)"
               >详情</el-button
             >
@@ -64,16 +87,39 @@
         </template>
       </el-table-column>
     </el-table>
+    <pagination
+      v-show="total > 0"
+      :total="total"
+      :page.sync="page.pageNum"
+      :limit.sync="page.pageSize"
+      @pagination="getList"
+    />
   </div>
 </template>
+
 <script>
+import { getapprovalProcess,deleteGroup,isUserGroup } from "@/api/assetManagement/assetManagementSet";
 export default {
   data() {
     return {
-      processData: [{ id: 1, status: 0 }],
+      processData: [],
+      page: {
+        pageSize: 10,
+        pageNum: 1,
+      },
+      total: 0,
     };
   },
+  created(){
+    this.getList()
+  },
   methods: {
+    getList() {
+      getapprovalProcess(this.page).then((res) => {
+        this.processData=res.rows
+        this.total=res.total
+      });
+    },
     //添加
     add() {
       const obj = {
@@ -84,32 +130,44 @@ export default {
     },
     //复制
     copy() {
-        const obj = {
+      const obj = {
         path: "/assetManagement/assetManagementSet/process/addApprovalProcess",
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
     //详情
-    detail(){
-         const obj = {
+    detail(data) {
+      const obj = {
         path: "/assetManagement/assetManagementSet/process/detailApprovalProcess",
+        query:{detailId:data.id}
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
     //编辑
-    edit() {
+    edit(data) {
       const obj = {
         path: "/assetManagement/assetManagementSet/process/editApprovalProcess",
+        query:{detailId:data.id}
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
     //停用启用
-    stopOrUse() {},
+    stopOrUse() {
+      isUserGroup().then(res=>{
+
+      })
+    },
     //删除
-    del() {},
+    del(id) {
+      deleteGroup(id).then(res=>{
+        if(res.code==200){
+          this.$message.sucess("删除成功")
+        }
+      })
+    },
   },
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-        <div v-if="!isShowCheck && !isSowFlowChart">
+        <!-- <div v-if="!isShowCheck && !isSowFlowChart">
             <div class="headContainer">
             <span class="model-name">模型列表</span>
             <div class="btns"><el-button type="primary"  @click="handleAdd()">新增</el-button></div>
@@ -46,8 +46,8 @@
             layout="sizes, prev, pager, next"
             :total="totalNum">
             </el-pagination>
-        </div>
-        <div v-if="!isShowCheck && isSowFlowChart">
+        </div> -->
+        <div>
             <DrawFlowChart :flowId="flowId" :flowType="flowType" @setFlowChart="setFlowChart"></DrawFlowChart>
         </div>
         <div v-if="isShowCheck">

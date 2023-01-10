@@ -172,7 +172,13 @@ export default {
      * 初始化 数据私有化
      */
     init() {
-      this.selfConfig = JSON.parse(JSON.stringify(this.FlowConfig));
+      // if(this.FlowConfig.length>0){
+      //    this.selfConfig = JSON.parse(JSON.stringify(this.FlowConfig));
+      // console.log(this.selfConfig,'hhhhhhhhhhhhhhhhhhhhhhhhh')
+      // }
+       this.selfConfig = JSON.parse(JSON.stringify(this.FlowConfig));
+      console.log(this.selfConfig,'hhhhhhhhhhhhhhhhhhhhhhhhh')
+     
     },
     /**
      *  @param data  源数组一维数组
@@ -406,7 +412,9 @@ export default {
     let FlowConfig = JSON.parse(JSON.stringify(this.selfConfig));
     FlowConfig = this.transformTree(FlowConfig);  // 将一维数组转化为树状结构
     this.cacheData = FlowConfig;
+    console.log(this.selfConfig[0],'JSON.stringify(this.selfConfig[0])')
     const root = JSON.parse(JSON.stringify(this.selfConfig[0]));
+    console.log(root,'root')
     const scale = `transform: scale(${this.scaleVal/100})`
     return (
       <div class="design-engine">

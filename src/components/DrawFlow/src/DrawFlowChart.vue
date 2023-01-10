@@ -1,11 +1,11 @@
 <template>
   <div id="drawProcessDesign">
     <div class="process-container">
-        <div class="editType"><i class="el-icon-back" @click="jumpBack"></i></div>
+        <!-- <div class="editType"><i class="el-icon-back" @click="jumpBack"></i></div> -->
         <div class="form-container">
           <el-form ref="mainform"  :model="form" label-width="110px" :rules="formRules">
             <el-row :gutter="24">
-              <el-col :span="6">
+              <!-- <el-col :span="6">
                   <el-form-item label="模型名称:"  prop="processName">
                     <el-input v-model="form.processName"  placeholder="请输入模型名称" :disabled="type == 'see'"></el-input>
                   </el-form-item>
@@ -23,12 +23,12 @@
                       </el-option>
                     </el-select>
                   </el-form-item>
-              </el-col>
-              <el-col :span="8">
+              </el-col> -->
+              <!-- <el-col :span="8">
                   <el-form-item label="模型简介:"  prop="processDes">
                     <el-input type="textarea" :disabled="type == 'see'" v-model="form.processDes" placeholder="请输入模型简介"  :autosize="{ minRows: 2, maxRows: 4}" show-word-limit></el-input>
                   </el-form-item>
-              </el-col>
+              </el-col> -->
               <el-col :span="4"><el-button type="primary"  @click="submitData()" :disabled="type == 'see'">发布模型</el-button></el-col>
             </el-row>
           </el-form>
@@ -64,6 +64,7 @@
 import NodeAttribute from "./components/NodeAttribute/NodeAttribute.vue";
 import FactoryDrawFlow from "./DrawFlow.vue";
 import axios from 'axios'
+import { getProcessType , deployModel} from "@/api/assetManagement/assetManagementSet";
 export default {
   name: "DrawFlowChart",
   components: {
@@ -113,12 +114,19 @@ export default {
   },
   created() {
     this.init();
+    this.getType()
   },
   props: {
     flowId: {
       type: String,
       default() {
         return '';
+      }
+    },
+     flowData: {
+      type: Array,
+      default() {
+        return [];
       }
     },
     flowType: {
@@ -143,20 +151,28 @@ export default {
     }
   },
   methods: {
+    getType(){
+      getProcessType().then(res=>{
+        this.processTypeList=res.data
+      })
+    },
     handleClose() {
       this.isShowAttribute = false;
     },
     // 初始化（判断进入这个页面是查看，编辑，新增）
     init() {
-      if(!this.flowId){
-        this.type = 'add';
-        this.$forceUpdate();
-      }else {
-        this.modelId = this.flowId;
+      // if(!this.flowId){
+      //   this.type = 'add';
+      //   this.$forceUpdate();
+      // }else {
+        // this.modelId = this.flowId;
+       this.FlowConfig = this.flowData
+       console.log(this.flowData,'this.flowDatathis.flowDatathis.flowDatathis.flowDatathis.flowDatathis.flowData')
         this.type = this.flowType;
-        this.getModelData();
-      }
-      this.getModeList();
+        console.log(this.type,'this.type')
+        // this.getModelData();
+      // }
+      // this.getModeList();
     },
     // 获取模型列表
     getModeList(){
@@ -164,6 +180,7 @@ export default {
             console.log(res)
             if(res && res.data && res.data.code == 200){
               this.processTypeList = res.data.data
+              console.log(res.data.data,'res.data.data')
               this.form.processType = this.processTypeList[0].id
             }
         })
@@ -265,7 +282,7 @@ export default {
           modelDefinition: {
             process: {
               processId:this.form.processId,
-              name: this.form.processName
+              name: new Date()
             },
             processNode: res[0] || {},
             list: this.$refs.flow.getData()
@@ -283,8 +300,12 @@ export default {
       if(!params){
         return false
       }
-      axios.post("/flowable/definition/deploy", params).then(res => {
-          if(res && res.data && res.data.code == 200){
+      params.des = new Date()
+      params.modelType = 1
+      // this.form.processName = new Date()
+      deployModel(params).then(res=>{
+      // axios.post("/flowable/definition/deploy", params).then(res => {
+          if(res && res.data && res.code == 200){
             this.$emit('setFlowChart');
           }else {
               this.$message({

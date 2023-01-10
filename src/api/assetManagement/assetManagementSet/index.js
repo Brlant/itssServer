@@ -61,3 +61,62 @@ export function getTypeData() {
       params:query
     })
   }
+    //流程组详情
+  export function getDetailProcess(id) {
+    return request({
+      url: '/flowable/bizFlowGroup/getInfoForm/'+id,
+      method: 'get'
+    })
+  }
+  //查询流程组管理的流程模型类型列表
+  export function getProcessType(id) {
+    return request({
+      url: '/flowable/bizFlowGroup/groupGetCategoryList',
+      method: 'get'
+    })
+  }
+  //新建流程组
+  export function newGroup(data) {
+    return request({
+      url: '/flowable/bizFlowGroup/',
+      method: 'post',
+      data
+    })
+  }
+  //编辑流程组
+  export function editGroup(data) {
+    return request({
+      url: '/flowable/bizFlowGroup/',
+      method: 'put',
+      data
+    })
+  }
+  //删除流程组
+  export function deleteGroup(id) {
+    return request({
+      url: '/flowable/bizFlowGroup/'+id,
+      method: 'delete'
+    })
+  }
+  //启用禁用流程组
+  export function isUserGroup(data) {
+    return request({
+      url: '/flowable/bizFlowGroup/enable',
+      method: 'put',
+      data
+    })
+  }
+  export function getUserListByType(type) {
+    return request({
+      url: 'flowable/flowable/definition/infoList?type='+type,
+      method: 'get'
+    })
+  }
+  //发布模型
+  export function deployModel(data) {
+    return request({
+      url: 'flowable/flowable/definition/deploy',
+      method: 'post',
+      data
+    })
+  }

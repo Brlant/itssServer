@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="process-title">
-      <div style="font-size: 18px">
+      <div style="font-size: 18px" @click='goBack'>
         <i class="el-icon-arrow-left"></i>
         <span>流程组新建</span>
       </div>
@@ -32,8 +32,8 @@
             </el-form-item>
           </el-col>
         </el-row>
-
-        <el-form-item label="审批异常处理" prop="nickName">
+        <div v-if='hidden'>
+           <el-form-item label="审批异常处理" prop="nickName">
           <el-row>
             <el-col :span="6" style='margin-right:10px;'>
               <el-select
@@ -43,14 +43,14 @@
                 clearable
                 size="medium"
               >
-                <!-- <el-option
-                  v-for="item in detailTemplates"
-                  :key="user.userId"
+                <el-option
+                  v-for="(item,index) in detailTemplates"
+                  :key="index"
                   :label="user.nickName"
                   :value="user.userId"
                   :disabled="user.disabled"
                 >
-                </el-option> -->
+                </el-option>
               </el-select>
             </el-col>
 
@@ -62,14 +62,14 @@
                 clearable
                 size="medium"
               >
-                <!-- <el-option
-                  v-for="item in detailTemplates"
-                  :key="user.userId"
+                <el-option
+                  v-for="(item,index) in detailTemplates"
+                  :key="index"
                   :label="user.nickName"
                   :value="user.userId"
                   :disabled="user.disabled"
                 >
-                </el-option> -->
+                </el-option>
               </el-select>
             </el-col>
           </el-row>
@@ -86,14 +86,14 @@
                 clearable
                 size="medium"
               >
-                <!-- <el-option
-                  v-for="item in detailTemplates"
-                  :key="user.userId"
+                <el-option
+                  v-for="(item,index) in detailTemplates"
+                  :key="index"
                   :label="user.nickName"
                   :value="user.userId"
                   :disabled="user.disabled"
                 >
-                </el-option> -->
+                </el-option>
               </el-select>
             </el-col>
           </el-row>
@@ -110,27 +110,36 @@
                 clearable
                 size="medium"
               >
-                <!-- <el-option
-                  v-for="item in detailTemplates"
-                  :key="user.userId"
+                <el-option
+                  v-for="(item,index) in detailTemplates"
+                  :key="index"
                   :label="user.nickName"
                   :value="user.userId"
                   :disabled="user.disabled"
                 >
-                </el-option> -->
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
-        <div class='select'>
-            <span :class="[{ current: n == 0 }]" @click='aa(0)'>入库</span>|
-            <span :class="[{ current: n == 1 }]" @click='aa(1)'>申领</span>|
-            <span :class="[{ current: n == 2 }]" @click='aa(2)'>归还</span>|
-            <span :class="[{ current: n == 3 }]" @click='aa(3)'>借用</span>|
-            <span :class="[{ current: n == 4 }]" @click='aa(4)'>维修</span>|
-            <span :class="[{ current: n == 5 }]" @click='aa(5)'>报废</span>|
-            <span :class="[{ current: n == 6 }]" @click='aa(6)'>盘亏</span>
         </div>
+       
+        <div class='select'>
+            <span 
+              v-for='(item,index) in modelType'
+              :key='index'
+              :class="[{ current: n == index }]" 
+              @click='aa(index)'>
+                {{item.name}}
+                <span v-if='index<modelType.length-1'>|</span>
+            </span>
+        </div>
+        <el-row>
+          <el-col>
+            <!-- <DrawFlowList :isShowCheck="isShowCheck" :params ="params"/> -->
+            <!-- <DrawFlowList/> -->
+          </el-col>
+        </el-row>
         <el-row>
           <el-col :span='12'>
              <el-form-item label="适用部门" prop="dept">
@@ -158,10 +167,21 @@
   </div>
 </template>
 <script>
+import { getProcessType } from "@/api/assetManagement/assetManagementSet";
 export default {
   data() {
     return {
+        hidden:false,
+        isShowCheck: true, // 是否现实审核，这个必须要写 true
+        params: {
+          taskId:'06fc35b6-16bf-11ed-86db-00ff19aa678e',
+          processInstanceId:'06e0701c-16bf-11ed-86db-00ff19aa678e',
+          deployId:'8007d903-148f-11ed-9e4d-f645cd1a1bbc'
+        },
+
+
       form: {},
+      modelType:[],
       n:0,
       rules: {
         processName: [
@@ -174,10 +194,26 @@ export default {
       },
     };
   },
+  created(){
+    this.getType()
+  },
   methods:{
     aa(index){
         this.n=index
 
+    },
+    //获取类型
+    getType(){
+      getProcessType().then(res=>{
+        this.modelType=res.data
+      })
+    },
+     goBack(){
+      const obj = {
+        path: "/assetManagement/assetManagementSet/approvalProcess",
+      };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
     }
   }
 };

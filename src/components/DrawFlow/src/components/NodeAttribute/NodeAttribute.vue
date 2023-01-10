@@ -81,6 +81,7 @@
 </template>
 <script>
 import axios from 'axios'
+import { getUserListByType } from "@/api/assetManagement/assetManagementSet";
 export default {
   data() {
     return {
@@ -174,15 +175,21 @@ export default {
     // 获取人员列表
     getUserList(){
       // 需要根据人员类型来定下拉框的数据是什么
-      axios.get(`/flowable/definition/infoList?type=${this.form.userType}`)
-      .then(res => {
-          if(res && res.data && res.data.code == 200){
-            this.userList = res.data.data
+      // axios.get(`flowable/flowable/definition/infoList?type=${this.form.userType}`)
+      // .then(res => {
+      //     if(res && res.data && res.data.code == 200){
+      //       this.userList = res.data.data
+      //       return false;
+      //     }
+      // })
+      // .then(err => {
+      //     console.log(err)
+      // })
+      getUserListByType(this.form.userType).then(res=>{
+        if(res && res.data && res.code == 200){
+            this.userList = res.data
             return false;
           }
-      })
-      .then(err => {
-          console.log(err)
       })
     },
     changeType(){
