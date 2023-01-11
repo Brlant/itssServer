@@ -55,6 +55,7 @@ export default {
     modelType: {
       handler() {
         this.isShowMask();
+        console.log(this.modelType,'modelType')
       },
       deep: true
     },
@@ -177,6 +178,7 @@ export default {
       // console.log(this.selfConfig,'hhhhhhhhhhhhhhhhhhhhhhhhh')
       // }
        this.selfConfig = JSON.parse(JSON.stringify(this.FlowConfig));
+       this.$forceUpdate()
       console.log(this.selfConfig,'hhhhhhhhhhhhhhhhhhhhhhhhh')
      
     },

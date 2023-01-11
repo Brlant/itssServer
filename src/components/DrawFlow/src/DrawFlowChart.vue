@@ -29,16 +29,16 @@
                     <el-input type="textarea" :disabled="type == 'see'" v-model="form.processDes" placeholder="请输入模型简介"  :autosize="{ minRows: 2, maxRows: 4}" show-word-limit></el-input>
                   </el-form-item>
               </el-col> -->
-              <el-col :span="4"><el-button type="primary"  @click="submitData()" :disabled="type == 'see'">发布模型</el-button></el-col>
+              <!-- <el-col :span="4"><el-button type="primary"  @click="submitData()" v-if="type != 'see'">发布模型</el-button></el-col> -->
             </el-row>
           </el-form>
         </div>
     </div>
-    <div class="scale-slider">
+    <!-- <div class="scale-slider">
       <i class="btn el-icon-minus"   @click="changeScale(-step)"></i>
       <span style="font-size:14px;">{{scaleVal}}%</span>
       <i class="btn el-icon-plus"  @click="changeScale(step)"></i>
-    </div>
+    </div> -->
     <!-- 流程图 -->
     <FactoryDrawFlow
       @clickNode="clickNode"
@@ -76,6 +76,8 @@ export default {
       isShowAttribute: false, // 是否显示属性
       nodeData: null, // 当前点击的node对象
       nodeList: null, // 流程图所有的节点列表
+      //发布模型之后获取的返回值
+      modelResult:{},
       // 默认的流程图发起人
       FlowConfig: [
         {
@@ -115,6 +117,7 @@ export default {
   created() {
     this.init();
     this.getType()
+
   },
   props: {
     flowId: {
@@ -129,12 +132,30 @@ export default {
         return [];
       }
     },
+    groupGetCategory:{
+      type: Number,
+      default() {
+        return null;
+      }
+    },
     flowType: {
       type: String,
       default() {
         return '';
       }
-    }
+    },
+    deptId:{
+      type: Array,
+      default() {
+        return [];
+      }
+    },
+    modelKey: {
+      type: String,
+      default() {
+        return '';
+      }
+    },
   },
   watch: {
     flowId: {
@@ -143,13 +164,28 @@ export default {
       },
       deep: true
     },
-    flowType: {
+    type: {
       handler() {
         this.init();
       },
       deep: true
+    },
+     flowType: {
+      handler() {
+        this.init();
+       
+      },
+      deep: true
+    },
+    flowData: {
+      handler() {
+        this.init();
+       
+      },
+      deep: true
     }
   },
+ 
   methods: {
     getType(){
       getProcessType().then(res=>{
@@ -161,15 +197,16 @@ export default {
     },
     // 初始化（判断进入这个页面是查看，编辑，新增）
     init() {
-      // if(!this.flowId){
+      // if(!this.flowData){
       //   this.type = 'add';
       //   this.$forceUpdate();
       // }else {
         // this.modelId = this.flowId;
        this.FlowConfig = this.flowData
-       console.log(this.flowData,'this.flowDatathis.flowDatathis.flowDatathis.flowDatathis.flowDatathis.flowData')
+       console.log(this.flowData,'tttttttttttttttttt')
         this.type = this.flowType;
-        console.log(this.type,'this.type')
+         this.$forceUpdate();
+        console.log(this.type,'this.type222')
         // this.getModelData();
       // }
       // this.getModeList();
@@ -248,6 +285,7 @@ export default {
       if(flag){ 
         this.isShowAttribute = false; 
       }
+      this.submitData()
     },
     // 获取提交模型的参数
     getParams(){
@@ -281,7 +319,7 @@ export default {
           modelType: this.form.processType,
           modelDefinition: {
             process: {
-              processId:this.form.processId,
+              processId:this.modelKey,
               name: new Date()
             },
             processNode: res[0] || {},
@@ -294,6 +332,7 @@ export default {
       }
       
     },
+   
     // 发布模型
     submitData() {
       let params = this.getParams();
@@ -301,12 +340,16 @@ export default {
         return false
       }
       params.des = new Date()
-      params.modelType = 1
+      params.modelType = this.groupGetCategory
       // this.form.processName = new Date()
       deployModel(params).then(res=>{
       // axios.post("/flowable/definition/deploy", params).then(res => {
           if(res && res.data && res.code == 200){
             this.$emit('setFlowChart');
+            this.modelResult=res.data
+            this.modelResult.sysDeptList=this.deptId
+             this.$emit('childClick', JSON.parse(JSON.stringify(this.modelResult)));
+            console.log( JSON.parse(JSON.stringify(this.modelResult)),' JSON.parse(JSON.stringify(this.modelResult));')
           }else {
               this.$message({
                 type: 'error',
@@ -317,6 +360,11 @@ export default {
       .then(err => {
           console.log(err)
       })
+    },
+     getModelResult(){
+      let modelResultReturn = JSON.parse(JSON.stringify(this.modelResult));
+      console.log(modelResultReturn,'modelResultReturn')
+      return modelResultReturn;
     },
     jumpBack(){
         this.$emit('setFlowChart');
@@ -356,9 +404,9 @@ export default {
   width: 100%;
   background-color:#fff;
 }
-#drawProcessDesign {
-  background: #f0f2f5;
-}
+// #drawProcessDesign {
+//   background: #f0f2f5;
+// }
 .scale-slider {
     margin-top: 20px;
 }
