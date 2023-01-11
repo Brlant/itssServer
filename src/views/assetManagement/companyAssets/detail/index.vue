@@ -173,6 +173,7 @@
           :info="info"
           :list="list"
         />
+        <asset-certificate v-if="tab === 4" />
       </div>
     </div>
   </div>
@@ -185,11 +186,13 @@ import findItemById from '@/utils/findItemById'
 import { detailInformation } from '../options'
 import EasyTabs from '@/components/EasyTabs'
 import DetailInfo from './DetailInfo'
+import AssetCertificate from './AssetCertificate'
 
 export default {
   components: {
     EasyTabs,
-    DetailInfo
+    DetailInfo,
+    AssetCertificate
   },
   data() {
     return {
@@ -228,7 +231,7 @@ export default {
     },
     // tab切换
     change() {
-
+      
     },
     // 时间格式
     formatDate(date) {
@@ -303,6 +306,7 @@ export default {
   .tabs {
     .content {
       background: #fff;
+      min-height: 261px;
       padding: 10px;
     }
   }

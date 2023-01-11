@@ -194,7 +194,7 @@
 import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 import { queryAll } from '@/api/assetManagement/quickAssetDetail'
 import { treeselect } from "@/api/system/dept"
-import { addAssets } from '@/api/assetManagement/companyAssets'
+import { addAssets, queryAssetId } from '@/api/assetManagement/companyAssets'
 import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css"
 import { detailInformation, information } from '../options'
@@ -228,7 +228,8 @@ export default {
       template: [],
       dept: [],
       formData: {
-        assetTypeId: []
+        assetTypeId: [],
+        assetId: null
       },
       rules: {
         assetTypeId: [
@@ -285,15 +286,31 @@ export default {
         this.template = rows
       })
     },
+    // 查询资产编号
+    getAssetId(assetTypeId) {
+      queryAssetId(assetTypeId).then(res => {
+        if (res) {
+          this.formData.assetId = res.data
+        } else {
+          this.formData.assetId = null
+        }
+        this.$forceUpdate()
+      })
+    },
     handleChange(value) {
-      this.formData = {
-        assetTypeId: value
+      if (this.formData.templateId) {
+        this.formData = {
+          assetTypeId: value,
+          assetId: null
+        }
       }
       if (!value.length) {
+        this.formData.assetId = null
         this.formItems = []
+        this.$forceUpdate()
         return
       }
-      // 动态渲染详细信息的表单
+      // a - 动态渲染详细信息的表单
       let formItems = []
       const { assetTemplate } = this.$refs.assetCas.getCheckedNodes()[0].data
       detailInformation.forEach(item => {
@@ -306,21 +323,35 @@ export default {
         }
       })
       this.formItems = formItems
-      // 控制填充模板
+      // b - 控制填充模板
       const assetTypeId = value[value.length - 1]
       this.getTemplate(assetTypeId)
+      // c - 获取资产编号
+      this.getAssetId(assetTypeId)
     },
     // 填充表单
     change(value) {
+      const {
+        assetTypeId,
+        assetId,
+        financialNo,
+        assetName
+      } = this.formData
       if (value) {
         const template = this.template.find(item => {
           return item.id === value
         })
-        this.formData = this.deepClone(template)
+        let formData = this.deepClone(template)
+        formData.assetId = assetId
+        formData.financialNo = financialNo
+        formData.assetName = assetName
+        this.formData = formData
       } else {
-        const assetTypeId = this.formData.assetTypeId
         this.formData = {
-          assetTypeId
+          assetTypeId,
+          assetId,
+          financialNo,
+          assetName
         }
       }
     },

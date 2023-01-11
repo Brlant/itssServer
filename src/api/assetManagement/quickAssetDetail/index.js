@@ -12,11 +12,11 @@ import {
 /** * 列表查询-分页 GET /asset/assetTemplateInfo/list
 接口ID：56815680
 接口地址：https://www.apifox.cn/web/project/1611498/apis/api-56815680 */
-export function queryAll(params) {
+export function queryAll(data) {
   return request({
     url: "/asset/assetTemplateInfo/list",
-    method: 'get',
-    params: params
+    method: 'post',
+    data
   })
 }
 /** *

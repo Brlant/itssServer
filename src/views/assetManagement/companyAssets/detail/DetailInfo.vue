@@ -1,6 +1,6 @@
 <template>
   <div class="info">
-    <el-row>
+    <el-row v-if="list.length">
       <!-- 动态渲染展示条目 -->
       <el-col
         v-for="(item, index) in list"
@@ -17,6 +17,9 @@
         </div>
       </el-col>
     </el-row>
+    <div v-else>
+      暂无详细信息
+    </div>
   </div>
 </template>
 
