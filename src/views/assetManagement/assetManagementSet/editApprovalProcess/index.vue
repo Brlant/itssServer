@@ -7,7 +7,7 @@
           <span>流程组编辑</span>
         </div>
         <div>
-          <el-button type="primary">保存</el-button>
+          <el-button type="primary" @click='sureSave'>保存</el-button>
           <el-button>取消</el-button>
         </div>
       </div>
@@ -109,24 +109,17 @@
             <div
               v-for="(item, index) in FlowConfigList"
               :key="index"
-              style="width: 30%; display: inline-block"
+              style="width: 30%; display: inline-block;background:#e5e5e5;margin-right:10px;min-height:580px;height:820px;"
             >
-              <FactoryDrawFlow
-                v-if="isShowEdit"
-                ref="flow"
-                :FlowConfig="item.list"
-                :modelType="item.type"
-                :scaleVal="scaleVal"
-              ></FactoryDrawFlow>
-              <span style="width: 20%; position: absolute; top: 480px">
-                <el-button
-                  type="primary"
-                  @click="editProcess(item.list)"
-                  v-if="isShowEdit"
-                  >编辑</el-button
-                >
-              </span>
-              <el-row  v-if="isShowEdit">
+              <DrawFlowChart 
+                :flowData="item.list" 
+                :flowType="item.type" 
+                :groupGetCategory='n' 
+                :ref='item.flow' 
+                @childClick='childClick' 
+                :modelKey='item.modelKey'
+                :deptId='item.deptId'></DrawFlowChart>
+              <el-row>
                 <el-col :span="12">
                   <el-form-item label="适用部门" prop="deptId">
                     <treeselect
@@ -135,48 +128,7 @@
                       :options="deptOptions"
                       :show-count="true"
                       placeholder="请选择适用部门"
-                    />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </div>
-             <!-- <div v-if="!isShowEdit">
-              
-                <FactoryDrawFlow
-                  @clickNode="clickNode"
-                  ref="flow"
-                  :FlowConfig="editData"
-                  :modelType="type"
-                  :scaleVal="scaleVal"
-                ></FactoryDrawFlow>
-               
-                <el-drawer
-                  title="设置节点属性"
-                  :before-close="handleClose"
-                  :visible.sync="isShowAttribute"
-                  direction="rtl"
-                  custom-class="demo-drawer"
-                  ref="drawer"
-                >
-                  <NodeAttribute
-                    @cancel="handleClose"
-                    :nodeData="nodeData"
-                    :nodeList="nodeList"
-                    @nodeChange="nodeChange($event)"
-                  />
-                </el-drawer>
-              </div> -->
-            <div v-if="!isShowEdit">
-               <DrawFlowChart :flowData="flowData" :flowType="type"></DrawFlowChart>
-                <el-row >
-                <el-col :span="12">
-                  <el-form-item label="适用部门" prop="deptId">
-                    <treeselect
-                      multiple
-                      v-model="deptId"
-                      :options="deptOptions"
-                      :show-count="true"
-                      placeholder="请选择适用部门"
+                      
                     />
                   </el-form-item>
                 </el-col>
@@ -206,6 +158,7 @@ export default {
   },
   data() {
     return {
+      
       isShowAttribute: false, // 是否显示属性
       nodeData: null, // 当前点击的node对象
       nodeList: null, // 流程图所有的节点列表
@@ -230,8 +183,11 @@ export default {
       isShowEdit: true,
       form: {},
       n: 0,
+      m:0,
       detailId: "",
       editData: {},
+      //模型数据
+      modelData:[],
       //部门名称
       deptId: null,
       deptOptions: [],
@@ -280,11 +236,12 @@ export default {
       this.detailData();
     },
     //编辑按钮
-    editProcess(data) {
-    
-      this.isShowEdit = false;
+    editProcess(data,index) {
+      this.m=index
       this.flowData = data;
-      this.type = "edit";
+      // this.FlowConfigList[index].type='edit'
+      this.$set(this.FlowConfigList[index],'type','edit')
+      this.$forceUpdate()
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
@@ -296,34 +253,45 @@ export default {
     checkSelect(data, index) {
       this.isShowEdit = true
       this.n = index;
-      this.FlowConfigList = data.flowDefInfoVoList;
-      this.FlowConfigList.forEach((item) => {
+      this.FlowConfigList=[]
+      this.FlowConfigList = JSON.parse(JSON.stringify(data.flowDefInfoVoList));
+      this.$forceUpdate()
+     
+      this.FlowConfigList.forEach((item,index) => {
         let { des, json, modelType, modelKey, processId } = item.flowProcDefRes;
         let processData = JSON.parse(json);
         item.list = processData.list;
-        item.type = "see";
+         console.log(item.list,'kkkkkkkkkkkkkkkkkkkk')
+        item.type = "edit";
         item.deptId = [];
+         item.modelKey=modelKey
         item.sysDeptList.forEach((i) => {
           item.deptId.push(i.deptId);
         });
+        item.flow=index
+        item.list.sysDeptList=item.deptId
         console.log(item.list, "this.FlowConfigthis.FlowConfigthis.FlowConfig");
       });
+      
     },
     detailData() {
       getDetailProcess(this.detailId).then((res) => {
         this.form = res.data;
         // this.type=res.data.flowInfoVoList
         this.FlowConfigList = res.data.flowInfoVoList[0].flowDefInfoVoList;
-        this.FlowConfigList.forEach((item) => {
-          let { des, json, modelType, modelKey, processId } =
-            item.flowProcDefRes;
+        this.FlowConfigList.forEach((item,index) => {
+          let { des, json, modelType, modelKey, processId } = item.flowProcDefRes;
           let processData = JSON.parse(json);
           item.list = processData.list;
-          item.type = "see";
+          item.type = "edit";
+          item.modelKey=modelKey;
           item.deptId = [];
           item.sysDeptList.forEach((i) => {
             item.deptId.push(i.deptId);
           });
+            item.flow=index
+            console.log(index,'aaaaaaaaaaaaaaaaaaaaaaa')
+          item.list.sysDeptList=item.deptId
           console.log(
             item.list,
             "this.FlowConfigthis.FlowConfigthis.FlowConfig"
@@ -386,6 +354,42 @@ export default {
         this.isShowAttribute = false;
       }
     },
+     //子组件触发
+  childClick(data){
+   this.$nextTick(()=>{
+     let dataList={
+      modelKey:data.modelKey,
+      modelDeployId:data.modelDeployId
+
+     }
+    const index = this.modelData.findIndex(v => {
+     return v.modelKey === dataList.modelKey
+    })
+    if (index === -1) {
+     this.modelData.push(dataList)
+    } else {
+     this.modelData.splice(index, 1, dataList)
+    }
+     console.log(this.modelData,'fffffff')
+    
+   })
+  },
+
+    //保存
+    sureSave(){
+      console.log(this.form,'this.form')
+      this.$nextTick(()=>{
+          console.log(this.$refs[this.m],'this.$refs')
+          console.log(this.m,'this.n')
+          console.log(this.$refs[this.m].getModelResult(),'this.$refs')
+        // console.log(this.$refs['0'].getModelResult(),'this.$refs')
+        // this.modelData.push(this.$refs[this.m][0].getModelResult())
+        //  console.log( this.modelData,' this.modelData')
+      })
+    
+      // let aa = this.$refs.flow.getModelResult();
+      // console.log(aa,'ssssssssssssssssssss')
+    }
   },
 };
 </script>
