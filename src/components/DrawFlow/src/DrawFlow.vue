@@ -84,6 +84,8 @@ export default {
         this.selfConfig.forEach(i => {
             if (i.id === this.currentNode.id) {
               i.nodeName = node.nodeName;
+              i.attribute =  node.attribute;
+              i.isAddLabel = node.isAddLabel;
               i.assignee = node.nodeName.replace(/\;/g,'');;
               i.processMultiInstanceUsers = node.processMultiInstanceUsers
               i.title = node.title

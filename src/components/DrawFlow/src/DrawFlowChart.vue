@@ -264,8 +264,10 @@ export default {
     // 改变某一个节点,并对节点进行验证
     nodeChange(params) {
       if(params.type == 'userTask'){
-        const { nodeName, processMultiInstanceUsers, title, rejectKey, completionCondition, userType,  sequential, className  } = params;
+        const { nodeName, attribute,processMultiInstanceUsers, title, rejectKey, completionCondition, userType,  sequential, className,isAddLabel  } = params;
         this.nodeData.nodeName = nodeName;
+        this.nodeData.attribute = attribute;
+         this.nodeData.isAddLabel = isAddLabel;
         this.nodeData.assignee = nodeName;
         this.nodeData.processMultiInstanceUsers = processMultiInstanceUsers;
         this.nodeData.title = title;

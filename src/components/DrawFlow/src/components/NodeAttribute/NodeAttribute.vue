@@ -9,6 +9,18 @@
               <el-form-item label="节点名称：" label-width="100px" prop="title">
                  <el-input v-model="form.title"></el-input>
               </el-form-item>
+               <el-form-item label="节点属性：" label-width="100px" prop="attribute">
+                <el-select  v-model="form.attribute"  placeholder="请选择">
+                    <el-option
+                      v-for="( item, index ) in attributeList"
+                      :key="index"
+                      :label="item.name"
+                      :value="item.id"
+                      >
+                      <span style="float: left">{{ item.name }}</span>
+                    </el-option>
+                  </el-select>   
+              </el-form-item>
               <el-form-item label="人员类型：" label-width="100px" prop="userType">
                  <template>
                   <el-radio-group v-model="form.userType" @change="changeType">
@@ -50,6 +62,14 @@
               <el-form-item v-if="form.type ==  2" label="类监听：" label-width="100px" prop="className">
                 <el-input v-model="form.className"></el-input>
               </el-form-item>
+               <el-form-item v-if="form.type == 2" label="是否加签" label-width="100px" prop="isAddLabel">
+                 <template>
+                  <el-radio-group v-model="form.isAddLabel">
+                    <el-radio  label="1">否</el-radio>
+                    <el-radio  label="2">是</el-radio>
+                  </el-radio-group>
+                </template>
+              </el-form-item>
             </el-col>
           </el-row>
         </el-form>
@@ -81,13 +101,14 @@
 </template>
 <script>
 import axios from 'axios'
-import { getUserListByType } from "@/api/assetManagement/assetManagementSet";
+import { getUserListByType,getdictListByType } from "@/api/assetManagement/assetManagementSet";
 export default {
   data() {
     return {
       type:'', // 传入的类型
       userList: [], // 人员列表选择
       backNodeList: [], // 可回退的节点
+       attributeList:[], // 节点属性
       form: {
         title: "", // 名称
         userType:'1',
@@ -96,7 +117,9 @@ export default {
         completionCondition:'', // 审核类型
         backId:'',
         type:'',
-        className:'' // 监听类目
+        className:'', // 监听类目
+         attribute:'', // 节点属性
+         isAddLabel: 1 // 是否可以加签
       },
       conform: {
           conTitle:'',
@@ -104,6 +127,7 @@ export default {
       },
       formRules: {
         title: [ {required: true, message: "请输入节点名称", trigger: "blur"}],
+         attribute: [ {required: true, message: "请选择节点属性", trigger: "blur"}],
         userType: [ {required: true, message: "请选择人员类型", trigger: "blur"}],
         userId: [ {required: true, message: "请选择人员", trigger: "blur"}],
         backId: [ {required: true, message: "请选择回退节点", trigger: "blur"}],
@@ -155,6 +179,8 @@ export default {
           backId = this.nodeData.rejectKey
         }
         this.form.userType = this.nodeData.userType || '1';
+        this.form.isAddLabel = this.nodeData.isAddLabel || '1';
+        this.form.attribute = this.nodeData.attribute;
         this.form.userId = this.nodeData.processMultiInstanceUsers;
         this.form.userName = this.nodeData.nodeName;
         this.form.title = this.nodeData.title;
@@ -165,6 +191,7 @@ export default {
         this.conform.conTitle = '';
         this.conform.condition = '';
         this.getUserList();
+        this.getAttributeList();
       }else {
         this.form.userId = '';
         this.form.userName = '';
@@ -192,23 +219,23 @@ export default {
           }
       })
     },
+     // 获取节点属性列表
+    getAttributeList(){
+      getdictListByType().then(res => {
+          if(res && res.data && res.code == 200){
+            this.attributeList = res.data
+            return false;
+          }
+      })
+      .then(err => {
+          console.log(err)
+      })
+    },
     changeType(){
       this.form.userName = ''
       this.form.userId = ''
       this.userList = []
       this.getUserList();
-    },
-    // 修改值
-    changeValue(value){
-        let nodeName = ""
-        for(let i = 0; i< value.length; i++){
-          this.userList.filter(( item )=> {
-            if(item.key == value[i] ){
-              nodeName = nodeName + item.name + ';'
-            }
-          })
-        }
-        this.form.userName = nodeName
     },
     // 修改
     change(value){
@@ -219,6 +246,18 @@ export default {
           that.form.userId = item.id
         }
       })
+    },
+     // 修改值
+    changeValue(value){
+        let nodeName = ""
+        for(let i = 0; i< value.length; i++){
+          this.userList.filter(( item )=> {
+            if(item.key == value[i] ){
+              nodeName = nodeName + item.name + ';'
+            }
+          })
+        }
+        this.form.userName = nodeName
     },
     // 获取可以回退的节点
     getBackNodeList(){
@@ -329,19 +368,21 @@ export default {
     },
     // 人物节点提交
     submitForm() {
+     let that =  this;
       let rejectKey = ''
-      if(this.form.backId = 'a78x4anxe'){
+      if(this.form.backId == 'a78x4anxe'){
           rejectKey = ''
       }else {
-          rejectKey == that.form.backId || ""
+          rejectKey = that.form.backId || ""
       }
-      let that =  this;
       this.$refs['form'].validate(valid => {
         if(!valid){  return false }
         let params = {
           title: that.form.title,
           type: that.nodeData.nodeType,
+          attribute: that.form.attribute, // 节点属性
           userType: that.form.userType,
+          isAddLabel: that.form.isAddLabel,
           processMultiInstanceUsers: that.form.userId,
           nodeName: that.form.userName,
           rejectKey: rejectKey, // 当前节点看看是否需要回退的部分

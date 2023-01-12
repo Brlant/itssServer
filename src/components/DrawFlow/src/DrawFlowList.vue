@@ -51,7 +51,7 @@
             <DrawFlowChart :flowId="flowId" :flowType="flowType" @setFlowChart="setFlowChart"></DrawFlowChart>
         </div>
         <div v-if="isShowCheck">
-            <DrawFlowCheck :params="params"></DrawFlowCheck>
+            <DrawFlowCheck :params="params" :isCustomcheck="isCustomcheck"></DrawFlowCheck>
         </div>
     </div>
 </template>
@@ -84,6 +84,12 @@ import axios from 'axios'
             return false;
           }
       },
+        isCustomcheck: {
+        type: Boolean,
+          default() {
+            return false;
+          }
+      },
       params: {
         type: Object,
           default() {
@@ -93,6 +99,10 @@ import axios from 'axios'
     },
     watch: {
       isShowCheck: {
+        handler() {},
+        deep: true
+      },
+        isCustomcheck: {
         handler() {},
         deep: true
       },

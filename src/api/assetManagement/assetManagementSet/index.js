@@ -112,6 +112,12 @@ export function getTypeData() {
       method: 'get'
     })
   }
+  export function getdictListByType() {
+    return request({
+      url: 'flowable/flowable/task/findBizDict',
+      method: 'get'
+    })
+  }
   //发布模型
   export function deployModel(data) {
     return request({

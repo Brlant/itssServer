@@ -16,8 +16,8 @@
           :scaleVal="scaleVal"
         ></FactoryDrawFlow>
       </div>
-
-      <div class="examine">
+ <div class="examine" v-if="isCustomcheck"><slot></slot></div>
+      <div class="examine" v-if="!isCustomcheck">
           <div>
             <h4>审核历史</h4>
             <el-timeline :reverse="reverse">
@@ -81,6 +81,8 @@ export default {
             5: "转办",
             6: "终止",
             7: "抄送",
+            8: "向前加签",
+            9: "向后加签",
         },
         scaleVal: 100, // 流程图缩放比例 100%
         step: 5, // 缩放步长
@@ -97,9 +99,21 @@ export default {
                 return {};
             }
         },
+         isCustomcheck: {
+            type: Boolean,
+            default() {
+                return {};
+            }
+        },
     },
     watch: {
         params: {
+            handler() {
+                this.init();
+            },
+            deep: true
+        },
+          isCustomcheck: {
             handler() {
                 this.init();
             },
