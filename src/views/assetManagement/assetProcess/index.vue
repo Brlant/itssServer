@@ -161,42 +161,54 @@
     </div>
     <div style="margin-top: 20px;background:#ffffff;padding:5px;">
       <el-table :data="processData" @row-click="getDetail">
-        <el-table-column label="流程ID" align="center" prop="id">
+        <el-table-column label="流程ID" align="center" prop="FLOW_ID">
+            <template slot-scope="scope">
+            {{scope.row.procVars.FLOW_ID}}
+          </template>
         </el-table-column>
 
-        <el-table-column label="流程类型" align="center" prop="assetTypeList">
-        </el-table-column>
-        <el-table-column label="流程组名称" align="center" prop="id">
-        </el-table-column>
-        <el-table-column label="申请人" align="center" prop="assetTypeList">
-        </el-table-column>
-        <el-table-column label="发起时间" align="center" prop="assetTypeList">
-        </el-table-column>
-        <el-table-column label="资产类型" align="center" prop="assetTypeList">
+         <el-table-column label="流程类型" align="center" prop="CATEGORY_NAME">
           <template slot-scope="scope">
-            <span
-              v-for="(item, index) in scope.row.assetTypeList"
-              :key="index"
-              >{{ item.typeName + "；" }}</span
-            >
+            {{scope.row.procVars.CATEGORY_NAME}}
+          </template>
+        </el-table-column>
+        
+        <el-table-column label="流程组名称" align="center" prop="FLOWGROUP_NAME">
+           <template slot-scope="scope">
+            {{scope.row.procVars.FLOWGROUP_NAME}}
+          </template>
+        </el-table-column>
+        <el-table-column label="申请人" align="center" prop="APPLICANT_NAME">
+          <template slot-scope="scope">
+            {{scope.row.procVars.APPLICANT_NAME}}
+          </template>
+        </el-table-column>
+        <el-table-column label="发起时间" align="center" prop="APPLY_TIME">
+              <template slot-scope="scope">
+            {{scope.row.procVars.APPLY_TIME}}
+          </template>
+        </el-table-column>
+        <el-table-column label="资产类型" align="center" prop="ASSET_TYPE_NAME">
+          <template slot-scope="scope">
+            {{scope.row.procVars.ASSET_TYPE_NAME}}
           </template>
         </el-table-column>
         <el-table-column
           label="资产编号&amp;名称"
           align="center"
-          prop="updateTime"
+          prop="processName"
         >
-          <template slot-scope="scope">
-            <span>{{ scope.row.assetcode[0].typeName }}</span>
-            <span v-if="scope.row.assetcode.length > 1">
+          <template slot-scope="scope" v-if='scope.row.procVars.processName'>
+            <span>{{ scope.row.procVars.processName[0] }}</span>
+            <span v-if="scope.row.procVars.processName.length > 1">
               <span>
                 <el-popover placement="bottom" width="400" trigger="click">
                   <div
-                    v-for="(item, index) in scope.row.assetcode"
+                    v-for="(item, index) in scope.row.procVars.processName"
                     :key="index"
                     style="height: 40px; border-bottom: 1px solid #ebeff3;line-height:40px;"
                   >
-                    {{ item.typeName }}
+                    {{ item }}
                   </div>
                   <span
                     slot="reference"
@@ -209,9 +221,15 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="数量" align="center" prop="ruleName">
+        <el-table-column label="数量" align="center" prop="AMOUNT">
+           <template slot-scope="scope">
+            {{scope.row.procVars.AMOUNT}}
+          </template>
         </el-table-column>
-        <el-table-column label="状态" align="center" prop="ruleName">
+        <el-table-column label="状态" align="center" prop="STATUS">
+            <template slot-scope="scope">
+            {{formateStutas(scope.row.procVars.STATUS)}}
+          </template>
         </el-table-column>
         <el-table-column
           label="操作"
@@ -257,15 +275,28 @@
           </template>
         </el-table-column>
       </el-table>
+       <pagination
+     v-show="total > 0"
+     :total="total"
+     :page.sync="page.pageNum"
+     :limit.sync="page.pageSize"
+     @pagination="initData"
+    />
     </div>
   </div>
 </template>
 <script>
+import { getPendingList, getProcessedList } from "@/api/assetManagement/assetProcess";
 export default {
   components: {},
   props: [],
   data() {
     return {
+      page:{
+        pageSize: 10,
+        pageNum: 1,
+      },
+      total:0,
       m: 0,
       //是否展示筛选条件
       showSelect: false,
@@ -277,7 +308,7 @@ export default {
         field105: undefined,
       },
       processData: [
-        { assetcode: [{ typeName: "aaaa" }, { typeName: "bbbb" }] },
+       
       ],
       //表单校验
       rules: {
@@ -334,6 +365,18 @@ export default {
   created() {},
   mounted() {},
   methods: {
+    formateStutas(item){
+      let value=''
+      if(item==1){
+        value='申请中'
+      }else if(item==2){
+        value='已完成'
+      }else{
+        value='已取消'
+      }
+      return value
+    },
+    //切换选项
     submitForm() {
       this.$refs["elForm"].validate((valid) => {
         if (!valid) return;
@@ -349,7 +392,94 @@ export default {
     },
     checkActive(index) {
       this.m = index;
+      this.initData(index)
     },
+    initData(index){
+      if(index==3){
+        this.pendingList()
+      }else if(index==4){
+        this.getProcessed()
+      }
+    },
+    //未处理
+    pendingList(){
+      let paramas={
+          pageNum:this.page.pageNum,
+          pageSize:this.page.pageSize,
+          // userId:this.$store.state.user.user.userId,
+          userId:4
+      }
+      getPendingList(paramas).then(res=>{
+        if(res.code==200){
+          this.processData=res.data.data
+          console.log(this.processData,'this.processData')
+          this.total=res.data.total
+          this.processData.forEach(item=>{
+            let array=[]
+            let no=[]
+            let name=[]
+            if(item.procVars.ASSET_NO ){
+               no=item.procVars.ASSET_NO.split(',')
+            console.log(no,'no')
+            }
+            if(item.procVars.ASSET_NAME ){
+               name=item.procVars.ASSET_NAME.split(',')
+            console.log(no,'ASSET_NAME')
+            no.forEach((i,index)=>{
+              let ss=i+'-'+name[index]
+              array.push(ss)
+               this.$set(item.procVars,'processName',array)
+            })
+            console.log(array,'array')
+           
+            //  this.processData.procVars.processName=array
+            }
+            console.log(this.processData,'this.processData')
+          })
+        }
+      })
+
+    },
+    //已处理
+    getProcessed(){
+       let paramas={
+          pageNum:this.page.pageNum,
+          pageSize:this.page.pageSize,
+          // userId:this.$store.state.user.user.userId,
+          userId:4
+      }
+      getProcessedList(paramas).then(res=>{
+        if(res.code==200){
+          this.processData=res.data.data
+          console.log(this.processData,'this.processData')
+          this.total=res.data.total
+          this.processData.forEach(item=>{
+            let array=[]
+            let no=[]
+            let name=[]
+            if(item.procVars.ASSET_NO ){
+               no=item.procVars.ASSET_NO.split(',')
+            console.log(no,'no')
+            }
+            if(item.procVars.ASSET_NAME ){
+               name=item.procVars.ASSET_NAME.split(',')
+            console.log(no,'ASSET_NAME')
+            no.forEach((i,index)=>{
+              let ss=i+'-'+name[index]
+              array.push(ss)
+               this.$set(item.procVars,'processName',array)
+            })
+            console.log(array,'array')
+           
+            //  this.processData.procVars.processName=array
+            }
+            console.log(this.processData,'this.processData')
+          })
+        }
+      })
+    },
+
+
     //详情
     detail(data){
        const obj = {

@@ -448,19 +448,19 @@ export default {
 
         this.FlowConfigListCopy[this.m].sysDeptList = sysDeptList;
 
-        this.params = {
-          groupName: this.form.groupName,
-          groupDescription: this.form.groupDescription,
-          groupSetting: null,
-          id: this.$route.query.detailId,
-          flowInfoVoList: [
-            {
-              flowTypeId: this.checkIndex,
-              flowTypeName: this.checkName,
-              flowDefInfoVoList: this.FlowConfigListCopy,
-            },
-          ],
-        };
+        // this.params = {
+        //   groupName: this.form.groupName,
+        //   groupDescription: this.form.groupDescription,
+        //   groupSetting: null,
+        //   id: this.$route.query.detailId,
+        //   flowInfoVoList: [
+        //     {
+        //       flowTypeId: this.checkIndex,
+        //       flowTypeName: this.checkName,
+        //       flowDefInfoVoList: this.FlowConfigListCopy,
+        //     },
+        //   ],
+        // };
       });
     },
     //子组件触发
@@ -482,7 +482,30 @@ export default {
        
         // this.FlowConfigList[this.m].
         this.FlowConfigListCopy[this.m].sysDeptList = sysDeptList;
-        this.params = {
+        // this.params = {
+        //   groupName: this.form.groupName,
+        //   groupDescription: this.form.groupDescription,
+        //   groupSetting: null,
+        //   id: this.$route.query.detailId,
+        //   flowInfoVoList: [
+        //     {
+        //       flowTypeId: this.checkIndex,
+        //       flowTypeName: this.checkName,
+        //       flowDefInfoVoList: this.FlowConfigListCopy,
+        //     },
+        //   ],
+        // };
+      });
+    },
+    del(i){
+      this.FlowConfigList.splice(i,1)
+      this.FlowConfigListCopy.splice(i,1)
+      console.log(this.FlowConfigList,' this.FlowConfigList.splice(i,1)')
+    },
+    //保存
+    sureSave() {
+      console.log(this.params, " this.params");
+  this.params = {
           groupName: this.form.groupName,
           groupDescription: this.form.groupDescription,
           groupSetting: null,
@@ -495,17 +518,6 @@ export default {
             },
           ],
         };
-      });
-    },
-    del(i){
-      this.FlowConfigList.splice(i,1)
-      this.FlowConfigListCopy.splice(i,1)
-      console.log(this.FlowConfigList,' this.FlowConfigList.splice(i,1)')
-    },
-    //保存
-    sureSave() {
-      console.log(this.params, " this.params");
- 
       editGroup(this.params).then((res) => {
         if (res.code == 200) {
           this.$message.success('操作成功')
