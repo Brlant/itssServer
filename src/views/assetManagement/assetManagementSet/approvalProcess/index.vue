@@ -5,38 +5,23 @@
       <div style="color: #1c6cf7" @click="add">+添加</div>
     </div>
     <el-table :data="processData">
-      <el-table-column 
-        label="流程组ID" 
-        align="center" 
-        prop="id" />
-      <el-table-column 
-        label="流程组名称" 
-        align="center" 
-        prop="groupName" />
+      <el-table-column label="流程组ID" align="center" prop="id" />
+      <el-table-column label="流程组名称" align="center" prop="groupName" />
       <el-table-column
         label="适用范围描述"
         align="center"
         prop="groupDescription"
       />
-      <el-table-column 
-        label="适用资产类型" 
-        align="center" 
-        prop="assetTypeList">
+      <el-table-column label="适用资产类型" align="center" prop="assetTypeList">
         <template slot-scope="scope">
           <span v-for="(item, index) in scope.row.assetTypeList" :key="index">{{
             item.typeName + "；"
           }}</span>
         </template>
       </el-table-column>
-      <el-table-column 
-        label="上次修改时间" 
-        align="center" 
-        prop="updatorName">
+      <el-table-column label="上次修改时间" align="center" prop="updatorName">
       </el-table-column>
-      <el-table-column 
-        label="上次修改人" 
-        align="center" 
-        prop="updatorName">
+      <el-table-column label="上次修改人" align="center" prop="updatorName">
       </el-table-column>
       <el-table-column
         label="操作"
@@ -98,7 +83,11 @@
 </template>
 
 <script>
-import { getapprovalProcess,deleteGroup,isUserGroup } from "@/api/assetManagement/assetManagementSet";
+import {
+  getapprovalProcess,
+  deleteGroup,
+  isUserGroup,
+} from "@/api/assetManagement/assetManagementSet";
 export default {
   data() {
     return {
@@ -110,28 +99,30 @@ export default {
       total: 0,
     };
   },
-  created(){
-    this.getList()
+  created() {
+    this.getList();
   },
   methods: {
     getList() {
       getapprovalProcess(this.page).then((res) => {
-        this.processData=res.rows
-        this.total=res.total
+        this.processData = res.rows;
+        this.total = res.total;
       });
     },
     //添加
     add() {
       const obj = {
         path: "/assetManagement/assetManagementSet/process/addApprovalProcess",
+        query: { isCopy: 1 },
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
     //复制
-    copy() {
+    copy(data) {
       const obj = {
         path: "/assetManagement/assetManagementSet/process/addApprovalProcess",
+        query: { detailId: data.id, isCopy: 2 },
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
@@ -140,7 +131,7 @@ export default {
     detail(data) {
       const obj = {
         path: "/assetManagement/assetManagementSet/process/detailApprovalProcess",
-        query:{detailId:data.id}
+        query: { detailId: data.id },
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
@@ -149,24 +140,39 @@ export default {
     edit(data) {
       const obj = {
         path: "/assetManagement/assetManagementSet/process/editApprovalProcess",
-        query:{detailId:data.id}
+        query: { detailId: data.id },
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
     //停用启用
-    stopOrUse() {
-      isUserGroup().then(res=>{
-
-      })
+    stopOrUse(id, item) {
+      let data;
+      if (item == 0) {
+        data = {
+          id,
+          status: 0,
+        };
+      } else {
+        data = {
+          id,
+          status: 1,
+        };
+      }
+      isUserGroup(data).then((res) => {
+        if (res.code == 200) {
+          this.$message.success("操作成功");
+          this.getList();
+        }
+      });
     },
     //删除
     del(id) {
-      deleteGroup(id).then(res=>{
-        if(res.code==200){
-          this.$message.sucess("删除成功")
+      deleteGroup(id).then((res) => {
+        if (res.code == 200) {
+          this.$message.success("删除成功");
         }
-      })
+      });
     },
   },
 };

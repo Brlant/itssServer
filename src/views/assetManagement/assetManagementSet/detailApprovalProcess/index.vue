@@ -8,8 +8,8 @@
       <div>
         <el-button type="primary">复制并新建</el-button>
         <el-button type="primary">编辑</el-button>
-        <el-button>启用</el-button>
-        <el-button>停用</el-button>
+        <el-button v-if="form.status == 1">启用</el-button>
+        <el-button v-if="form.status == 0">停用</el-button>
       </div>
     </div>
     <div>

@@ -114,14 +114,15 @@
                   display: inline-block;
                   background: #e5e5e5;
                   margin-right: 10px;
-                  min-height: 580px;
+                  min-height: 820px;
                   height: 820px;
                   margin-top:20px;
                 "
                 @click="aa(index)"
               >
-               <el-button type='primary' @click='del(index)' style='float:right'>删除</el-button>
-                <DrawFlowChart
+               <el-button type='primary' @click.self='del(index)' style='z-index:1000'>删除</el-button>
+               <div >
+                  <DrawFlowChart
                   :flowData="item.list"
                   :flowType="item.type"
                   :groupGetCategory="n"
@@ -130,8 +131,7 @@
                   :modelKey="item.modelKey"
                   :deptId="item.deptId"
                 ></DrawFlowChart>
-               
-                <el-row>
+                  <el-row>
                   <el-col :span="12">
                     <el-form-item label="适用部门" prop="deptId">
                       <treeselect
@@ -146,6 +146,10 @@
                     </el-form-item>
                   </el-col>
                 </el-row>
+               </div>
+              
+               
+              
               </div>
               
             </div>
@@ -470,7 +474,7 @@ export default {
         this.FlowConfigListCopy[this.m].modelDeployId = data.modelDeployId;
         this.FlowConfigListCopy[this.m].modelKey = data.modelKey;
         console.log(this.FlowConfigListCopy, " this.FlowConfigList[this.m]");
-        if(this.FlowConfigListCopy[this.m].modelDeployId){
+        if(this.FlowConfigListCopy[this.m].modelDeployId && this.FlowConfigList[this.m].deptId){
            this.FlowConfigList[this.m].deptId.forEach((i) => {
           sysDeptList.push({ deptId: i });
         });
@@ -496,11 +500,12 @@ export default {
     del(i){
       this.FlowConfigList.splice(i,1)
       this.FlowConfigListCopy.splice(i,1)
+      console.log(this.FlowConfigList,' this.FlowConfigList.splice(i,1)')
     },
     //保存
     sureSave() {
       console.log(this.params, " this.params");
-     
+ 
       editGroup(this.params).then((res) => {
         if (res.code == 200) {
           this.$message.success('操作成功')
