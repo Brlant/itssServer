@@ -72,10 +72,36 @@ export function fileUpload(data) {
 }
 
 // 提交证书
-// 上传文件
 export function addCertificate(data) {
   return request({
     url: `/asset/assetCertificate/add`,
+    method: 'post',
+    data
+  })
+}
+
+// 保养列表
+export function maintainList(data) {
+  return request({
+    url: `/asset/assetMaintain/list`,
+    method: 'post',
+    data
+  })
+}
+
+// 提交保养
+export function addMaintain(data) {
+  return request({
+    url: `/asset/assetMaintain/add`,
+    method: 'post',
+    data
+  })
+}
+
+// 使用记录
+export function useRecord(data) {
+  return request({
+    url: `/asset/assetUseRecord/list`,
     method: 'post',
     data
   })

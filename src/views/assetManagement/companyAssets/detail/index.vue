@@ -168,11 +168,17 @@
         @change="change"
       />
       <div class="content">
+        <!-- 详细信息 -->
         <detail-info 
           v-if="tab === 0"
           :info="info"
           :list="list"
         />
+        <!-- 使用记录 -->
+        <use-record v-if="tab === 1" />
+        <!-- 保养记录 -->
+        <asset-maintain v-if="tab === 3" />
+        <!-- 证书记录 -->
         <asset-certificate v-if="tab === 4" />
       </div>
     </div>
@@ -187,12 +193,16 @@ import { detailInformation } from '../options'
 import EasyTabs from '@/components/EasyTabs'
 import DetailInfo from './DetailInfo'
 import AssetCertificate from './AssetCertificate'
+import AssetMaintain from './AssetMaintain'
+import UseRecord from './UseRecord'
 
 export default {
   components: {
     EasyTabs,
     DetailInfo,
-    AssetCertificate
+    AssetCertificate,
+    AssetMaintain,
+    UseRecord
   },
   data() {
     return {
