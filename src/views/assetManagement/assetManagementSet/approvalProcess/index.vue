@@ -19,7 +19,7 @@
           }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="上次修改时间" align="center" prop="updatorName">
+      <el-table-column label="上次修改时间" align="center" prop="updateTime">
       </el-table-column>
       <el-table-column label="上次修改人" align="center" prop="updatorName">
       </el-table-column>
