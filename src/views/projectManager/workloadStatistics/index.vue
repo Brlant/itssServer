@@ -217,14 +217,17 @@ export default {
     },
     created(){       
         console.log(this.$store.state.user.user.userId)    
-        this.queryUser() 
-        this.getDeptTree()   
+        // this.queryUser() 
+        // this.getDeptTree()   
         // this.drillDowm=this.isJurisdiction('common') ? false : true      
         // this.selfJurisdiction=this.isJurisdiction('common')
         // this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')
         if(this.isJurisdiction('workloadStatistics:stat:dept') || this.isJurisdiction('workloadStatistics:stat:all')){
             this.mangerJurisdiction=true
             this.drillDowm=true
+            // 普通角色不调用以下2个接口，否则会报无权限
+            this.queryUser() 
+            this.getDeptTree()
         }else if(this.isJurisdiction('workloadStatistics:stat:self')){
             this.drillDowm=false
             this.selfJurisdiction=true
