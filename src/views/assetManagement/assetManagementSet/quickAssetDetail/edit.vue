@@ -210,9 +210,6 @@ export default {
         assetTypeId: [
           { required: true, trigger: 'blur', message: '请选择资产类型' }
         ],
-        model: [
-          { required: true, trigger: 'blur', message: '请输入型号' }
-        ],
         afterTaxPrice: [
           { validator: checkNumber, trigger: 'blur' }
         ],

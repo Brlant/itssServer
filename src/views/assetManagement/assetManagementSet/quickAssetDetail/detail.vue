@@ -41,7 +41,6 @@
           </el-col>
           <el-col :span="span">
             <div class="item">
-              <span class="star">*</span>
               <span class="label">型号：</span>
               <span class="value">{{ info.model }}</span>
             </div>

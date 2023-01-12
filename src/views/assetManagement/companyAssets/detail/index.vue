@@ -24,6 +24,9 @@
       </div>
     </header>
     <div class="main">
+      <span class="status">
+        {{ $route.query.status }}
+      </span>
       <div class="section">
         <div class="heading">
           <span class="bar"></span>
@@ -176,6 +179,8 @@
         />
         <!-- 使用记录 -->
         <use-record v-if="tab === 1" />
+        <!-- 维修记录 -->
+        <maintain-record v-if="tab === 2" />
         <!-- 保养记录 -->
         <asset-maintain v-if="tab === 3" />
         <!-- 证书记录 -->
@@ -195,6 +200,7 @@ import DetailInfo from './DetailInfo'
 import AssetCertificate from './AssetCertificate'
 import AssetMaintain from './AssetMaintain'
 import UseRecord from './UseRecord'
+import MaintainRecord from './MaintainRecord'
 
 export default {
   components: {
@@ -202,7 +208,8 @@ export default {
     DetailInfo,
     AssetCertificate,
     AssetMaintain,
-    UseRecord
+    UseRecord,
+    MaintainRecord
   },
   data() {
     return {
@@ -286,6 +293,14 @@ export default {
     background: #fff;
     padding: 10px;
     font-size: 14px;
+    position: relative;
+    .status {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      font-size: 15px;
+      color: #67c23a;
+    }
     .item {
       padding: 10px;
       .star {

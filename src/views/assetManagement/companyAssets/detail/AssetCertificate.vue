@@ -21,7 +21,7 @@
         </p>
       </el-timeline-item>
     </el-timeline>
-    <div v-else>
+    <div v-else style="font-size: 14px">
       暂无证书记录
     </div>
     <div class="btn">

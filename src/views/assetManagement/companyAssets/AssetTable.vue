@@ -129,7 +129,8 @@ export default {
       this.$router.push({
         path: '/assetManagement/companyAssets/companyAssets-auth/detail',
         query: {
-          id: row.id
+          id: row.id,
+          status: this.statusFormatter(row)
         }
       })
     },

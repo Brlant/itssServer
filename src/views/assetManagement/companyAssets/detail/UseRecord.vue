@@ -14,7 +14,7 @@
                 v-if="activity.businessType != 7"
                 style="font-size:12px;color:#ccc;font-weight:200"
               >
-              {{ "流程Id:" + activity.flowId }}
+                {{ "流程Id:" + activity.flowId }}
               </span>
           </p>
           <p
@@ -43,7 +43,7 @@
         </div>
       </el-timeline-item>
     </el-timeline>
-    <div v-else>
+    <div v-else style="font-size: 14px">
       暂无使用记录
     </div>
   </div>

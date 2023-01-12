@@ -106,3 +106,12 @@ export function useRecord(data) {
     data
   })
 }
+
+// 维修记录
+export function maintainRecord(data) {
+  return request({
+    url: `/asset/assetMaintenanceRecord/list`,
+    method: 'post',
+    data
+  })
+}

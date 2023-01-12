@@ -1,5 +1,5 @@
 <template>
-  <div class="certificate">
+  <div class="maintain">
     <el-timeline v-if="list.length">
       <el-timeline-item
         v-for="(item, index) in list"
@@ -21,7 +21,7 @@
         </p>
       </el-timeline-item>
     </el-timeline>
-    <div v-else>
+    <div v-else style="font-size: 14px">
       暂无保养记录
     </div>
     <div class="btn">
@@ -198,7 +198,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.certificate {
+.maintain {
   position: relative;
   .link {
     cursor: pointer;
