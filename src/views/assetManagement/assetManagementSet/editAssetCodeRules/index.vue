@@ -100,8 +100,10 @@
               v-if="item.type != 1 && item.type != 5"
               :label="item.label"
               label-width="120px"
+            
             >
               <el-input
+                v-if='item.ruleLable &&  item.ruleLable.label'
                 v-model="item.ruleLable.label"
                 placeholder="请输入"
                 disabled
@@ -391,6 +393,7 @@ export default {
   watch: {},
   created() {
     this.ruleForm = this.$route.query.detailData;
+    
     let pushAssetType = [];
     this.$route.query.detailData.assetTypeList.forEach((item) =>
       pushAssetType.push(item.id)

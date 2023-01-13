@@ -116,44 +116,44 @@
                   margin-right: 10px;
                   min-height: 820px;
                   height: 820px;
-                  margin-top:20px;
+                  margin-top: 20px;
                 "
                 @click="aa(index)"
               >
-               <el-button type='primary' @click.self='del(index)' style='z-index:1000'>删除</el-button>
-               <div >
+                <el-button
+                  type="primary"
+                  @click.self="del(index)"
+                  style="z-index: 1000"
+                  >删除</el-button
+                >
+                <div>
                   <DrawFlowChart
-                  :flowData="item.list"
-                  :flowType="item.type"
-                  :groupGetCategory="n"
-                  :ref="item.flow"
-                  @childClick="childClick"
-                  :modelKey="item.modelKey"
-                  :deptId="item.deptId"
-                ></DrawFlowChart>
+                    :flowData="item.list"
+                    :flowType="item.type"
+                    :groupGetCategory="n"
+                    :ref="item.flow"
+                    @childClick="childClick"
+                    :modelKey="item.modelKey"
+                    :deptId="item.deptId"
+                  ></DrawFlowChart>
                   <el-row>
-                  <el-col :span="12">
-                    <el-form-item label="适用部门" prop="deptId">
-                      <treeselect
-                        multiple
-                        @input="searchDept(item.deptId)"
-                        @change="searchDept(item.deptId)"
-                        v-model="item.deptId"
-                        :options="deptOptions"
-                        :show-count="true"
-                        placeholder="请选择适用部门"
-                      />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-               </div>
-              
-               
-              
+                    <el-col :span="12">
+                      <el-form-item label="适用部门" prop="deptId">
+                        <treeselect
+                          multiple
+                          @input="searchDept(item.deptId, index)"
+                          v-model="item.deptId"
+                          :options="deptOptions"
+                          :show-count="true"
+                          placeholder="请选择适用部门"
+                        />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </div>
               </div>
-              
             </div>
-            <el-button type='text' @click="add">+添加审批流程</el-button>
+            <el-button type="text" @click="add">+添加审批流程</el-button>
           </div>
         </el-form>
       </div>
@@ -206,7 +206,7 @@ export default {
       ],
       isShowEdit: true,
       form: {},
-      n:1,
+      n: 1,
       m: 0,
       checkIndex: "",
       chenckName: "",
@@ -214,7 +214,8 @@ export default {
       editData: {},
       //模型数据
       modelData: [],
-      deptIds:[],
+      flowInfoVoListCopy: [],
+      deptIds: [],
       //部门名称
       deptId: null,
       deptOptions: [],
@@ -272,29 +273,29 @@ export default {
     add() {
       this.FlowConfigListCopy.push({
         modelDeployId: "",
-        modelKey:'',
-        sysDeptList:[],
-        modelDefinition:{}
-      })
-      this.FlowConfigList.push( {
-          list: [
-            {
-              id: "a78x4anxe",
-              groupId: null,
-              pids: [null],
-              groupPid: null,
-              groupId: null,
-              type: "1",
-              title: "发起人",
-              nodeName: "发起人",
-              nodeType: "userTask",
-              assignee: "${INITIATOR}",
-              oiginator: true,
-              isRow: true,
-              isRoot: true,
-            },
-          ],
-        },)
+        modelKey: "",
+        sysDeptList: [],
+        modelDefinition: {},
+      });
+      this.FlowConfigList.push({
+        list: [
+          {
+            id: "a78x4anxe",
+            groupId: null,
+            pids: [null],
+            groupPid: null,
+            groupId: null,
+            type: "1",
+            title: "发起人",
+            nodeName: "发起人",
+            nodeType: "userTask",
+            assignee: "${INITIATOR}",
+            oiginator: true,
+            isRow: true,
+            isRoot: true,
+          },
+        ],
+      });
     },
     //编辑按钮
     editProcess(data, index) {
@@ -316,12 +317,16 @@ export default {
       this.checkIndex = data.flowTypeId;
       this.checkName = data.flowTypeName;
       this.n = index;
-      console.log(this.n,'this.n')
-      this.FlowConfigList = [];
+      console.log(this.n, "this.n");
+      // this.FlowConfigList = [];
       this.FlowConfigList = JSON.parse(JSON.stringify(data.flowDefInfoVoList));
+      console.log(
+        this.FlowConfigList,
+        " this.FlowConfigList this.FlowConfigList"
+      );
       this.$forceUpdate();
       this.FlowConfigListCopy = this.deepClone(this.FlowConfigList);
-      console.log(this.FlowConfigListCopy,',,,,,,,,,,,,')
+      console.log(this.FlowConfigListCopy, ",,,,,,,,,,,,");
       this.FlowConfigList.forEach((item, index) => {
         let { des, json, modelType, modelKey, processId } = item.flowProcDefRes;
         let processData = JSON.parse(json);
@@ -341,12 +346,15 @@ export default {
     detailData() {
       getDetailProcess(this.detailId).then((res) => {
         this.form = res.data;
+        this.flowInfoVoListCopy = this.deepClone(res.data.flowInfoVoList);
         // this.type=res.data.flowInfoVoList
         this.checkIndex = res.data.flowInfoVoList[0].flowTypeId;
         this.checkName = res.data.flowInfoVoList[0].flowTypeName;
-        this.FlowConfigList = this.deepClone(res.data.flowInfoVoList[0].flowDefInfoVoList);
+        this.FlowConfigList = this.deepClone(
+          res.data.flowInfoVoList[0].flowDefInfoVoList
+        );
         // console.log(this.FlowConfigList,'this.FlowConfigList')
-        this.FlowConfigListCopy = res.data.flowInfoVoList[0].flowDefInfoVoList
+        this.FlowConfigListCopy = res.data.flowInfoVoList[0].flowDefInfoVoList;
         // console.log( this.FlowConfigListCopy, "this.FlowConfigListCopy");
         this.FlowConfigList.forEach((item, index) => {
           let { des, json, modelType, modelKey, processId } =
@@ -424,45 +432,35 @@ export default {
         this.isShowAttribute = false;
       }
     },
-    searchDept(item) {
-      this.deptIds=item
+    searchDept(item, index) {
+      // console.log( this.FlowConfigListCopy[this.m],'sysDeptList')
+      this.m = index;
+      this.deptIds = item;
       console.log("this.FlowConfigListCopy", this.FlowConfigListCopy);
-      console.log(!this.dataCopy,'this.dataCopy')
-      this.$nextTick(() => {
+      console.log(!this.dataCopy, "this.dataCopy");
+
+      console.log(111);
+
+      // this.FlowConfigList[this.m].deptId = item;
+      //   console.log(this.FlowConfigList[this.m],'this.FlowConfigList[this.m]')
+      // this.FlowConfigList[this.m].deptId.forEach((i) => {
+      //   sysDeptList.push({ deptId: i });
+      // });
+
+      if (this.FlowConfigListCopy[this.m]) {
         let sysDeptList = [];
-       
-       
-        // if(this.dataCopy){
-        //   console.log(this.m, ",,,,,,");
-        //   this.FlowConfigListCopy[this.m].modelDeployId =
-        //   this.dataCopy.modelDeployId;
-        // this.FlowConfigListCopy[this.m].modelKey = this.dataCopy.modelKey;
-        // console.log(this.FlowConfigListCopy, " this.FlowConfigList[this.m]");
-        // }else{
-        
-        // }
-      
-        this.FlowConfigList[this.m].deptId = item;
-        this.FlowConfigList[this.m].deptId.forEach((i) => {
+        item.forEach((i) => {
           sysDeptList.push({ deptId: i });
         });
-        
         this.FlowConfigListCopy[this.m].sysDeptList = sysDeptList;
+        console.log(
+          this.FlowConfigListCopy[this.m].sysDeptList,
+          "this.FlowConfigListCopy[this.m].sysDeptList"
+        );
+      }
 
-        // this.params = {
-        //   groupName: this.form.groupName,
-        //   groupDescription: this.form.groupDescription,
-        //   groupSetting: null,
-        //   id: this.$route.query.detailId,
-        //   flowInfoVoList: [
-        //     {
-        //       flowTypeId: this.checkIndex,
-        //       flowTypeName: this.checkName,
-        //       flowDefInfoVoList: this.FlowConfigListCopy,
-        //     },
-        //   ],
-        // };
-      });
+      this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
+        this.FlowConfigListCopy;
     },
     //子组件触发
     childClick(data) {
@@ -472,87 +470,68 @@ export default {
         // console.log(this.FlowConfigListCopy, "this.FlowConfigListCopy");
         console.log(this.m, ",,,,,,");
         // 当流程定义没有修改时 modelDeployId 保持原样
-      if(this.FlowConfigListCopy && this.FlowConfigListCopy[this.m] && this.FlowConfigListCopy[this.m].modelDefinition){
-            if(JSON.stringify(this.FlowConfigListCopy[this.m].modelDefinition) != JSON.stringify(data.modelDefinition)){
-             this.FlowConfigListCopy[this.m].modelDeployId = '';
+        if (
+          this.FlowConfigListCopy &&
+          this.FlowConfigListCopy[this.m] &&
+          this.FlowConfigListCopy[this.m].modelDefinition
+        ) {
+          if (
+            JSON.stringify(this.FlowConfigListCopy[this.m].modelDefinition) !=
+            JSON.stringify(data.modelDefinition)
+          ) {
+            this.FlowConfigListCopy[this.m].modelDeployId = "";
+          }
+        } else {
+          this.FlowConfigListCopy[this.m].modelDeployId = "";
         }
-      }else{
-        this.FlowConfigListCopy[this.m].modelDeployId = '';
-      }
-      
-     
-        // this.FlowConfigListCopy[this.m].modelKey = data.modelKey;
-        // console.log(this.FlowConfigListCopy, " this.FlowConfigList[this.m]");
-        // if(this.FlowConfigListCopy[this.m].modelDeployId && this.FlowConfigList[this.m].deptId){
-        //    this.FlowConfigList[this.m].deptId.forEach((i) => {
-        //   sysDeptList.push({ deptId: i });
-        // });
-        // }
-       
-        // this.FlowConfigList[this.m].
-        if(this.deptIds){
+        if (this.deptIds) {
           this.deptIds.forEach((i) => {
-          sysDeptList.push({ deptId: i });
-          })
+            sysDeptList.push({ deptId: i });
+          });
         }
         this.FlowConfigListCopy[this.m].sysDeptList = sysDeptList;
         this.FlowConfigListCopy[this.m].modelDefinition = data.modelDefinition;
-        // this.params = {
-        //   groupName: this.form.groupName,
-        //   groupDescription: this.form.groupDescription,
-        //   groupSetting: null,
-        //   id: this.$route.query.detailId,
-        //   flowInfoVoList: [
-        //     {
-        //       flowTypeId: this.checkIndex,
-        //       flowTypeName: this.checkName,
-        //       flowDefInfoVoList: this.FlowConfigListCopy,
-        //     },
-        //   ],
-        // };
+        this.flowInfoVoListCopy[this.n - 1].flowTypeId = this.checkIndex;
+        this.flowInfoVoListCopy[this.n - 1].flowTypeName = this.checkName;
+        this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
+          this.FlowConfigListCopy;
       });
     },
-    del(i){
-      this.FlowConfigList.splice(i,1)
-      this.FlowConfigListCopy.splice(i,1)
-      console.log(this.FlowConfigList,' this.FlowConfigList.splice(i,1)')
+    del(i) {
+      this.FlowConfigList.splice(i, 1);
+      this.FlowConfigListCopy.splice(i, 1);
+      console.log(this.FlowConfigList, " this.FlowConfigList.splice(i,1)");
     },
     //保存
     sureSave() {
-    
-  this.params = {
-          groupName: this.form.groupName,
-          groupDescription: this.form.groupDescription,
-          groupSetting: null,
-          id: this.$route.query.detailId,
-          flowInfoVoList: [
-            {
-              flowTypeId: this.checkIndex,
-              flowTypeName: this.checkName,
-              flowDefInfoVoList: this.FlowConfigListCopy,
-            },
-          ],
-        };
-          console.log(this.params, " this.params");
-      
+      this.params = {
+        groupName: this.form.groupName,
+        groupDescription: this.form.groupDescription,
+        groupSetting: null,
+        id: this.$route.query.detailId,
+        // flowInfoVoList: [
+        //   {
+        //     flowTypeId: this.checkIndex,
+        //     flowTypeName: this.checkName,
+        //     flowDefInfoVoList: this.FlowConfigListCopy,
+        //   },
+        // ],
+        flowInfoVoList: this.flowInfoVoListCopy,
+      };
+      console.log(this.params, " this.params");
+      // return
       editGroup(this.params).then((res) => {
         if (res.code == 200) {
-          this.$message.success('操作成功')
-          this.detailData();
+          this.n = 1;
+          this.$message.success("操作成功");
+          // this.detailData();
+          const obj = {
+            path: "/assetManagement/assetManagementSet/approvalProcess",
+          };
+          // getToday()
+          this.$tab.closeOpenPage(obj);
         }
       });
-      //   console.log(this.form,'this.form')
-      //   this.dataList.sysDeptList=this.FlowConfigList[this.m].deptId
-      //   console.log()
-      //    const index = this.modelData.findIndex(v => {
-      //  return v.modelKey === this.dataList.modelKey
-      // })
-      // if (index === -1) {
-      //  this.modelData.push(this.dataList)
-      // } else {
-      //  this.modelData.splice(index, 1, this.dataList)
-      // }
-      //   console.log('cccc',this.modelData)
     },
   },
 };

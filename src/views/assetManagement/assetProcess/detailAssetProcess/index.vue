@@ -3,7 +3,7 @@
     <div class="process-title">
       <div style="font-size: 18px">
         <i class="el-icon-arrow-left"></i>
-        <span>资产申领</span>
+        <span>{{detailDataList.procVars.CATEGORY_NAME}}</span>
       </div>
       <div>
         <el-button type="primary">全部同意</el-button>
@@ -16,61 +16,55 @@
         <span class="title-name">规则描述</span>
       </div>
       <div>
-        <span> 
-            资产数量：33
-        </span>
-        <span> 
-            申请人：qq
-        </span>
-        <span>
-            申请日期：2022
-        </span>
-        <span> 
-            审批状态
-        </span>
+        <span> 资产数量：33 </span>
+        <span> 申请人：qq </span>
+        <span> 申请日期：2022 </span>
+        <span> 审批状态 </span>
       </div>
     </div>
-     <el-table :data="detailAssetData">
-        <el-table-column label="流程ID" align="center" prop="id">
-        </el-table-column>
+    <el-table :data="detailAssetData">
+      <el-table-column label="流程ID" align="center" prop="id">
+      </el-table-column>
 
-        <el-table-column label="资产类型" align="center" prop="assetTypeList">
-        </el-table-column>
-        <el-table-column
-          label="资产编号&amp;名称"
-          align="center"
-          prop="updateTime"
-        />
-        <el-table-column label="资产编号" align="center" prop="updatorName">
-        </el-table-column>
-        <el-table-column label="资产名称" align="center" prop="ruleName">
-        </el-table-column>
-        <el-table-column label="品牌" align="center" prop="ruleName">
-        </el-table-column>
-        <el-table-column label="型号" align="center" prop="updatorName">
-        </el-table-column>
-        <el-table-column label="保修期" align="center" prop="ruleName">
-        </el-table-column>
-        <el-table-column label="数量" align="center" prop="ruleName">
-        </el-table-column>
-        <el-table-column label="存放地点" align="center" prop="ruleName">
-        </el-table-column>
-        <el-table-column label="归属部门" align="center" prop="remark">
-        </el-table-column>
-          <el-table-column
-          label="操作"
-          align="center"
-          width="160"
-          class-name="small-padding fixed-width"
-        >
-          <template slot-scope="scope">
-            <span style="margin-left: 10px">
-              <el-button size="mini" type="text" @click='see(scope.row)'>查看</el-button>
-            </span>
-             <!-- <span style="margin-left: 10px">
+      <el-table-column label="资产类型" align="center" prop="assetTypeList">
+      </el-table-column>
+      <el-table-column
+        label="资产编号&amp;名称"
+        align="center"
+        prop="updateTime"
+      />
+      <el-table-column label="资产编号" align="center" prop="updatorName">
+      </el-table-column>
+      <el-table-column label="资产名称" align="center" prop="ruleName">
+      </el-table-column>
+      <el-table-column label="品牌" align="center" prop="ruleName">
+      </el-table-column>
+      <el-table-column label="型号" align="center" prop="updatorName">
+      </el-table-column>
+      <el-table-column label="保修期" align="center" prop="ruleName">
+      </el-table-column>
+      <el-table-column label="数量" align="center" prop="ruleName">
+      </el-table-column>
+      <el-table-column label="存放地点" align="center" prop="ruleName">
+      </el-table-column>
+      <el-table-column label="归属部门" align="center" prop="remark">
+      </el-table-column>
+      <el-table-column
+        label="操作"
+        align="center"
+        width="160"
+        class-name="small-padding fixed-width"
+      >
+        <template slot-scope="scope">
+          <span style="margin-left: 10px">
+            <el-button size="mini" type="text" @click="see(scope.row)"
+              >查看</el-button
+            >
+          </span>
+          <!-- <span style="margin-left: 10px">
               <el-button size="mini" type="text" @click='detail(scope.row)'>详情</el-button>
             </span> -->
-            <!-- <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <!-- <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
                 <el-button
                   size="mini"
                   type="text"
@@ -98,28 +92,46 @@
                   >启用</el-button
                 >
               </span> -->
-          </template>
-        </el-table-column>
-      </el-table>
-        <div class="process-title">
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="process-title">
       <div class="title">
         <span class="box"></span>
         <span class="title-name">审批进度</span>
       </div>
+
       <div>
-        <el-button type="text">
-            查看全部记录
-        </el-button>
+        <el-button type="text"> 查看全部记录 </el-button>
       </div>
+    </div>
+    <div>
+      <el-timeline>
+        <el-timeline-item
+          v-for="(activity, index) in tableData"
+          :key="index"
+          :timestamp="activity.createTime"
+        >
+          {{ activity.taskName }}:{{activity.userName}}
+        </el-timeline-item>
+      </el-timeline>
+    </div>
+    <div>
+      <DrawFlowList :isShowCheck="isShowCheck" :params="params" />
     </div>
   </div>
 </template>
 <script>
+import { getListData , deployModel} from "@/api/assetManagement/assetManagementSet";
 export default {
   components: {},
   props: [],
   data() {
     return {
+      params:{},
+      //上级带过来的数据
+      detailDataList:this.$route.query.detailData,
+      tableData: [],
       formData: {
         field101: null,
         field102: undefined,
@@ -127,6 +139,7 @@ export default {
         field104: undefined,
         field105: undefined,
       },
+      isShowCheck: true,
       detailAssetData: [],
       rules: {
         field101: [
@@ -179,9 +192,28 @@ export default {
   },
   computed: {},
   watch: {},
-  created() {},
+  created() {
+    this.initData()
+  },
   mounted() {},
   methods: {
+     initData(){
+     this.params={
+        id:this.detailDataList.taskId,
+        processInstanceId:this.detailDataList.processInstanceId,
+        deployId:this.detailDataList.deployId
+      }
+           getListData(this.params).then(res => {
+                if(res && res.data && res.code == 200){
+                    this.tableData = res.data.flowCommentResGroupList;
+                  
+                    return false;
+                }
+            })
+            .then(err => {
+                console.log(err)
+            })
+        },
     submitForm() {
       this.$refs["elForm"].validate((valid) => {
         if (!valid) return;
@@ -193,7 +225,6 @@ export default {
     },
   },
 };
-
 </script>
 
 <style lang="scss" scoped>

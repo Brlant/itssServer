@@ -6,10 +6,10 @@
         <span>流程组详情</span>
       </div>
       <div>
-        <el-button type="primary">复制并新建</el-button>
-        <el-button type="primary">编辑</el-button>
-        <el-button v-if="form.status == 1">启用</el-button>
-        <el-button v-if="form.status == 0">停用</el-button>
+        <el-button type="primary" @click='copy'>复制并新建</el-button>
+        <el-button type="primary" @click='edit'>编辑</el-button>
+        <el-button v-if="form.status == 1" @click='stopOrUse(form.id,0)'>启用</el-button>
+        <el-button v-if="form.status == 0" @click='stopOrUse(form.id,1)'>停用</el-button>
       </div>
     </div>
     <div>
@@ -105,7 +105,7 @@
 <script>
 import DrawFlowChart from "@/components/DrawFlow/src/DrawFlowChart.vue";
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue";
-import { getDetailProcess } from "@/api/assetManagement/assetManagementSet";
+import { getDetailProcess,isUserGroup } from "@/api/assetManagement/assetManagementSet";
 export default {
   components: {
     DrawFlowChart,
@@ -160,6 +160,23 @@ export default {
     console.log(this.form, "this.form");
   },
   methods: {
+     //编辑
+    edit() {
+      const obj = {
+        path: "/assetManagement/assetManagementSet/process/editApprovalProcess",
+        query: { detailId:this.detailId },
+      };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
+    },
+        copy() {
+      const obj = {
+        path: "/assetManagement/assetManagementSet/process/addApprovalProcess",
+        query: { detailId: this.detailId, isCopy: 2 },
+      };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
+    },
     checkSelect(data,index) {
       this.n=index
       this.FlowConfigList=data.flowDefInfoVoList
@@ -186,6 +203,31 @@ export default {
          console.log(this.FlowConfigList,'this.FlowConfigList')
        
       })
+    },
+    //停用启用
+     stopOrUse(id, item) {
+      let data;
+      if (item == 0) {
+        data = {
+          id,
+          status: 0,
+        };
+      } else {
+        data = {
+          id,
+          status: 1,
+        };
+      }
+      isUserGroup(data).then((res) => {
+        if (res.code == 200) {
+          this.$message.success("操作成功");
+         if(item==0){
+          this.form.status=0
+         }else{
+          this.form.status=1
+         }
+        }
+      });
     },
     //返回
     goBack() {

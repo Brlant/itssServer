@@ -629,6 +629,8 @@ export default {
         if (res.code == 200) {
           this.$message.success("新增成功");
            this.$router.push('/assetManagement/assetManagementSet/assetCodeRules')
+        }else{
+          this.$message.error(res.msg)
         }
       });
     },

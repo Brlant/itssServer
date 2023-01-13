@@ -108,7 +108,7 @@ service.interceptors.response.use(res => {
       return Promise.reject(msg)
       // return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
     } else if (code === 500) {
-      if (msg === msgTxt) return
+      // if (msg === msgTxt) return
       msgTxt = msg
       Message({
         message: msg,
