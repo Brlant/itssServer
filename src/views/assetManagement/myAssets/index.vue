@@ -12,6 +12,7 @@
         <el-button type="primary">资产借用</el-button>
       </div>
     </div>
+    <!-- 前2个tab -->
     <div class="main" v-if="tab === 0 || tab === 1">
       <!-- 表格开始 -->
       <el-table

@@ -466,6 +466,20 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/assetManagement/myAssets/myAssets-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['chanceManage:chance:duty'],
+    children: [
+      {
+        path: 'applyInfo',
+        component: () => import('@/views/assetManagement/myAssets/applyInfo/index'),
+        name: 'applyInfo',
+        meta: { title: '资产申领', noCache:false  }
+      }
+    ]
+  },
+  {
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
     hidden: true,

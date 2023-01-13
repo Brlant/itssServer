@@ -93,6 +93,7 @@
     <!-- 表格开始 -->
     <el-table
       :data="tableData"
+      @row-click="goDetail"
       border
       v-loading="loading"
     >
@@ -182,7 +183,7 @@ export default {
       formData: {
         assetTypeId: []
       },
-      tableData: [],
+      tableData: [{}],
       loading: false,
       total: 0,
       queryParams: {
@@ -226,6 +227,12 @@ export default {
     // 分页
     getList() {
 
+    },
+    // 进入资产申领
+    goDetail(row) {
+      this.$router.push({
+        path: '/assetManagement/myAssets/myAssets-auth/applyInfo'
+      })
     },
     formatter(row) {
       return row.ASSET_NO + row.ASSET_NAME
