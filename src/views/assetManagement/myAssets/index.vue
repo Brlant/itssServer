@@ -4,6 +4,7 @@
       <my-tabs
         v-model="tab"
         :options="tabOptions"
+        @change="change"
       />
       <div class="btns">
         <el-button type="primary">批量归还</el-button>
@@ -11,9 +12,11 @@
         <el-button type="primary">资产借用</el-button>
       </div>
     </div>
-    <div class="table">
+    <div class="main" v-if="tab === 0 || tab === 1">
+      <!-- 表格开始 -->
       <el-table
         :data="tableData"
+        @row-click="goDetail"
         border
         v-loading="loading"
       >
@@ -65,14 +68,19 @@
           prop="checkDate"
         />
       </el-table>
+      <!-- 表格结束 -->
+      <!-- 分页 -->
+      <pagination
+        v-show="total > 0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
     </div>
-    <!-- 分页 -->
-    <pagination
-      v-show="total > 0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
+    <!-- 我的申请tab -->
+    <my-apply 
+      v-if="tab === 2"
     />
   </div>
 </template>
@@ -80,10 +88,12 @@
 <script>
 import MyTabs from '@/components/MyTabs'
 import { personalAssetList } from '@/api/assetManagement/myAssets'
+import MyApply from './MyApply'
 
 export default {
   components: {
-    MyTabs
+    MyTabs,
+    MyApply
   },
   data() {
     return {
@@ -108,13 +118,32 @@ export default {
   methods: {
     // 表格数据
     getTableData() {
-      const data = {
-        manageType: this.tabOptions[this.tab].value
+      let data
+      if (this.tab !== 2) {
+        // 前2个tab
+        data = {
+          manageType: this.tabOptions[this.tab].value
+        }
+        personalAssetList(data, this.queryParams).then(res => {
+          this.tableData = res.rows
+          this.total = res.total
+        })
       }
-      personalAssetList(data, this.queryParams).then(res => {
-        this.tableData = res.rows
-        this.total = res.total
+    },
+    // 进入详情页
+    goDetail(row) {
+      this.$router.push({
+        path: '/assetManagement/companyAssets/companyAssets-auth/detail',
+        query: {
+          id: row.id,
+          status: this.statusFormatter(row)
+        }
       })
+    },
+    // tab切换
+    change() {
+      this.queryParams.pageNum = 1
+      this.getTableData()
     },
     // 分页
     getList() {
@@ -154,12 +183,15 @@ export default {
 
 <style lang="scss" scoped>
 .my {
-  background: #fff;
   padding: 10px;
   .heading {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 15px;
   }
+}
+.pagination-container {
+  background: transparent;
 }
 </style>

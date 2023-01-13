@@ -3,7 +3,7 @@
     <header>
       <div 
         class="left" 
-        @click="$router.push('/assetManagement/companyAssets')"
+        @click="$router.go(-1)"
       >
         <i class="el-icon-arrow-left"></i>
         <span>资产信息</span>
