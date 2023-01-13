@@ -51,10 +51,10 @@ export function updateOrDelete(data) {
 }
 
 // 查询资产类型
-export function queryAsset(params) {
+export function queryAsset(params = {status: 0}) {
   return request({
     url: '/asset/assetType/tree',
     method: 'get',
-    params: params
+    params
   })
 }

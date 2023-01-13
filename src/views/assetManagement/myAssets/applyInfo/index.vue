@@ -2,7 +2,7 @@
   <div class="wrap">
     <header>
       <div 
-        class="left" 
+        style="cursor: pointer" 
         @click="$router.go(-1)"
       >
         <i class="el-icon-arrow-left"></i>

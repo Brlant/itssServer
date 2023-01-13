@@ -3,7 +3,7 @@
     <div class="heading">
       <div class="left">
         <span class="bar"></span>
-        <b>资产信息</b>
+        <b>审批进度</b>
       </div>
       <div class="right">
         <el-button type="text">

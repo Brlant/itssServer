@@ -18,3 +18,12 @@ export function applyList(params) {
     params
   })
 }
+
+// 流程类型
+export function cateList(params) {
+  return request({
+    url: '/flowable/bizFlowGroup/groupGetCategoryList',
+    method: 'get',
+    params
+  })
+}

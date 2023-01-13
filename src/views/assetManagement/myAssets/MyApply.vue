@@ -11,7 +11,6 @@
         >
           <span class="text">
             {{ item.label }}
-            ({{ 5 }})
           </span>
         </div>
       </div>
@@ -32,34 +31,39 @@
       >
         <el-row>
           <el-col :span="8">
-            <el-form-item label="申请日期" prop="applyDate">
+            <el-form-item label="申请日期" prop="APPLY_TIME">
               <el-date-picker
-                v-model="formData.applyDate"
-                value-format="yyyy-MM-dd"
-                type="daterange"
+                v-model="formData.APPLY_TIME"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                type="datetimerange"
                 range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
                 :style="style"
               />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="流程类型" prop="flowId">
-              <el-select v-model="formData.flowId" :style="style">
-
+            <el-form-item label="流程类型" prop="CATEGORY_ID">
+              <el-select v-model="formData.CATEGORY_ID" clearable :style="style">
+                <el-option
+                  v-for="(item, index) in cateList"
+                  :key="index"
+                  :label="item.name"
+                  :value="item.id"
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="流程编号" prop="flowNo">
-              <el-input v-model="formData.flowNo" :style="style" />
+            <el-form-item label="流程编号" prop="FLOW_ID">
+              <el-input v-model.trim="formData.FLOW_ID" :style="style" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="资产类型" prop="assetTypeId">
+            <el-form-item label="资产类型" prop="ASSET_TYPE">
               <el-cascader
-                v-model="formData.assetTypeId"
+                v-model="formData.ASSET_TYPE"
                 :options="asset"
                 ref="assetCas"
                 :props="{ label: 'typeName', value: 'id' }"
@@ -69,17 +73,17 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="资产名称" prop="assetName">
-              <el-input v-model.trim="formData.assetName" :style="style" />
+            <el-form-item label="资产名称" prop="ASSET_NAME">
+              <el-input v-model.trim="formData.ASSET_NAME" :style="style" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="资产编号" prop="assetId">
-              <el-input v-model.trim="formData.assetId" :style="style" />
+            <el-form-item label="资产编号" prop="ASSET_NO">
+              <el-input v-model.trim="formData.ASSET_NO" :style="style" />
             </el-form-item>
           </el-col>
           <el-col :span="6" style="display:flex; justify-content:flex-end; align-items:center">
-            <el-button type="primary">
+            <el-button type="primary" @click="query">
               查询
             </el-button>
             <el-button>
@@ -129,6 +133,7 @@
       />
       <el-table-column 
         align="center"
+        label="资产编号&名称"
         :formatter="formatter"
       />
       <el-table-column 
@@ -139,7 +144,7 @@
       <el-table-column 
         align="center"
         label="状态"
-        prop="STATUS"
+        :formatter="statusFormatter"
       />
       <el-table-column 
         align="center"
@@ -166,24 +171,29 @@
 
 <script>
 import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
-import { applyList } from '@/api/assetManagement/myAssets'
+import {
+  cateList,
+  applyList 
+} from '@/api/assetManagement/myAssets'
 
 export default {
   data() {
     return {
+      userId: this.$store.state.user.user.userId,
       options: [
-        { label: '审批中' },
-        { label: '已完成' },
-        { label: '已取消' },
+        { label: '审批中', value: '1' },
+        { label: '已完成', value: '2' },
+        { label: '已取消', value: '3' }
       ],
       n: 0,
       isExpand: false,
       style: {width: '100%'},
       asset: [],
+      cateList: [],
       formData: {
-        assetTypeId: []
+        ASSET_TYPE: []
       },
-      tableData: [{}],
+      tableData: [],
       loading: false,
       total: 0,
       queryParams: {
@@ -194,6 +204,7 @@ export default {
   },
   mounted() {
     this.getAsset()
+    this.getCateList()
     this.getTableData()
   },
   methods: {
@@ -203,15 +214,77 @@ export default {
         this.asset = res.data
       })
     },
+    // 流程类型
+    getCateList() {
+      cateList().then(res => {
+        this.cateList = res.data
+      })
+    },
     // 表格数据
     getTableData() {
+      // 传参数据处理
+      const {
+        APPLY_TIME,
+        CATEGORY_ID,
+        FLOW_ID,
+        ASSET_TYPE,
+        ASSET_NAME,
+        ASSET_NO
+      } = this.formData
+      
+      let eq = {
+        STATUS: this.options[this.n].value,
+        APPLICANT_ID: this.userId + ''
+      }
+      if (CATEGORY_ID) {
+        eq.CATEGORY_ID = CATEGORY_ID
+      }
+      if (FLOW_ID) {
+        eq.FLOW_ID = FLOW_ID
+      }
+      
+      let like = {}
+      if (ASSET_TYPE.length) {
+        like.ASSET_TYPE = `%${ASSET_TYPE[ASSET_TYPE.length - 1]}%`
+      }
+      if (ASSET_NAME) {
+        like.ASSET_NAME = `%${ASSET_NAME}%`
+      }
+      if (ASSET_NO) {
+        like.ASSET_NO = `%${ASSET_NO}%`
+      }
+
+      let lte = {}
+      let gte = {}
+      if (APPLY_TIME) {
+        lte.APPLY_TIME = APPLY_TIME[1]
+        gte.APPLY_TIME = APPLY_TIME[0]
+      }
+
       const params = {
         ...this.queryParams,
-        userKey: this.$store.state.user.user.userId
+        userKey: this.userId,
+        variableJsonStr: JSON.stringify({
+          eq,
+          neq: {},
+          like,
+          lte,
+          lt: {},
+          gte,
+          gt: {}
+        })
       }
       applyList(params).then(res => {
-
+        this.tableData = res.data.data.map(item => {
+          return item.procVars
+        })
+        this.total = res.data.total
       })
+    },
+    // 点击查询
+    query() {
+      this.queryParams.pageNum = 1
+      this.getTableData()
     },
     // tab切换
     change(index) {
@@ -219,6 +292,8 @@ export default {
         return
       }
       this.n = index
+      this.queryParams.pageNum = 1
+      this.getTableData()
     },
     // 取消
     cancel(row) {
@@ -226,7 +301,7 @@ export default {
     },
     // 分页
     getList() {
-
+      this.getTableData()
     },
     // 进入资产申领
     goDetail(row) {
@@ -236,6 +311,11 @@ export default {
     },
     formatter(row) {
       return row.ASSET_NO + row.ASSET_NAME
+    },
+    statusFormatter(row) {
+      if (row.STATUS) {
+        return this.options.find(v => v.value === row.STATUS).label
+      }
     }
   }
 }
@@ -288,5 +368,8 @@ export default {
     padding: 10px;
     height: auto;
   }
+}
+.pagination-container {
+  background: transparent;
 }
 </style>
