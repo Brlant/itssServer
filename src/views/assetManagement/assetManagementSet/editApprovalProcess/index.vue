@@ -98,8 +98,8 @@
             <span
               v-for="(data, index) in form.flowInfoVoList"
               :key="index"
-              :class="[{ current: n == index }]"
-              @click="checkSelect(data, index)"
+              :class="[{ current: n == data.flowTypeId }]"
+              @click="checkSelect(data, data.flowTypeId)"
             >
               {{ data.flowTypeName }}
               <span v-if="index < form.flowInfoVoList.length - 1">|</span>
@@ -206,7 +206,7 @@ export default {
       ],
       isShowEdit: true,
       form: {},
-      n: 0,
+      n:1,
       m: 0,
       checkIndex: "",
       chenckName: "",
@@ -214,6 +214,7 @@ export default {
       editData: {},
       //模型数据
       modelData: [],
+      deptIds:[],
       //部门名称
       deptId: null,
       deptOptions: [],
@@ -272,7 +273,8 @@ export default {
       this.FlowConfigListCopy.push({
         modelDeployId: "",
         modelKey:'',
-        sysDeptList:[]
+        sysDeptList:[],
+        modelDefinition:{}
       })
       this.FlowConfigList.push( {
           list: [
@@ -314,6 +316,7 @@ export default {
       this.checkIndex = data.flowTypeId;
       this.checkName = data.flowTypeName;
       this.n = index;
+      console.log(this.n,'this.n')
       this.FlowConfigList = [];
       this.FlowConfigList = JSON.parse(JSON.stringify(data.flowDefInfoVoList));
       this.$forceUpdate();
@@ -342,9 +345,9 @@ export default {
         this.checkIndex = res.data.flowInfoVoList[0].flowTypeId;
         this.checkName = res.data.flowInfoVoList[0].flowTypeName;
         this.FlowConfigList = this.deepClone(res.data.flowInfoVoList[0].flowDefInfoVoList);
-        console.log(this.FlowConfigList,'this.FlowConfigList')
+        // console.log(this.FlowConfigList,'this.FlowConfigList')
         this.FlowConfigListCopy = res.data.flowInfoVoList[0].flowDefInfoVoList
-        console.log( this.FlowConfigListCopy, "this.FlowConfigListCopy");
+        // console.log( this.FlowConfigListCopy, "this.FlowConfigListCopy");
         this.FlowConfigList.forEach((item, index) => {
           let { des, json, modelType, modelKey, processId } =
             item.flowProcDefRes;
@@ -422,30 +425,28 @@ export default {
       }
     },
     searchDept(item) {
-      
+      this.deptIds=item
       console.log("this.FlowConfigListCopy", this.FlowConfigListCopy);
       console.log(!this.dataCopy,'this.dataCopy')
-      
-     let dataCopy=this.deepClone(this.FlowConfigListCopy)
       this.$nextTick(() => {
         let sysDeptList = [];
        
        
-        if(this.dataCopy){
-          console.log(this.m, ",,,,,,");
-          this.FlowConfigListCopy[this.m].modelDeployId =
-          this.dataCopy.modelDeployId;
-        this.FlowConfigListCopy[this.m].modelKey = this.dataCopy.modelKey;
-        console.log(this.FlowConfigListCopy, " this.FlowConfigList[this.m]");
-        }else{
+        // if(this.dataCopy){
+        //   console.log(this.m, ",,,,,,");
+        //   this.FlowConfigListCopy[this.m].modelDeployId =
+        //   this.dataCopy.modelDeployId;
+        // this.FlowConfigListCopy[this.m].modelKey = this.dataCopy.modelKey;
+        // console.log(this.FlowConfigListCopy, " this.FlowConfigList[this.m]");
+        // }else{
         
-        }
+        // }
       
         this.FlowConfigList[this.m].deptId = item;
         this.FlowConfigList[this.m].deptId.forEach((i) => {
           sysDeptList.push({ deptId: i });
         });
-
+        
         this.FlowConfigListCopy[this.m].sysDeptList = sysDeptList;
 
         // this.params = {
@@ -470,18 +471,32 @@ export default {
         let sysDeptList = [];
         // console.log(this.FlowConfigListCopy, "this.FlowConfigListCopy");
         console.log(this.m, ",,,,,,");
-
-        this.FlowConfigListCopy[this.m].modelDeployId = data.modelDeployId;
-        this.FlowConfigListCopy[this.m].modelKey = data.modelKey;
-        console.log(this.FlowConfigListCopy, " this.FlowConfigList[this.m]");
-        if(this.FlowConfigListCopy[this.m].modelDeployId && this.FlowConfigList[this.m].deptId){
-           this.FlowConfigList[this.m].deptId.forEach((i) => {
-          sysDeptList.push({ deptId: i });
-        });
+        // 当流程定义没有修改时 modelDeployId 保持原样
+      if(this.FlowConfigListCopy && this.FlowConfigListCopy[this.m] && this.FlowConfigListCopy[this.m].modelDefinition){
+            if(JSON.stringify(this.FlowConfigListCopy[this.m].modelDefinition) != JSON.stringify(data.modelDefinition)){
+             this.FlowConfigListCopy[this.m].modelDeployId = '';
         }
+      }else{
+        this.FlowConfigListCopy[this.m].modelDeployId = '';
+      }
+      
+     
+        // this.FlowConfigListCopy[this.m].modelKey = data.modelKey;
+        // console.log(this.FlowConfigListCopy, " this.FlowConfigList[this.m]");
+        // if(this.FlowConfigListCopy[this.m].modelDeployId && this.FlowConfigList[this.m].deptId){
+        //    this.FlowConfigList[this.m].deptId.forEach((i) => {
+        //   sysDeptList.push({ deptId: i });
+        // });
+        // }
        
         // this.FlowConfigList[this.m].
+        if(this.deptIds){
+          this.deptIds.forEach((i) => {
+          sysDeptList.push({ deptId: i });
+          })
+        }
         this.FlowConfigListCopy[this.m].sysDeptList = sysDeptList;
+        this.FlowConfigListCopy[this.m].modelDefinition = data.modelDefinition;
         // this.params = {
         //   groupName: this.form.groupName,
         //   groupDescription: this.form.groupDescription,
@@ -504,7 +519,7 @@ export default {
     },
     //保存
     sureSave() {
-      console.log(this.params, " this.params");
+    
   this.params = {
           groupName: this.form.groupName,
           groupDescription: this.form.groupDescription,
@@ -518,6 +533,8 @@ export default {
             },
           ],
         };
+          console.log(this.params, " this.params");
+      
       editGroup(this.params).then((res) => {
         if (res.code == 200) {
           this.$message.success('操作成功')

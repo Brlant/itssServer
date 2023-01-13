@@ -341,27 +341,28 @@ export default {
       if(!params){
         return false
       }
-      params.des = new Date()
-      params.modelType = this.groupGetCategory
-      // this.form.processName = new Date()
-      deployModel(params).then(res=>{
-      // axios.post("/flowable/definition/deploy", params).then(res => {
-          if(res && res.data && res.code == 200){
-            this.$emit('setFlowChart');
-            this.modelResult=res.data
-            this.modelResult.sysDeptList=this.deptId
-             this.$emit('childClick', JSON.parse(JSON.stringify(this.modelResult)));
-            console.log( JSON.parse(JSON.stringify(this.modelResult)),' JSON.parse(JSON.stringify(this.modelResult));')
-          }else {
-              this.$message({
-                type: 'error',
-                message: '流程图发布失败'
-              });
-          }
-      })
-      .then(err => {
-          console.log(err)
-      })
+      this.$emit('childClick', JSON.parse(JSON.stringify(params)));
+      // params.des = new Date()
+      // params.modelType = this.groupGetCategory
+      // // this.form.processName = new Date()
+      // deployModel(params).then(res=>{
+      // // axios.post("/flowable/definition/deploy", params).then(res => {
+      //     if(res && res.data && res.code == 200){
+      //       this.$emit('setFlowChart');
+      //       this.modelResult=res.data
+      //       this.modelResult.sysDeptList=this.deptId
+            
+      //       console.log( JSON.parse(JSON.stringify(this.modelResult)),' JSON.parse(JSON.stringify(this.modelResult));')
+      //     }else {
+      //         this.$message({
+      //           type: 'error',
+      //           message: '流程图发布失败'
+      //         });
+      //     }
+      // })
+      // .then(err => {
+      //     console.log(err)
+      // })
     },
      getModelResult(){
       let modelResultReturn = JSON.parse(JSON.stringify(this.modelResult));
