@@ -163,7 +163,10 @@
     <!-- 计算部分开始 -->
     <div class="calc">
       <div class="item">
-        <span class="label">总计(此处精确到小数点后两位)</span>
+        <span class="label">
+          <b>总计</b>
+          (此处精确到小数点后两位)
+        </span>
       </div>
       <div class="specific">
         <div class="item">
@@ -201,6 +204,7 @@
     <!-- 表格部分 -->
     <asset-table 
       :data="tableData"
+      @delRow="delRow"
       :flag="tab"
       ref="table"
     />
@@ -219,7 +223,8 @@
 import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 import { 
   queryAssetList, 
-  getTotal 
+  getTotal,
+  updateAssets
 } from '@/api/assetManagement/companyAssets'
 import { treeselect } from "@/api/system/dept"
 import Treeselect from "@riophae/vue-treeselect"
@@ -259,7 +264,7 @@ export default {
   },
   created() {
     // tab回显
-    const { tab } = this.$route.query
+    const { tab } = this.$route.params
     this.tab = tab ? tab - 0 : 0
   },
   computed: {
@@ -360,6 +365,18 @@ export default {
       this.getTableData()
       this.calc()
     },
+    // 删除
+    delRow(row) {
+      const data = {
+        ...row,
+        status: 0
+      }
+      updateAssets(data).then(res => {
+        this.$message.success(res.msg)
+        this.getTableData()
+        this.calc()
+      })
+    },
     // tab切换
     change() {
       this.queryParams.pageNum = 1
@@ -402,7 +419,7 @@ export default {
       transition: all .4s;
     }
     .expand {
-      height: 234px;
+      height: auto;
     }
   }
   .tabs {
@@ -413,6 +430,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 14px;
     .item {
       margin-right: 50px;
       &:last-child {

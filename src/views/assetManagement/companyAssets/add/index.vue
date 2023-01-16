@@ -373,9 +373,9 @@ export default {
         addAssets(data).then(res => {
           this.$message.success(res.msg)
           this.$router.push({
-            path: '/assetManagement/companyAssets',
-            query: {
-              tab: 9
+            name: 'companyAssets',
+            params: {
+              tab: 10
             }
           })
         })

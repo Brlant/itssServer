@@ -72,7 +72,7 @@
         prop="creatorName"
       />
       <el-table-column
-        v-if="flag === 9"
+        v-if="flag === 10"
         align="center"
         label="操作"
       >
@@ -122,7 +122,11 @@ export default {
     },
     // 删除
     del(row) {
-
+      this.$confirm('确认删除改资产吗？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        this.$emit('delRow', row)
+      }).catch(() => {})
     },
     // 进入详情页
     goDetail(row) {
@@ -144,7 +148,7 @@ export default {
       }
       if (row.status !== null) {
         if (row.status == 1) {
-          res = '闲置'
+          res = '闲置中'
           return res
         } else {
           const arr = tabOptions.filter(v => v.type == 'status')

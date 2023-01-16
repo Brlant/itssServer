@@ -136,7 +136,26 @@
         label="资产编号&名称"
       >
         <div slot-scope="{row}">
-
+          {{ row.NO_NAME_ARR[0] }}
+          <el-popover
+            v-if="row.NO_NAME_ARR.length > 1"
+            width="200"
+            trigger="hover"
+            placement="bottom-end"
+          >
+            <el-button type="text" size="small" slot="reference">
+              ...更多
+            </el-button>
+            <div class="content">
+              <div 
+                class="item"
+                v-for="(item, index) in row.NO_NAME_ARR"
+                :key="index"
+              >
+                {{ item }}
+              </div>
+            </div>
+          </el-popover>
         </div>
       </el-table-column>
       <el-table-column 
@@ -286,7 +305,17 @@ export default {
         let tableData = res.data.data.map(item => {
           return item.procVars
         })
-        
+        // 处理资产编号与名称
+        for (let i = 0; i < tableData.length; i ++) {
+          const noArr = tableData[i].ASSET_NO.split(',')
+          const nameArr = tableData[i].ASSET_NAME.split(',')
+          let arr = []
+          noArr.forEach((value, index) => {
+            arr.push(value + nameArr[index])
+          })
+          tableData[i]['NO_NAME_ARR'] = arr 
+        }
+        this.tableData = tableData
         this.total = res.data.total
         this.loading = false
       }).catch(() => {
@@ -381,6 +410,13 @@ export default {
   .expand {
     padding: 10px;
     height: auto;
+  }
+}
+.item {
+  padding: 5px 0;
+  border-bottom: 1px solid #dfe6ec;
+  &:last-child {
+    border-bottom: 0;
   }
 }
 .pagination-container {
