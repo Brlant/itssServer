@@ -72,7 +72,7 @@
                   v-model="formData.assetTypeId"
                   :options="asset"
                   ref="assetCas"
-                  :props="{ label: 'typeName', value: 'id' }"
+                  :props="{ label: 'typeName', value: 'id', checkStrictly: true }"
                   clearable
                   :style="style"
                 />
@@ -303,10 +303,21 @@ export default {
         delete data.purchasingDate
       }
       const assetTypeId = data.assetTypeId
-      if (assetTypeId.length) {
-        data.assetTypeId = assetTypeId[assetTypeId.length - 1]
-      } else {
-        delete data.assetTypeId
+      switch (assetTypeId.length) {
+        case 0:
+          delete data.assetTypeId
+          break
+        case 1:
+          data.oneTypeId = assetTypeId[0]
+          delete data.assetTypeId
+          break
+        case 2:
+          data.twoTypeId = assetTypeId[1]
+          delete data.assetTypeId
+          break
+        case 3:
+          data.assetTypeId = assetTypeId[2]
+          break
       }
       if (data.depreciation) {
         data.startDate = data.depreciation[0]

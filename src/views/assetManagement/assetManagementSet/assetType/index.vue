@@ -297,14 +297,13 @@
                 clearable
                 size="medium"
               >
-                <!-- <el-option
-                  v-for="item in detailTemplates"
-                  :key="user.userId"
-                  :label="user.nickName"
-                  :value="user.userId"
-                  :disabled="user.disabled"
+                <el-option
+                  v-for="item in process"
+                  :key="item.id"
+                  :label="item.groupName"
+                  :value="item.id"
                 >
-                </el-option> -->
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -370,6 +369,7 @@ import {
   disableEnable,
   querySubcategory,
   getAssetTemplate,
+  flowGroup
 } from "@/api/assetManagement/assetManagementSet";
 export default {
   data() {
@@ -390,6 +390,7 @@ export default {
         pageNum: 1,
       },
       detailTemplates: [],
+      process: [],
       typeId: null,
       rightTitle: "",
       isEdit: true,
@@ -457,6 +458,7 @@ export default {
   created() {
     this.getTreeselect();
     this.getTemplate();
+    this.getFlowGroup();
   },
   methods: {
      defaultData() {
@@ -472,6 +474,11 @@ export default {
       getAssetTemplate({}).then((res) => {
         this.detailTemplates = res.rows;
       });
+    },
+    getFlowGroup() {
+      flowGroup().then(res => {
+        this.process = res.data
+      })
     },
     // 筛选节点
     filterNode(value, data) {
@@ -606,13 +613,25 @@ export default {
     },
     //弹窗确认按钮
     sureEdit() {
-      if (this.isEdit) {
-        this.edit();
-        console.log("bianji");
-      } else {
-        console.log("新增");
-        this.newAdd();
-      }
+      // if (this.isEdit) {
+      //   this.edit();
+      //   console.log("bianji");
+      // } else {
+      //   console.log("新增");
+      //   this.newAdd();
+      // }
+      this.$refs.diaForm.validate(valid => {
+        if (!valid) {
+          return
+        }
+        if (this.isEdit) {
+          this.edit();
+          console.log("bianji");
+        } else {
+          console.log("新增");
+          this.newAdd();
+        }
+      })
     },
     //弹窗取消按钮
     cancelFn() {

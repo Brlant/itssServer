@@ -126,3 +126,11 @@ export function getTypeData() {
       data
     })
   }
+// 审批流程组
+export function flowGroup(query) {
+  return request({
+    url: '/flowable/bizFlowGroup/listFlowGroup',
+    method: 'get',
+    params: query
+  })
+}

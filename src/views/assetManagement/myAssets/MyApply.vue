@@ -151,7 +151,11 @@
         label="操作"
       >
         <template slot-scope="{row}">
-          <el-button type="text" size="small" @click="cancel(row)">
+          <el-button 
+            type="text"
+            size="small" 
+            @click="cancel(row)"
+          >
             取消
           </el-button>
         </template>
