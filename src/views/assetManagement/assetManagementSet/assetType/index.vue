@@ -120,7 +120,8 @@
           <el-table-column 
             label="管理方式" 
             align="center" 
-            prop="manageType">
+            prop="manageType"
+            :formatter="formatter">
           </el-table-column>
           <el-table-column 
             label="备注" 
@@ -452,6 +453,20 @@ export default {
             trigger: "blur",
           },
         ],
+        hasUserfulExpire: [
+          {
+            required: true,
+            message: "使用期限提醒不能为空",
+            trigger: "blur",
+          },
+        ],
+        hasCertificate: [
+          {
+            required: true,
+            message: "证书管理不能为空",
+            trigger: "blur",
+          },
+        ]
       },
     };
   },
@@ -486,6 +501,10 @@ export default {
       flowGroup().then(res => {
         this.process = res.data
       })
+    },
+    // 管理方式匹配
+    formatter(row) {
+      return this.manageSelect.find(item => item.value == row.manageType).label
     },
     // 筛选节点
     filterNode(value, data) {
