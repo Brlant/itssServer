@@ -86,7 +86,7 @@
             <el-button type="primary" @click="query">
               查询
             </el-button>
-            <el-button>
+            <el-button @click="reset">
               重置
             </el-button>
           </el-col>
@@ -134,8 +134,11 @@
       <el-table-column 
         align="center"
         label="资产编号&名称"
-        :formatter="formatter"
-      />
+      >
+        <div slot-scope="{row}">
+
+        </div>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="数量"
@@ -226,6 +229,7 @@ export default {
     },
     // 表格数据
     getTableData() {
+      this.loading = true
       // 传参数据处理
       const {
         APPLY_TIME,
@@ -279,15 +283,24 @@ export default {
         })
       }
       applyList(params).then(res => {
-        this.tableData = res.data.data.map(item => {
+        let tableData = res.data.data.map(item => {
           return item.procVars
         })
+        
         this.total = res.data.total
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
       })
     },
     // 点击查询
     query() {
       this.queryParams.pageNum = 1
+      this.getTableData()
+    },
+    // 重置表单
+    reset() {
+      this.$refs.elForm.resetFields()
       this.getTableData()
     },
     // tab切换
@@ -312,9 +325,6 @@ export default {
       this.$router.push({
         path: '/assetManagement/myAssets/myAssets-auth/applyInfo'
       })
-    },
-    formatter(row) {
-      return row.ASSET_NO + row.ASSET_NAME
     },
     statusFormatter(row) {
       if (row.STATUS) {

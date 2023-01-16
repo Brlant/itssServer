@@ -289,9 +289,9 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="审批流程" prop="flowId">
+            <el-form-item label="审批流程" prop="flowGroupId">
               <el-select
-                v-model="diaForm.flowId"
+                v-model="diaForm.flowGroupId"
                 :collapse-tags="true"
                 filterable
                 clearable
@@ -438,7 +438,7 @@ export default {
             trigger: "blur",
           },
         ],
-        flowId:[
+        flowGroupId:[
            {
             required: true,
             message: "审批流程不能为空",
@@ -459,6 +459,13 @@ export default {
     this.getTreeselect();
     this.getTemplate();
     this.getFlowGroup();
+  },
+  watch: {
+    addEdit(value) {
+      if (value === false) {
+        this.$refs.diaForm.resetFields()
+      }
+    }
   },
   methods: {
      defaultData() {
@@ -488,6 +495,7 @@ export default {
     handleNodeClick(data) {
       this.curren=data.id
       this.n = data.id;
+      
       this.isshow = false;
       console.log(data, "data1111111111");
       if (data.parentId != 0) {
@@ -500,6 +508,9 @@ export default {
       }
     },
     getList() {
+      if (!this.typeId) {
+        return
+      }
       querySubcategory({
         id: this.typeId,
         pageNum: this.page.pageNum,
@@ -507,6 +518,7 @@ export default {
       }).then((res) => {
         this.typeData = res.rows;
         this.total = res.total;
+        this.parentId = this.typeId;
       });
     },
     leaveOne() {
@@ -524,6 +536,7 @@ export default {
     },
     add() {
       this.addEdit = true;
+      this.isEdit = false;
     },
     // 新增或者编辑分类
     editOrAdd(item, data) {
