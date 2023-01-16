@@ -9,14 +9,17 @@
         <span>资产信息</span>
       </div>
       <div class="btns">
-        <div class="item">
+        <div class="item" v-if="isShow">
+          <span>入库</span>
+        </div>
+        <div class="item" v-if="manageType == 2">
           <span>维修</span>
         </div>
         <div class="item">
           <span>报废</span>
         </div>
-        <div class="item">
-          <span>编辑</span>
+        <div class="item" v-if="isShow">
+          <span @click="goEdit">编辑</span>
         </div>
         <div class="item">
           <span>打印条码</span>
@@ -25,7 +28,7 @@
     </header>
     <div class="main">
       <span class="status">
-        {{ $route.query.status }}
+        {{ status }}
       </span>
       <div class="section">
         <div class="heading">
@@ -215,10 +218,23 @@ export default {
     return {
       span: 6,
       id: this.$route.query.id,
+      status: this.$route.query.status,
+      isApplying: this.$route.query.isApplying,
+      manageType: this.$route.query.manageType,
       info: {},
       list: [],
       tabOptions: ['详细信息', '使用记录', '维修记录', '保养记录', '证书记录'],
       tab: 0
+    }
+  },
+  computed: {
+    // 是否显示入库及编辑
+    isShow() {
+      if (this.status.includes('入库') && (this.isApplying == 0 || this.isApplying == 3)) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   created() {
@@ -244,6 +260,15 @@ export default {
           })
           this.list = list
         })
+      })
+    },
+    // 进入编辑
+    goEdit() {
+      this.$router.push({
+        path: '/assetManagement/companyAssets/companyAssets-auth/edit',
+        query: {
+          id: this.id
+        }
       })
     },
     // tab切换

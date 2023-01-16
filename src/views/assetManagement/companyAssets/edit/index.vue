@@ -3,7 +3,7 @@
     <header>
       <div 
         class="left" 
-        @click="$router.push('/assetManagement/companyAssets')"
+        @click="$router.go(-1)"
       >
         <i class="el-icon-arrow-left"></i>
         <span>编辑资产</span>
@@ -12,7 +12,7 @@
         <el-button type="primary" size="small" @click="save">
           保存
         </el-button>
-        <el-button size="small" @click="$router.push('/assetManagement/companyAssets')">
+        <el-button size="small" @click="$router.go(-1)">
           取消
         </el-button>
       </div>

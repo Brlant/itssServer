@@ -134,7 +134,9 @@ export default {
         path: '/assetManagement/companyAssets/companyAssets-auth/detail',
         query: {
           id: row.id,
-          status: this.statusFormatter(row)
+          status: this.statusFormatter(row),
+          isApplying: row.isApplying,
+          manageType: row.manageType
         }
       })
     },
