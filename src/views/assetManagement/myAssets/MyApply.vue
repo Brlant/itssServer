@@ -380,6 +380,7 @@ export default {
           applicantName: row.procVars.APPLICANT_NAME,
           applyTime: row.procVars.APPLY_TIME,
           status: this.statusFormatter(row.procVars.STATUS),
+          categoryName: row.procVars.CATEGORY_NAME,
           taskId: row.taskId,
           processInstanceId: row.processInstanceId,
           deployId: row.deployId

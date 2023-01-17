@@ -15,7 +15,7 @@
         </p>
         <p class="row3">
           附件：
-          <span class="link" @click="viewFile(item.certificateUrl)">
+          <span class="link" @click="downFlowLoad(item.certificateUrl)">
             {{ item.certificateName }}
           </span>
         </p>
@@ -95,6 +95,7 @@ import {
   addCertificate
 } from '@/api/assetManagement/companyAssets'
 import moment from 'moment'
+import downFile from '@/utils/downFile'
 
 export default {
   data() {
@@ -190,8 +191,8 @@ export default {
       })
     },
     // 查看文件
-    viewFile(url) {
-      window.open(url)
+    downFlowLoad(url) {
+      downFile(url)
     }
   }
 }

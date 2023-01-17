@@ -19,7 +19,7 @@
         placement="top"
         :timestamp="activity.createTime"
       >
-        <p class="row1">
+        <p :class="{current: index === current}">
           {{ activity.taskName }}
           <span v-if="activity.userName">
             : {{ activity.userName }}
@@ -28,18 +28,19 @@
             {{ commentType[activity.type] }}
           </span>
         </p>
-        <p class="prow2" v-if="activity.comment">
+        <p v-if="activity.comment">
           备注:
           {{ activity.comment }}
         </p>
-        <p class="row3" v-if="activity.flowUploads.length">
+        <p v-if="activity.flowUploads.length">
           附件:
           <span 
             class="link"
             v-for="(item, index) in activity.flowUploads"
             :key="index"
+            @click="downFlowLoad(item.url)"
           >
-            {{ item.name }}.{{ item.type }}
+            {{ item.name }}
           </span>
         </p>
       </el-timeline-item>
@@ -57,7 +58,7 @@
           :key="index"
           :timestamp="activity.createTime"
         >
-          <p class="row1">
+          <p>
             {{ activity.taskName }}
             <span v-if="activity.userName">
               : {{ activity.userName }}
@@ -66,18 +67,19 @@
               {{ commentType[activity.type] }}
             </span>
           </p>
-          <p class="prow2" v-if="activity.comment">
+          <p v-if="activity.comment">
             备注:
             {{ activity.comment }}
           </p>
-          <p class="row3" v-if="activity.flowUploads.length">
+          <p v-if="activity.flowUploads.length">
             附件:
             <span 
               class="link"
               v-for="(item, index) in activity.flowUploads"
               :key="index"
+              @click="downFlowLoad(item.url)"
             >
-              {{ item.name }}.{{ item.type }}
+              {{ item.name }}
             </span>
           </p>
         </el-timeline-item>
@@ -88,6 +90,7 @@
 
 <script>
 import { flowViewer } from '@/api/assetManagement/myAssets'
+import downFile from '@/utils/downFile'
 
 export default {
   data() {
@@ -95,6 +98,7 @@ export default {
       dialogVisible: false,
       flowExamineList: [],
       flowHistoryList: [],
+      current: -1,
       commentType: {
         1: "通过",
         2: "驳回",
@@ -144,8 +148,8 @@ export default {
           item.flowUploads = flowUploads
         })
         this.flowExamineList = groupListArr
-        const current = this.flowExamineList.findIndex(item => item.group)
-        console.log('xxxxxx', this.flowExamineList)
+        const current = this.flowExamineList.findIndex(item => item.groupList)
+        this.current = current - 1
 
         // b - 全部记录
         flowCommentResList.forEach(item => {
@@ -159,6 +163,10 @@ export default {
         })
         this.flowHistoryList = flowCommentResList
       })
+    },
+    // 下载
+    downFlowLoad(url) {
+      downFile(url)
     }
   }
 }
@@ -184,6 +192,9 @@ export default {
       font-size: 15px;
     }
   }
+}
+.current {
+  color: #073dff; 
 }
 .link {
   cursor: pointer;

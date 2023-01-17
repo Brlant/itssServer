@@ -6,7 +6,9 @@
         @click="goBack"
       >
         <i class="el-icon-arrow-left"></i>
-        <span>资产申领</span>
+        <span>
+          {{ $route.query.categoryName }}
+        </span>
       </div>
       <div class="btns">
         <el-button type="danger" size="small" @click="cancel">
