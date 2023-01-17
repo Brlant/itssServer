@@ -27,3 +27,20 @@ export function cateList(params) {
     params
   })
 }
+
+// 流程查询所属资产信息
+export function listAsset(flowId) {
+  return request({
+    url: '/asset/assetFlow/listAsset/' + flowId,
+    method: 'get',
+  })
+}
+
+// 进度
+export function flowViewer(params) {
+  return request({
+    url: '/flowable/flowable/task/flowViewer',
+    method: 'get',
+    params
+  })
+}

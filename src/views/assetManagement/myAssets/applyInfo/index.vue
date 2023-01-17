@@ -3,7 +3,7 @@
     <header>
       <div 
         style="cursor: pointer" 
-        @click="$router.go(-1)"
+        @click="goBack"
       >
         <i class="el-icon-arrow-left"></i>
         <span>资产申领</span>
@@ -24,19 +24,28 @@
         <div class="right">
           <div class="item">
             <span class="name">资产数量：</span>
-            <span class="value">3项3件</span>
+            <span class="value">
+              {{ tableData.length }} 项
+              {{ total }} 件
+            </span>
           </div>
           <div class="item">
             <span class="name">申请人：</span>
-            <span class="value">张三</span>
+            <span class="value">
+              {{ $route.query.applicantName }}
+            </span>
           </div>
           <div class="item">
             <span class="name">申请日期：</span>
-            <span class="value">张三</span>
+            <span class="value">
+              {{ $route.query.applyTime }}
+            </span>
           </div>
           <div class="item">
             <span class="name">审批状态：</span>
-            <span class="value">张三</span>
+            <span class="value">
+              {{ $route.query.status }}
+            </span>
           </div>
         </div>
       </div>
@@ -95,7 +104,12 @@
           label="操作"
         >
           <template slot-scope="{row}">
-            <el-button type="text" size="small" @click="view(row)">
+            <el-button 
+              type="text" 
+              size="small"
+              :disabled="!row.id"
+              @click="view(row)"
+            >
               查看
             </el-button>
           </template>
@@ -113,6 +127,8 @@
 
 <script>
 import ApprovalProcess from './ApprovalProcess'
+import { listAsset } from '@/api/assetManagement/myAssets'
+import { tabOptions } from '../../companyAssets/options'
 
 export default {
   components: {
@@ -120,16 +136,69 @@ export default {
   },
   data() {
     return {
-      tableData: [{}]
+      flowId: this.$route.query.flowId,
+      tableData: [],
+      total: 0
     }
   },
+  created() {
+    this.getTableData()
+  },
   methods: {
+    // 表格数据
+    getTableData() {
+      listAsset(this.flowId).then(res => {
+        this.tableData = res.data
+        // 总件数
+        let total = 0
+        this.tableData.forEach(value => {
+          total += value.amount
+        })
+        this.total = total
+      })
+    },
     cancel() {
 
     },
     // 查看详情
     view(row) {
-
+      this.$router.push({
+        path: '/assetManagement/companyAssets/companyAssets-auth/detail',
+        query: {
+          id: row.id,
+          status: this.statusFormatter(row),
+          isApplying: row.isApplying,
+          manageType: row.manageType
+        }
+      })
+    },
+    // 状态处理
+    statusFormatter(row) {
+      let res
+      if (row.specialStatus !== null) {
+        const specialArr = tabOptions.filter(v => v.type == 'specialStatus')
+        res = specialArr.find(v => row.specialStatus == v.value).label
+        return res
+      }
+      if (row.status !== null) {
+        if (row.status == 1) {
+          res = '闲置中'
+          return res
+        } else {
+          const arr = tabOptions.filter(v => v.type == 'status')
+          res = arr.find(v => row.status == v.value).label
+          return res
+        }
+      }
+    },
+    // 返回
+    goBack() {
+      this.$router.push({
+        name: 'myAssets',
+        params: {
+          tab: 2
+        }
+      })
     }
   }
 }

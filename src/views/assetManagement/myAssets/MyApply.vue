@@ -104,41 +104,59 @@
       <el-table-column 
         align="center"
         label="流程ID"
-        prop="FLOW_ID"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.FLOW_ID }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="流程类型"
-        prop="CATEGORY_NAME"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.CATEGORY_NAME }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="流程组名称"
-        prop="FLOWGROUP_NAME"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.FLOWGROUP_NAME }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="申请人"
-        prop="APPLICANT_NAME"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.APPLICANT_NAME }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="发起时间"
-        prop="APPLY_TIME"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.APPLY_TIME }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="资产类型"
-        prop="ASSET_TYPE_NAME"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.ASSET_TYPE_NAME }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="资产编号&名称"
       >
         <div slot-scope="{row}">
-          {{ row.NO_NAME_ARR[0] }}
+          {{ row.noNameArr[0] }}
           <el-popover
-            v-if="row.NO_NAME_ARR.length > 1"
+            v-if="row.noNameArr.length > 1"
             width="200"
             trigger="hover"
             placement="bottom-end"
@@ -149,7 +167,7 @@
             <div class="content">
               <div 
                 class="item"
-                v-for="(item, index) in row.NO_NAME_ARR"
+                v-for="(item, index) in row.noNameArr"
                 :key="index"
               >
                 {{ item }}
@@ -161,13 +179,19 @@
       <el-table-column 
         align="center"
         label="数量"
-        prop="AMOUNT"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.AMOUNT }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="状态"
-        :formatter="statusFormatter"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ statusFormatter(row.procVars.STATUS) }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="操作"
@@ -302,18 +326,16 @@ export default {
         })
       }
       applyList(params).then(res => {
-        let tableData = res.data.data.map(item => {
-          return item.procVars
-        })
         // 处理资产编号与名称
+        let tableData = res.data.data
         for (let i = 0; i < tableData.length; i ++) {
-          const noArr = tableData[i].ASSET_NO.split(',')
-          const nameArr = tableData[i].ASSET_NAME.split(',')
+          const noArr = tableData[i].procVars.ASSET_NO.split(',')
+          const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
           let arr = []
           noArr.forEach((value, index) => {
             arr.push(value + nameArr[index])
           })
-          tableData[i]['NO_NAME_ARR'] = arr 
+          tableData[i]['noNameArr'] = arr 
         }
         this.tableData = tableData
         this.total = res.data.total
@@ -352,12 +374,21 @@ export default {
     // 进入资产申领
     goDetail(row) {
       this.$router.push({
-        path: '/assetManagement/myAssets/myAssets-auth/applyInfo'
+        path: '/assetManagement/myAssets/myAssets-auth/applyInfo',
+        query: {
+          flowId: row.procVars.FLOW_ID,
+          applicantName: row.procVars.APPLICANT_NAME,
+          applyTime: row.procVars.APPLY_TIME,
+          status: this.statusFormatter(row.procVars.STATUS),
+          taskId: row.taskId,
+          processInstanceId: row.processInstanceId,
+          deployId: row.deployId
+        }
       })
     },
-    statusFormatter(row) {
-      if (row.STATUS) {
-        return this.options.find(v => v.value === row.STATUS).label
+    statusFormatter(status) {
+      if (status) {
+        return this.options.find(v => v.value === status).label
       }
     }
   }

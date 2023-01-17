@@ -114,6 +114,9 @@ export default {
     }
   },
   created() {
+    // tab回显
+    const { tab } = this.$route.params
+    this.tab = tab ? tab - 0 : 0
     this.getTableData()
   },
   methods: {
