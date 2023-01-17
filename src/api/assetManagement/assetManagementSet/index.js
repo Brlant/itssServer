@@ -118,6 +118,18 @@ export function getTypeData() {
       method: 'get'
     })
   }
+  export function getListData(data) {
+    return request({
+      url: `/flowable/flowable/task/flowViewer?taskId=${data.id}&processInstanceId=${data.processInstanceId}&deployId=${data.deployId}`,
+      method: 'get'
+    })
+  }
+  export function getDefinitionList(data) {
+    return request({
+      url: `/flowable/flowable/definition/list?pageNum=${data.currentPage}&pageSize=${data.pageSize}`,
+      method: 'get'
+    })
+  }
   //发布模型
   export function deployModel(data) {
     return request({

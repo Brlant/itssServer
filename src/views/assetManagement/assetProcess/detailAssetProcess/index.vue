@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="process-title">
-      <div style="font-size: 18px">
+      <div style="font-size: 18px" @click='goback'>
         <i class="el-icon-arrow-left"></i>
         <span>{{detailDataList.procVars.CATEGORY_NAME}}</span>
       </div>
@@ -61,37 +61,7 @@
               >查看</el-button
             >
           </span>
-          <!-- <span style="margin-left: 10px">
-              <el-button size="mini" type="text" @click='detail(scope.row)'>详情</el-button>
-            </span> -->
-          <!-- <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
-                <el-button
-                  size="mini"
-                  type="text"
-                  style="color: red"
-                  @click="delAsset(scope.row)"
-                  >删除</el-button
-                >
-              </span>
-              <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
-                <el-button
-                  size="mini"
-                  type="text"
-                  style="color: red"
-                  @click="stopOrUse(scope.row.id, 1)"
-                  v-if="scope.row.status == 0"
-                  >停用</el-button
-                >
-              </span>
-              <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="stopOrUse(scope.row.id, 0)"
-                  v-if="scope.row.status == 1"
-                  >启用</el-button
-                >
-              </span> -->
+       
         </template>
       </el-table-column>
     </el-table>
@@ -117,8 +87,9 @@
       </el-timeline>
     </div>
     <div>
-      <DrawFlowList :isShowCheck="isShowCheck" :params="params" />
+      <!-- <DrawFlowList :isShowCheck="isShowCheck" :params="params" /> -->
     </div>
+    
   </div>
 </template>
 <script>
@@ -223,6 +194,14 @@ export default {
     resetForm() {
       this.$refs["elForm"].resetFields();
     },
+    //返回
+    goback(){
+       const obj = {
+        path: "/assetManagement/assetProcess",
+      };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
+    }
   },
 };
 </script>
