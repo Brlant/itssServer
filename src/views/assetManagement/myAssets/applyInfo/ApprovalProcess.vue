@@ -144,6 +144,7 @@ export default {
           item.flowUploads = flowUploads
         })
         this.flowExamineList = groupListArr
+        const current = this.flowExamineList.findIndex(item => item.group)
         console.log('xxxxxx', this.flowExamineList)
 
         // b - 全部记录
