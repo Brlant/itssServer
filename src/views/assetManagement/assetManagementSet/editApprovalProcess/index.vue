@@ -118,21 +118,24 @@
                   height: 820px;
                   margin-top: 20px;
                 "
-                @click="aa(index)"
+               
               >
                 <el-button
                   type="primary"
-                  @click.self="del(index)"
-                  style="z-index: 1000"
+                  @click="del(index)"
+                  style="z-index: 2000"
                   >删除</el-button
                 >
-                <div>
+                <div @click="aa(index)">
                   <DrawFlowChart
+                   
                     :flowData="item.list"
                     :flowType="item.type"
                     :groupGetCategory="n"
                     :ref="item.flow"
+                    :index='index'
                     @childClick="childClick"
+                    @getEditNodeSon='getEditNodeSon'
                     :modelKey="item.modelKey"
                     :deptId="item.deptId"
                   ></DrawFlowChart>
@@ -355,7 +358,7 @@ export default {
         );
         // console.log(this.FlowConfigList,'this.FlowConfigList')
         this.FlowConfigListCopy = res.data.flowInfoVoList[0].flowDefInfoVoList;
-        // console.log( this.FlowConfigListCopy, "this.FlowConfigListCopy");
+        console.log( this.FlowConfigListCopy, "this.FlowConfigListCopy");
         this.FlowConfigList.forEach((item, index) => {
           let { des, json, modelType, modelKey, processId } =
             item.flowProcDefRes;
@@ -433,19 +436,9 @@ export default {
       }
     },
     searchDept(item, index) {
-      // console.log( this.FlowConfigListCopy[this.m],'sysDeptList')
+  
       this.m = index;
       this.deptIds = item;
-      console.log("this.FlowConfigListCopy", this.FlowConfigListCopy);
-      console.log(!this.dataCopy, "this.dataCopy");
-
-      console.log(111);
-
-      // this.FlowConfigList[this.m].deptId = item;
-      //   console.log(this.FlowConfigList[this.m],'this.FlowConfigList[this.m]')
-      // this.FlowConfigList[this.m].deptId.forEach((i) => {
-      //   sysDeptList.push({ deptId: i });
-      // });
 
       if (this.FlowConfigListCopy[this.m]) {
         let sysDeptList = [];
@@ -462,13 +455,21 @@ export default {
       this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
         this.FlowConfigListCopy;
     },
+    getEditNodeSon(data){
+      this.m=data.index
+      // return
+       this.FlowConfigListCopy[this.m].modelDeployId = "";
+        this.FlowConfigListCopy[this.m].modelDefinition = data.modelDefinition;
+         
+         this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
+          this.FlowConfigListCopy;
+    },
     //子组件触发
     childClick(data) {
       this.dataCopy = data;
       this.$nextTick(() => {
         let sysDeptList = [];
-        // console.log(this.FlowConfigListCopy, "this.FlowConfigListCopy");
-        console.log(this.m, ",,,,,,");
+    
         // 当流程定义没有修改时 modelDeployId 保持原样
         if (
           this.FlowConfigListCopy &&
@@ -498,13 +499,18 @@ export default {
       });
     },
     del(i) {
+     console.log(i)
       this.FlowConfigList.splice(i, 1);
+      
       this.FlowConfigListCopy.splice(i, 1);
-      console.log(this.FlowConfigList, " this.FlowConfigList.splice(i,1)");
+    
+       this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
+          this.FlowConfigListCopy;
     },
     //保存
     sureSave() {
       this.params = {
+        
         groupName: this.form.groupName,
         groupDescription: this.form.groupDescription,
         groupSetting: null,
@@ -518,7 +524,6 @@ export default {
         // ],
         flowInfoVoList: this.flowInfoVoListCopy,
       };
-      console.log(this.params, " this.params");
       // return
       editGroup(this.params).then((res) => {
         if (res.code == 200) {

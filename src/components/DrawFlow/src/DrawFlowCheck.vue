@@ -16,7 +16,7 @@
           :scaleVal="scaleVal"
         ></FactoryDrawFlow>
       </div>
- <div class="examine" v-if="isCustomcheck"><slot></slot></div>
+      <div class="examine" v-if="isCustomcheck"><slot></slot></div>
       <div class="examine" v-if="!isCustomcheck">
           <div>
             <h4>审核历史</h4>
@@ -31,11 +31,9 @@
                   <p>审核结果：{{commentType[item.type]}}</p>
                   <p>审核意见：{{item.comment}}</p>
                 </div>
-                
               </el-timeline-item>
             </el-timeline>
           </div>
-          
       </div>
     </div>
 
@@ -44,6 +42,7 @@
 <script>
 import axios from 'axios'
 import FactoryDrawFlow from "./DrawFlow.vue";
+import { getListData , deployModel} from "@/api/assetManagement/assetManagementSet";
 export default {
   name: "DrawFlowCheck",
    components: {
@@ -99,7 +98,7 @@ export default {
                 return {};
             }
         },
-         isCustomcheck: {
+        isCustomcheck: {
             type: Boolean,
             default() {
                 return {};
@@ -113,7 +112,7 @@ export default {
             },
             deep: true
         },
-          isCustomcheck: {
+        isCustomcheck: {
             handler() {
                 this.init();
             },
@@ -129,8 +128,13 @@ export default {
         },
         // 获取模型流程图数据
         getModelData( taskId, processInstanceId,deployId ){
+          let params={
+              id:taskId,
+              processInstanceId:processInstanceId,
+              deployId:deployId
+              }
             // 通过id获取流程表单
-            axios.get(`/flowable/task/flowViewer?taskId=${taskId}&processInstanceId=${processInstanceId}&deployId=${deployId}`).then(res => {
+            getListData(params).then(res => {
                 console.log(res)
                 if(res && res.data && res.data.code == 200){
                 let { flowProcDefRes, flowProgressResList, flowCommentResList } = res.data.data;

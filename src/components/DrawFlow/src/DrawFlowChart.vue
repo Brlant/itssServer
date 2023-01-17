@@ -46,6 +46,8 @@
       :FlowConfig="FlowConfig"
       :modelType="type"
       :scaleVal="scaleVal"
+      :index='index'
+      @getEditNode='getEditNode'
     ></FactoryDrawFlow>
     <!-- 属性面板 -->
     <el-drawer
@@ -156,6 +158,12 @@ export default {
         return '';
       }
     },
+     index: {
+      type: Number,
+      default() {
+        return 0;
+      }
+    },
   },
   watch: {
     flowId: {
@@ -261,8 +269,27 @@ export default {
       this.$forceUpdate();
       console.log("当前点击节点", node);
     },
+    getEditNode(params){
+      let res =  this.$refs.flow.getTreeData();
+      console.log(params.index,'ggggggg')
+       let list =  {
+        index:params.index,
+          des: this.form.processDes,
+          modelType: this.form.processType,
+          modelDefinition: {
+            process: {
+              processId:this.modelKey,
+              name: new Date()
+            },
+            processNode: res[0] || {},
+            list: params.selfConfig
+          }
+        }
+      this.$emit('getEditNodeSon',list)
+    },
     // 改变某一个节点,并对节点进行验证
     nodeChange(params) {
+      console.log(params,'params')
       if(params.type == 'userTask'){
         const { nodeName, attribute,processMultiInstanceUsers, title, rejectKey, completionCondition, userType,  sequential, className,isAddLabel  } = params;
         this.nodeData.nodeName = nodeName;
@@ -334,13 +361,12 @@ export default {
       }
       
     },
-   
-    // 发布模型
     submitData() {
       let params = this.getParams();
       if(!params){
         return false
       }
+      console.log('kkkkkkkkkkkkkkk')
       this.$emit('childClick', JSON.parse(JSON.stringify(params)));
       // params.des = new Date()
       // params.modelType = this.groupGetCategory

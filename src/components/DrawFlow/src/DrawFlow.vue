@@ -44,6 +44,12 @@ export default {
         return 100;
       }
     },
+     index: {
+      type: Number,
+      default() {
+        return 0;
+      }
+    },
   },
   watch: {
     FlowConfig: {
@@ -122,10 +128,7 @@ export default {
     creatBusNodeChange() {
       // EventBus.$on("nodeChange", this.nodeChange);
     },
-    getData(){
-      let FlowConfig = JSON.parse(JSON.stringify(this.selfConfig));
-      return FlowConfig;
-    },
+   
     getSelfConfigData(){
 
     },
@@ -298,21 +301,36 @@ export default {
     },
     //点击关闭节点
     closeNode(node) {
+      console.log(this.index,'this.index')
       let repickConfig = {};
       if (node.isRow) {
         repickConfig.groupId = node.groupId;
         repickConfig.id = node.id;
         let selfConfig = JSON.parse(JSON.stringify(this.selfConfig));
         this.selfConfig = this.deleteNode(selfConfig, node);
+        console.log(this.selfConfig,'dddddddddddddddddd')
         this.repickDeleteArr(repickConfig);
+        let parmas={
+          selfConfig:this.selfConfig,
+          index:this.index
+        }
+       this.$emit('getEditNode',parmas)
+       
       } else {
         this.deleteColNode(node);
       }
     },
-
+ getData(){
+    
+      let FlowConfig = JSON.parse(JSON.stringify(this.selfConfig));
+        console.log(this.FlowConfig,'ffffffffffffffffffffffffffffffffff')
+      return FlowConfig;
+    },
     // 删除节点
     deleteNode(selfConfig, node) {
+    
       selfConfig = selfConfig.map(i => i.id !== node.id && i).filter(Boolean);
+        console.log(selfConfig,'selfConfig')
       return selfConfig;
     },
     //单独删除col下node

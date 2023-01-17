@@ -131,15 +131,15 @@
                   height: 820px;
                   margin-top: 20px;
                 "
-                @click="aa(index)"
+               
               >
                 <el-button
                   type="primary"
-                  @click.self="del(index)"
+                  @click="del(index)"
                   style="z-index: 1000"
                   >删除</el-button
                 >
-                <div>
+                <div @click="aa(index)">
                   <DrawFlowChart
                     :flowData="item.list"
                     :flowType="item.type"
@@ -602,7 +602,7 @@ export default {
      this.FlowConfigListCopy[this.m].modelDeployId = "";
     //  this.FlowConfigListCopy[this.m].modelkey = "";
           this.FlowConfigListCopy[this.m].sysDeptList = sysDeptList;
-        this.FlowConfigListCopy[this.m].modelDefinition = data.modelDefinition;
+        this.FlowConfigListCopy[this.m].modelDefinition =  JSON.stringify(data.modelDefinition)=="{}" ? null : data.modelDefinition;
         this.flowInfoVoListCopy[this.n - 1].flowTypeId = this.checkIndex;
         this.flowInfoVoListCopy[this.n - 1].flowTypeName = this.checkName;
         this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =

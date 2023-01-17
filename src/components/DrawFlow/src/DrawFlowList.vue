@@ -47,7 +47,7 @@
             :total="totalNum">
             </el-pagination>
         </div> -->
-        <div>
+        <div v-if="!isShowCheck">
             <DrawFlowChart :flowId="flowId" :flowType="flowType" @setFlowChart="setFlowChart"></DrawFlowChart>
         </div>
         <div v-if="isShowCheck">
@@ -59,6 +59,7 @@
 <script>
 import DrawFlowChart from "./DrawFlowChart.vue";
 import DrawFlowCheck from "./DrawFlowCheck.vue";
+import { getDefinitionList , deployModel} from "@/api/assetManagement/assetManagementSet";
 import axios from 'axios'
   export default {
     name: "DrawFlowList",
@@ -121,10 +122,16 @@ import axios from 'axios'
         },
         // 获取列表数据
         initData(){
-            axios.get(`/flowable/definition/list?pageNum=${this.currentPage}&pageSize=${this.pageSize}`).then(res => {
-                if(res && res.data && res.data.code == 200){
-                    this.tableData = res.data.data.data;
-                    this.totalNum = res.data.data.total;
+            // axios.get(`/flowable/definition/list?pageNum=${this.currentPage}&pageSize=${this.pageSize}`).then(res => {
+               getDefinitionList(
+                {
+                  currentPage:this.currentPage,
+                  pageSize:this.pageSize
+                }
+               ).then(res => {
+                if(res && res.data && res.code == 200){
+                    this.tableData = res.data.data;
+                    this.totalNum = res.data.total;
                     return false;
                 }
             })
