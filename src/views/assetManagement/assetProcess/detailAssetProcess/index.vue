@@ -3,7 +3,7 @@
     <div class="process-title">
       <div style="font-size: 18px" @click='goback'>
         <i class="el-icon-arrow-left"></i>
-        <span>{{detailDataList.procVars.CATEGORY_NAME}}</span>
+        <span>{{title}}</span>
       </div>
       <div>
         <el-button type="primary">全部同意</el-button>
@@ -101,7 +101,7 @@ export default {
     return {
       params:{},
       //上级带过来的数据
-      detailDataList:this.$route.query.detailData,
+      title:this.$route.query.applyName,
       tableData: [],
       formData: {
         field101: null,
@@ -164,7 +164,8 @@ export default {
   computed: {},
   watch: {},
   created() {
-    this.initData()
+    console.log(this.detailDataList,'detailDataList')
+    // this.initData()
   },
   mounted() {},
   methods: {

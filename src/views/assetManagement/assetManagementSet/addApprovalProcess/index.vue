@@ -8,7 +8,7 @@
         </div>
         <div>
           <el-button type="primary" @click="sureSave">保存</el-button>
-          <el-button>取消</el-button>
+          <el-button @click='cancel'>取消</el-button>
         </div>
       </div>
       <div>
@@ -387,21 +387,7 @@ export default {
           flowTypeName: "",
           flowDefInfoVoList: this.FlowConfigListCopy,}
         console.log(this.FlowConfigListCopy, ",,,,,,,,,,,,");
-      // this.FlowConfigList.forEach((item, index) => {
-      //   let { des, json, modelType, modelKey, processId } = item.flowProcDefRes;
-      //   let processData = JSON.parse(json);
-      //   item.list = processData.list;
-      //   console.log(item.list, "kkkkkkkkkkkkkkkkkkkk");
-      //   item.type = "edit";
-      //   item.deptId = [];
-      //   item.modelKey = modelKey;
-      //   item.sysDeptList.forEach((i) => {
-      //     item.deptId.push(i.deptId);
-      //   });
-      //   item.flow = index;
-      //   item.list.sysDeptList = item.deptId;
-      //   console.log(item.list, "this.FlowConfigthis.FlowConfigthis.FlowConfig");
-      // });
+     
     },
     //切换类型触发事件
     checkSelect(data, index) {
@@ -465,6 +451,7 @@ export default {
         console.log(this.FlowConfigList, "this.FlowConfigList");
       });
     },
+    //返回
     goBack() {
       const obj = {
         path: "/assetManagement/assetManagementSet/approvalProcess",
@@ -519,6 +506,7 @@ export default {
         this.isShowAttribute = false;
       }
     },
+    //切换部门时调用
     searchDept(item, index) {
            this.m = index;
         this.deptIds = item;
@@ -527,19 +515,7 @@ export default {
             sysDeptList.push({ deptId: i });
           });
       if (this.isCopy == 2) {
-        // console.log( this.FlowConfigListCopy[this.m],'sysDeptList')
-   
-        console.log("this.FlowConfigListCopy", this.FlowConfigListCopy);
-        console.log(!this.dataCopy, "this.dataCopy");
-
-        console.log(111);
-
-        // this.FlowConfigList[this.m].deptId = item;
-        //   console.log(this.FlowConfigList[this.m],'this.FlowConfigList[this.m]')
-        // this.FlowConfigList[this.m].deptId.forEach((i) => {
-        //   sysDeptList.push({ deptId: i });
-        // });
-
+        //为复制新增时
         if (this.FlowConfigListCopy[this.m]) {
          
           this.FlowConfigListCopy[this.m].sysDeptList = sysDeptList;
@@ -552,6 +528,7 @@ export default {
         this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
           this.FlowConfigListCopy;
       } else if (this.isCopy == 1) {
+        //为新增不复制
           this.FlowConfigListCopy[this.m].sysDeptList = sysDeptList;
            this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
           this.FlowConfigListCopy;
@@ -609,6 +586,7 @@ export default {
           this.FlowConfigListCopy;
       }
     },
+    //删除流程图
     del(i) {
       this.FlowConfigList.splice(i, 1);
       this.FlowConfigListCopy.splice(i, 1);
@@ -620,14 +598,6 @@ export default {
         groupName: this.form.groupName,
         groupDescription: this.form.groupDescription,
         groupSetting: null,
-        // id: this.$route.query.detailId,
-        // flowInfoVoList: [
-        //   {
-        //     flowTypeId: this.checkIndex,
-        //     flowTypeName: this.checkName,
-        //     flowDefInfoVoList: this.FlowConfigListCopy,
-        //   },
-        // ],
         flowInfoVoList: this.flowInfoVoListCopy,
       };
       console.log(this.params, " this.params");
@@ -644,6 +614,18 @@ export default {
           }
       });
     },
+    //取消
+     cancel(){
+       this.$confirm(`当前页面修改内容尚未保存，是否确认退出？`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+            this.$router.push('/assetManagement/assetManagementSet/approvalProcess')
+        })
+        .catch(() => {});
+    }
   },
 };
 </script>

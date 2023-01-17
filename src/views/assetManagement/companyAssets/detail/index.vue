@@ -1,15 +1,12 @@
 <template>
   <div class="wrap">
     <header>
-      <div 
-        class="left" 
-        @click="$router.go(-1)"
-      >
+      <div class="left" @click="$router.go(-1)">
         <i class="el-icon-arrow-left"></i>
         <span>资产信息</span>
       </div>
       <div class="btns">
-        <div class="item" v-if="isShow">
+        <div class="item" v-if="isShow" @click="warehousing">
           <span>入库</span>
         </div>
         <div class="item" v-if="manageType == 2">
@@ -168,18 +165,10 @@
     </div>
     <!-- tab切换部分 -->
     <div class="tabs">
-      <easy-tabs
-        v-model="tab"
-        :options="tabOptions"
-        @change="change"
-      />
+      <easy-tabs v-model="tab" :options="tabOptions" @change="change" />
       <div class="content">
         <!-- 详细信息 -->
-        <detail-info 
-          v-if="tab === 0"
-          :info="info"
-          :list="list"
-        />
+        <detail-info v-if="tab === 0" :info="info" :list="list" />
         <!-- 使用记录 -->
         <use-record v-if="tab === 1" />
         <!-- 维修记录 -->
@@ -190,21 +179,96 @@
         <asset-certificate v-if="tab === 4" />
       </div>
     </div>
+    <el-dialog
+      :title="title"
+      class="dialogForm"
+      width="30%"
+      :visible.sync="dialogShow"
+    >
+      <el-form
+        :model="diaForm"
+        ref="diaForm"
+        :rules="dialogRules"
+        :inline="false"
+        label-width="120px"
+        class="dialogFormInfo"
+      >
+        <div class='sure-title'><span style='color:red'>*</span>确认信息</div>
+        <div class='list-style'>
+          <div
+            v-for="(item, index) in sureList"
+            :key="index"
+            :class="['div-style', { current: selectAll.includes(index) },{noSelect:!selectAllCopy.includes(index)}]"
+            @click='select(index)'
+          >
+            {{ item.label }}
+          </div>
+        </div>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="证书文件" prop="url">
+              <el-upload
+                action
+                :on-change="upChange"
+                :before-remove="remove"
+                :limit="1"
+                accept=".jpg, .png, .pdf"
+                :auto-upload="false"
+              >
+                <el-button type="info"> 上传附件 </el-button>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
+           <el-row>
+          <el-col :span="12">
+            <el-form-item label="备注" prop="url">
+             <el-input v-model='diaForm.remark' type='textarea'>
+             </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div @click='seeAsset'>审批流程查看</div>
+      <div class="txtAlignC dialogBtnInfo">
+        <el-button type="primary" @click="sureApply">确定</el-button>
+        <el-button @click="cancelFn">取消</el-button>
+      </div>
+    </el-dialog>
+    <!-- <el-dialog
+      title='审批流程'
+      class="dialogForm"
+      width="30%"
+      :visible.sync="assetShow">
+           <FactoryDrawFlow
+              ref="flow"
+              :FlowConfig="list"
+              :modelType="see"
+              :scaleVal="scaleVal"
+            ></FactoryDrawFlow>
+            <el-row >
+              <el-col :span="12" >
+                <el-form-item label="适用部门" prop="dept">
+                  <span v-for='(i,index) in item.sysDeptList' :key="index"> {{i.deptName+'；'}}</span>
+                </el-form-item>
+              </el-col>
+            </el-row>
+    </el-dialog> -->
   </div>
 </template>
 
 <script>
-import { assetDetail } from '@/api/assetManagement/companyAssets'
-import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
-import findItemById from '@/utils/findItemById'
-import { detailInformation } from '../options'
-import EasyTabs from '@/components/EasyTabs'
-import DetailInfo from './DetailInfo'
-import AssetCertificate from './AssetCertificate'
-import AssetMaintain from './AssetMaintain'
-import UseRecord from './UseRecord'
-import MaintainRecord from './MaintainRecord'
-
+import { assetDetail, fileUpload, setWarehousing,seeAssetProcess} from "@/api/assetManagement/companyAssets";
+import { queryAsset } from "@/api/assetManagement/quickAssetDetail";
+import findItemById from "@/utils/findItemById";
+import { detailInformation } from "../options";
+import EasyTabs from "@/components/EasyTabs";
+import DetailInfo from "./DetailInfo";
+import AssetCertificate from "./AssetCertificate";
+import AssetMaintain from "./AssetMaintain";
+import UseRecord from "./UseRecord";
+import MaintainRecord from "./MaintainRecord";
 export default {
   components: {
     EasyTabs,
@@ -212,9 +276,17 @@ export default {
     AssetCertificate,
     AssetMaintain,
     UseRecord,
-    MaintainRecord
+    MaintainRecord,
   },
   data() {
+    // 上传校验
+    const check = (rule, value, callback) => {
+      if (!this.url) {
+        callback(new Error("请上传证书文件"));
+      } else {
+        callback();
+      }
+    };
     return {
       span: 6,
       id: this.$route.query.id,
@@ -223,66 +295,196 @@ export default {
       manageType: this.$route.query.manageType,
       info: {},
       list: [],
-      tabOptions: ['详细信息', '使用记录', '维修记录', '保养记录', '证书记录'],
-      tab: 0
-    }
+      scaleVal: 100, // 流程图缩放比例 100%
+      sureList: [
+        {
+          label: "资产类型确认",
+          value: 0,
+        },
+        {
+          label: "资产型号确认",
+          value: 1,
+        },
+        {
+          label: "资产类型确认",
+          value: 2,
+        },
+        {
+          label: "资产型号确认",
+          value: 3,
+        },
+      ],
+      tabOptions: ["详细信息", "使用记录", "维修记录", "保养记录", "证书记录"],
+      tab: 0,
+      dialogShow: false,
+      assetShow:false,
+      title: "申请入库",
+      diaForm: {},
+      url: "",
+      name: "",
+      type:'',
+      selectAll:[0,1,2,3],
+      selectAllCopy:[0,1,2,3],
+      dialogRules: {
+        url: [{ required: true, trigger: "blur", validator: check }],
+      },
+    };
   },
   computed: {
     // 是否显示入库及编辑
     isShow() {
-      if (this.status.includes('入库') && (this.isApplying == 0 || this.isApplying == 3)) {
-        return true
+      if (
+        this.status.includes("入库") &&
+        (this.isApplying == 0 || this.isApplying == 3)
+      ) {
+        return true;
       } else {
-        return false
+        return false;
       }
-    }
+    },
   },
   created() {
-    this.getDetail()
+    this.getDetail();
   },
   methods: {
+    //查看审批流程
+    seeAsset(){
+      this.assetShow=true
+      let param={
+        assetTypeIds
+      }
+      seeAssetProcess().then(res=>{
+
+      })
+    },
+    // 上传文件
+    upChange(file) {
+      let formData = new FormData();
+      formData.append("file", file.raw);
+      fileUpload(formData).then(res => {
+        this.url = res.data.url
+        this.name = res.data.name
+         this.type=this.name.substring(this.name.lastIndexOf('.'))
+      })
+    },
+    remove() {
+      this.url = "";
+      this.name = "";
+      this.type=''
+    },
+    //弹框取消
+    cancelFn() {
+      this.dialogShow = false;
+    },
+    select(index){
+      console.log(this.selectAll,'selectAll')
+    let n=index
+    this.$nextTick(()=>{
+      if(this.selectAll.includes(n)){
+        console.log('aaaa')
+        // this.selectAll.splice(n, 1);
+          this.selectAll[n]=''
+       
+      }else{
+         this.selectAll[n]=n
+      }
+    })
+    this.selectAllCopy=[0,1,2,3]
+      this.$forceUpdate()
+      console.log(this.selectAllCopy,'this.selectAll')
+     
+    },
+    //弹框确认
+    sureApply() {
+       this.$refs.diaForm.validate(valid => {
+        if (!valid) {
+          return
+        }
+           if(!this.selectAll.includes('')){
+        
+          let attachList={
+              name:this.name,
+              url:this.url,
+              type:this.type,
+              description:''
+          }
+          let attachmentList=[]
+          let assetList=[]
+          attachmentList.push(attachList)
+          assetList.push(this.info)
+          let params={
+            assetList,
+            attachmentList,
+            remark:this.diaForm.remark
+          }
+          setWarehousing(params).then(res=>{
+            if(res.code==200){
+              this.$message.success(res.msg)
+              this.dialogShow=false
+            }
+          })
+      }else{
+        this.selectAllCopy=JSON.parse(JSON.stringify(this.selectAll))
+        // console.log( this.selectAll,' this.selectAll')
+        // this.selectAll.forEach((i,index)=>{
+        //   if(i!=''){
+        //     this.selectAllCopy[index]=i
+        //   }
+          
+        // })
+        // console.log(this.selectAllCopy)
+      }
+     
+       })
+     
+    },
     // 详情
     getDetail() {
-      assetDetail(this.id).then(res => {
-        this.info = res.data
-        queryAsset().then(resp => {
+      assetDetail(this.id).then((res) => {
+        this.info = res.data;
+        queryAsset().then((resp) => {
           // 动态渲染展示条目
-          const { assetTemplate } = findItemById(this.info.assetTypeId, resp.data)
-          let list = []
-          detailInformation.forEach(item => {
+          const { assetTemplate } = findItemById(
+            this.info.assetTypeId,
+            resp.data
+          );
+          let list = [];
+          detailInformation.forEach((item) => {
             for (let i in assetTemplate) {
               if (item.status === i) {
                 if (assetTemplate[i] === 1) {
-                  list.push(item)
+                  list.push(item);
                 }
               }
             }
-          })
-          this.list = list
-        })
-      })
+          });
+          this.list = list;
+        });
+      });
+    },
+    //入库
+    warehousing() {
+      this.dialogShow = true;
     },
     // 进入编辑
     goEdit() {
       this.$router.push({
-        path: '/assetManagement/companyAssets/companyAssets-auth/edit',
+        path: "/assetManagement/companyAssets/companyAssets-auth/edit",
         query: {
-          id: this.id
-        }
-      })
+          id: this.id,
+        },
+      });
     },
     // tab切换
-    change() {
-      
-    },
+    change() {},
     // 时间格式
     formatDate(date) {
       if (date) {
-        return date.substr(0, 10)
+        return date.substr(0, 10);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -329,10 +531,10 @@ export default {
     .item {
       padding: 10px;
       .star {
-        color: #F52551;
+        color: #f52551;
       }
       .label {
-        color: #8294AD;
+        color: #8294ad;
       }
     }
     .section {
@@ -364,5 +566,32 @@ export default {
 .el-row {
   display: flex;
   flex-wrap: wrap;
+}
+.list-style{
+  display: inline-block;
+  width:80%;
+}
+.sure-title{
+  display:inline-block;
+  width:20%;
+  vertical-align:top;
+  text-align:right;
+  padding-right:40px;
+}
+.div-style {
+  cursor: pointer;
+  width: 30%;
+  margin-right: 100px;
+  margin-bottom: 20px;
+  display: inline-block;
+  border: 1px solid #ddd;
+  text-align: center;
+  padding:10px 0;
+}
+.current{
+  background:#97b2e98c
+}
+.noSelect{
+  box-shadow: 2px 2px 10px red;;
 }
 </style>

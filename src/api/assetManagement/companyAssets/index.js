@@ -115,3 +115,19 @@ export function maintainRecord(data) {
     data
   })
 }
+//发起入库
+export function setWarehousing(data) {
+  return request({
+    url: `/asset/approvalProcess/assetInStorageInitiate`,
+    method: 'post',
+    data
+  })
+}
+//查看审批流程
+export function seeAssetProcess(query) {
+  return request({
+    url: '/asset/assetFlow/getFlowDefinitionDetail',
+    method: 'get',
+    params:query
+  })
+}

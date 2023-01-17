@@ -351,6 +351,14 @@
             </el-form-item>
           </el-col>
         </el-row>
+         <el-row>
+          <el-col :span="12">
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="diaForm.remark" type='textarea'>
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div class="txtAlignC dialogBtnInfo">
         <el-button type="primary" 

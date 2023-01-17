@@ -8,7 +8,7 @@
         </div>
         <div>
           <el-button type="primary" @click="sureSave">保存</el-button>
-          <el-button>取消</el-button>
+          <el-button @click='cancel'>取消</el-button>
         </div>
       </div>
       <div>
@@ -268,9 +268,9 @@ export default {
       this.isShowEdit = true;
       this.detailData();
     },
+    //点击某个流程图调用方法，获取点击流程图的下标
     aa(index) {
       this.m = index;
-      console.log(index, "ddddddddddddddddddddd");
     },
     //添加流程
     add() {
@@ -346,6 +346,7 @@ export default {
         console.log(item.list, "this.FlowConfigthis.FlowConfigthis.FlowConfig");
       });
     },
+    //页面初始化时数据获取
     detailData() {
       getDetailProcess(this.detailId).then((res) => {
         this.form = res.data;
@@ -381,6 +382,7 @@ export default {
         console.log(this.FlowConfigList, "this.FlowConfigList");
       });
     },
+    //返回
     goBack() {
       const obj = {
         path: "/assetManagement/assetManagementSet/approvalProcess",
@@ -435,6 +437,7 @@ export default {
         this.isShowAttribute = false;
       }
     },
+    //改变部门时调用的方法
     searchDept(item, index) {
   
       this.m = index;
@@ -455,6 +458,7 @@ export default {
       this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
         this.FlowConfigListCopy;
     },
+    //点击删除节点触发事件
     getEditNodeSon(data){
       this.m=data.index
       // return
@@ -464,7 +468,7 @@ export default {
          this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
           this.FlowConfigListCopy;
     },
-    //子组件触发
+    //子组件触发（右侧弹窗）
     childClick(data) {
       this.dataCopy = data;
       this.$nextTick(() => {
@@ -498,6 +502,7 @@ export default {
           this.FlowConfigListCopy;
       });
     },
+    //删除按钮事件
     del(i) {
      console.log(i)
       this.FlowConfigList.splice(i, 1);
@@ -515,13 +520,6 @@ export default {
         groupDescription: this.form.groupDescription,
         groupSetting: null,
         id: this.$route.query.detailId,
-        // flowInfoVoList: [
-        //   {
-        //     flowTypeId: this.checkIndex,
-        //     flowTypeName: this.checkName,
-        //     flowDefInfoVoList: this.FlowConfigListCopy,
-        //   },
-        // ],
         flowInfoVoList: this.flowInfoVoListCopy,
       };
       // return
@@ -538,6 +536,18 @@ export default {
         }
       });
     },
+    //页面取消按钮
+    cancel(){
+       this.$confirm(`当前页面修改内容尚未保存，是否确认退出？`, "温馨提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+            this.$router.push('/assetManagement/assetManagementSet/approvalProcess')
+        })
+        .catch(() => {});
+    }
   },
 };
 </script>

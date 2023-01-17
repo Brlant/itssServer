@@ -43,6 +43,18 @@
               />
             </el-form-item>
           </el-col>
+           <el-col :span="8">
+            <el-form-item label="申请人" prop="APPLICANT_ID">
+               <el-select v-model="formData.APPLICANT_ID" clearable :style="style">
+                <el-option
+                  v-for="(item, index) in peopleLists"
+                  :key="index"
+                  :label="item.nickName"
+                  :value="item.userId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="8">
             <el-form-item label="流程类型" prop="CATEGORY_ID">
               <el-select v-model="formData.CATEGORY_ID" clearable :style="style">
@@ -95,7 +107,7 @@
     </div>
     <!-- 表单结束 -->
     <!-- 表格开始 -->
-    <el-table
+     <el-table
       :data="tableData"
       @row-click="goDetail"
       border
@@ -104,46 +116,59 @@
       <el-table-column 
         align="center"
         label="流程ID"
-        prop="FLOW_ID"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.FLOW_ID }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="流程类型"
-        prop="CATEGORY_NAME"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.CATEGORY_NAME }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="流程组名称"
-        prop="FLOWGROUP_NAME"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.FLOWGROUP_NAME }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="申请人"
-        prop="APPLICANT_NAME"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.APPLICANT_NAME }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="发起时间"
-        prop="APPLY_TIME"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.APPLY_TIME }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="资产类型"
-        prop="ASSET_TYPE_NAME"
-      />
-      <!-- <el-table-column 
-        align="center"
-        label="资产编号&名称"
-        :formatter="formatter"
-      /> -->
-       <el-table-column 
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.ASSET_TYPE_NAME }}
+        </template>
+      </el-table-column>
+      <el-table-column 
         align="center"
         label="资产编号&名称"
       >
         <div slot-scope="{row}">
-          {{ row.NO_NAME_ARR[0] }}
+          {{ row.noNameArr[0] }}
           <el-popover
-            v-if="row.NO_NAME_ARR.length > 1"
+            v-if="row.noNameArr.length > 1"
             width="200"
             trigger="hover"
             placement="bottom-end"
@@ -154,7 +179,7 @@
             <div class="content">
               <div 
                 class="item"
-                v-for="(item, index) in row.NO_NAME_ARR"
+                v-for="(item, index) in row.noNameArr"
                 :key="index"
               >
                 {{ item }}
@@ -166,19 +191,29 @@
       <el-table-column 
         align="center"
         label="数量"
-        prop="AMOUNT"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ row.procVars.AMOUNT }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="状态"
-        :formatter="statusFormatter"
-      />
+      >
+        <template slot-scope="{row}">
+          {{ statusFormatter(row.procVars.STATUS) }}
+        </template>
+      </el-table-column>
       <el-table-column 
         align="center"
         label="操作"
       >
         <template slot-scope="{row}">
-          <el-button type="text" size="small" @click="cancel(row)">
+          <el-button 
+            type="text"
+            size="small" 
+            @click="cancel(row)"
+          >
             取消
           </el-button>
         </template>
@@ -198,7 +233,7 @@
 
 <script>
 import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
-import { getPendingList, getProcessedList } from "@/api/assetManagement/assetProcess";
+import { getPendingList, getProcessedList,getPeople } from "@/api/assetManagement/assetProcess";
 import {
   cateList,
   applyList 
@@ -216,6 +251,7 @@ export default {
        
       ],
       n: 0,
+      peopleLists:[],
       isExpand: false,
       style: {width: '100%'},
       asset: [],
@@ -235,9 +271,16 @@ export default {
   mounted() {
     this.getAsset()
     this.getCateList()
+    this.peopleList()
     // this.getTableData()
   },
   methods: {
+    //申请人查询
+    peopleList(){
+      getPeople().then(res=>{
+        this.peopleLists=res.data
+      })
+    },
     // 资产类型查询
     getAsset() {
       queryAsset().then(res => {
@@ -263,8 +306,8 @@ export default {
       } = this.formData
       
       let eq = {
-        STATUS: this.options[this.n].value,
-        APPLICANT_ID: this.userId + ''
+        // STATUS: this.options[this.n].value,
+        APPLICANT_ID:  this.formData.APPLICANT_ID
       }
       if (CATEGORY_ID) {
         eq.CATEGORY_ID = CATEGORY_ID
@@ -293,8 +336,8 @@ export default {
 
       const params = {
         ...this.queryParams,
-      // userId:this.$store.state.user.user.userId,
-        userKey:4,
+      userKey:this.$store.state.user.user.userId,
+        // userKey:4,
         variableJsonStr: JSON.stringify({
           eq,
           neq: {},
@@ -306,21 +349,20 @@ export default {
         })
       }
       getProcessedList(params).then(res => {
-         let tableData = res.data.data.map(item => {
-          return item.procVars
-        })
-         for (let i = 0; i < tableData.length; i ++) {
-          const noArr = tableData[i].ASSET_NO.split(',')
-          const nameArr = tableData[i].ASSET_NAME.split(',')
+        let tableData = res.data.data
+        for (let i = 0; i < tableData.length; i ++) {
+          const noArr = tableData[i].procVars.ASSET_NO.split(',')
+          const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
           let arr = []
           noArr.forEach((value, index) => {
             arr.push(value + nameArr[index])
           })
-          tableData[i]['NO_NAME_ARR'] = arr 
+          tableData[i]['noNameArr'] = arr 
         }
         this.tableData = tableData
         this.total = res.data.total
         this.loading = false
+      
       }).catch(() => {
         this.loading = false
       })
@@ -336,8 +378,8 @@ export default {
       } = this.formData
       
       let eq = {
-        STATUS: this.options[this.n].value,
-        APPLICANT_ID: this.userId + ''
+        // STATUS: this.options[this.n].value,
+        APPLICANT_ID: this.formData.APPLICANT_ID
       }
       if (CATEGORY_ID) {
         eq.CATEGORY_ID = CATEGORY_ID
@@ -366,8 +408,8 @@ export default {
 
       const params = {
         ...this.queryParams,
-        //  userId:this.$store.state.user.user.userId,
-        userKey:4,
+         userKey:this.$store.state.user.user.userId,
+        // userKey:4,
         variableJsonStr: JSON.stringify({
           eq,
           neq: {},
@@ -380,21 +422,35 @@ export default {
       }
       console.log(params,'params')
       getPendingList(params).then(res => {
-         let tableData = res.data.data.map(item => {
-          return item.procVars
-        })
-         for (let i = 0; i < tableData.length; i ++) {
-          const noArr = tableData[i].ASSET_NO.split(',')
-          const nameArr = tableData[i].ASSET_NAME.split(',')
+        //  let tableData = res.data.data.map(item => {
+        //   return item.procVars
+        // })
+        //  for (let i = 0; i < tableData.length; i ++) {
+        //   const noArr = tableData[i].ASSET_NO.split(',')
+        //   const nameArr = tableData[i].ASSET_NAME.split(',')
+        //   let arr = []
+        //   noArr.forEach((value, index) => {
+        //     arr.push(value + nameArr[index])
+        //   })
+        //   tableData[i]['NO_NAME_ARR'] = arr 
+        // }
+        // this.tableData = tableData
+        // this.total = res.data.total
+        // this.loading = false
+         let tableData = res.data.data
+        for (let i = 0; i < tableData.length; i ++) {
+          const noArr = tableData[i].procVars.ASSET_NO.split(',')
+          const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
           let arr = []
           noArr.forEach((value, index) => {
             arr.push(value + nameArr[index])
           })
-          tableData[i]['NO_NAME_ARR'] = arr 
+          tableData[i]['noNameArr'] = arr 
         }
         this.tableData = tableData
         this.total = res.data.total
         this.loading = false
+      
       }).catch(() => {
         this.loading = false
       })
@@ -429,18 +485,36 @@ export default {
       this.n=3
       this.pendingList()
     },
-    // 进入资产申领
+    // 进入入库详情
     goDetail(row) {
-      this.$router.push({
-        path: '/assetManagement/myAssets/myAssets-auth/applyInfo'
-      })
+      console.log(row,'scope')
+      // return 
+       const obj = {
+        path: "/assetManagement/detailAssetProcess/process/detailAssetProcess",
+        query: {
+          flowId: row.procVars.FLOW_ID,
+          applyName:row.procVars.CATEGORY_NAME,
+          applicantName: row.procVars.APPLICANT_NAME,
+          applyTime: row.procVars.APPLY_TIME,
+          // status: this.statusFormatter(row.procVars.STATUS),
+          taskId: row.taskId,
+          processInstanceId: row.processInstanceId,
+          deployId: row.deployId
+        }
+      };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
     },
     formatter(row) {
       return row.ASSET_NO + row.ASSET_NAME
     },
     statusFormatter(row) {
-      if (row.STATUS) {
-        return this.options.find(v => v.value === row.STATUS).label
+      if (row.STATUS==1) {
+        return '申请中'
+      }else if(row.STATUS==2){
+        return '已完成'
+      }else{
+      return '已取消'
       }
     }
   }
