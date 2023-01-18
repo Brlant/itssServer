@@ -55,7 +55,7 @@ export default {
       const nodeConfig = this.nodeConfig;
       let { id, prevId } = Object.assign(nodeConfig, item);
       let { type, isRow, value, nodeType, rejectKey, completionCondition, userType, attribute } = item;
-      let nextNode = new NextNode({ id, prevId, type, nodeType, title:value, rejectKey, completionCondition: type == 4 ? '${nrOfCompletedInstances/nrOfInstances >= 1}':'' , userType, attribute, isRow });
+      let nextNode = new NextNode({ id, prevId, type, nodeType, title:value, rejectKey, completionCondition: type == 4 ? '${nrOfCompletedInstances/nrOfInstances == 1}':'' , userType, attribute, isRow });
       this.$emit("clickSelectBox", nextNode);
     },
     renderAddSBox() {

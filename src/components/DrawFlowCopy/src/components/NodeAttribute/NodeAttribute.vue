@@ -338,7 +338,7 @@ export default {
           processMultiInstanceUsers: that.form.userId,
           nodeName: that.form.userName,
           rejectKey: rejectKey, // 当前节点看看是否需要回退的部分
-          completionCondition: that.form.completionCondition == 1 ? '${nrOfCompletedInstances >= 1}' : '${nrOfCompletedInstances/nrOfInstances >= 1}', // 当前节点的审批类型
+          completionCondition: that.form.completionCondition == 1 ? '${nrOfCompletedInstances == 1}' : '${nrOfCompletedInstances/nrOfInstances == 1}', // 当前节点的审批类型
           sequential: false,
           className: that.form.className ? [{ implementation: that.form.className }] : ''
         }
