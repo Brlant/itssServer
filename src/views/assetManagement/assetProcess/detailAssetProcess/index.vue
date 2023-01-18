@@ -227,7 +227,7 @@
 import ApprovalProcess from './ApprovalProcess.vue'
 import { listAsset } from '@/api/assetManagement/myAssets'
 import { tabOptions } from '../../companyAssets/options'
-import { agreeQuery,rejectQuery } from "@/api/assetManagement/assetProcess";
+import { agreeQuery,rejectQuery,deleteAttachment,uploadSuccess } from "@/api/assetManagement/assetProcess";
 import { 
   fileUpload,
 } from '@/api/assetManagement/companyAssets'
@@ -246,7 +246,8 @@ export default {
       rejectShow:false,
       url: '',
       name: '',
-      type:''
+      type:'',
+      attachmentId:''//取消时的附件id
     }
   },
   created() {
@@ -268,13 +269,35 @@ export default {
       let formData = new FormData()
       formData.append('file', file.raw)
       fileUpload(formData).then(res => {
+        if(res.code==200){
         this.url = res.data.url
         this.name = res.data.name
+        this.uploadAttachment(res.data)
+        }
+       
       })
     },
     remove() {
       this.url = ''
       this.name = ''
+    },
+    uploadAttachment(data){
+      let params={
+        attachments:[
+          {
+            description:'',
+            name:data.name,
+            url:data.url,
+            type:data.name.substring(data.name.lastIndexOf('.')),
+            userId:this.$store.state.user.user.userId,
+          }
+        ],
+         processInstanceId:this.$route.query.processInstanceId,
+         taskId:this.$route.query.taskId,
+      }
+      uploadSuccess(params).then(res=>{
+          this.attachmentId=res.data[0].id
+      })
     },
     //确认同意
     sureAgree(){
@@ -286,9 +309,18 @@ export default {
         }
         agreeQuery(params).then(res=>{
             if(res.code==200){
-                    this.$message.success(res.msg)
-                    this.getTableData()
+                this.$message.success(res.msg)
+                this.agreeShow=false
+                  const obj = {
+                path: "/assetManagement/assetProcess",
+                query:{
+                    tab:this.$route.query.tab
                 }
+              };
+              // getToday()
+              this.$tab.closeOpenPage(obj);
+              this.getTableData()
+          }
         })
     },
     //确认拒绝
@@ -302,6 +334,15 @@ export default {
         rejectQuery(params).then(res=>{
             if(res.code==200){
                 this.$message.success(res.msg)
+                this.rejectShow=false
+                  const obj = {
+                    path: "/assetManagement/assetProcess",
+                    query:{
+                        tab:this.$route.query.tab
+                    }
+                  };
+                  // getToday()
+                  this.$tab.closeOpenPage(obj);
                 this.getTableData()
             }
         })
@@ -310,6 +351,11 @@ export default {
     cancelFn(){
          this.rejectShow=false
          this.agreeShow=false
+         deleteAttachment(this.attachmentId).then(res=>{
+          if(res.code==200){
+            this.$message.success('取消成功')
+          }
+         })
     },
     // 表格数据
     getTableData() {

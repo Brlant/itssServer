@@ -39,3 +39,20 @@ export function getPendingList(query) {
       data    
     })
   }
+  //上传附件
+  export function uploadSuccess(data) {
+    return request({
+      url: `flowable/flowable/task/addAttachment`,
+      method: 'post',  
+      data  
+    })
+  }
+  //删除附件
+  export function deleteAttachment(attachmentId) {
+    return request({
+      url: `flowable/flowable/task/deleteAttachment?attachmentId=${attachmentId}`,
+      method: 'post',  
+       
+    })
+  } 
+  
