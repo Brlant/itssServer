@@ -149,9 +149,10 @@ export default {
     getList() {
       this.loading = true;
       queryAll(this.queryParams).then(res => {
-        this.assetDetailTemplateList = res.rows;
+        this.assetDetailTemplateList = this.deepClone(res.rows);
         this.total = res.total;
         this.loading = false;
+        this.$forceUpdate()
       });
     },
     /**查看详情页面*/
