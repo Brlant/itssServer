@@ -6,14 +6,14 @@
         <span>资产信息</span>
       </div>
       <div class="btns">
-        <div class="item" v-if="isShow" @click="warehousing">
-          <span>入库</span>
+        <div class="item" v-if="isShow">
+          <span @click="warehousing">入库</span>
         </div>
         <div class="item" v-if="manageType == 2">
           <span>维修</span>
         </div>
         <div class="item">
-          <span>报废</span>
+          <span @click="initScrap">报废</span>
         </div>
         <div class="item" v-if="isShow">
           <span @click="goEdit">编辑</span>
@@ -255,6 +255,9 @@
               </el-col>
             </el-row>
     </el-dialog> -->
+
+    <!-- 发起报废 -->
+    <asset-scrap ref="scrap" />
   </div>
 </template>
 
@@ -269,6 +272,8 @@ import AssetCertificate from "./AssetCertificate";
 import AssetMaintain from "./AssetMaintain";
 import UseRecord from "./UseRecord";
 import MaintainRecord from "./MaintainRecord";
+import AssetScrap from './AssetScrap'
+
 export default {
   components: {
     EasyTabs,
@@ -277,6 +282,7 @@ export default {
     AssetMaintain,
     UseRecord,
     MaintainRecord,
+    AssetScrap
   },
   data() {
     // 上传校验
@@ -347,6 +353,10 @@ export default {
     this.getDetail();
   },
   methods: {
+    // 发起报废
+    initScrap() {
+      this.$refs.scrap.open()
+    },
     //查看审批流程
     seeAsset(){
       this.assetShow=true

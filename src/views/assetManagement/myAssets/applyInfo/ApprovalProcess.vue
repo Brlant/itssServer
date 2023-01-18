@@ -29,11 +29,11 @@
           </span>
         </p>
         <p v-if="activity.comment">
-          备注:
+          备注 :
           {{ activity.comment }}
         </p>
         <p v-if="activity.flowUploads.length">
-          附件:
+          附件 :
           <span 
             class="link"
             v-for="(item, index) in activity.flowUploads"
@@ -52,7 +52,7 @@
       :visible.sync="dialogVisible"
       center
     >
-      <el-timeline>
+      <el-timeline reverse>
         <el-timeline-item
           v-for="(activity, index) in flowHistoryList"
           :key="index"
@@ -68,11 +68,11 @@
             </span>
           </p>
           <p v-if="activity.comment">
-            备注:
+            备注 :
             {{ activity.comment }}
           </p>
           <p v-if="activity.flowUploads.length">
-            附件:
+            附件 :
             <span 
               class="link"
               v-for="(item, index) in activity.flowUploads"
@@ -133,7 +133,7 @@ export default {
         let groupListArr = []
         flowCommentResGroupList.forEach(item => {
           if (item.groupList.length) {
-            groupListArr.push(...item.groupList)
+            groupListArr.push(item.groupList[0])
           } else {
             groupListArr.push(item)
           }

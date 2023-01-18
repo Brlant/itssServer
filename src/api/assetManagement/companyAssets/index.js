@@ -131,3 +131,12 @@ export function seeAssetProcess(query) {
     params:query
   })
 }
+
+// 报废
+export function scrap(data) {
+  return request({
+    url: `asset/approvalProcess/initiateScrap`,
+    method: 'post',
+    data
+  })
+}
