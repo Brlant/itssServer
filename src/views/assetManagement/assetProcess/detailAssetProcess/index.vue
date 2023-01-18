@@ -305,7 +305,10 @@ export default {
             processInstanceId:this.$route.query.processInstanceId,
             taskId:this.$route.query.taskId,
             userKey:this.$store.state.user.user.userId,
-            comment: this.diaForm.comment
+            comment: this.diaForm.comment,
+            procVars:{time:new Date()
+
+            }
         }
         agreeQuery(params).then(res=>{
             if(res.code==200){
@@ -329,7 +332,10 @@ export default {
             processInstanceId:this.$route.query.processInstanceId,
             taskId:this.$route.query.taskId,
             userKey:this.$store.state.user.user.userId,
-            comment: this.diaForm.comment
+            comment: this.diaForm.comment,
+             procVars:{time:new Date()
+
+            }
         }
         rejectQuery(params).then(res=>{
             if(res.code==200){
