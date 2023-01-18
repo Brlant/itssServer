@@ -89,7 +89,7 @@
             </el-col>
             <el-col :span="span">
               <el-form-item label="数量:" prop="amount">
-                <el-input v-model.trim="formData.amount" :style="style" />
+                <el-input v-model.number="formData.amount" :style="style" />
               </el-form-item>
             </el-col>
             <el-col :span="span">
@@ -177,14 +177,14 @@ export default {
   },
   data() {
     const checkNumber = (rule, value, callback) => {
-      if (!value) {
+      if (value === null) {
         callback()
         return
       }
       if (String(Number(value)) === 'NaN') {
         callback(new Error('输入内容不合规'))
       } else {
-        if (value < 0) {
+        if (value <= 0) {
           callback(new Error('输入内容不合规'))
         } else {
           callback()
