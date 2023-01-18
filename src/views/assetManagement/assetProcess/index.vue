@@ -244,13 +244,13 @@ export default {
       userId: this.$store.state.user.user.userId,
       options: [
         { label: '申请中', value: '0' },
-         { label: '已完成', value: '1' },
+        { label: '已完成', value: '1' },
         { label: '已取消', value: '2' },
         { label: '待处理', value: '3' },
         { label: '参与处理记录', value: '4' },
        
       ],
-      n: 0,
+      n: 3,
       peopleLists:[],
       isExpand: false,
       style: {width: '100%'},
@@ -272,7 +272,20 @@ export default {
     this.getAsset()
     this.getCateList()
     this.peopleList()
-    // this.getTableData()
+    console.log(this.$route.query.tab,'this.$route.query.tab')
+    if(this.$route.query.tab){
+      this.n=this.$route.query.tab-0
+      if(this.n==3){
+         this.queryParams.pageNum = 1
+      this.pendingList()
+      }else if(this.n==4){
+        this.queryParams.pageNum = 1
+         this.getProcessed()
+      }
+    }else{
+      this.pendingList()
+    }
+   
   },
   methods: {
     //申请人查询
@@ -422,28 +435,13 @@ export default {
       }
       console.log(params,'params')
       getPendingList(params).then(res => {
-        //  let tableData = res.data.data.map(item => {
-        //   return item.procVars
-        // })
-        //  for (let i = 0; i < tableData.length; i ++) {
-        //   const noArr = tableData[i].ASSET_NO.split(',')
-        //   const nameArr = tableData[i].ASSET_NAME.split(',')
-        //   let arr = []
-        //   noArr.forEach((value, index) => {
-        //     arr.push(value + nameArr[index])
-        //   })
-        //   tableData[i]['NO_NAME_ARR'] = arr 
-        // }
-        // this.tableData = tableData
-        // this.total = res.data.total
-        // this.loading = false
          let tableData = res.data.data
         for (let i = 0; i < tableData.length; i ++) {
           const noArr = tableData[i].procVars.ASSET_NO.split(',')
           const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
           let arr = []
           noArr.forEach((value, index) => {
-            arr.push(value + nameArr[index])
+            arr.push(value +'&'+ nameArr[index])
           })
           tableData[i]['noNameArr'] = arr 
         }
@@ -496,10 +494,11 @@ export default {
           applyName:row.procVars.CATEGORY_NAME,
           applicantName: row.procVars.APPLICANT_NAME,
           applyTime: row.procVars.APPLY_TIME,
-          // status: this.statusFormatter(row.procVars.STATUS),
+          status: this.statusFormatter(row.procVars.STATUS),
           taskId: row.taskId,
           processInstanceId: row.processInstanceId,
-          deployId: row.deployId
+          deployId: row.deployId,
+          tab:this.n
         }
       };
       // getToday()
@@ -508,10 +507,10 @@ export default {
     formatter(row) {
       return row.ASSET_NO + row.ASSET_NAME
     },
-    statusFormatter(row) {
-      if (row.STATUS==1) {
+    statusFormatter(status) {
+      if (status=='1') {
         return '申请中'
-      }else if(row.STATUS==2){
+      }else if(status=='2'){
         return '已完成'
       }else{
       return '已取消'

@@ -23,3 +23,19 @@ export function getPendingList(query) {
             
     })
   }
+  //同意
+  export function agreeQuery(data) {
+    return request({
+      url: `flowable/flowable/task/complete`,
+      method: 'post',  
+      data  
+    })
+  }
+  //拒绝
+  export function rejectQuery(data) {
+    return request({
+      url: `flowable/flowable/task/return`,
+      method: 'post',  
+      data    
+    })
+  }

@@ -1,239 +1,425 @@
 <template>
-  <div class="app-container">
-    <div class="process-title">
-      <div style="font-size: 18px" @click='goback'>
-        <i class="el-icon-arrow-left"></i>
-        <span>{{title}}</span>
-      </div>
-      <div>
-        <el-button type="primary">全部同意</el-button>
-        <el-button type="danger">全部拒绝</el-button>
-      </div>
-    </div>
-    <div class="process-title">
-      <div class="title">
-        <span class="box"></span>
-        <span class="title-name">规则描述</span>
-      </div>
-      <div>
-        <span> 资产数量：33 </span>
-        <span> 申请人：qq </span>
-        <span> 申请日期：2022 </span>
-        <span> 审批状态 </span>
-      </div>
-    </div>
-    <el-table :data="detailAssetData">
-      <el-table-column label="流程ID" align="center" prop="id">
-      </el-table-column>
-
-      <el-table-column label="资产类型" align="center" prop="assetTypeList">
-      </el-table-column>
-      <el-table-column
-        label="资产编号&amp;名称"
-        align="center"
-        prop="updateTime"
-      />
-      <el-table-column label="资产编号" align="center" prop="updatorName">
-      </el-table-column>
-      <el-table-column label="资产名称" align="center" prop="ruleName">
-      </el-table-column>
-      <el-table-column label="品牌" align="center" prop="ruleName">
-      </el-table-column>
-      <el-table-column label="型号" align="center" prop="updatorName">
-      </el-table-column>
-      <el-table-column label="保修期" align="center" prop="ruleName">
-      </el-table-column>
-      <el-table-column label="数量" align="center" prop="ruleName">
-      </el-table-column>
-      <el-table-column label="存放地点" align="center" prop="ruleName">
-      </el-table-column>
-      <el-table-column label="归属部门" align="center" prop="remark">
-      </el-table-column>
-      <el-table-column
-        label="操作"
-        align="center"
-        width="160"
-        class-name="small-padding fixed-width"
+  <div class="wrap">
+    <header>
+      <div 
+        style="cursor: pointer" 
+        @click="goBack"
       >
-        <template slot-scope="scope">
-          <span style="margin-left: 10px">
-            <el-button size="mini" type="text" @click="see(scope.row)"
-              >查看</el-button
-            >
-          </span>
-       
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="process-title">
-      <div class="title">
-        <span class="box"></span>
-        <span class="title-name">审批进度</span>
+        <i class="el-icon-arrow-left"></i>
+        <span>
+          {{ title }}
+        </span>
       </div>
-
-      <div>
-        <el-button type="text"> 查看全部记录 </el-button>
-      </div>
-    </div>
-    <div>
-      <el-timeline>
-        <el-timeline-item
-          v-for="(activity, index) in tableData"
-          :key="index"
-          :timestamp="activity.createTime"
-        >
-          {{ activity.taskName }}:{{activity.userName}}
-        </el-timeline-item>
-      </el-timeline>
-    </div>
-    <div>
-      <!-- <DrawFlowList :isShowCheck="isShowCheck" :params="params" /> -->
-    </div>
+      <div class="btns">
+          
+        <el-button type="primary" @click='agree'>全部同意</el-button>
+        <el-button type="danger" @click='reject'>全部拒绝</el-button>
     
+      </div>
+    </header>
+    <!-- 资产信息开始 -->
+    <section class="asset-info">
+      <div class="heading">
+        <div class="left">
+          <span class="bar"></span>
+          <b>资产信息</b>
+        </div>
+        <div class="right">
+          <div class="item">
+            <span class="name">资产数量：</span>
+            <span class="value">
+              {{ tableData.length }} 项
+              {{ total }} 件
+            </span>
+          </div>
+          <div class="item">
+            <span class="name">申请人：</span>
+            <span class="value">
+              {{ $route.query.applicantName }}
+            </span>
+          </div>
+          <div class="item">
+            <span class="name">申请日期：</span>
+            <span class="value">
+              {{ $route.query.applyTime }}
+            </span>
+          </div>
+          <div class="item">
+            <span class="name">审批状态：</span>
+            <span class="value">
+              {{ $route.query.status }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <!-- 表格部分 -->
+      <el-table
+        :data="tableData"
+        border
+      >
+        <el-table-column
+          align="center"
+          label="资产类型"
+          prop="assetTypeName"
+        />
+        <el-table-column
+          align="center"
+          label="资产编号"
+          prop="assetId"
+        />
+        <el-table-column
+          align="center"
+          label="资产名称"
+          prop="assetName"
+        />
+        <el-table-column
+          align="center"
+          label="品牌"
+          prop="brand"
+        />
+        <el-table-column
+          align="center"
+          label="型号"
+          prop="model"
+        />
+        <el-table-column
+          align="center"
+          label="保修期"
+          prop="maintenanceTime"
+        />
+        <el-table-column
+          align="center"
+          label="数量"
+          prop="amount"
+        />
+        <el-table-column
+          align="center"
+          label="存放地点"
+          prop="storageAddress"
+        />
+        <el-table-column
+          align="center"
+          label="归属部门"
+          prop="departmentName"
+        />
+        <el-table-column
+          align="center"
+          label="操作"
+        >
+          <template slot-scope="{row}">
+            <el-button 
+              type="text" 
+              size="small"
+              :disabled="!row.id"
+              @click="view(row)"
+            >
+              查看
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </section>
+    <!-- 资产信息结束 -->
+    <!-- 审批进度开始 -->
+    <section class="process">
+      <approval-process />
+    </section>
+    <!-- 同意 -->
+     <el-dialog
+      title="审批同意"
+      class="dialogForm"
+      width="50%"
+      :visible.sync="agreeShow"
+    >
+      <el-form
+        :model="diaForm"
+        ref="diaForm"
+        :inline="false"
+        label-width="120px"
+        class="dialogFormInfo"
+      >
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="附件上传" prop="typeName">
+               <el-upload
+              action
+              :on-change="onChange"
+              :before-remove="remove"
+              :limit="1"
+              accept=".jpg, .png, .pdf"
+              :auto-upload="false"
+            >
+              <el-button type="info">
+                上传附件
+              </el-button>
+            </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
+         <el-row>
+          <el-col :span="12">
+            <el-form-item label="备注" prop="comment">
+              <el-input v-model="diaForm.comment" type='textarea'>
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div class="txtAlignC dialogBtnInfo">
+        <el-button type="primary" 
+        @click="sureAgree">确定</el-button>
+        <el-button 
+        @click="cancelFn">取消</el-button>
+      </div>
+    </el-dialog>
+      <!-- 拒绝 -->
+     <el-dialog
+      title="审批拒绝"
+      class="dialogForm"
+      width="50%"
+      :visible.sync="rejectShow"
+    >
+      <el-form
+        :model="diaForm"
+        ref="diaForm"
+        :inline="false"
+        label-width="120px"
+        class="dialogFormInfo"
+      >
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="附件上传" prop="typeName">
+               <el-upload
+              action
+              :on-change="onChange"
+              :before-remove="remove"
+              :limit="1"
+              accept=".jpg, .png, .pdf"
+              :auto-upload="false"
+            >
+              <el-button type="info">
+                上传附件
+              </el-button>
+            </el-upload>
+            </el-form-item>
+          </el-col>
+        </el-row>
+         <el-row>
+          <el-col :span="12">
+            <el-form-item label="备注" prop="comment">
+              <el-input v-model="diaForm.comment" type='textarea'>
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div class="txtAlignC dialogBtnInfo">
+        <el-button type="primary" 
+        @click="sureReject">确定</el-button>
+        <el-button 
+        @click="cancelFn">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
+
 <script>
-import { getListData , deployModel} from "@/api/assetManagement/assetManagementSet";
+import ApprovalProcess from './ApprovalProcess.vue'
+import { listAsset } from '@/api/assetManagement/myAssets'
+import { tabOptions } from '../../companyAssets/options'
+import { agreeQuery,rejectQuery } from "@/api/assetManagement/assetProcess";
+import { 
+  fileUpload,
+} from '@/api/assetManagement/companyAssets'
 export default {
-  components: {},
-  props: [],
+  components: {
+    ApprovalProcess
+  },
   data() {
     return {
-      params:{},
-      //上级带过来的数据
       title:this.$route.query.applyName,
+      flowId: this.$route.query.flowId,
       tableData: [],
-      formData: {
-        field101: null,
-        field102: undefined,
-        field103: undefined,
-        field104: undefined,
-        field105: undefined,
-      },
-      isShowCheck: true,
-      detailAssetData: [],
-      rules: {
-        field101: [
-          {
-            required: true,
-            message: "申请日期不能为空",
-            trigger: "change",
-          },
-        ],
-        field102: [
-          {
-            required: true,
-            message: "请输入维修金额",
-            trigger: "blur",
-          },
-        ],
-        field103: [
-          {
-            required: true,
-            message: "请输入资产编号",
-            trigger: "blur",
-          },
-        ],
-        field104: [
-          {
-            required: true,
-            message: "请选择资产类型",
-            trigger: "change",
-          },
-        ],
-        field105: [
-          {
-            required: true,
-            message: "请输入资产名称",
-            trigger: "blur",
-          },
-        ],
-      },
-      field104Options: [
-        {
-          label: "选项一",
-          value: 1,
-        },
-        {
-          label: "选项二",
-          value: 2,
-        },
-      ],
-    };
+      diaForm:{},
+      total: 0,
+      agreeShow:false,
+      rejectShow:false,
+      url: '',
+      name: '',
+      type:''
+    }
   },
-  computed: {},
-  watch: {},
   created() {
-    console.log(this.detailDataList,'detailDataList')
-    // this.initData()
+    this.getTableData()
   },
-  mounted() {},
   methods: {
-     initData(){
-     this.params={
-        id:this.detailDataList.taskId,
-        processInstanceId:this.detailDataList.processInstanceId,
-        deployId:this.detailDataList.deployId
-      }
-           getListData(this.params).then(res => {
-                if(res && res.data && res.code == 200){
-                    this.tableData = res.data.flowCommentResGroupList;
-                  
-                    return false;
+    //同意
+    agree(){
+        this.agreeShow=true
+        this.rejectShow=false
+    },
+    //拒绝
+    reject(){
+        this.rejectShow=true
+         this.agreeShow=false
+    },
+      // 上传文件
+    onChange(file) {
+      let formData = new FormData()
+      formData.append('file', file.raw)
+      fileUpload(formData).then(res => {
+        this.url = res.data.url
+        this.name = res.data.name
+      })
+    },
+    remove() {
+      this.url = ''
+      this.name = ''
+    },
+    //确认同意
+    sureAgree(){
+        let params={
+            processInstanceId:this.$route.query.processInstanceId,
+            taskId:this.$route.query.taskId,
+            userKey:this.$store.state.user.user.userId,
+            comment: this.diaForm.comment
+        }
+        agreeQuery(params).then(res=>{
+            if(res.code==200){
+                    this.$message.success(res.msg)
+                    this.getTableData()
                 }
-            })
-            .then(err => {
-                console.log(err)
-            })
-        },
-    submitForm() {
-      this.$refs["elForm"].validate((valid) => {
-        if (!valid) return;
-        // TODO 提交表单
-      });
+        })
     },
-    resetForm() {
-      this.$refs["elForm"].resetFields();
+    //确认拒绝
+    sureReject(){
+        let params={
+            processInstanceId:this.$route.query.processInstanceId,
+            taskId:this.$route.query.taskId,
+            userKey:this.$store.state.user.user.userId,
+            comment: this.diaForm.comment
+        }
+        rejectQuery(params).then(res=>{
+            if(res.code==200){
+                this.$message.success(res.msg)
+                this.getTableData()
+            }
+        })
     },
-    //返回
-    goback(){
+     //取消按钮
+    cancelFn(){
+         this.rejectShow=false
+         this.agreeShow=false
+    },
+    // 表格数据
+    getTableData() {
+      listAsset(this.flowId).then(res => {
+        this.tableData = res.data
+        // 总件数
+        let total = 0
+        this.tableData.forEach(value => {
+          total += value.amount
+        })
+        this.total = total
+      })
+    },
+    // 查看详情
+    view(row) {
+      this.$router.push({
+        path: '/assetManagement/companyAssets/companyAssets-auth/detail',
+        query: {
+          id: row.id,
+          status: this.statusFormatter(row),
+          isApplying: row.isApplying,
+          manageType: row.manageType
+        }
+      })
+    },
+    // 状态处理
+    statusFormatter(row) {
+      let res
+      if (row.specialStatus !== null) {
+        const specialArr = tabOptions.filter(v => v.type == 'specialStatus')
+        res = specialArr.find(v => row.specialStatus == v.value).label
+        return res
+      }
+      if (row.status !== null) {
+        if (row.status == 1) {
+          res = '闲置中'
+          return res
+        } else {
+          const arr = tabOptions.filter(v => v.type == 'status')
+          res = arr.find(v => row.status == v.value).label
+          return res
+        }
+      }
+    },
+    // 返回
+    goBack() {
        const obj = {
         path: "/assetManagement/assetProcess",
+        query:{
+            tab:this.$route.query.tab
+        }
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
     }
-  },
-};
+  }
+}
 </script>
 
 <style lang="scss" scoped>
-.process-title {
-  display: flex;
-  justify-content: space-between;
-  padding: 20px;
-}
-.title {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-.box {
-  width: 4px;
-  height: 22px;
-  background: #4c4c4c;
-  display: inline-block;
-  position: absolute;
-  /* bottom: 0;
-    left: 0; */
-  border-radius: 8px;
-}
-.title-name {
-  margin-left: 14px;
-  font-size: 18px;
-  color: #4c4c4c;
-  font-weight: bold;
-  line-height: 20px;
+.wrap {
+  header {
+    background: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  .asset-info {
+    background: #fff;
+    padding: 10px;
+    margin-bottom: 5px;
+  }
+  .process {
+    background: #fff;
+    padding: 10px;
+  }
+  .heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    .left {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      .bar {
+        width: 4px;
+        height: 15px;
+        background: #333;
+        margin-right: 8px;
+      }
+      b {
+        font-size: 15px;
+      }
+    }
+    .right {
+      display: flex;
+      .item {
+        font-size: 14px;
+        margin-right: 50px;
+        .name {
+          color: #8294ad;
+        }
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
 }
 </style>
