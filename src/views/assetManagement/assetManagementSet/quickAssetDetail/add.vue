@@ -177,11 +177,22 @@ export default {
   },
   data() {
     const checkNumber = (rule, value, callback) => {
-      if (value === null) {
+      if (!value) {
         callback()
         return
       }
       if (String(Number(value)) === 'NaN') {
+        callback(new Error('输入内容不合规'))
+      } else {
+        if (value <= 0) {
+          callback(new Error('输入内容不合规'))
+        } else {
+          callback()
+        }
+      }
+    }
+    const checkAmount = (rule, value, callback) => {
+      if (String(value) === 'NaN') {
         callback(new Error('输入内容不合规'))
       } else {
         if (value <= 0) {
@@ -215,7 +226,7 @@ export default {
         ],
         amount: [
           { required: true, trigger: 'blur', message: '请输入数量' },
-          { validator: checkNumber, trigger: 'blur' }
+          { validator: checkAmount, trigger: 'blur' }
         ],
         depreciableLife: [
           { validator: checkNumber, trigger: 'blur' }
