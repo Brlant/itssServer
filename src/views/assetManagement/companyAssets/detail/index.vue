@@ -19,7 +19,7 @@
           <span @click="goEdit">编辑</span>
         </div>
         <div class="item">
-          <span>打印条码</span>
+          <span @click="printCode">打印条码</span>
         </div>
       </div>
     </header>
@@ -281,6 +281,7 @@
 import { assetDetail, fileUpload, setWarehousing,seeAssetProcess} from "@/api/assetManagement/companyAssets";
 import { queryAsset } from "@/api/assetManagement/quickAssetDetail";
 import findItemById from "@/utils/findItemById";
+import Print from '@/utils/Print';
 import { detailInformation } from "../options";
 import EasyTabs from "@/components/EasyTabs";
 import DetailInfo from "./DetailInfo";
@@ -506,6 +507,10 @@ export default {
           id: this.id,
         },
       });
+    },
+    // 打印条码
+    printCode() {
+      
     },
     // tab切换
     change() {},

@@ -149,3 +149,12 @@ export function repair(data) {
     data
   })
 }
+
+// 查看流程
+export function getFlow(params) {
+  return request({
+    url: '/asset/assetFlow/getFlowDefinitionDetail',
+    method: 'get',
+    params
+  })
+}

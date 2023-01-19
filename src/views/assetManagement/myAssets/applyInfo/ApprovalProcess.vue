@@ -100,7 +100,6 @@ export default {
       dialogVisible: false,
       flowExamineList: [],
       flowHistoryList: [],
-      current: -1,
       commentType: {
         1: "通过",
         2: "驳回",
@@ -113,9 +112,9 @@ export default {
         9: "向后加签",
       },
       statusColor: {
-        0: '#909399',
-        1: '#073dff',
-        2: '#303133'
+        0: '#909399', // pending
+        1: '#073dff', // going
+        2: '#303133' // finished
       }
     }
   },
@@ -167,7 +166,6 @@ export default {
           })
         })
         this.flowExamineList = groupListArr
-        console.log('xxxx', this.flowExamineList)
 
         // b - 全部记录
         flowCommentResList.forEach(item => {
@@ -210,9 +208,6 @@ export default {
       font-size: 15px;
     }
   }
-}
-.current {
-  color: #073dff; 
 }
 .link {
   cursor: pointer;

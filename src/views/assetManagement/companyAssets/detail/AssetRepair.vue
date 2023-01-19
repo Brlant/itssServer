@@ -11,6 +11,7 @@
       :rules="rules"
       ref="elForm"
       label-width="120px"
+      v-show="isShow"
     >
       <!-- 表单开始 -->
       <el-form-item label="请输入资产数量" prop="amount">
@@ -18,6 +19,8 @@
           <el-input-number 
             v-model="formData.amount" 
             :min="1"
+            :step="1"
+            step-strictly
             :disabled="$route.query.manageType == 2"
           />
         </div>
@@ -46,13 +49,31 @@
           :style="style"
         />
       </el-form-item>
-      <el-button type="text">
+      <el-button type="text" @click="viewFlow">
         <span style="text-decoration: underline">
           审批流程查看
         </span>
       </el-button>
     </el-form>
     <!-- 表单结束 -->
+    <!-- 流程开始 -->
+    <div 
+      style="cursor:pointer" 
+      v-show="!isShow"
+    >
+      <span @click="isShow = true">
+        <i class="el-icon-arrow-left"></i>
+        返回
+      </span>
+      <div class="flow-wrap">
+        <factory-draw-flow
+          :FlowConfig="list"
+          modelType="see"
+          ref="flow"
+        />
+      </div>
+    </div>
+    <!-- 流程结束 -->
     <div slot="footer" style="display:flex; justify-content:flex-end; align-items:center">
         <el-button type="primary" @click="submit">
           确定
@@ -67,13 +88,20 @@
 <script>
 import { 
   fileUpload,
-  repair
+  repair,
+  getFlow
 } from '@/api/assetManagement/companyAssets'
+import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue"
 
 export default {
   props: ['info'],
+  components: {
+    FactoryDrawFlow
+  },
   data() {
     return {
+      isShow: true,
+      list: [],
       dialogVisible: false,
       style: {width: '100%'},
       fileList: [],
@@ -93,6 +121,7 @@ export default {
       if (value === false) {
         // 关闭时清空表单
         this.$refs.elForm.resetFields()
+        this.isShow = true
       }
     }
   },
@@ -122,6 +151,18 @@ export default {
           this.dialogVisible = false
           this.$message.success(res.msg)
         })
+      })
+    },
+    // 查看流程
+    viewFlow() {
+      this.isShow = false
+      const params = {
+        assetTypeIds: this.info.assetTypeId,
+        categoryId: 5,
+        deptId: this.info.departmentId
+      }
+      getFlow(params).then(res => {
+        this.list = JSON.parse(res.data.json).list
       })
     },
     // 上传文件
