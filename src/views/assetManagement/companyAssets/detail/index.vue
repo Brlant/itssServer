@@ -10,7 +10,7 @@
           <span @click="warehousing">入库</span>
         </div>
         <div class="item" v-if="manageType == 2">
-          <span>维修</span>
+          <span @click="initRepair">维修</span>
         </div>
         <div class="item">
           <span @click="initScrap">报废</span>
@@ -165,10 +165,18 @@
     </div>
     <!-- tab切换部分 -->
     <div class="tabs">
-      <easy-tabs v-model="tab" :options="tabOptions" @change="change" />
+      <easy-tabs 
+        v-model="tab" 
+        :options="tabOptions" 
+        @change="change" 
+      />
       <div class="content">
         <!-- 详细信息 -->
-        <detail-info v-if="tab === 0" :info="info" :list="list" />
+        <detail-info 
+          v-if="tab === 0" 
+          :info="info" 
+          :list="list" 
+        />
         <!-- 使用记录 -->
         <use-record v-if="tab === 1" />
         <!-- 维修记录 -->
@@ -257,7 +265,15 @@
     </el-dialog> -->
 
     <!-- 发起报废 -->
-    <asset-scrap ref="scrap" />
+    <asset-scrap 
+      ref="scrap" 
+      :info="info" 
+    />
+    <!-- 发起维修 -->
+    <asset-repair
+      ref="repair" 
+      :info="info" 
+    />
   </div>
 </template>
 
@@ -273,6 +289,7 @@ import AssetMaintain from "./AssetMaintain";
 import UseRecord from "./UseRecord";
 import MaintainRecord from "./MaintainRecord";
 import AssetScrap from './AssetScrap'
+import AssetRepair from './AssetRepair'
 
 export default {
   components: {
@@ -282,7 +299,8 @@ export default {
     AssetMaintain,
     UseRecord,
     MaintainRecord,
-    AssetScrap
+    AssetScrap,
+    AssetRepair
   },
   data() {
     // 上传校验
@@ -353,6 +371,10 @@ export default {
     this.getDetail();
   },
   methods: {
+    // 发起维修
+    initRepair() {
+      this.$refs.repair.open()
+    },
     // 发起报废
     initScrap() {
       this.$refs.scrap.open()
@@ -374,7 +396,7 @@ export default {
       fileUpload(formData).then(res => {
         this.url = res.data.url
         this.name = res.data.name
-         this.type=this.name.substring(this.name.lastIndexOf('.'))
+        this.type=this.name.substring(this.name.lastIndexOf('.'))
       })
     },
     remove() {
@@ -388,18 +410,18 @@ export default {
     },
     select(index){
       console.log(this.selectAll,'selectAll')
-    let n=index
-    this.$nextTick(()=>{
-      if(this.selectAll.includes(n)){
-        console.log('aaaa')
-        // this.selectAll.splice(n, 1);
-          this.selectAll[n]=''
-       
-      }else{
-         this.selectAll[n]=n
-      }
-    })
-    this.selectAllCopy=[0,1,2,3]
+      let n=index
+      this.$nextTick(()=>{
+        if(this.selectAll.includes(n)){
+          console.log('aaaa')
+          // this.selectAll.splice(n, 1);
+            this.selectAll[n]=''
+        
+        }else{
+          this.selectAll[n]=n
+        }
+      })
+      this.selectAllCopy=[0,1,2,3]
       this.$forceUpdate()
       console.log(this.selectAllCopy,'this.selectAll')
      

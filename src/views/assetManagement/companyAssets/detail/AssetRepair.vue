@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="资产报废"
+    title="资产维修"
     :visible.sync="dialogVisible"
     center
     width="30%"
@@ -13,15 +13,6 @@
       label-width="120px"
     >
       <!-- 表单开始 -->
-      <el-form-item label="请选择报废日期" prop="scarpTime">
-        <el-date-picker
-          v-model="formData.scarpTime"
-          value-format="yyyy-MM-dd"
-          placeholder="选择日期"
-          type="date"
-          :style="style"
-        />
-      </el-form-item>
       <el-form-item label="请输入资产数量" prop="amount">
         <div style="width:100%; display:flex; justify-content:flex-end">
           <el-input-number 
@@ -76,7 +67,7 @@
 <script>
 import { 
   fileUpload,
-  scrap
+  repair
 } from '@/api/assetManagement/companyAssets'
 
 export default {
@@ -87,14 +78,10 @@ export default {
       style: {width: '100%'},
       fileList: [],
       formData: {
-        scarpTime: '',
         amount: 1,
         remark: ''
       },
       rules: {
-        scarpTime: [
-          { required: true, trigger: 'blur', message: '请选择报废日期' }
-        ],
         amount: [
           { required: true, trigger: 'blur', message: '请输入资产数量' }
         ]
@@ -131,7 +118,7 @@ export default {
             }
           })
         }
-        scrap(data).then(res => {
+        repair(data).then(res => {
           this.dialogVisible = false
           this.$message.success(res.msg)
         })

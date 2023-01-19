@@ -140,3 +140,12 @@ export function scrap(data) {
     data
   })
 }
+
+// 维修
+export function repair(data) {
+  return request({
+    url: `asset/approvalProcess/initiateRepair`,
+    method: 'post',
+    data
+  })
+}

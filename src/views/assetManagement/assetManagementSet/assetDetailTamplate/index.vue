@@ -22,7 +22,7 @@
           @click="handleExport"
           v-hasPermi="['system:user:export']"
         >导出</el-button> -->
-      </el-col>
+      <!-- </el-col> -->
     </el-row>
 
     <el-table v-loading="loading" :data="assetDetailTemplateList" @row-click="goDetail" >
