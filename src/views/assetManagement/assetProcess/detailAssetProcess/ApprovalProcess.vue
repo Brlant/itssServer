@@ -19,30 +19,32 @@
         placement="top"
         :timestamp="activity.createTime"
       >
-        <p :class="{current: index === current}">
-          {{ activity.taskName }}
-          <span v-if="activity.userName">
-            : {{ activity.userName }}
-          </span>
-          <span style="margin-left: 5px">
-            {{ commentType[activity.type] }}
-          </span>
-        </p>
-        <p v-if="activity.comment">
-          备注 :
-          {{ activity.comment }}
-        </p>
-        <p v-if="activity.flowUploads.length">
-          附件 :
-          <span 
-            class="link"
-            v-for="(item, index) in activity.flowUploads"
-            :key="index"
-            @click="downFlowLoad(item.url)"
-          >
-            {{ item.name }}
-          </span>
-        </p>
+        <div :style="{color: statusColor[activity.status]}">
+          <p>
+            {{ activity.taskName }}
+            <span v-if="activity.userName">
+              : {{ activity.userName }}
+            </span>
+            <span style="margin-left: 5px">
+              {{ commentType[activity.type] }}
+            </span>
+          </p>
+          <p v-if="activity.comment">
+            备注 :
+            {{ activity.comment }}
+          </p>
+          <p v-if="activity.flowUploads.length">
+            附件 :
+            <span 
+              class="link"
+              v-for="(item, index) in activity.flowUploads"
+              :key="index"
+              @click="downFlowLoad(item.url)"
+            >
+              {{ item.name }}
+            </span>
+          </p>
+        </div>
       </el-timeline-item>
     </el-timeline>
     <!-- 审批进度结束 -->
@@ -110,6 +112,12 @@ export default {
         8: "向前加签",
         9: "向后加签",
       },
+      statusColor: {
+        0: '#909399', // pending
+        1: '#073dff', // going
+        2: '#303133' // finished
+      },
+      list: []
     }
   },
   created() {
@@ -126,8 +134,12 @@ export default {
         let { 
           flowCommentResGroupList,
           flowCommentResList,
+          flowProcDefRes,
+          flowProgressResList,
           taskAttachments
         } = res.data
+
+        this.list = JSON.parse(flowProcDefRes.json).list
 
         // a - 审批进度
         let groupListArr = []
@@ -146,10 +158,19 @@ export default {
             }
           })
           item.flowUploads = flowUploads
+
+          item.status = 0
+          flowProgressResList.forEach(value => {
+            if (item.id == value.id) {
+              if (value.completed === false) {
+                item.status = 1
+              } else if (value.completed === true) {
+                item.status = 2
+              }
+            }
+          })
         })
         this.flowExamineList = groupListArr
-        const current = this.flowExamineList.findIndex(item => item.groupList)
-        this.current = current - 1
 
         // b - 全部记录
         flowCommentResList.forEach(item => {
@@ -163,6 +184,11 @@ export default {
         })
         this.flowHistoryList = flowCommentResList
       })
+    },
+    getAttribute() {
+      const { id } = this.flowExamineList.find(item => item.status == 1)
+      const { attribute } = this.list.find(item => item.id == id)
+      return attribute
     },
     // 下载
     downFlowLoad(url) {

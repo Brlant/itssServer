@@ -122,7 +122,7 @@
     <!-- 资产信息结束 -->
     <!-- 审批进度开始 -->
     <section class="process">
-      <approval-process />
+      <approval-process ref="process" />
     </section>
     <!-- 同意 -->
      <el-dialog
@@ -306,8 +306,8 @@ export default {
             taskId:this.$route.query.taskId,
             userKey:this.$store.state.user.user.userId,
             comment: this.diaForm.comment,
-            procVars:{time:new Date()
-
+            procVars:{
+              attribute: this.$refs.process.getAttribute()
             }
         }
         agreeQuery(params).then(res=>{
@@ -333,8 +333,8 @@ export default {
             taskId:this.$route.query.taskId,
             userKey:this.$store.state.user.user.userId,
             comment: this.diaForm.comment,
-             procVars:{time:new Date()
-
+            procVars:{
+              attribute: this.$refs.process.getAttribute()
             }
         }
         rejectQuery(params).then(res=>{
