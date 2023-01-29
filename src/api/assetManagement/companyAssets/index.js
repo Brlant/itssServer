@@ -159,6 +159,15 @@ export function getFlow(params) {
   })
 }
 
+// 申领
+export function claim(data) {
+  return request({
+    url: `/asset/approvalProcess/assetClaimInitiate`,
+    method: 'post',
+    data
+  })
+}
+
 // 借用
 export function borrowing(data) {
   return request({

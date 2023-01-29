@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="资产借用"
+    title="资产申领"
     :visible.sync="dialogVisible"
     center
     width="30%"
@@ -82,7 +82,7 @@
 
 <script>
 import { 
-  borrowing,
+  claim,
   getFlow
 } from '@/api/assetManagement/companyAssets'
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue"
@@ -135,8 +135,11 @@ export default {
           amount: this.formData.amount,
           remark: this.formData.remark
         }
-        borrowing(data).then(res => {
-
+        claim(data).then(res => {
+          this.dialogVisible = false
+          this.$message.success(res.msg)
+        }).catch(() => {
+          this.dialogVisible = false
         })
       })
     },
@@ -150,7 +153,7 @@ export default {
         const { assetTypeId } = this.formData
         const params = {
           assetTypeIds: assetTypeId[assetTypeId.length - 1],
-          categoryId: 4,
+          categoryId: 2,
           deptId: this.$store.state.user.user.deptId
         }
         getFlow(params).then(res => {

@@ -379,7 +379,7 @@ export default {
         this.tableData = tableData
         this.total = res.data.total
         this.loading = false
-      
+        this.$forceUpdate()
       }).catch(() => {
         this.loading = false
       })

@@ -8,7 +8,9 @@
       />
       <div class="btns">
         <el-button type="primary">批量归还</el-button>
-        <el-button type="primary">资产申领</el-button>
+        <el-button type="primary" @click="initClaim">
+          资产申领
+        </el-button>
         <el-button type="primary" @click="initBorrow">
           资产借用
         </el-button>
@@ -85,22 +87,34 @@
     <!-- 我的申请tab -->
     <my-apply v-if="tab === 2" />
 
+    <!-- 资产申领弹窗 -->
+    <asset-claim 
+      :asset="asset"
+      ref="claim" 
+    />
+
     <!-- 资产借用弹窗 -->
-    <asset-borrow ref="borrow" />
+    <asset-borrow
+      :asset="asset"
+      ref="borrow" 
+    />
   </div>
 </template>
 
 <script>
 import MyTabs from '@/components/MyTabs'
 import { personalAssetList } from '@/api/assetManagement/myAssets'
+import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 import MyApply from './MyApply'
 import AssetBorrow from './AssetBorrow'
+import AssetClaim from './AssetClaim'
 
 export default {
   components: {
     MyTabs,
     MyApply,
-    AssetBorrow
+    AssetBorrow,
+    AssetClaim
   },
   data() {
     return {
@@ -116,14 +130,17 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10
-      }
+      },
+      asset: []
     }
   },
   created() {
     // tab回显
     const { tab } = this.$route.params
     this.tab = tab ? tab - 0 : 0
+
     this.getTableData()
+    this.getAsset()
   },
   methods: {
     // 表格数据
@@ -140,6 +157,12 @@ export default {
         })
       }
     },
+    // 资产类型查询
+    getAsset() {
+      queryAsset().then(res => {
+        this.asset = res.data
+      })
+    },
     // 进入详情页
     goDetail(row) {
       this.$router.push({
@@ -149,6 +172,10 @@ export default {
           status: this.statusFormatter(row)
         }
       })
+    },
+    // 资产申领
+    initClaim() {
+      this.$refs.claim.open()
     },
     // 资产借用
     initBorrow() {
