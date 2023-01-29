@@ -85,11 +85,16 @@
     </div>
 
     <!-- 我的申请tab -->
-    <my-apply v-if="tab === 2" />
+    <my-apply 
+      v-if="tab === 2"
+      :asset="asset"
+      ref="apply"
+    />
 
     <!-- 资产申领弹窗 -->
     <asset-claim 
       :asset="asset"
+      @success="onClaimSuccess"
       ref="claim" 
     />
 
@@ -176,6 +181,11 @@ export default {
     // 资产申领
     initClaim() {
       this.$refs.claim.open()
+    },
+    onClaimSuccess() {
+      if (this.tab == 2) {
+        this.$refs.apply.getTableData()
+      }
     },
     // 资产借用
     initBorrow() {

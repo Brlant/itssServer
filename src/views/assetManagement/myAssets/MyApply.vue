@@ -221,13 +221,13 @@
 </template>
 
 <script>
-import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 import {
   cateList,
   applyList 
 } from '@/api/assetManagement/myAssets'
 
 export default {
+  props: ['asset'],
   data() {
     return {
       userId: this.$store.state.user.user.userId,
@@ -239,7 +239,6 @@ export default {
       n: 0,
       isExpand: false,
       style: {width: '100%'},
-      asset: [],
       cateList: [],
       formData: {
         ASSET_TYPE: []
@@ -254,17 +253,10 @@ export default {
     }
   },
   mounted() {
-    this.getAsset()
     this.getCateList()
     this.getTableData()
   },
   methods: {
-    // 资产类型查询
-    getAsset() {
-      queryAsset().then(res => {
-        this.asset = res.data
-      })
-    },
     // 流程类型
     getCateList() {
       cateList().then(res => {
