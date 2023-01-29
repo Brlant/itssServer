@@ -6,16 +6,16 @@
         <span>资产信息</span>
       </div>
       <div class="btns">
-        <div class="item" v-if="isShow">
+        <div class="item" v-if="showEntry">
           <span @click="warehousing">入库</span>
         </div>
-        <div class="item" v-if="manageType == 2">
+        <div class="item" v-if="showRepair">
           <span @click="initRepair">维修</span>
         </div>
-        <div class="item">
+        <div class="item" v-if="showScrap">
           <span @click="initScrap">报废</span>
         </div>
-        <div class="item" v-if="isShow">
+        <div class="item" v-if="showEntry">
           <span @click="goEdit">编辑</span>
         </div>
         <div class="item">
@@ -357,16 +357,29 @@ export default {
   },
   computed: {
     // 是否显示入库及编辑
-    isShow() {
-      if (
-        this.status.includes("入库") &&
-        (this.isApplying == 0 || this.isApplying == 3)
-      ) {
+    showEntry() {
+      if (this.status.includes("入库") && this.isApplying == 0) {
         return true;
       } else {
         return false;
       }
     },
+    // 是否显示维修
+    showRepair() {
+      if (!this.status.includes("入库") && this.manageType == 2) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    // 是否显示报废
+    showScrap() {
+      if (!this.status.includes("入库")) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   },
   created() {
     this.getDetail();

@@ -79,14 +79,14 @@
         <template slot-scope="{row}">
           <span
             class="edit"
-            v-if="row.isApplying === 0 || row.isApplying === 3"
+            v-if="row.isApplying === 0"
             @click.stop="edit(row)"
           >
             修改
           </span>
           <span 
             class="del"
-            v-if="row.isApplying === 0 || row.isApplying === 3"
+            v-if="row.isApplying === 0"
             @click.stop="del(row)"
           >
             删除
