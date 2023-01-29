@@ -368,18 +368,21 @@ export default {
       getProcessedList(params).then(res => {
         let tableData = res.data.data
         for (let i = 0; i < tableData.length; i ++) {
-          const noArr = tableData[i].procVars.ASSET_NO.split(',')
-          const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
-          let arr = []
-          noArr.forEach((value, index) => {
-            arr.push(value + nameArr[index])
-          })
-          tableData[i]['noNameArr'] = arr 
+          if (tableData[i].procVars.ASSET_NO) {
+            const noArr = tableData[i].procVars.ASSET_NO.split(',')
+            const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
+            let arr = []
+            noArr.forEach((value, index) => {
+              arr.push(value + nameArr[index])
+            })
+            tableData[i]['noNameArr'] = arr
+          } else {
+            tableData[i]['noNameArr'] = []
+          }   
         }
         this.tableData = tableData
         this.total = res.data.total
         this.loading = false
-        this.$forceUpdate()
       }).catch(() => {
         this.loading = false
       })
@@ -441,13 +444,17 @@ export default {
       getPendingList(params).then(res => {
          let tableData = res.data.data
         for (let i = 0; i < tableData.length; i ++) {
-          const noArr = tableData[i].procVars.ASSET_NO.split(',')
-          const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
-          let arr = []
-          noArr.forEach((value, index) => {
-            arr.push(value +'&'+ nameArr[index])
-          })
-          tableData[i]['noNameArr'] = arr 
+          if (tableData[i].procVars.ASSET_NO) {
+            const noArr = tableData[i].procVars.ASSET_NO.split(',')
+            const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
+            let arr = []
+            noArr.forEach((value, index) => {
+              arr.push(value + nameArr[index])
+            })
+            tableData[i]['noNameArr'] = arr
+          } else {
+            tableData[i]['noNameArr'] = []
+          }   
         }
         this.tableData = tableData
         this.total = res.data.total
