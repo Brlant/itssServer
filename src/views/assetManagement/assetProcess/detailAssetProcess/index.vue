@@ -14,6 +14,8 @@
           
         <el-button type="primary" @click='agree'>全部同意</el-button>
         <el-button type="danger" @click='reject'>全部拒绝</el-button>
+         <el-button type="primary" @click='allocateAssets '>分配资产</el-button>
+        <el-button type="danger" @click='rejectAllocate '>拒绝</el-button>
     
       </div>
     </header>
@@ -277,6 +279,21 @@ export default {
        
       })
     },
+    //分配资产按钮
+    allocateAssets(){
+      // const obj = {
+      //   path: "/assetManagement/allocateAssets/allocate",
+      // };
+      // getToday()
+   this.$router.push({
+        path: '/assetManagement/allocateAssets/process/allocateAssets',
+       
+      })
+      
+    },
+    rejectAllocate(){},
+    //拒绝分配资产
+
     remove() {
       this.url = ''
       this.name = ''

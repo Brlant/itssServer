@@ -1,20 +1,10 @@
 <template>
   <div class="apply">
     <div class="heading">
-      <!-- tab开始 -->
-      <div class="tabs">
-        <div
-          v-for="(item, index) in options"
-          :key="index"
-          :class="{active: index === n}"
-          @click="change(index)"
-        >
-          <span class="text">
-            {{ item.label }}
-          </span>
-        </div>
-      </div>
-      <!-- tab结束 -->
+      <div
+      style='font-size:18px;
+      color:#000000'
+      >公司资产审批流程</div>
       <div class="btn" @click="isExpand = !isExpand">
         <span>
           {{ isExpand ? '收起' : '筛选' }}
@@ -106,6 +96,20 @@
       </el-form>
     </div>
     <!-- 表单结束 -->
+      <!-- tab开始 -->
+      <div class="tabs">
+        <div
+          v-for="(item, index) in options"
+          :key="index"
+          :class="{active: index === n}"
+          @click="change(index)"
+        >
+          <span class="text">
+            {{ item.label }}
+          </span>
+        </div>
+      </div>
+      <!-- tab结束 -->
     <!-- 表格开始 -->
      <el-table
       :data="tableData"
@@ -527,7 +531,21 @@ export default {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+  
+    .btn {
+      color: #037dff;
+      cursor: pointer;
+      i {
+        margin-left: 5px;
+        transition: all .4s;
+      }
+      .up {
+        transform: rotate(180deg);
+      }
+    }
+  }
     .tabs {
+      margin:10px 0;
       display: flex;
       align-items: center;
       >div {
@@ -545,18 +563,6 @@ export default {
         color: #037dff;
       }
     }
-    .btn {
-      color: #037dff;
-      cursor: pointer;
-      i {
-        margin-left: 5px;
-        transition: all .4s;
-      }
-      .up {
-        transform: rotate(180deg);
-      }
-    }
-  }
   .search {
     background: #fff;
     height: 0;

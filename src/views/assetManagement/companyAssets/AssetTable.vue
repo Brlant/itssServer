@@ -136,7 +136,9 @@ export default {
           id: row.id,
           status: this.statusFormatter(row),
           isApplying: row.isApplying,
-          manageType: row.manageType
+          manageType: row.manageType,
+          assetTypeId:row.assetTypeId,
+          departmentId:row.departmentId
         }
       })
     },

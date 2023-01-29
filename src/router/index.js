@@ -578,7 +578,20 @@ export const dynamicRoutes = [
       }
     ]
   }, 
-
+  {
+    path: '/assetManagement/allocateAssets/process',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:user:query'],
+    children: [
+      {
+        path: 'allocateAssets',
+        component: () => import('@/views/assetManagement/assetProcess/allocateAssets'),
+        name: 'allocateAssets',
+        meta: { title: '资产分配',noCache:false  }
+      }
+    ]
+  }, 
 ]
 
 // 防止连续点击多次路由报错
