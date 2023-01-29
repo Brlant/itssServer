@@ -192,7 +192,8 @@
           {{ statusFormatter(row.procVars.STATUS) }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
+        v-if="n === 0" 
         align="center"
         label="操作"
       >

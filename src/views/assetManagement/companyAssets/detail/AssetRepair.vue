@@ -75,13 +75,13 @@
     </div>
     <!-- 流程结束 -->
     <div slot="footer" style="display:flex; justify-content:flex-end; align-items:center">
-        <el-button type="primary" @click="submit">
-          确定
-        </el-button>
-        <el-button @click="dialogVisible = false">
-          取消
-        </el-button>
-      </div>
+      <el-button type="primary" @click="submit">
+        确定
+      </el-button>
+      <el-button @click="dialogVisible = false">
+        取消
+      </el-button>
+    </div>
   </el-dialog>
 </template>
 

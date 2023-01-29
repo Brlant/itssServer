@@ -9,7 +9,9 @@
       <div class="btns">
         <el-button type="primary">批量归还</el-button>
         <el-button type="primary">资产申领</el-button>
-        <el-button type="primary">资产借用</el-button>
+        <el-button type="primary" @click="initBorrow">
+          资产借用
+        </el-button>
       </div>
     </div>
     <!-- 前2个tab -->
@@ -79,10 +81,12 @@
         @pagination="getList"
       />
     </div>
+
     <!-- 我的申请tab -->
-    <my-apply 
-      v-if="tab === 2"
-    />
+    <my-apply v-if="tab === 2" />
+
+    <!-- 资产借用弹窗 -->
+    <asset-borrow ref="borrow" />
   </div>
 </template>
 
@@ -90,11 +94,13 @@
 import MyTabs from '@/components/MyTabs'
 import { personalAssetList } from '@/api/assetManagement/myAssets'
 import MyApply from './MyApply'
+import AssetBorrow from './AssetBorrow'
 
 export default {
   components: {
     MyTabs,
-    MyApply
+    MyApply,
+    AssetBorrow
   },
   data() {
     return {
@@ -143,6 +149,10 @@ export default {
           status: this.statusFormatter(row)
         }
       })
+    },
+    // 资产借用
+    initBorrow() {
+      this.$refs.borrow.open()
     },
     // tab切换
     change() {

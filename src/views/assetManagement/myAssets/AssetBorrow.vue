@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="资产报废"
+    title="资产借用"
     :visible.sync="dialogVisible"
     center
     width="30%"
@@ -14,12 +14,13 @@
       v-show="isShow"
     >
       <!-- 表单开始 -->
-      <el-form-item label="请选择报废日期" prop="scarpTime">
-        <el-date-picker
-          v-model="formData.scarpTime"
-          value-format="yyyy-MM-dd"
-          placeholder="选择日期"
-          type="date"
+      <el-form-item label="请选择资产类型" prop="assetTypeId">
+        <el-cascader
+          v-model="formData.assetTypeId"
+          :options="asset"
+          ref="assetCas"
+          :props="{ label: 'typeName', value: 'id' }"
+          clearable
           :style="style"
         />
       </el-form-item>
@@ -30,23 +31,8 @@
             :min="1"
             :step="1"
             step-strictly
-            :disabled="$route.query.manageType == 2"
           />
         </div>
-      </el-form-item>
-      <el-form-item label-width="0">
-        <el-upload
-          action
-          :on-change="onChange"
-          :on-remove="onRemove"
-          :file-list="fileList"
-          accept=".jpg, .png, .pdf"
-          :auto-upload="false"
-        >
-          <el-button type="info" :style="style">
-            上传附件
-          </el-button>
-        </el-upload>
       </el-form-item>
       <el-form-item label-width="0" prop="remark">
         <div style="color:#606266; font-weight:700">
@@ -90,16 +76,16 @@
       <el-button @click="dialogVisible = false">
         取消
       </el-button>
-      </div>
+    </div>
   </el-dialog>
 </template>
 
 <script>
 import { 
-  fileUpload,
-  scrap,
+  borrowing,
   getFlow
 } from '@/api/assetManagement/companyAssets'
+import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue"
 
 export default {
@@ -113,15 +99,15 @@ export default {
       list: [],
       dialogVisible: false,
       style: {width: '100%'},
-      fileList: [],
+      asset: [],
       formData: {
-        scarpTime: '',
+        assetTypeId: [],
         amount: 1,
         remark: ''
       },
       rules: {
-        scarpTime: [
-          { required: true, trigger: 'blur', message: '请选择报废日期' }
+        assetTypeId: [
+          { required: true, trigger: 'blur', message: '请选择资产类型' }
         ],
         amount: [
           { required: true, trigger: 'blur', message: '请输入资产数量' }
@@ -134,67 +120,54 @@ export default {
       if (value === false) {
         // 关闭时清空表单
         this.$refs.elForm.resetFields()
+        this.isShow = true
       }
     }
   },
+  mounted() {
+    this.getAsset()
+  },
   methods: {
+    // 资产类型查询
+    getAsset() {
+      queryAsset().then(res => {
+        this.asset = res.data
+      })
+    },
     // 提交表单
     submit() {
       this.$refs.elForm.validate(valid => {
         if (!valid) {
           return
         }
+        const { assetTypeId } = this.formData
         const data = {
-          ...this.formData,
-          asset: {
-            id: this.info.id,
-            assetId: this.info.assetId,
-            assetName: this.info.assetName,
-            assetTypeId: this.info.assetTypeId
-          },
-          attachmentList: this.fileList.map(item => {
-            return {
-              name: item.name,
-              url: item.url
-            }
-          })
+          assetTypeId: assetTypeId[assetTypeId.length - 1],
+          amount: this.formData.amount,
+          remark: this.formData.remark
         }
-        scrap(data).then(res => {
-          this.dialogVisible = false
-          this.$message.success(res.msg)
+        borrowing(data).then(res => {
+
         })
       })
     },
     // 查看流程
     viewFlow() {
-      this.isShow = false
-      const params = {
-        assetTypeIds: this.info.assetTypeId,
-        categoryId: 6,
-        deptId: this.info.departmentId
-      }
-      getFlow(params).then(res => {
-        this.list = JSON.parse(res.data.json).list
-      })
-    },
-    // 上传文件
-    onChange(file, fileList) {
-      let formData = new FormData()
-      formData.append('file', file.raw)
-      fileUpload(formData).then(res => {
-        // 文件列表格式处理
-        let fileArr = this.deepClone(fileList)
-        const index = fileArr.findIndex(item => {
-          return item.uid == file.uid
+      this.$refs.elForm.validateField('assetTypeId', error => {
+        if (error) {
+          return
+        }
+        this.isShow = false
+        const { assetTypeId } = this.formData
+        const params = {
+          assetTypeIds: assetTypeId[assetTypeId.length - 1],
+          categoryId: 4,
+          deptId: this.$store.state.user.user.deptId
+        }
+        getFlow(params).then(res => {
+          this.list = JSON.parse(res.data.json).list
         })
-        fileArr[index].status = 'success'
-        fileArr[index].name = res.data.name
-        fileArr[index].url = res.data.url
-        this.fileList = fileArr
       })
-    },
-    onRemove(file, fileList) {
-      this.fileList = fileList
     },
     open() {
       this.dialogVisible = true

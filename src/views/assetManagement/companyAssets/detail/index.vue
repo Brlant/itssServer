@@ -545,6 +545,7 @@ export default {
         line-height: 1;
         &:last-child {
           border-right: 0;
+          padding-right: 0;
         }
         span {
           color: #037dff;

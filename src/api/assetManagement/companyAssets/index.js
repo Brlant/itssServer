@@ -158,3 +158,12 @@ export function getFlow(params) {
     params
   })
 }
+
+// 借用
+export function borrowing(data) {
+  return request({
+    url: `asset/approvalProcess/initiateBorrowing`,
+    method: 'post',
+    data
+  })
+}
