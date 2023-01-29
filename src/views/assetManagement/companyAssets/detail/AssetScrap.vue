@@ -162,6 +162,8 @@ export default {
         scrap(data).then(res => {
           this.dialogVisible = false
           this.$message.success(res.msg)
+        }).catch(() => {
+          this.dialogVisible = false
         })
       })
     },
