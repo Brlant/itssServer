@@ -34,7 +34,7 @@
           <br />
           <div class="base">
             <el-row :gutter="15">
-              <el-form-item label="模板名称">
+              <el-form-item label="模板名称" required>
                   <!-- :disabled="$route.query.id ? true : false" -->
                 <el-input
                   v-model="assetTemplate.templateName"
@@ -474,7 +474,7 @@ export default {
      */
     saveAseet() {
       if (this.assetTemplate.templateName === "") {
-        this.$message.error("请输入标题名称!");
+        this.$message.error("请输入模板名称!");
         return;
       }
       if (this.assetTemplate.detailRadius=="") {

@@ -25,7 +25,10 @@
     </el-row>
     <!-- 内容主体开始 -->
     <div>
-      <el-form ref="form" :model="assetTemplate" label-width="80px">
+      <el-form ref="form" 
+        :model="assetTemplate"
+        label-width="80px"
+      >
         <div class="base-row">
           <div class="title">
             <span class="title-name c333">模板信息</span>
@@ -34,10 +37,10 @@
           <br />
           <div class="base">
             <el-row :gutter="15" >
-              <el-form-item label="模板名称">
+              <el-form-item label="模板名称" required>
                   <!-- :disabled="$route.query.id ? true : false" -->
                 <el-input
-                  v-model="assetTemplate.templateName" :required="true"
+                  v-model="assetTemplate.templateName"
                   maxlength="32"
                   placeholder="请输入模板名称"
                 ></el-input>
@@ -474,7 +477,7 @@ export default {
      */
     saveAseet() {
       if (this.assetTemplate.templateName === "") {
-        this.$message.error("请输入标题名称!");
+        this.$message.error("请输入模板名称!");
         return;
       }
       if (this.assetTemplate.detailRadius=="") {
