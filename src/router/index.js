@@ -592,6 +592,20 @@ export const dynamicRoutes = [
       }
     ]
   }, 
+  {
+    path: '/assetManagement/maintenanceRecords/detail',
+    component: Layout,
+    hidden: true,
+    permissions: ['system:user:query'],
+    children: [
+      {
+        path: 'recordDetail',
+        component: () => import('@/views/assetManagement/maintenanceRecords/recordDetail'),
+        name: 'recordDetail',
+        meta: { title: '资产维修记录详情',noCache:false  }
+      }
+    ]
+  }, 
 ]
 
 // 防止连续点击多次路由报错

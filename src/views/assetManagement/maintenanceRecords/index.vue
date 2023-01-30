@@ -2,7 +2,7 @@
   <div class="">
     <div class="title">
       <div :class="[{ active: n == 0 }]" @click="tabActive(0)">维修记录</div>
-      <div :class="[{ active: n == 1 }]" @click="tabActive(1)">报废记录</div>
+      <div :class="[{ active: n == 1 }]" @click="tabActive(1)">报损记录</div>
       <div :class="[{ active: n == 2 }]" @click="tabActive(2)">盘亏记录</div>
     </div>
     <div>

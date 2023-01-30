@@ -9,10 +9,10 @@
         label-width="120px"
       >
         <el-col :span="8">
-          <el-form-item label="申请日期" prop="field101">
+          <el-form-item label="申请日期" prop="time1">
             <el-date-picker
               type="daterange"
-              v-model="formData.field101"
+              v-model="formData.time1"
               format="yyyy-MM-dd"
               value-format="yyyy-MM-dd"
               :style="{ width: '100%' }"
@@ -24,10 +24,10 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="审批通过日期" prop="field102">
+          <el-form-item label="审批通过日期" prop="time2">
              <el-date-picker
               type="daterange"
-              v-model="formData.field101"
+              v-model="formData.time2"
               format="yyyy-MM-dd"
               value-format="yyyy-MM-dd"
               :style="{ width: '100%' }"
@@ -39,9 +39,9 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="资产编号" prop="field103">
+          <el-form-item label="资产编号" prop="assetNo">
             <el-input
-              v-model="formData.field103"
+              v-model="formData.assetNo"
               placeholder="请输入资产编号"
               clearable
               :style="{ width: '100%' }"
@@ -50,27 +50,21 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="资产类型" prop="field104">
-            <el-select
-              v-model="formData.field104"
-              placeholder="请选择资产类型"
-              clearable
-              :style="{ width: '100%' }"
-            >
-              <el-option
-                v-for="(item, index) in field104Options"
-                :key="index"
-                :label="item.label"
-                :value="item.value"
-                :disabled="item.disabled"
-              ></el-option>
-            </el-select>
+          <el-form-item label="资产类型" prop="assetTypeId">
+            <el-cascader
+                v-model="formData.assetTypeId"
+                :options="asset"
+                ref="assetCas"
+                :props="{ label: 'typeName', value: 'id' }"
+                clearable
+              
+              />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="资产名称" prop="field105">
+          <el-form-item label="资产名称" prop="assetName">
             <el-input
-              v-model="formData.field105"
+              v-model="formData.assetName"
               placeholder="请输入资产名称"
               clearable
               :style="{ width: '100%' }"
@@ -88,121 +82,142 @@
       </el-form>
     </el-row>
     <div>
-      <el-table :data="repairData">
-        <el-table-column label="流程ID" align="center" prop="id">
+      <el-table :data="frmLossData" @row-click='goDetail'>
+        <el-table-column label="流程ID" align="center" prop="flowId">
         </el-table-column>
 
-        <el-table-column label="资产类型" align="center" prop="assetTypeList">
-          <template slot-scope="scope">
-            <span
-              v-for="(item, index) in scope.row.assetTypeList"
-              :key="index"
-              >{{ item.typeName + "；" }}</span
-            >
-          </template>
+        <el-table-column label="资产类型" align="center" prop="assetTypeName">
         </el-table-column>
         <el-table-column
           label="资产编号&amp;名称"
           align="center"
           prop="updateTime"
-        />
-        <el-table-column label="盘亏数量" align="center" prop="updatorName">
+        >
+         <template slot-scope="scope">
+            <span v-if='scope.row.assetNo'>
+              {{scope.row.assetNo}}
+             </span>
+             <span v-if='scope.row.assetNo && scope.row.assetName'>-</span>
+             <span v-if='scope.row.assetName'>
+               {{scope.row.assetName}}
+             </span>
+          </template>
         </el-table-column>
-        <el-table-column label="税后价格" align="center" prop="ruleName">
+        <el-table-column label="盘亏数量" align="center" prop="amount">
         </el-table-column>
-        <el-table-column label="累计折旧" align="center" prop="ruleName">
+        <el-table-column label="税后价格" align="center" prop="rulafterTaxPriceeName">
         </el-table-column>
-        <el-table-column label="资产净值" align="center" prop="updatorName">
+        <el-table-column label="累计折旧" align="center" prop="depreciation">
         </el-table-column>
-        <el-table-column label="折旧年限" align="center" prop="ruleName">
+        <el-table-column label="资产净值" align="center" prop="surplusValue">
         </el-table-column>
-        <el-table-column label="申请日期" align="center" prop="ruleName">
+        <el-table-column label="折旧年限" align="center" prop="depreciableLife">
         </el-table-column>
-        <el-table-column label="报废日期" align="center" prop="ruleName">
+        <el-table-column label="申请日期" align="center" prop="createTime">
+        </el-table-column>
+        <el-table-column label="报废日期" align="center" prop="scarpTime">
         </el-table-column>
         <el-table-column label="备注" align="center" prop="remark">
         </el-table-column>
       </el-table>
+        <pagination
+     v-show="total > 0"
+     :total="total"
+     :page.sync="page.pageNum"
+     :limit.sync="page.pageSize"
+     @pagination="initData"
+    />
     </div>
   </div>
 </template>
 <script>
+import {
+ maintenanceScrapRecord
+} from "@/api/assetManagement/maintenanceRecords";
+import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 export default {
   components: {},
   props: [],
   data() {
     return {
       formData: {
-        field101: null,
-        field102: undefined,
-        field103: undefined,
-        field104: undefined,
-        field105: undefined,
+       
       },
-      repairData: [],
+      frmLossData: [],
       rules: {
-        field101: [
-          {
-            required: true,
-            message: "申请日期不能为空",
-            trigger: "change",
-          },
-        ],
-        field102: [
-          {
-            required: true,
-            message: "请输入维修金额",
-            trigger: "blur",
-          },
-        ],
-        field103: [
-          {
-            required: true,
-            message: "请输入资产编号",
-            trigger: "blur",
-          },
-        ],
-        field104: [
-          {
-            required: true,
-            message: "请选择资产类型",
-            trigger: "change",
-          },
-        ],
-        field105: [
-          {
-            required: true,
-            message: "请输入资产名称",
-            trigger: "blur",
-          },
-        ],
+      
       },
-      field104Options: [
-        {
-          label: "选项一",
-          value: 1,
-        },
-        {
-          label: "选项二",
-          value: 2,
-        },
-      ],
+      asset: [],//资产类型
+      page:{
+      pageNum:1,
+      pageSize:10
+    },
+      total:0,
     };
   },
   computed: {},
   watch: {},
-  created() {},
+  created() {
+    this.getAsset()
+    this.initData()
+  },
   mounted() {},
   methods: {
+      // 资产类型查询
+    getAsset() {
+      queryAsset().then(res => {
+        this.asset = res.data
+      })
+    },
+     initData(){
+      let params={
+        pageNum:this.page.pageNum,
+        pageSize:this.page.pageSize,
+        businessType:8,
+        createStartTime:this.formData.time1 ? this.formData.time1[0] : '',
+        createEndTime:this.formData.time1 ? this.formData.time1[1] : '',
+        scrapStartTime:this.formData.time2 ? this.formData.time2[0] : '',
+        scrapEndTime:this.formData.time2 ? this.formData.time2[1] : '',
+        assetNo:this.formData.assetNo,
+        assetTypeId:this.formData.assetTypeId,
+        assetName:this.formData.assetName
+      }
+      maintenanceScrapRecord(params).then(res=>{
+        this.frmLossData=res.rows
+        this.total=res.total
+      })
+    },
     submitForm() {
-      this.$refs["elForm"].validate((valid) => {
-        if (!valid) return;
-        // TODO 提交表单
-      });
+      this.initData()
     },
     resetForm() {
-      this.$refs["elForm"].resetFields();
+     this.formData={}
     },
+    statusFormatter(status) {
+      if (status=='1') {
+        return '申请中'
+      }else if(status=='2'){
+        return '已完成'
+      }else{
+      return '已取消'
+      }
+    },
+    goDetail(row){
+        const obj = {
+        path: "/assetManagement/maintenanceRecords/detail/recordDetail",
+        query: {
+         taskId:row.taskId,
+         processInstanceId:row.processInstanceId,
+         deployId:row.deployId,
+         flowId:row.flowId,
+          status:this.statusFormatter(row.status),
+          applyTime:row.createTime,
+          applicantName:row.creatorName
+        }
+      };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
+    }
   },
 };
 </script>
