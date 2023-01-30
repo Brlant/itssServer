@@ -145,14 +145,28 @@
       <div v-if='isShow'>
       <el-form
         :model="diaForm"
+        :rules="dialogRules"
         ref="diaForm"
         :inline="false"
         label-width="120px"
         class="dialogFormInfo"
       >
+      <div v-if='attribute=="userconfirmation"'>
+         <div class='sure-title'><span style='color:red'>*</span>确认信息</div>
+        <div class='list-style'>
+          <div
+            v-for="(item, index) in sureList"
+            :key="index"
+            :class="['div-style', { current: selectAll.includes(index) },{noSelect:!selectAllCopy.includes(index)}]"
+            @click='select(index)'
+          >
+            {{ item.label }}
+          </div>
+        </div>
+      </div>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="附件上传" prop="typeName">
+            <el-form-item label="附件上传" prop="url">
                <el-upload
               action
               :on-change="onChange"
@@ -225,7 +239,7 @@
       >
         <el-row>
           <el-col :span="24">
-            <el-form-item label="附件上传" prop="typeName">
+            <el-form-item label="附件上传" prop="url">
                <el-upload
               action
               :on-change="onChange"
@@ -296,6 +310,14 @@ export default {
     ApprovalProcess,FactoryDrawFlow
   },
   data() {
+     // 上传校验
+    const check = (rule, value, callback) => {
+      if (!this.url) {
+        callback(new Error("请上传证书文件"));
+      } else {
+        callback();
+      }
+    };
     return {
       list:[],
       isShow:true,
@@ -303,7 +325,10 @@ export default {
       title:this.$route.query.applyName,
       flowId: this.$route.query.flowId,
       tableData: [],
-      diaForm:{},
+      attribute:'',
+      diaForm:{
+        url:''
+      },
       total: 0,
       agreeShow:false,
       rejectShow:false,
@@ -311,17 +336,72 @@ export default {
       name: '',
       type:'',
       attachmentId:'',//取消时的附件id
-      showAllocate: false
+      showAllocate: false,
+      sureList: [
+        {
+          label: "资产类型确认",
+          value: 0,
+        },
+        {
+          label: "资产型号确认",
+          value: 1,
+        },
+        {
+          label: "资产类型确认",
+          value: 2,
+        },
+        {
+          label: "资产型号确认",
+          value: 3,
+        },
+      ],
+      selectAll:[],
+      selectAllCopy:[0,1,2,3],
+       dialogRules: {
+        url: [{ required: true, trigger: "blur", validator: check }],
+      },
+    }
+  },
+  watch: {
+    agreeShow(value) {
+      if (value === false) {
+        // 关闭时清空表单
+        this.$refs.diaForm.resetFields()
+        this.url = ''
+        this.name = ''
+      }
     }
   },
   created() {
     this.getTableData()
   },
   methods: {
+      select(index){
+      console.log(this.selectAll,'selectAll')
+      let n=index
+      this.$nextTick(()=>{
+        if(this.selectAll.includes(n)){
+          console.log('aaaa')
+          // this.selectAll.splice(n, 1);
+            this.selectAll[n]=''
+        
+        }else{
+          this.selectAll[n]=n
+        }
+      })
+      this.selectAllCopy=[0,1,2,3]
+      this.$forceUpdate()
+      console.log(this.selectAllCopy,'this.selectAll')
+     
+    },
     //同意
     agree(){
+       this.selectAll=[]
+      this.selectAllCopy=[0,1,2,3]
         this.agreeShow=true
         this.rejectShow=false
+        this.attribute=this.$refs.process.getAttribute()
+
     },
     //拒绝
     reject(){
@@ -399,7 +479,26 @@ export default {
     },
     //确认同意
     sureAgree(){
-        let params={
+       this.$refs.diaForm.validate(valid => {
+        if (!valid) {
+          return
+        }
+            if(this.attribute=='userconfirmation'){
+              console.log(this.selectAll,'this.selectAll')
+                 if(!this.selectAll.includes('') && this.selectAll.length==4){
+                  this.sureForm()
+                 }else{
+                  this.selectAllCopy=JSON.parse(JSON.stringify(this.selectAll))
+                 }
+          }else{
+            this.sureForm()
+          }
+        
+       })
+    
+    },
+    sureForm(){
+      let params={
             processInstanceId:this.$route.query.processInstanceId,
             taskId:this.$route.query.taskId,
             userKey:this.$store.state.user.user.userId,
@@ -601,5 +700,32 @@ export default {
       }
     }
   }
+}
+.list-style{
+  display: inline-block;
+  width:80%;
+}
+.sure-title{
+  display:inline-block;
+  width:13%;
+  vertical-align:top;
+  text-align:right;
+  padding-right:40px;
+}
+.div-style {
+  cursor: pointer;
+  width: 30%;
+  margin-right: 100px;
+  margin-bottom: 20px;
+  display: inline-block;
+  border: 1px solid #ddd;
+  text-align: center;
+  padding:10px 0;
+}
+.current{
+  background:#97b2e98c
+}
+.noSelect{
+  box-shadow: 2px 2px 10px red;;
 }
 </style>
