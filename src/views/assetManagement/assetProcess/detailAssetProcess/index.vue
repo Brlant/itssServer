@@ -137,6 +137,7 @@
     </section>
     <!-- 同意 -->
      <el-dialog
+     destroy-on-close
       title="审批同意"
       class="dialogForm"
       width="50%"
@@ -231,8 +232,8 @@
     >
     <div v-if='show'>
        <el-form
-        :model="diaForm"
-        ref="diaForm"
+        :model="diaFormTwo"
+        ref="diaFormTwo"
         :inline="false"
         label-width="120px"
         class="dialogFormInfo"
@@ -258,7 +259,7 @@
          <el-row>
           <el-col :span="12">
             <el-form-item label="备注" prop="comment">
-              <el-input v-model="diaForm.comment" type='textarea'>
+              <el-input v-model="diaFormTwo.comment" type='textarea'>
               </el-input>
             </el-form-item>
           </el-col>
@@ -329,6 +330,7 @@ export default {
       diaForm:{
         url:''
       },
+      diaFormTwo:{},
       total: 0,
       agreeShow:false,
       rejectShow:false,
@@ -529,7 +531,7 @@ export default {
             processInstanceId:this.$route.query.processInstanceId,
             taskId:this.$route.query.taskId,
             userKey:this.$store.state.user.user.userId,
-            comment: this.diaForm.comment,
+            comment: this.diaFormTwo.comment,
             procVars:{
               attribute: this.$refs.process.getAttribute()
             }

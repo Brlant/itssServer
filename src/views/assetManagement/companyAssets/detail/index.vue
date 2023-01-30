@@ -348,7 +348,7 @@ export default {
       url: "",
       name: "",
       type:'',
-      selectAll:[0,1,2,3],
+      selectAll:[],
       selectAllCopy:[0,1,2,3],
       dialogRules: {
         url: [{ required: true, trigger: "blur", validator: check }],
@@ -471,14 +471,6 @@ export default {
           })
       }else{
         this.selectAllCopy=JSON.parse(JSON.stringify(this.selectAll))
-        // console.log( this.selectAll,' this.selectAll')
-        // this.selectAll.forEach((i,index)=>{
-        //   if(i!=''){
-        //     this.selectAllCopy[index]=i
-        //   }
-          
-        // })
-        // console.log(this.selectAllCopy)
       }
      
        })
