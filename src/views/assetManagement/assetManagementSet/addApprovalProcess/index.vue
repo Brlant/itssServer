@@ -149,8 +149,8 @@
                     :modelKey="item.modelKey"
                     :deptId="item.deptId"
                   ></DrawFlowChart>
-                  <el-row>
-                    <el-col :span="12">
+                  <!-- <el-row>
+                    <el-col :span="24"> -->
                       <el-form-item label="适用部门" prop="deptId">
                         <treeselect
                           multiple
@@ -161,8 +161,8 @@
                           placeholder="请选择适用部门"
                         />
                       </el-form-item>
-                    </el-col>
-                  </el-row>
+                    <!-- </el-col>
+                  </el-row> -->
                 </div>
               </div>
             </div>

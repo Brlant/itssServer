@@ -86,13 +86,13 @@
               :modelType="item.type"
               :scaleVal="scaleVal"
             ></FactoryDrawFlow>
-            <el-row >
-              <el-col :span="12" >
+            <!-- <el-row >
+              <el-col :span="12" > -->
                 <el-form-item label="适用部门" prop="dept">
                   <span v-for='(i,index) in item.sysDeptList' :key="index"> {{i.deptName+'；'}}</span>
                 </el-form-item>
-              </el-col>
-            </el-row>
+              <!-- </el-col>
+            </el-row> -->
           </div>
         </div>
     
