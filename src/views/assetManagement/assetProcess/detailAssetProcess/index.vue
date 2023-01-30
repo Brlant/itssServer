@@ -14,7 +14,13 @@
           
         <el-button type="primary" @click='agree'>全部同意</el-button>
         <el-button type="danger" @click='reject'>全部拒绝</el-button>
-         <el-button type="primary" @click='allocateAssets '>分配资产</el-button>
+         <el-button
+          v-if="showAllocate" 
+          type="primary" 
+          @click='allocateAssets'
+         >
+          分配资产
+          </el-button>
         <el-button type="danger" @click='rejectAllocate '>拒绝</el-button>
     
       </div>
@@ -124,7 +130,10 @@
     <!-- 资产信息结束 -->
     <!-- 审批进度开始 -->
     <section class="process">
-      <approval-process ref="process" />
+      <approval-process
+        @emitAttr="getAttr"
+        ref="process" 
+      />
     </section>
     <!-- 同意 -->
      <el-dialog
@@ -277,7 +286,8 @@ export default {
       url: '',
       name: '',
       type:'',
-      attachmentId:''//取消时的附件id
+      attachmentId:'',//取消时的附件id
+      showAllocate: false
     }
   },
   created() {
@@ -307,17 +317,36 @@ export default {
        
       })
     },
+    // 控制分配资产按钮
+    getAttr(value) {
+      console.log('xxx',value)
+      if (value == 'assignment') {
+        this.showAllocate = true
+      } else {
+        this.showAllocate = false
+      }
+    },
     //分配资产按钮
     allocateAssets(){
       // const obj = {
       //   path: "/assetManagement/allocateAssets/allocate",
       // };
       // getToday()
-   this.$router.push({
-        path: '/assetManagement/allocateAssets/process/allocateAssets',
-       
-      })
       
+      const {
+        applicantName,
+        applyTime,
+        status
+      } = this.$route.query
+
+      this.$router.push({
+        path: '/assetManagement/allocateAssets/process/allocateAssets',
+        query: {
+          applicantName,
+          applyTime,
+          status
+        }
+      })
     },
     rejectAllocate(){},
     //拒绝分配资产
