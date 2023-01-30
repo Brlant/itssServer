@@ -132,7 +132,8 @@
       class="dialogForm"
       width="50%"
       :visible.sync="agreeShow"
-    >
+    > 
+      <div v-if='isShow'>
       <el-form
         :model="diaForm"
         ref="diaForm"
@@ -166,6 +167,11 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-button type="text" @click="viewFlow">
+        <span style="text-decoration: underline">
+          审批流程查看
+        </span>
+      </el-button>
       </el-form>
       <div class="txtAlignC dialogBtnInfo">
         <el-button type="primary" 
@@ -173,6 +179,25 @@
         <el-button 
         @click="cancelFn">取消</el-button>
       </div>
+      </div>
+         <!-- 流程开始 -->
+    <div 
+      style="cursor:pointer" 
+      v-show="!isShow"
+    >
+      <span @click="isShow = true">
+        <i class="el-icon-arrow-left"></i>
+        返回
+      </span>
+      <div class="flow-wrap">
+        <factory-draw-flow
+          :FlowConfig="list"
+          modelType="see"
+          ref="flow"
+        />
+      </div>
+    </div>
+    <!-- 流程结束 -->
     </el-dialog>
       <!-- 拒绝 -->
      <el-dialog
@@ -229,16 +254,19 @@
 import ApprovalProcess from './ApprovalProcess.vue'
 import { listAsset } from '@/api/assetManagement/myAssets'
 import { tabOptions } from '../../companyAssets/options'
-import { agreeQuery,rejectQuery,deleteAttachment,uploadSuccess } from "@/api/assetManagement/assetProcess";
+import { agreeQuery,rejectQuery,deleteAttachment,uploadSuccess,seeFlow } from "@/api/assetManagement/assetProcess";
+import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue";
 import { 
   fileUpload,
 } from '@/api/assetManagement/companyAssets'
 export default {
   components: {
-    ApprovalProcess
+    ApprovalProcess,FactoryDrawFlow
   },
   data() {
     return {
+      list:[],
+      isShow:true,
       title:this.$route.query.applyName,
       flowId: this.$route.query.flowId,
       tableData: [],
@@ -433,6 +461,18 @@ export default {
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
+    },
+    //审批流程查看
+    viewFlow(){
+       this.isShow = false
+      const params = {
+        assetTypeIds: this.info.assetTypeId,
+        categoryId: 1,
+        deptId: this.info.departmentId
+      }
+      seeFlow(params).then(res => {
+        this.list = JSON.parse(res.data.json).list
+      })
     }
   }
 }

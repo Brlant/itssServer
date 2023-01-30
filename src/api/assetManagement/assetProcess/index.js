@@ -55,4 +55,12 @@ export function getPendingList(query) {
        
     })
   } 
+  //查看流程图
+  export function seeFlow(query) {
+    return request({
+      url: `flowable/flowable/task/flowViewer`,
+      method: 'get',  
+       params:query
+    })
+  } 
   
