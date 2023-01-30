@@ -320,6 +320,7 @@ export default {
       }
     };
     return {
+      attribute: '',
       list:[],
       isShow:true,
       show:true,
@@ -425,7 +426,7 @@ export default {
     },
     // 控制分配资产按钮
     getAttr(value) {
-      console.log('xxx',value)
+      this.attribute = value
       if (value == 'assignment') {
         this.showAllocate = true
       } else {
@@ -442,7 +443,13 @@ export default {
       const {
         applicantName,
         applyTime,
-        status
+        status,
+        applyUserId,
+        assetTypeId,
+        amount,
+        taskId,
+        processInstanceId,
+        deployId
       } = this.$route.query
 
       this.$router.push({
@@ -450,7 +457,14 @@ export default {
         query: {
           applicantName,
           applyTime,
-          status
+          status,
+          applyUserId,
+          assetTypeId,
+          amount,
+          attribute: this.attribute,
+          taskId,
+          processInstanceId,
+          deployId
         }
       })
     },

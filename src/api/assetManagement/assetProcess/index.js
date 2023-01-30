@@ -64,3 +64,11 @@ export function getPendingList(query) {
     })
   } 
   
+// 待分配资产
+export function assigned(query) {
+  return request({
+    url: `/asset/asset/listToBeAssigned`,
+    method: 'get',  
+     params:query
+  })
+}

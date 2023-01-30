@@ -183,6 +183,15 @@ export default {
           item.flowUploads = flowUploads
         })
         this.flowHistoryList = flowCommentResList
+
+        // c - 匹配attribute
+        const { id } = this.flowExamineList.find(item => {
+          return item.status == 1
+        })
+        const { attribute } = this.list.find(item => {
+          return item.id == id
+        })
+        this.$emit('emitAttr', attribute)
       })
     },
     getAttribute() {

@@ -509,7 +509,10 @@ export default {
           taskId: row.taskId,
           processInstanceId: row.processInstanceId,
           deployId: row.deployId,
-          tab:this.n
+          tab:this.n,
+          assetTypeId: row.procVars.ASSET_TYPE,
+          amount: row.procVars.AMOUNT,
+          applyUserId: row.procVars.APPLICANT_ID
         }
       };
       // getToday()

@@ -8,7 +8,13 @@
         </span>
       </div>
       <div class="btns">
-        <el-button type="primary" @click="sure">确定</el-button>
+        <el-button 
+          type="primary"
+          :disabled="tableData.length == 0" 
+          @click="sure"
+        >
+          确定
+        </el-button>
         <el-button type="danger" @click="cancel">取消</el-button>
        
       </div>
@@ -21,11 +27,11 @@
           <b>资产信息</b>
         </div>
         <div class="right">
-            <div class="item">
-                <span class="name">需分配数：</span>
-                <span class="value">
-                {{ total }} 
-                </span>
+          <div class="item">
+            <span class="name">需分配数：</span>
+            <span class="value">
+              {{ amount }} 
+            </span>
           </div>
           <div class="item">
             <span class="name">资产数量：</span>
@@ -97,16 +103,25 @@
         <el-table-column
           align="center"
           label="存放地点"
-          prop="storageAddress"
-        />
+        >
+
+        </el-table-column>
         <el-table-column
           align="center"
           label="归属部门"
           prop="departmentName"
         >
-            <template>
-                
-            </template>
+          <template slot-scope="{row}">
+            <treeselect
+              v-model="row.departmentId"
+              :options="dept"
+              ref="deptTree"
+              :show-count="true"
+              appendToBody
+              z-index="9999"
+              placeholder="请选择"
+            />
+          </template>
         </el-table-column>
         <el-table-column
           align="center"
@@ -137,15 +152,24 @@
       </div>
       <!-- 表格部分 -->
       <el-table
-        :data="tableData"
+        :data="list"
         border
-        @selection-change="handleSelectionChange"
+        :row-style="rowStyle"
       >
-       <el-table-column
-        type="selection"
-        width="55">
+        <el-table-column
+          align="center"
+          width="90"
+        >
+          <template slot-scope="{row}">
+            <el-radio
+              :label="row.id"
+              v-model="id"
+              @input="input"
+            >
+              <span></span>
+            </el-radio>
+          </template>
         </el-table-column>
-        
         <el-table-column
           align="center"
           label="资产编号"
@@ -199,44 +223,100 @@
       </el-table>
     </section>
     <!-- 可分配资产信息结束 -->
+    <!-- 确定弹窗 -->
+    <my-dialog
+      :customVar="CUSTOM_VAR"
+      ref="dialog" 
+    />
   </div>
 </template>
 <script>
-import { listAsset } from '@/api/assetManagement/myAssets'
+import { assigned } from "@/api/assetManagement/assetProcess";
+import { treeselect } from "@/api/system/dept";
 import { tabOptions } from '../../companyAssets/options'
-import { agreeQuery,rejectQuery,deleteAttachment,uploadSuccess } from "@/api/assetManagement/assetProcess";
+import Treeselect from "@riophae/vue-treeselect"
+import "@riophae/vue-treeselect/dist/vue-treeselect.css"
+import MyDialog from './MyDialog'
 
 export default {
+  components: {
+    Treeselect,
+    MyDialog
+  },
   data() {
     return {
+      amount: 0,
       title:'分配资产',
       flowId: this.$route.query.flowId,
+      id: '',
+      dept: [],
       tableData: [],
+      list: [],
       diaForm:{},
-      total: 0,
       agreeShow:false,
       rejectShow:false,
       url: '',
       name: '',
       type:'',
-      attachmentId:''//取消时的附件id
+      attachmentId:'',//取消时的附件id
+      CUSTOM_VAR: []
     }
   },
-  created() {
-    // this.getTableData()
-  },
-  methods: {
-    // 表格数据
-    getTableData() {
-      listAsset(this.flowId).then(res => {
-        this.tableData = res.data
-        // 总件数
+  computed: {
+    // 总件数
+    total() {
+      if (!this.tableData.length) {
+        return 0
+      } else {
         let total = 0
         this.tableData.forEach(value => {
           total += value.amount
         })
-        this.total = total
+        return total
+      }
+    }
+  },
+  created() {
+    this.amount = this.$route.query.amount
+    this.getList()
+    this.getDept()
+  },
+  methods: {
+    // 表格数据
+    getList() {
+      const params = {
+        applyUserId: this.$route.query.applyUserId,
+        assetType: this.$route.query.assetTypeId,
+        amount: this.$route.query.amount
+      }
+      assigned(params).then(res => {
+        this.list = res.data
       })
+    },
+    // 部门查询
+    getDept() {
+      treeselect().then(res => {
+        this.dept = res.data
+      })
+    },
+    // 单选操作
+    input() {
+      let row = this.deepClone(this.list.find(item => {
+        return item.id === this.id
+      }))
+      row.amount = this.amount
+      this.tableData = [row]
+    },
+    rowStyle({ row }) {
+      if (row.id === this.id) {
+        return {
+          background: '#f5f7fa'
+        }
+      }
+    },
+    del(row) {
+      this.tableData = []
+      this.id = ''
     },
     // 查看详情
     view(row) {
@@ -269,8 +349,27 @@ export default {
         }
       }
     },
-    //确定
-    sure(){},
+    // 确定
+    sure() {
+      const { departmentId } = this.tableData[0]
+      let departmentName
+      if (departmentId) {
+        departmentName = this.$refs.deptTree.getNode(departmentId).label
+      } else {
+        departmentName = null
+      }
+      this.CUSTOM_VAR = this.tableData.map(item => {
+        return {
+          id: item.id,
+          assetId: item.assetId,
+          assetName: item.assetName,
+          amount: item.amount,
+          departmentId: item.departmentId,
+          departmentName
+        }
+      })
+      this.$refs.dialog.open()
+    },
     //拒绝
     cancel(){},
     handleSelectionChange(){},
