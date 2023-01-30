@@ -10,10 +10,10 @@
           <i :class="['el-icon-arrow-down', {up: isExpand}]"></i>
         </div>
         <div class="right">
-          <el-button type="primary" size="small" >
+          <!-- <el-button type="primary" size="small" >
             批量管理
             <i class="el-icon-caret-bottom el-icon--right"></i>
-          </el-button>
+          </el-button> -->
           <el-button 
             type="primary" 
             size="small"
