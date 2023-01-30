@@ -435,8 +435,9 @@ export default {
     FlowConfig = this.transformTree(FlowConfig);  // 将一维数组转化为树状结构
     this.cacheData = FlowConfig;
     console.log(this.selfConfig[0],'JSON.stringify(this.selfConfig[0])')
-    const root = JSON.parse(JSON.stringify(this.selfConfig[0]));
-    console.log(root,'root')
+    if(this.selfConfig[0]){
+      const root = JSON.parse(JSON.stringify(this.selfConfig[0]));
+       console.log(root,'root')
     const scale = `transform: scale(${this.scaleVal/100})`
     return (
       <div class="design-engine">
@@ -455,6 +456,9 @@ export default {
         </div>
       </div>
     );
+    }
+    
+   
   }
 };
 </script>

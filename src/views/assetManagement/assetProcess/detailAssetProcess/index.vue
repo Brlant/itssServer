@@ -21,7 +21,7 @@
          >
           分配资产
           </el-button>
-        <el-button type="danger" @click='rejectAllocate '>拒绝</el-button>
+        <el-button type="danger"  v-if="showAllocate"  @click='rejectAllocate '>拒绝</el-button>
     
       </div>
     </header>
@@ -176,7 +176,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-button type="text" @click="viewFlow">
+        <el-button type="text" @click="viewFlowOne">
         <span style="text-decoration: underline">
           审批流程查看
         </span>
@@ -215,7 +215,8 @@
       width="50%"
       :visible.sync="rejectShow"
     >
-      <el-form
+    <div v-if='show'>
+       <el-form
         :model="diaForm"
         ref="diaForm"
         :inline="false"
@@ -248,6 +249,11 @@
             </el-form-item>
           </el-col>
         </el-row>
+         <el-button type="text" @click="viewFlowTwo">
+        <span style="text-decoration: underline">
+          审批流程查看
+        </span>
+      </el-button>
       </el-form>
       <div class="txtAlignC dialogBtnInfo">
         <el-button type="primary" 
@@ -255,6 +261,23 @@
         <el-button 
         @click="cancelFn">取消</el-button>
       </div>
+    </div>
+    <div 
+      style="cursor:pointer" 
+      v-show="!show"
+    >
+      <span @click="show = true">
+        <i class="el-icon-arrow-left"></i>
+        返回
+      </span>
+      <div class="flow-wrap">
+        <factory-draw-flow
+          :FlowConfig="list"
+          modelType="see"
+          ref="flow"
+        />
+      </div>
+    </div>
     </el-dialog>
   </div>
 </template>
@@ -276,6 +299,7 @@ export default {
     return {
       list:[],
       isShow:true,
+      show:true,
       title:this.$route.query.applyName,
       flowId: this.$route.query.flowId,
       tableData: [],
@@ -428,14 +452,17 @@ export default {
         })
     },
      //取消按钮
-    cancelFn(){
+     cancelFn(){
          this.rejectShow=false
          this.agreeShow=false
-         deleteAttachment(this.attachmentId).then(res=>{
+         if(this.attachmentId){
+           deleteAttachment(this.attachmentId).then(res=>{
           if(res.code==200){
             this.$message.success('取消成功')
           }
          })
+         }
+        
     },
     // 表格数据
     getTableData() {
@@ -450,7 +477,7 @@ export default {
       })
     },
     // 查看详情
-    view(row) {
+     view(row) {
       this.$router.push({
         path: '/assetManagement/companyAssets/companyAssets-auth/detail',
         query: {
@@ -492,15 +519,30 @@ export default {
       this.$tab.closeOpenPage(obj);
     },
     //审批流程查看
-    viewFlow(){
+    viewFlowOne(){
        this.isShow = false
       const params = {
-        assetTypeIds: this.info.assetTypeId,
-        categoryId: 1,
-        deptId: this.info.departmentId
+        taskId: this.$route.query.taskId,
+        processInstanceId: this.$route.query.processInstanceId,
+        deployId: this.$route.query.deployId
       }
       seeFlow(params).then(res => {
-        this.list = JSON.parse(res.data.json).list
+        this.list = JSON.parse(res.data.flowProcDefRes.json).list
+        console.log(this.list,'this.list')
+        return
+      })
+    },
+     viewFlowTwo(){
+       this.show = false
+      const params = {
+        taskId: this.$route.query.taskId,
+        processInstanceId: this.$route.query.processInstanceId,
+        deployId: this.$route.query.deployId
+      }
+      seeFlow(params).then(res => {
+        this.list = JSON.parse(res.data.flowProcDefRes.json).list
+        console.log(this.list,'this.list')
+        return
       })
     }
   }
