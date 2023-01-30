@@ -225,6 +225,7 @@
     </el-dialog>
       <!-- 拒绝 -->
      <el-dialog
+     destroy-on-close
       title="审批拒绝"
       class="dialogForm"
       width="50%"
@@ -361,17 +362,19 @@ export default {
       selectAll:[],
       selectAllCopy:[0,1,2,3],
        dialogRules: {
-        url: [{ required: true, trigger: "blur", validator: check }],
+        // url: [{ required: true, trigger: "blur", validator: check }],
       },
     }
   },
   watch: {
     agreeShow(value) {
       if (value === false) {
-        // 关闭时清空表单
-        this.$refs.diaForm.resetFields()
-        this.url = ''
-        this.name = ''
+       this.cancelFn()
+      }
+    },
+    rejectShow(value) {
+      if (value === false) {
+       this.cancelFn()
       }
     }
   },

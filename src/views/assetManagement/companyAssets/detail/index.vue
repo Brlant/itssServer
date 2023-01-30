@@ -188,12 +188,14 @@
       </div>
     </div>
     <el-dialog
+    destroy-on-close
       :title="title"
       class="dialogForm"
       width="30%"
       :visible.sync="dialogShow"
     >
-      <el-form
+    <div v-if='isShow'>
+        <el-form
         :model="diaForm"
         ref="diaForm"
         :rules="dialogRules"
@@ -237,32 +239,35 @@
             </el-form-item>
           </el-col>
         </el-row>
+         <el-button type="text" @click="viewFlowOne">
+        <span style="text-decoration: underline">
+          审批流程查看
+        </span>
+      </el-button>
       </el-form>
-      <div @click='seeAsset'>审批流程查看</div>
       <div class="txtAlignC dialogBtnInfo">
         <el-button type="primary" @click="sureApply">确定</el-button>
         <el-button @click="cancelFn">取消</el-button>
       </div>
+    </div>
+     <div 
+      style="cursor:pointer" 
+      v-if="!isShow"
+    >
+      <span @click="isShow = true">
+        <i class="el-icon-arrow-left"></i>
+        返回
+      </span>
+      <div class="flow-wrap">
+        <factory-draw-flow
+          :FlowConfig="list"
+          modelType="see"
+          ref="flow"
+        />
+      </div>
+    </div>
+    
     </el-dialog>
-    <!-- <el-dialog
-      title='审批流程'
-      class="dialogForm"
-      width="30%"
-      :visible.sync="assetShow">
-           <FactoryDrawFlow
-              ref="flow"
-              :FlowConfig="list"
-              :modelType="see"
-              :scaleVal="scaleVal"
-            ></FactoryDrawFlow>
-            <el-row >
-              <el-col :span="12" >
-                <el-form-item label="适用部门" prop="dept">
-                  <span v-for='(i,index) in item.sysDeptList' :key="index"> {{i.deptName+'；'}}</span>
-                </el-form-item>
-              </el-col>
-            </el-row>
-    </el-dialog> -->
 
     <!-- 发起报废 -->
     <asset-scrap 
@@ -278,7 +283,7 @@
 </template>
 
 <script>
-import { assetDetail, fileUpload, setWarehousing,seeAssetProcess} from "@/api/assetManagement/companyAssets";
+import { assetDetail, fileUpload, setWarehousing,seeAssetProcess,getFlow} from "@/api/assetManagement/companyAssets";
 import { queryAsset } from "@/api/assetManagement/quickAssetDetail";
 import findItemById from "@/utils/findItemById";
 import Print from '@/utils/Print';
@@ -291,7 +296,7 @@ import UseRecord from "./UseRecord";
 import MaintainRecord from "./MaintainRecord";
 import AssetScrap from './AssetScrap'
 import AssetRepair from './AssetRepair'
-
+import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue"
 export default {
   components: {
     EasyTabs,
@@ -301,7 +306,8 @@ export default {
     UseRecord,
     MaintainRecord,
     AssetScrap,
-    AssetRepair
+    AssetRepair,
+    FactoryDrawFlow
   },
   data() {
     // 上传校验
@@ -313,6 +319,7 @@ export default {
       }
     };
     return {
+      isShow:true,
       span: 6,
       id: this.$route.query.id,
       status: this.$route.query.status,
@@ -351,7 +358,7 @@ export default {
       selectAll:[],
       selectAllCopy:[0,1,2,3],
       dialogRules: {
-        url: [{ required: true, trigger: "blur", validator: check }],
+        // url: [{ required: true, trigger: "blur", validator: check }],
       },
     };
   },
@@ -392,16 +399,6 @@ export default {
     // 发起报废
     initScrap() {
       this.$refs.scrap.open()
-    },
-    //查看审批流程
-    seeAsset(){
-      this.assetShow=true
-      let param={
-        assetTypeIds
-      }
-      seeAssetProcess().then(res=>{
-
-      })
     },
     // 上传文件
     upChange(file) {
@@ -525,6 +522,20 @@ export default {
         return date.substr(0, 10);
       }
     },
+    //查看流程图
+    viewFlowOne(){
+      console.log(JSON.parse(window.localStorage.getItem("user")).deptId)
+      // return
+       this.isShow = false
+      const params = {
+        assetTypeIds: this.info.assetTypeId,
+        categoryId: 1,
+        deptId: this.info.departmentId ? this.info.departmentId : JSON.parse(window.localStorage.getItem("user")).deptId
+      }
+      getFlow(params).then(res => {
+        this.list = JSON.parse(res.data.json).list
+      })
+    }
   },
 };
 </script>

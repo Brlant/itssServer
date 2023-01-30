@@ -408,12 +408,15 @@ export default {
     //绘制body
     drawBody(h, node) {
       console.log('绘制节点方法drawBody', h, node)
-      if (node.nextNode) {
+      if(node){
+         if (node.nextNode) {
         console.log('11111111', FlowFactory.getFactory.bind(this, h, node.nextNode)())
         return FlowFactory.getFactory.bind(this, h, node.nextNode)();
       } else {
         return <div></div>;
       }
+      }
+     
     },
     isShowMask(){
       if(this.modelType == 'see'){
