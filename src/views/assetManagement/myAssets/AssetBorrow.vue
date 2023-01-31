@@ -170,3 +170,65 @@ export default {
   width: 100%;
 }
 </style>
+<style lang="scss" scoped>
+.test{
+  .apply {
+  .heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    .tabs {
+      display: flex;
+      align-items: center;
+      >div {
+        box-sizing: border-box;
+        padding: 5px 10px;
+        border-radius: 15px;
+        margin-right: 15px;
+        cursor: pointer;
+        .text {
+          font-size: 14px;
+        }
+      }
+      .active {
+        background: #fff;
+        color: #037dff;
+      }
+    }
+    .btn {
+      color: #037dff;
+      cursor: pointer;
+      i {
+        margin-left: 5px;
+        transition: all .4s;
+      }
+      .up {
+        transform: rotate(180deg);
+      }
+    }
+  }
+  .search {
+    background: #fff;
+    height: 0;
+    overflow: hidden;
+    transition: all .4s;
+  }
+  .expand {
+    padding: 10px;
+    height: auto;
+  }
+}
+.item {
+  padding: 5px 0;
+  border-bottom: 1px solid #dfe6ec;
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+.pagination-container {
+  background: transparent;
+}
+}
+
+</style>
