@@ -146,6 +146,7 @@ export default {
         }
         const data = {
           ...this.formData,
+          deptId: this.info.departmentId ? this.info.departmentId : JSON.parse(window.localStorage.getItem("user")).deptId,
           asset: {
             id: this.info.id,
             assetId: this.info.assetId,
