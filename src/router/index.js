@@ -466,6 +466,58 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/assetManagement/assetManagementSet/quickAsset-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['quickAssetDetailIndex'],
+    children: [
+      {
+        path: 'add',
+        component: () => import('@/views/assetManagement/assetManagementSet/quickAssetDetail/add'),
+        name: 'quickAssetAdd',
+        meta: { title: '新增快速填充模板', noCache:false }
+      },
+      {
+        path: 'edit',
+        component: () => import('@/views/assetManagement/assetManagementSet/quickAssetDetail/edit'),
+        name: 'quickAssetEdit',
+        meta: { title: '编辑快速填充模板', noCache:false }
+      },
+      {
+        path: 'detail',
+        component: () => import('@/views/assetManagement/assetManagementSet/quickAssetDetail/detail'),
+        name: 'quickAssetDetail',
+        meta: { title: '快速填充模板详情', noCache:false }
+      }
+    ]
+  },
+  {
+    path: '/assetManagement/assetManagementSet/assetDetailTamplate-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['assetDetailTamplateIndex'],
+    children: [
+      {
+        path: 'add',
+        component: () => import('@/views/assetManagement/assetManagementSet/assetDetailTamplate/add'),
+        name: 'assetDetailTamplateAdd',
+        meta: { title: '新增资产详情模板', noCache:false }
+      },
+      {
+        path: 'edit',
+        component: () => import('@/views/assetManagement/assetManagementSet/assetDetailTamplate/edit'),
+        name: 'assetDetailTamplateEdit',
+        meta: { title: '编辑资产详情模板', noCache:false }
+      },
+      {
+        path: 'detail',
+        component: () => import('@/views/assetManagement/assetManagementSet/assetDetailTamplate/detail'),
+        name: 'assetDetailTamplateDetail',
+        meta: { title: '资产详情模板详情', noCache:false }
+      },
+    ]
+  },
+  {
     path: '/assetManagement/myAssets/myAssets-auth',
     component: Layout,
     hidden: true,

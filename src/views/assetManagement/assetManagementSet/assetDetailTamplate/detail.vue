@@ -447,14 +447,22 @@ export default {
      * 复制并新建
     */
     copyAndCreate(){
-      const obj = { path: "/assetManagement/assetManagementSet/assetDetailTamplateAdd",query:{"id":this.$route.query.id,"bf":'copy'} };
+      // const obj = { path: "/assetManagement/assetManagementSet/assetDetailTamplateAdd",query:{"id":this.$route.query.id,"bf":'copy'} };
+      const obj = {
+        path: '/assetManagement/assetManagementSet/assetDetailTamplate-auth/add',
+        query:{"id":this.$route.query.id,"bf":'copy'}
+      }
       this.$tab.closeOpenPage(obj);
     },
     /**
      * 去编辑页面
     */
     goEdit(){
-      const obj = { path: "/assetManagement/assetManagementSet/assetDetailTamplateEdit",query:{"id":this.$route.query.id} };
+      // const obj = { path: "/assetManagement/assetManagementSet/assetDetailTamplateEdit",query:{"id":this.$route.query.id} };
+      const obj = {
+        path: '/assetManagement/assetManagementSet/assetDetailTamplate-auth/edit',
+        query:{"id":this.$route.query.id}
+      }
       this.$tab.closeOpenPage(obj);
     },
     /**

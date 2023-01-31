@@ -182,7 +182,7 @@ export default {
     // 进入编辑
     goEdit() {
       this.$router.push({
-        path: '/assetManagement/assetManagementSet/quickAssetDetailedit',
+        path: '/assetManagement/assetManagementSet/quickAsset-auth/edit',
         query: {
           id: this.id
         }

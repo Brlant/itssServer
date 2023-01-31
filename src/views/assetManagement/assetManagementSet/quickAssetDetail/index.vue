@@ -186,7 +186,11 @@ export default {
      * 查看详情页面
      * */
     goDetail(row){
-       const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailDetail",query:{"id":row.id} };
+      //  const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailDetail",query:{"id":row.id} };
+      const obj = { 
+        path: "/assetManagement/assetManagementSet/quickAsset-auth/detail",
+        query:{"id":row.id} 
+      }
       this.$tab.closeOpenPage(obj);
     },
       
@@ -198,7 +202,11 @@ export default {
       // this.reset();
       // this.open = true;
       // this.title = "添加用户信息";
-      const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailAdd",query:{"action":'add'} };
+      // const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailAdd",query:{"action":'add'} };
+      const obj = { 
+        path: "/assetManagement/assetManagementSet/quickAsset-auth/add",
+        query:{"action":'add'} 
+      }
       this.$tab.closeOpenPage(obj);
     },
     /** 
@@ -217,7 +225,11 @@ export default {
      * 修改按钮操作
      *  */
     handleUpdate(row) {
-      const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailedit",query:{"id":row.id} };
+      // const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailedit",query:{"id":row.id} };
+      const obj = { 
+        path: "/assetManagement/assetManagementSet/quickAsset-auth/edit",
+        query:{"id":row.id} 
+      }
       this.$tab.closeOpenPage(obj);
     },
     /** 
