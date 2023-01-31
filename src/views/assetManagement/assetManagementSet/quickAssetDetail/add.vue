@@ -38,6 +38,7 @@
                 :options="asset"
                 ref="assetCas"
                 :props="{ label: 'typeName', value: 'id' }"
+                @change="change"
                 clearable
                 :style="style"
               />
@@ -89,7 +90,11 @@
             </el-col>
             <el-col :span="span">
               <el-form-item label="数量:" prop="amount">
-                <el-input v-model.number="formData.amount" :style="style" />
+                <el-input
+                  :disabled="manageType === 2"
+                  v-model.number="formData.amount" 
+                  :style="style" 
+                />
               </el-form-item>
             </el-col>
             <el-col :span="span">
@@ -170,6 +175,7 @@ import {
 import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css"
 import { detailInformation } from './option'
+import findItemById from '@/utils/findItemById'
 
 export default {
   components: {
@@ -203,12 +209,14 @@ export default {
       }
     }
     return {
+      manageType: '',
       span: 6,
       style: {width: '100%'},
       asset: [],
       dept: [],
       formData: {
-        assetTypeId: []
+        assetTypeId: [],
+        amount: 1
       },
       formItems: [],
       rules: {
@@ -301,6 +309,15 @@ export default {
           this.$router.push('/assetManagement/assetManagementSet/quickAssetDetailIndex')
         })
       })
+    },
+    // 选择资产类型
+    change() {
+      const idArr = this.formData.assetTypeId
+      const { manageType } = findItemById(idArr[idArr.length - 1], this.asset)
+      if (manageType === 2) {
+        this.formData.amount = 1
+      }
+      this.manageType = manageType
     },
     // 取消
     cancel() {

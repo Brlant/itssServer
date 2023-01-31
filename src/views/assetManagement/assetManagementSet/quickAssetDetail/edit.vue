@@ -37,6 +37,7 @@
                 :options="asset"
                 ref="assetCas"
                 :props="{ label: 'typeName', value: 'id' }"
+                @change="change"
                 clearable
                 :style="style"
               />
@@ -88,7 +89,11 @@
             </el-col>
             <el-col :span="span">
               <el-form-item label="数量:" prop="amount">
-                <el-input v-model.number="formData.amount" :style="style" />
+                <el-input 
+                  v-model.number="formData.amount"
+                  :disabled="manageType === 2"
+                  :style="style" 
+                />
               </el-form-item>
             </el-col>
             <el-col :span="span">
@@ -172,6 +177,7 @@ import "@riophae/vue-treeselect/dist/vue-treeselect.css"
 import recursion from '@/utils/recursion'
 import { detailInformation, information } from './option'
 import matchData from '@/utils/matchData'
+import findItemById from '@/utils/findItemById'
 
 export default {
   components: {
@@ -205,6 +211,7 @@ export default {
       }
     }
     return {
+      manageType: '',
       id: this.$route.query.id,
       span: 6,
       style: {width: '100%'},
@@ -264,6 +271,12 @@ export default {
           })
           this.formItems = formItems
         })
+        // 控制数量
+        const { manageType } = findItemById(value[value.length - 1], this.asset)
+        if (manageType === 2) {
+          this.formData.amount = 1
+        }
+        this.manageType = manageType
       }
     }
   },
@@ -308,6 +321,10 @@ export default {
           this.$router.go(-1)
         })
       })
+    },
+    // 选择资产类型
+    change() {
+      
     },
     // 取消
     cancel() {

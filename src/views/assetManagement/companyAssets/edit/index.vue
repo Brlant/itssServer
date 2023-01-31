@@ -118,7 +118,11 @@
             </el-col>
             <el-col :span="span">
               <el-form-item label="数量:" prop="amount">
-                <el-input v-model.trim="formData.amount" :style="style" />
+                <el-input 
+                  v-model.number="formData.amount"
+                  :disabled="manageType === 2"
+                  :style="style" 
+                />
               </el-form-item>
             </el-col>
             <el-col :span="span">
@@ -204,6 +208,7 @@ import "@riophae/vue-treeselect/dist/vue-treeselect.css"
 import recursion from '@/utils/recursion'
 import { detailInformation, information } from '../options'
 import matchData from '@/utils/matchData'
+import findItemById from '@/utils/findItemById'
 
 export default {
   components: {
@@ -225,10 +230,22 @@ export default {
         }
       }
     }
+    const checkAmount = (rule, value, callback) => {
+      if (String(value) === 'NaN') {
+        callback(new Error('输入内容不合规'))
+      } else {
+        if (value <= 0) {
+          callback(new Error('输入内容不合规'))
+        } else {
+          callback()
+        }
+      }
+    }
     return {
       id: this.$route.query.id,
       span: 6,
       style: {width: '100%'},
+      manageType: '',
       asset: [],
       template: [],
       dept: [],
@@ -252,7 +269,7 @@ export default {
         ],
         amount: [
           { required: true, trigger: 'blur', message: '请输入数量' },
-          { validator: checkNumber, trigger: 'blur' }
+          { validator: checkAmount, trigger: 'blur' }
         ],
         depreciableLife: [
           { validator: checkNumber, trigger: 'blur' }
@@ -327,12 +344,18 @@ export default {
         this.$forceUpdate()
         return
       }
-      // a - 动态渲染详细信息的表单
+      // a - 控制数量
+      const { manageType } = findItemById(value[value.length - 1], this.asset)
+      if (manageType === 2) {
+        this.formData.amount = 1
+      }
+      this.manageType = manageType
+      // b - 动态渲染详细信息的表单
       this.filterItems(this.formData.assetTypeId)
-      // b - 控制填充模板
+      // c - 控制填充模板
       const assetTypeId = value[value.length - 1]
       this.getTemplate(assetTypeId)
-      // c - 获取资产编号
+      // d - 获取资产编号
       this.getAssetId(assetTypeId)
     },
     filterItems(value) {
