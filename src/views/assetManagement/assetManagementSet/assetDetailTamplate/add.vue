@@ -457,8 +457,8 @@ export default {
      * @description 返回上一层
      */
     backPreviousLayer() {
-     const obj = { path: "/assetManagement/assetManagementSet/list" };
-        this.$tab.closeOpenPage(obj);
+      const obj = { path: "/assetManagement/assetManagementSet/list" };
+      this.$tab.closeOpenPage(obj);
     },
     /**
      * @description 取消按钮
@@ -468,9 +468,14 @@ export default {
       // this.dialogObject.dialogVisible = true;
       // this.dialogObject.sure = "退出";
       // this.dialogObject.center = "取消";
-       const obj = { path: "/assetManagement/assetManagementSet/list" };
+      // const obj = { path: "/assetManagement/assetManagementSet/list" };
+      // this.$tab.closeOpenPage(obj);
+      this.$confirm('确定返回列表页？', '温馨提示', {
+        type: 'warning'
+      }).then(() => {
+        const obj = { path: "/assetManagement/assetManagementSet/list" };
         this.$tab.closeOpenPage(obj);
-
+      }).catch(() => {})
     },
     /**
      * @description 保存按钮
@@ -500,16 +505,29 @@ export default {
       console.log(params);
       if(this.$route.query.id){
         // 有id 则说明是修改
-        updateOrDelete(params).then((res) => {
-          if (res.code == 200) {
+        if (this.$route.query.bf == 'copy') {
+          createDictionary(params).then((res) => {
+          // if (res.code == 200) {
             this.$message({
-              message: "修改成功！",
+              message: "新增成功！",
               type: "success",
             });
             const obj = { path: "/assetManagement/assetManagementSet/list" };
-        this.$tab.closeOpenPage(obj);
-          }
-        });
+            this.$tab.closeOpenPage(obj);
+          // }
+          });
+        } else {
+          updateOrDelete(params).then((res) => {
+            if (res.code == 200) {
+              this.$message({
+                message: "修改成功！",
+                type: "success",
+              });
+              const obj = { path: "/assetManagement/assetManagementSet/list" };
+              this.$tab.closeOpenPage(obj);
+            }
+          });
+        }
       }else{
 
         createDictionary(params).then((res) => {
@@ -519,7 +537,7 @@ export default {
               type: "success",
             });
             const obj = { path: "/assetManagement/assetManagementSet/list" };
-        this.$tab.closeOpenPage(obj);
+            this.$tab.closeOpenPage(obj);
           // }
         });
       }

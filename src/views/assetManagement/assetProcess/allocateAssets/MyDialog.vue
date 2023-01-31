@@ -177,18 +177,18 @@ export default {
       let params={
         attachments:[
           {
-            description:'',
-            name:data.name,
-            url:data.url,
-            type:data.name.substring(data.name.lastIndexOf('.')),
-            userId:this.$store.state.user.user.userId,
+            description: '',
+            name: data.name,
+            url: data.url,
+            type: data.name.substring(data.name.lastIndexOf('.')),
+            userId: this.$store.state.user.user.userId,
           }
         ],
-         processInstanceId:this.$route.query.processInstanceId,
-         taskId:this.$route.query.taskId,
+         processInstanceId: this.$route.query.processInstanceId,
+         taskId: this.$route.query.taskId
       }
       uploadSuccess(params).then(res=>{
-          this.attachmentId=res.data[0].id
+        this.attachmentId=res.data[0].id
       })
     },
     remove() {

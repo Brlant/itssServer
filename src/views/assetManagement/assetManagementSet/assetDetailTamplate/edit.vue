@@ -465,9 +465,14 @@ export default {
       // this.dialogObject.dialogVisible = true;
       // this.dialogObject.sure = "退出";
       // this.dialogObject.center = "取消";
-       const obj = { path: "/assetManagement/assetManagementSet/list" };
+      // const obj = { path: "/assetManagement/assetManagementSet/list" };
+      // this.$tab.closeOpenPage(obj);
+      this.$confirm('确定返回列表页？', '温馨提示', {
+        type: 'warning'
+      }).then(() => {
+        const obj = { path: "/assetManagement/assetManagementSet/list" };
         this.$tab.closeOpenPage(obj);
-
+      }).catch(() => {})
     },
     /**
      * @description 保存按钮

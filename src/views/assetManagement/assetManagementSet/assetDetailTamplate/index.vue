@@ -51,6 +51,7 @@
           <el-button
             size="mini"
             type="text"
+            :disabled="scope.row.status=='1'"
             @click.native.stop="handleDelete(scope.row)"
             class="tingyong"
           >
@@ -215,12 +216,13 @@ export default {
       }
       updateOrDelete(parems).then(res=>{
           this.$modal.msgSuccess("状态修改成功");
+          this.getList()
       })
       // parems.status =2
       // this.$modal.confirm('您确定删除"' + row.templateName + '"吗？').then(function() {
       //   return updateOrDelete(parems);
       // }).then(() => {
-        this.getList();
+        // this.getList();
       //   this.$modal.msgSuccess("删除成功");
       // }).catch(() => {});
     },

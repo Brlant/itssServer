@@ -12,7 +12,7 @@
         <el-button type="primary" size="small" @click="save">
           保存
         </el-button>
-        <el-button size="small" @click="$router.push('/assetManagement/assetManagementSet/quickAssetDetailIndex')">
+        <el-button size="small" @click="cancel">
           取消
         </el-button>
       </div>
@@ -301,6 +301,15 @@ export default {
           this.$router.push('/assetManagement/assetManagementSet/quickAssetDetailIndex')
         })
       })
+    },
+    // 取消
+    cancel() {
+      this.$confirm('确定返回列表页？', '温馨提示', {
+        type: 'warning'
+      }).then(() => {
+        const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailIndex" };
+        this.$tab.closeOpenPage(obj);
+      }).catch(() => {})
     }
   }
 }

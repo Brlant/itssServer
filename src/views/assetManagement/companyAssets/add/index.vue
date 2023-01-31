@@ -12,7 +12,7 @@
         <el-button type="primary" size="small" @click="save">
           保存
         </el-button>
-        <el-button size="small" @click="$router.push('/assetManagement/companyAssets')">
+        <el-button size="small" @click="cancel">
           取消
         </el-button>
       </div>
@@ -380,6 +380,15 @@ export default {
           })
         })
       })
+    },
+    // 取消
+    cancel() {
+      this.$confirm('确定返回列表页？', '温馨提示', {
+        type: 'warning'
+      }).then(() => {
+        const obj = { path: "/assetManagement/companyAssets" };
+        this.$tab.closeOpenPage(obj);
+      }).catch(() => {})
     }
   }
 }

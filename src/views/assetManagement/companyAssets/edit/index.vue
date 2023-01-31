@@ -12,7 +12,7 @@
         <el-button type="primary" size="small" @click="save">
           保存
         </el-button>
-        <el-button size="small" @click="$router.go(-1)">
+        <el-button size="small" @click="cancel">
           取消
         </el-button>
       </div>
@@ -407,6 +407,14 @@ export default {
           assetName
         }
       }
+    },
+    // 取消
+    cancel() {
+      this.$confirm('确定返回上一页？', '温馨提示', {
+        type: 'warning'
+      }).then(() => {
+        this.$router.go(-1)
+      }).catch(() => {})
     }
   }
 }
