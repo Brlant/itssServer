@@ -335,6 +335,7 @@ export default {
       flowId: this.$route.query.flowId,
       tableData: [],
       attribute:'',
+      uploadData:{},
       diaForm:{
         url:''
       },
@@ -432,7 +433,8 @@ export default {
         if(res.code==200){
         this.url = res.data.url
         this.name = res.data.name
-        this.uploadAttachment(res.data)
+        this.uploadData=res.data
+       
         }
        
       })
@@ -503,7 +505,8 @@ export default {
          taskId:this.$route.query.taskId,
       }
       uploadSuccess(params).then(res=>{
-          this.attachmentId=res.data[0].id
+        this.sureForm()
+          // this.attachmentId=res.data[0].id
       })
     },
     //确认同意
@@ -515,12 +518,14 @@ export default {
             if(this.attribute=='userconfirmation'){
               console.log(this.selectAll,'this.selectAll')
                  if(!this.selectAll.includes('') && this.selectAll.length==4){
-                  this.sureForm()
+                   this.uploadAttachment(this.uploadData)
+                  
+                  
                  }else{
                   this.selectAllCopy=JSON.parse(JSON.stringify(this.selectAll))
                  }
           }else{
-            this.sureForm()
+            this.uploadAttachment(this.uploadData)
           }
         
        })
@@ -531,13 +536,14 @@ export default {
             processInstanceId:this.$route.query.processInstanceId,
             taskId:this.$route.query.taskId,
             userKey:this.$store.state.user.user.userId,
-            comment: this.diaForm.comment,
+            comment: this.diaForm.comment ? this.diaForm.comment : '',
             procVars:{
               attribute: this.$refs.process.getAttribute()
             }
         }
         agreeQuery(params).then(res=>{
             if(res.code==200){
+             
                 this.$message.success(res.msg)
                 this.agreeShow=false
                   const obj = {
@@ -558,7 +564,7 @@ export default {
             processInstanceId:this.$route.query.processInstanceId,
             taskId:this.$route.query.taskId,
             userKey:this.$store.state.user.user.userId,
-            comment: this.diaFormTwo.comment,
+            comment: this.diaFormTwo.comment ? this.diaFormTwo.comment : '',
             procVars:{
               attribute: this.$refs.process.getAttribute()
             }
@@ -583,13 +589,13 @@ export default {
      cancelFn(){
          this.rejectShow=false
          this.agreeShow=false
-         if(this.attachmentId){
-           deleteAttachment(this.attachmentId).then(res=>{
-          if(res.code==200){
-            this.$message.success('取消成功')
-          }
-         })
-         }
+        //  if(this.attachmentId){
+        //    deleteAttachment(this.attachmentId).then(res=>{
+        //   if(res.code==200){
+        //     this.$message.success('取消成功')
+        //   }
+        //  })
+        //  }
         
     },
     // 表格数据

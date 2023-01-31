@@ -21,7 +21,7 @@
             :min="1"
             :step="1"
             step-strictly
-            :disabled="$route.query.manageType == 2"
+            disabled
           />
         </div>
       </el-form-item>
