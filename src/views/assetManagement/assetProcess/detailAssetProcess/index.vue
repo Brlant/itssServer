@@ -295,6 +295,8 @@
       </div>
     </div>
     </el-dialog>
+    <!-- 完成维修弹窗 -->
+    <my-maintenance ref="maintenance" />
   </div>
 </template>
 
@@ -307,9 +309,13 @@ import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue";
 import { 
   fileUpload,
 } from '@/api/assetManagement/companyAssets'
+import MyMaintenance from './MyMaintenance'
+
 export default {
   components: {
-    ApprovalProcess,FactoryDrawFlow
+    ApprovalProcess,
+    FactoryDrawFlow,
+    MyMaintenance
   },
   data() {
      // 上传校验
@@ -402,13 +408,16 @@ export default {
     },
     //同意
     agree(){
-       this.selectAll=[]
-      this.selectAllCopy=[0,1,2,3]
+      this.attribute = this.$refs.process.getAttribute()
+      if (this.attribute == 'maintenance') {
+        this.$refs.maintenance.open()
+      } else {
+        this.selectAll=[]
+        this.selectAllCopy=[0,1,2,3]
         this.agreeShow=true
         this.rejectShow=false
-        console.log(this.attribute,'this.attribute')
         // this.attribute=this.$refs.process.getAttribute()
-
+      }
     },
     //拒绝
     reject(){
