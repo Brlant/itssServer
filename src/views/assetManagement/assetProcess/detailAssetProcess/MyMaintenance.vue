@@ -46,9 +46,21 @@
           </el-form-item>
         </el-col>
         <el-col :span="span">
+          <el-form-item label-width="0" prop="feedback">
+            <div class="label">
+              维修反馈
+            </div>
+            <el-input
+              type="textarea"
+              v-model="formData.feedback"
+              :style="style"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="span">
           <el-form-item label-width="0">
             <div class="label">
-              上传附件
+              附件上传
             </div>
             <el-upload
               action
@@ -62,6 +74,18 @@
                 上传附件
               </el-button>
             </el-upload>
+          </el-form-item>
+        </el-col>
+        <el-col :span="span">
+          <el-form-item label-width="0" prop="comment">
+            <div class="label">
+              备注
+            </div>
+            <el-input
+              type="textarea"
+              v-model="formData.comment"
+              :style="style"
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -80,6 +104,8 @@
 
 <script>
 import { fileUpload } from '@/api/assetManagement/companyAssets'
+import { agreeQuery, uploadSuccess } from "@/api/assetManagement/assetProcess"
+import { param } from '../../../../utils'
 
 export default {
   data() {
@@ -106,7 +132,9 @@ export default {
       formData: {
         maintenanceDate: '',
         maintenancePrice: '',
-        maintenanceInfo: ''
+        maintenanceInfo: '',
+        feedback: '',
+        comment: ''
       },
       rules: {
         maintenancePrice: [
@@ -115,10 +143,72 @@ export default {
       }
     }
   },
+  watch: {
+    dialogVisible(value) {
+      if (value === false) {
+        // 关闭时清空表单
+        this.$refs.elForm.resetFields()
+        this.fileList = []
+      }
+    }
+  },
   methods: {
-    // 提交表单
     submit() {
-
+      this.$refs.elForm.validate(valid => {
+        if (!valid) {
+          return
+        }
+        if (this.fileList.length) {
+          this.uploadAttachment()
+        }
+        this.onConfirm()
+      })
+    },
+    // 提交表单
+    onConfirm() {
+      const params = {
+        processInstanceId: this.$route.query.processInstanceId,
+        taskId: this.$route.query.taskId,
+        userKey: this.$store.state.user.user.userId,
+        comment: this.formData.comment,
+        procVars: {
+          attribute: 'maintenance',
+          CUSTOM_VAR: JSON.stringify([{
+            maintenanceDate: this.formData.maintenanceDate,
+            maintenancePrice: this.formData.maintenancePrice,
+            maintenanceInfo: this.formData.maintenanceInfo,
+            feedback: this.formData.feedback
+          }])
+        }
+      }
+      agreeQuery(params).then(res => {
+        this.$message.success(res.msg)
+        const obj = {
+          path: "/assetManagement/assetProcess",
+          query: {
+            tab:this.$route.query.tab
+          }
+        };
+        this.$tab.closeOpenPage(obj);
+        this.getTableData()
+      }).catch(() => {
+        this.dialogVisible = false
+      })
+    },
+    // 提交文件
+    uploadAttachment() {
+      const params = {
+        processInstanceId: this.$route.query.processInstanceId,
+        taskId: this.$route.query.taskId,
+        attachments: this.fileList.map(item => {
+          return {
+            name: item.name,
+            url: item.url,
+            userId: this.$store.state.user.user.userId
+          }
+        })
+      }
+      uploadSuccess(params)
     },
     // 上传文件
     onChange(file, fileList) {

@@ -134,6 +134,7 @@ export default {
       if (value === false) {
         // 关闭时清空表单
         this.$refs.elForm.resetFields()
+        this.fileList = []
       }
     }
   },
