@@ -406,7 +406,8 @@ export default {
       this.selectAllCopy=[0,1,2,3]
         this.agreeShow=true
         this.rejectShow=false
-        this.attribute=this.$refs.process.getAttribute()
+        console.log(this.attribute,'this.attribute')
+        // this.attribute=this.$refs.process.getAttribute()
 
     },
     //拒绝
