@@ -15,6 +15,9 @@
         <div class="item" v-if="showScrap">
           <span @click="initScrap">报废</span>
         </div>
+        <div class="item" v-if="showReturn">
+          <span @click="initReturn">归还</span>
+        </div>
         <div class="item" v-if="showEntry">
           <span @click="goEdit">编辑</span>
         </div>
@@ -187,6 +190,7 @@
         <asset-certificate v-if="tab === 4" />
       </div>
     </div>
+    <!-- 资产入库发起begin -->
     <el-dialog
     destroy-on-close
       :title="title"
@@ -268,7 +272,7 @@
     </div>
     
     </el-dialog>
-
+   <!-- 资产入库发起end -->
     <!-- 发起报废 -->
     <asset-scrap 
       ref="scrap" 
@@ -279,6 +283,12 @@
       ref="repair" 
       :info="info" 
     />
+    <!-- 发起归还 -->
+    <asset-return  
+      ref="return" 
+      :info="info" >
+
+    </asset-return>
   </div>
 </template>
 
@@ -295,6 +305,7 @@ import AssetMaintain from "./AssetMaintain";
 import UseRecord from "./UseRecord";
 import MaintainRecord from "./MaintainRecord";
 import AssetScrap from './AssetScrap'
+import AssetReturn from './AssetReturn'
 import AssetRepair from './AssetRepair'
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue"
 export default {
@@ -307,7 +318,8 @@ export default {
     MaintainRecord,
     AssetScrap,
     AssetRepair,
-    FactoryDrawFlow
+    FactoryDrawFlow,
+    AssetReturn
   },
   data() {
     // 上传校验
@@ -386,6 +398,14 @@ export default {
       } else {
         return false;
       }
+    },
+    //是否显示归还
+    showReturn(){
+       if (!this.status.includes("入库")) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   created() {
@@ -399,6 +419,10 @@ export default {
     // 发起报废
     initScrap() {
       this.$refs.scrap.open()
+    },
+    //发起归还
+    initReturn(){
+      this.$refs.return.open()
     },
     // 上传文件
     upChange(file) {

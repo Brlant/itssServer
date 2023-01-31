@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="资产维修"
+    title="资产归还"
     :visible.sync="dialogVisible"
     center
     width="30%"
@@ -160,9 +160,8 @@ export default {
       this.isShow = false
       const params = {
         assetTypeIds: this.info.assetTypeId,
-        categoryId: 5,
+        categoryId: 3,
         deptId: this.info.departmentId ? this.info.departmentId : JSON.parse(window.localStorage.getItem("user")).deptId
-      
       }
       getFlow(params).then(res => {
         this.list = JSON.parse(res.data.json).list
