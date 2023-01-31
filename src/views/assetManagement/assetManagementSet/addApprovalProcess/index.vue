@@ -357,8 +357,6 @@ export default {
     },
     //不复制新增切换类型
     checkSelectNoCopy(data,index){
-       this.deptIds=[]
-       console.log(this.params,'this.params')
        this.n = index;
        this.checkIndex = data.id;
       this.checkName = data.name;

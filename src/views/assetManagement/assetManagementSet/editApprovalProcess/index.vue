@@ -317,19 +317,14 @@ export default {
     },
     //切换类型触发事件
     checkSelect(data, index) {
-      console.log(this.params,'this.params')
-      this.deptIds=[]
        console.log(data.flowDefInfoVoList,'data.flowDefInfoVoList')
       this.isShowEdit = true;
       this.checkIndex = data.flowTypeId;
       this.checkName = data.flowTypeName;
       this.n = index;
       console.log(this.n, "this.n");
-      // this.FlowConfigList = [];
-         this.FlowConfigList = JSON.parse(JSON.stringify(data.flowDefInfoVoList));
+      this.FlowConfigList = JSON.parse(JSON.stringify(data.flowDefInfoVoList));
       this.$forceUpdate();
-    
-    //  
       if(JSON.stringify(this.params)!="{}"){
         let paramsCopy=this.deepClone(this.params)
        this.FlowConfigList=paramsCopy.flowInfoVoList[this.n-1].flowDefInfoVoList
@@ -466,7 +461,7 @@ export default {
     },
     //改变部门时调用的方法
     searchDept(item, index) {
-  console.log(1111,'bumen')
+      console.log(1111,'bumen')
       this.m = index;
       this.deptIds = item;
 

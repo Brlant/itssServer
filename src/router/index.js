@@ -443,7 +443,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/companyAssets/companyAssets-auth',
     component: Layout,
     hidden: true,
-    permissions: ['chanceManage:chance:duty'],
+    permissions: ['companyAssets:list'],
     children: [
       {
         path: 'add',
@@ -469,7 +469,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/myAssets/myAssets-auth',
     component: Layout,
     hidden: true,
-    permissions: ['chanceManage:chance:duty'],
+    permissions: ['companyAssets:list'],
     children: [
       {
         path: 'applyInfo',
@@ -483,7 +483,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
     hidden: true,
-    permissions: ['chanceManage:chance:duty'],
+    permissions: ['approvalProcess:list'],
     children: [
       {
         path: 'addApprovalProcess',
@@ -497,7 +497,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
     hidden: true,
-    permissions: ['chanceManage:chance:duty'],
+    permissions: ['approvalProcess:list'],
     children: [
       {
         path: 'editApprovalProcess',
@@ -512,7 +512,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
     hidden: true,
-    permissions: ['chanceManage:chance:duty'],
+    permissions: ['approvalProcess:list'],
     children: [
       {
         path: 'detailApprovalProcess',
@@ -526,7 +526,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
     hidden: true,
-    permissions: ['chanceManage:chance:duty'],
+    permissions: ['assetCodeRules'],
     children: [
       {
         path: 'addAssetCodeRules',
@@ -540,7 +540,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
     hidden: true,
-    permissions: ['chanceManage:chance:duty'],
+    permissions: ['assetCodeRules'],
     children: [
       {
         path: 'editAssetCodeRules',
@@ -554,7 +554,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
     hidden: true,
-    permissions: ['chanceManage:chance:duty'],
+    permissions: ['assetCodeRules'],
     children: [
       {
         path: 'detailAssetCodeRules',
@@ -568,7 +568,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/detailAssetProcess/process',
     component: Layout,
     hidden: true,
-    permissions: ['chanceManage:chance:duty'],
+    permissions: ['companyAssets:list'],
     children: [
       {
         path: 'detailAssetProcess',
@@ -582,7 +582,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/allocateAssets/process',
     component: Layout,
     hidden: true,
-    permissions: ['system:user:query'],
+    permissions: ['companyAssets:list'],
     children: [
       {
         path: 'allocateAssets',
@@ -596,7 +596,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/maintenanceRecords/detail',
     component: Layout,
     hidden: true,
-    permissions: ['system:user:query'],
+    permissions: ['companyAssets:list'],
     children: [
       {
         path: 'recordDetail',
