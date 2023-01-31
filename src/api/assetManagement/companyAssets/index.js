@@ -179,7 +179,7 @@ export function borrowing(data) {
 // 归还
 export function returnAsset(data) {
   return request({
-    url: `/asset/approvalProcess/assetReturnFinish`,
+    url: `/asset/approvalProcess/assetReturnInitiate`,
     method: 'post',
     data
   })

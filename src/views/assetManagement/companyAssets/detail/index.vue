@@ -377,7 +377,7 @@ export default {
   computed: {
     // 是否显示入库及编辑
     showEntry() {
-      if (this.status.includes("入库") && this.isApplying == 0) {
+      if (this.status.includes("入库") && this.info.isApplying == 0) {
         return true;
       } else {
         return false;
@@ -385,6 +385,7 @@ export default {
     },
     // 是否显示维修
     showRepair() {
+    
       if (!this.status.includes("入库") && this.manageType == 2) {
         return true;
       } else {
@@ -401,7 +402,9 @@ export default {
     },
     //是否显示归还
     showReturn(){
-       if (!this.status.includes("入库")) {
+      console.log(this.isApplying)
+       if (this.status=="使用中" 
+       && this.manageType == 2 && this.info.isApplying == 0 && this.info.holderId==JSON.parse(window.localStorage.getItem("user")).userId) {
         return true;
       } else {
         return false;
@@ -467,7 +470,7 @@ export default {
         if (!valid) {
           return
         }
-           if(!this.selectAll.includes('')){
+           if(!this.selectAll.includes('') && this.selectAll.length==4){
         
           let attachList={
               name:this.name,
@@ -482,8 +485,11 @@ export default {
           let params={
             assetList,
             attachmentList,
-            remark:this.diaForm.remark
+            remark:this.diaForm.remark,
+            deptId: this.info.departmentId ? this.info.departmentId : JSON.parse(window.localStorage.getItem("user")).deptId
           }
+          // console.log(params,'params')
+          // return
           setWarehousing(params).then(res=>{
             if(res.code==200){
               this.$message.success(res.msg)

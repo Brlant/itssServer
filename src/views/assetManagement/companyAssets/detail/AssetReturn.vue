@@ -89,7 +89,8 @@
 import { 
   fileUpload,
   repair,
-  getFlow
+  getFlow,
+  returnAsset
 } from '@/api/assetManagement/companyAssets'
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue"
 
@@ -134,12 +135,13 @@ export default {
         }
         const data = {
           ...this.formData,
-          asset: {
+          deptId: this.info.departmentId ? this.info.departmentId : JSON.parse(window.localStorage.getItem("user")).deptId,
+          assetList: [{
             id: this.info.id,
             assetId: this.info.assetId,
             assetName: this.info.assetName,
             assetTypeId: this.info.assetTypeId
-          },
+          }],
           attachmentList: this.fileList.map(item => {
             return {
               name: item.name,
@@ -147,7 +149,7 @@ export default {
             }
           })
         }
-        repair(data).then(res => {
+        returnAsset(data).then(res => {
           this.dialogVisible = false
           this.$message.success(res.msg)
         }).catch(() => {

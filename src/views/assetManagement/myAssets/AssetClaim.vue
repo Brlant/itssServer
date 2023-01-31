@@ -133,7 +133,8 @@ export default {
         const data = {
           assetTypeId: assetTypeId[assetTypeId.length - 1],
           amount: this.formData.amount,
-          remark: this.formData.remark
+          remark: this.formData.remark,
+          deptId: JSON.parse(window.localStorage.getItem("user")).deptId
         }
         claim(data).then(res => {
           this.dialogVisible = false
