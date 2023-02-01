@@ -44,10 +44,10 @@
             </div>
           </el-col>
           <el-col :span="span">
-            <div class="item">
+            <div class="item" style="display:flex">
               <span class="star">*</span>
               <span class="label">资产条码：</span>
-              <span class="value">{{ info.assetCode }}</span>
+              <div class="qrcode" ref="qrCodeUrl"></div>
             </div>
           </el-col>
           <el-col :span="span">
@@ -308,6 +308,8 @@ import AssetScrap from './AssetScrap'
 import AssetReturn from './AssetReturn'
 import AssetRepair from './AssetRepair'
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue"
+import QRCode from "qrcodejs2"
+
 export default {
   components: {
     EasyTabs,
@@ -507,8 +509,20 @@ export default {
     getDetail() {
       assetDetail(this.id).then((res) => {
         this.info = res.data;
+        // 生成二维码
+        this.$nextTick(() => {
+          new QRCode(this.$refs.qrCodeUrl, {
+            text: this.info.assetId, // 需要转换为二维码的内容
+            width: 100,
+            height: 100,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H,
+          })
+        })
+
+        // 动态渲染展示条目
         queryAsset().then((resp) => {
-          // 动态渲染展示条目
           const { assetTemplate } = findItemById(
             this.info.assetTypeId,
             resp.data
@@ -542,7 +556,7 @@ export default {
     },
     // 打印条码
     printCode() {
-      
+      Print(document.querySelector('.qrcode'))
     },
     // tab切换
     change() {},
@@ -677,5 +691,13 @@ export default {
 }
 .noSelect{
   box-shadow: 2px 2px 10px red;;
+}
+.qrcode {
+  display: inline-block;
+  width: 112px;
+  height: 100px;
+  background-color: #fff;
+  padding: 0 6px;
+  box-sizing: border-box;
 }
 </style>
