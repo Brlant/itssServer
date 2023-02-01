@@ -209,6 +209,10 @@ export default {
       const { attribute } = this.list.find(item => item.id == id)
       return attribute
     },
+    getNodeId() {
+      const { id } = this.flowExamineList.find(item => item.status == 1)
+      return id
+    },
     // 下载
     downFlowLoad(url) {
       downFile(url)

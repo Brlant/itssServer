@@ -134,7 +134,8 @@ export default {
           assetTypeId: assetTypeId[assetTypeId.length - 1],
           amount: this.formData.amount,
           remark: this.formData.remark,
-          deptId: JSON.parse(window.localStorage.getItem("user")).deptId
+          deptId: JSON.parse(window.localStorage.getItem("user")).deptId,
+          revoke: "true",
         }
         claim(data).then(res => {
           this.dialogVisible = false

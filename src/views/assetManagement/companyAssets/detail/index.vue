@@ -487,6 +487,7 @@ export default {
           let params={
             assetList,
             attachmentList,
+            revoke: "true",
             remark:this.diaForm.remark,
             deptId: this.info.departmentId ? this.info.departmentId : JSON.parse(window.localStorage.getItem("user")).deptId
           }

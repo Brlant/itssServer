@@ -556,8 +556,10 @@ export default {
             taskId:this.$route.query.taskId,
             userKey:this.$store.state.user.user.userId,
             comment: this.diaForm.comment ? this.diaForm.comment : '',
+            
             procVars:{
-              attribute: this.$refs.process.getAttribute()
+              attribute: this.$refs.process.getAttribute(),
+              revoke: this.$refs.process.getNodeId()=='a78x4anxe' ? 'true': 'false',
             }
         }
         agreeQuery(params).then(res=>{
@@ -585,7 +587,8 @@ export default {
             userKey:this.$store.state.user.user.userId,
             comment: this.diaFormTwo.comment ? this.diaFormTwo.comment : '',
             procVars:{
-              attribute: this.$refs.process.getAttribute()
+              attribute: this.$refs.process.getAttribute(),
+              revoke:this.$route.query.procVars.revoke ? this.$route.query.procVars.revoke : ''
             }
         }
         rejectQuery(params).then(res=>{

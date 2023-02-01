@@ -46,7 +46,7 @@
                <el-form-item  v-if="form.type == 2" label="审核方式：" label-width="100px" prop="completionCondition">
                  <el-radio-group v-model="form.completionCondition">
                   <el-radio :label="1">或签（一名审批人同意或拒绝即可）</el-radio>
-                  <el-radio :label="2">会签（须所有审批人同意）</el-radio>
+                  <!-- <el-radio :label="2">会签（须所有审批人同意）</el-radio> -->
                 </el-radio-group>
               </el-form-item>
               <el-form-item v-if="form.type == 2" label="回退：" label-width="100px" prop="backId">
@@ -63,14 +63,14 @@
               <el-form-item v-if="form.type ==  2" label="类监听：" label-width="100px" prop="className">
                 <el-input v-model="form.className"></el-input>
               </el-form-item>
-               <el-form-item v-if="form.type == 2" label="是否加签" label-width="100px" prop="isAddLabel">
+               <!-- <el-form-item v-if="form.type == 2" label="是否加签" label-width="100px" prop="isAddLabel">
                  <template>
                   <el-radio-group v-model="form.isAddLabel">
                     <el-radio  label="1">否</el-radio>
                     <el-radio  label="2">是</el-radio>
                   </el-radio-group>
                 </template>
-              </el-form-item>
+              </el-form-item> -->
             </el-col>
           </el-row>
         </el-form>
@@ -115,7 +115,7 @@ export default {
         userType:'1',
         userId: "", // 用户选择
         userName:"",
-        completionCondition:'', // 审核类型
+        completionCondition:'1', // 审核类型
         backId:'',
         type:'',
         className:'', // 监听类目
@@ -187,7 +187,8 @@ export default {
         this.form.title = this.nodeData.title;
         this.form.backId = backId; // 这个是id
         this.form.type = this.nodeData.type;
-        this.form.completionCondition = this.nodeData.completionCondition == '${nrOfCompletedInstances >= 1}' ? 1:2;
+        // this.form.completionCondition = this.nodeData.completionCondition == '${nrOfCompletedInstances >= 1}' ? 1:2;
+        this.form.completionCondition=1
         this.form.className = this.nodeData.taskListeners ? this.nodeData.taskListeners[0].implementation : ''
         this.conform.conTitle = '';
         this.conform.condition = '';

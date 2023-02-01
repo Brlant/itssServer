@@ -135,12 +135,13 @@ export default {
         }
         const data = {
           ...this.formData,
+          revoke: "true",
           deptId: this.info.departmentId ? this.info.departmentId : JSON.parse(window.localStorage.getItem("user")).deptId,
           assetList: [{
             id: this.info.id,
             assetId: this.info.assetId,
             assetName: this.info.assetName,
-            assetTypeId: this.info.assetTypeId
+            assetTypeId: this.info.assetTypeId,
           }],
           attachmentList: this.fileList.map(item => {
             return {
