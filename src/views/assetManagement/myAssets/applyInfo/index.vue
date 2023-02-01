@@ -134,7 +134,10 @@
 
 <script>
 import ApprovalProcess from './ApprovalProcess'
-import { listAsset } from '@/api/assetManagement/myAssets'
+import { 
+  listAsset,
+  stopProcess
+} from '@/api/assetManagement/myAssets'
 import { tabOptions } from '../../companyAssets/options'
 
 export default {
@@ -145,7 +148,8 @@ export default {
     return {
       flowId: this.$route.query.flowId,
       tableData: [],
-      total: 0
+      total: 0,
+      show: false
     }
   },
   created() {
@@ -165,7 +169,24 @@ export default {
       })
     },
     cancel() {
-
+      this.$confirm('确认取消吗？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        const params = {
+          comment: '',
+          taskId: this.$route.query.taskId,
+          processInstanceId: this.$route.query.processInstanceId,
+          userKey: this.$store.state.user.user.userId
+        }
+        stopProcess(params).then(res => {
+          this.$message.success(res.msg)
+          const obj = {
+            name: 'myAssets',
+            params: { tab: 2 }
+          }
+          this.$tab.closeOpenPage(obj);
+        })
+      }).catch(() => {})
     },
     // 查看详情
     view(row) {

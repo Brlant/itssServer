@@ -133,8 +133,11 @@ export default {
           flowCommentResGroupList,
           flowCommentResList,
           flowProgressResList,
-          taskAttachments
+          taskAttachments,
+          variables
         } = res.data
+
+        this.$emit('emitRevoke', variables.revoke)
 
         // a - 审批进度
         let groupListArr = []
