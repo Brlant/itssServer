@@ -18,14 +18,14 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="附件上传" prop="url">
-              <el-upload
-            action
-            :on-change="onChange"
-            :before-remove="remove"
-            :limit="1"
-            accept=".jpg, .png, .pdf"
-            :auto-upload="false"
-          >
+            <el-upload
+              action
+              :on-change="onChange"
+              :on-remove="onRemove"
+              :file-list="fileList"
+              accept=".jpg, .png, .pdf"
+              :auto-upload="false"
+            >
             <el-button type="info">
               上传附件
             </el-button>
@@ -77,7 +77,11 @@
 
 <script>
 import { fileUpload } from '@/api/assetManagement/companyAssets'
-import { agreeQuery,uploadSuccess,seeFlow } from "@/api/assetManagement/assetProcess";
+import { 
+  agreeQuery,
+  uploadSuccess,
+  seeFlow 
+} from "@/api/assetManagement/assetProcess"
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue"
 
 export default {
@@ -98,6 +102,7 @@ export default {
       selectAll:[],
       selectAllCopy:[0,1,2,3],
       list: [],
+      fileList: [],
       agreeShow: false,
       isShow:true,
       diaForm: {},
@@ -126,12 +131,24 @@ export default {
       ],
     }
   },
+  watch: {
+    dialogVisible(value) {
+      if (value === false) {
+        // 关闭时清空表单
+        this.$refs.elForm.resetFields()
+        this.fileList = []
+      }
+    }
+  },
   methods: {
     //确认同意
     sureAgree(){
       this.$refs.diaForm.validate(valid => {
         if (!valid) {
           return
+        }
+        if (this.fileList.length) {
+          this.uploadAttachment()
         }
         this.sureForm()
       })
@@ -162,34 +179,38 @@ export default {
       })
     },
     // 上传文件
-    onChange(file) {
+    onChange(file, fileList) {
       let formData = new FormData()
       formData.append('file', file.raw)
       fileUpload(formData).then(res => {
-        if(res.code==200){
-          this.url = res.data.url
-          this.name = res.data.name
-          this.uploadAttachment(res.data)
-        }
+        // 文件列表格式处理
+        let fileArr = this.deepClone(fileList)
+        const index = fileArr.findIndex(item => {
+          return item.uid == file.uid
+        })
+        fileArr[index].status = 'success'
+        fileArr[index].name = res.data.name
+        fileArr[index].url = res.data.url
+        this.fileList = fileArr
       })
     },
-    uploadAttachment(data){
-      let params={
-        attachments:[
-          {
-            description: '',
-            name: data.name,
-            url: data.url,
-            type: data.name.substring(data.name.lastIndexOf('.')),
-            userId: this.$store.state.user.user.userId,
+    // 提交文件
+    uploadAttachment(){
+      const params = {
+        processInstanceId: this.$route.query.processInstanceId,
+        taskId: this.$route.query.taskId,
+        attachments: this.fileList.map(item => {
+          return {
+            name: item.name,
+            url: item.url,
+            userId: this.$store.state.user.user.userId
           }
-        ],
-         processInstanceId: this.$route.query.processInstanceId,
-         taskId: this.$route.query.taskId
+        })
       }
-      uploadSuccess(params).then(res=>{
-        this.attachmentId=res.data[0].id
-      })
+      uploadSuccess(params)
+    },
+    onRemove(file, fileList) {
+      this.fileList = fileList
     },
     remove() {
       this.url = ''
