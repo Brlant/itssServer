@@ -497,6 +497,9 @@ export default {
             if(res.code==200){
               this.$message.success(res.msg)
               this.dialogShow=false
+              this.$router.push({
+              path: "/assetManagement/companyAssets"
+            });
             }
           })
       }else{
