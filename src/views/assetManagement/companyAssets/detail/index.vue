@@ -497,9 +497,19 @@ export default {
             if(res.code==200){
               this.$message.success(res.msg)
               this.dialogShow=false
-              this.$router.push({
-              path: "/assetManagement/companyAssets"
-            });
+            //   this.$router.push({
+            //   name: "myAssets",
+            //   params:{
+            //     tab:'2'
+            //   }
+            // });
+             const obj = { 
+              name: "myAssets",
+              params:{
+                tab:'2'
+              }
+              };
+              this.$tab.closeOpenPage(obj);
             }
           })
       }else{
