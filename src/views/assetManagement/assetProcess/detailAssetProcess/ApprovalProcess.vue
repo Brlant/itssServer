@@ -124,12 +124,22 @@ export default {
     this.getFlow()
   },
   methods: {
-    getFlow() {
-      const params = {
+    getFlow() {  
+      let params
+       console.log(1111,'typeStatus')
+       if(this.$route.query.procVars.type==4){
+        
+        params = {
+        taskId: this.$route.query.procVars.parentTaskId,
+        processInstanceId: this.$route.query.procVars.parentProcessInstanceId,
+        deployId: this.$route.query.procVars.parentDeployId
+      }
+       }else{ params = {
         taskId: this.$route.query.taskId,
         processInstanceId: this.$route.query.processInstanceId,
         deployId: this.$route.query.deployId
       }
+       }
       flowViewer(params).then(res => {
         let { 
           flowCommentResGroupList,

@@ -501,10 +501,10 @@ export default {
        const obj = {
         path: "/assetManagement/detailAssetProcess/process/detailAssetProcess",
         query: {
-          flowId: row.procVars.FLOW_ID,
-          applyName:row.procVars.CATEGORY_NAME,
-          applicantName: row.procVars.APPLICANT_NAME,
-          applyTime: row.procVars.APPLY_TIME,
+          // flowId: row.procVars.FLOW_ID,
+          // applyName:row.procVars.CATEGORY_NAME,
+          // applicantName: row.procVars.APPLICANT_NAME,
+          // applyTime: row.procVars.APPLY_TIME,
           status: this.statusFormatter(row.procVars.STATUS),
           taskId: row.taskId,
           processInstanceId: row.processInstanceId,
@@ -512,7 +512,9 @@ export default {
           tab:this.n,
           assetTypeId: row.procVars.ASSET_TYPE,
           amount: row.procVars.AMOUNT,
-          applyUserId: row.procVars.APPLICANT_ID
+          applyUserId: row.procVars.APPLICANT_ID,
+          type:row.procVars.type,
+          procVars:row.procVars
         }
       };
       // getToday()

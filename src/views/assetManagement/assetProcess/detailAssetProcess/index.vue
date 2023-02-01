@@ -12,8 +12,9 @@
       </div>
       <div class="btns">
           
-        <el-button type="primary" @click='agree'>全部同意</el-button>
-        <el-button type="danger" @click='reject'>全部拒绝</el-button>
+        <el-button type="primary" v-if='typeStatus != 4' @click='agree'>全部同意</el-button>
+        <el-button type="danger"  v-if='typeStatus != 4' @click='reject'>全部拒绝</el-button>
+         <el-button type="danger"  v-if='typeStatus == 4' @click='seeReadShow=true'>已阅</el-button>
          <el-button
           v-if="showAllocate" 
           type="primary" 
@@ -43,13 +44,13 @@
           <div class="item">
             <span class="name">申请人：</span>
             <span class="value">
-              {{ $route.query.applicantName }}
+              {{ $route.query.procVars.APPLICANT_NAME }}
             </span>
           </div>
           <div class="item">
             <span class="name">申请日期：</span>
             <span class="value">
-              {{ $route.query.applyTime }}
+              {{ $route.query.procVars.APPLY_TIME }}
             </span>
           </div>
           <div class="item">
@@ -295,6 +296,21 @@
       </div>
     </div>
     </el-dialog>
+    <!-- 已阅 -->
+     <el-dialog
+     destroy-on-close
+      title="是否已阅"
+      class="dialogForm"
+      width="20%"
+      :visible.sync="seeReadShow"
+    > 
+     <div class="txtAlignC dialogBtnInfo">
+        <el-button type="primary" 
+        @click="seeRead">确定</el-button>
+        <el-button 
+        @click="seeReadShow=false">取消</el-button>
+      </div>
+     </el-dialog>
     <!-- 完成维修弹窗 -->
     <my-maintenance ref="maintenance" />
   </div>
@@ -304,7 +320,7 @@
 import ApprovalProcess from './ApprovalProcess.vue'
 import { listAsset } from '@/api/assetManagement/myAssets'
 import { tabOptions } from '../../companyAssets/options'
-import { agreeQuery,rejectQuery,deleteAttachment,uploadSuccess,seeFlow } from "@/api/assetManagement/assetProcess";
+import { agreeQuery,rejectQuery,deleteAttachment,uploadSuccess,seeFlow,read } from "@/api/assetManagement/assetProcess";
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue";
 import { 
   fileUpload,
@@ -331,8 +347,8 @@ export default {
       list:[],
       isShow:true,
       show:true,
-      title:this.$route.query.applyName,
-      flowId: this.$route.query.flowId,
+      title:this.$route.query.procVars.CATEGORY_NAME,
+      flowId: this.$route.query.procVars.FLOW_ID,
       tableData: [],
       attribute:'',
       uploadData:{},
@@ -346,6 +362,8 @@ export default {
       url: '',
       name: '',
       type:'',
+      typeStatus:'',
+      seeReadShow:false,
       attachmentId:'',//取消时的附件id
       showAllocate: false,
       sureList: [
@@ -387,6 +405,7 @@ export default {
   },
   created() {
     this.getTableData()
+    this.typeStatus=this.$route.query.type ? this.$route.query.type : ''
   },
   methods: {
       select(index){
@@ -497,7 +516,7 @@ export default {
             description:'',
             name:data.name,
             url:data.url,
-            type:data.name.substring(data.name.lastIndexOf('.')),
+            type:data.name ? data.name.substring(data.name.lastIndexOf('.')) : '',
             userId:this.$store.state.user.user.userId,
           }
         ],
@@ -655,11 +674,14 @@ export default {
     //审批流程查看
     viewFlowOne(){
        this.isShow = false
-      const params = {
+     
+        params = {
         taskId: this.$route.query.taskId,
         processInstanceId: this.$route.query.processInstanceId,
         deployId: this.$route.query.deployId
       }
+       
+     
       seeFlow(params).then(res => {
         this.list = JSON.parse(res.data.flowProcDefRes.json).list
         console.log(this.list,'this.list')
@@ -677,6 +699,27 @@ export default {
         this.list = JSON.parse(res.data.flowProcDefRes.json).list
         console.log(this.list,'this.list')
         return
+      })
+    },
+    //已阅
+    seeRead(){
+      
+      let params={
+         taskId: this.$route.query.taskId,
+        processInstanceId: this.$route.query.processInstanceId,
+      }
+      read(params).then(res=>{
+          if(res.code==200){
+            this.seeReadShow=false
+             const obj = {
+        path: "/assetManagement/assetProcess",
+        query:{
+            tab:this.$route.query.tab
+        }
+      };
+      // getToday()
+      this.$tab.closeOpenPage(obj);
+          }
       })
     }
   }

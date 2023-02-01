@@ -72,3 +72,11 @@ export function assigned(query) {
      params:query
   })
 }
+//已阅
+export function read(data) {
+  return request({
+    url: `flowable/flowable/task/readTask`,
+    method: 'post',  
+    data
+  })
+}
