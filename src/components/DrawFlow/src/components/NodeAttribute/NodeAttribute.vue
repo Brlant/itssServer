@@ -27,6 +27,7 @@
                     <el-radio  label="1">指定人员</el-radio>
                     <el-radio  label="2">角色</el-radio>
                     <el-radio  label="3">分组</el-radio>
+                    <el-radio  label="4">发起人</el-radio>
                   </el-radio-group>
                 </template>
               </el-form-item>
@@ -234,8 +235,12 @@ export default {
     changeType(){
       this.form.userName = ''
       this.form.userId = ''
-      this.userList = []
-      this.getUserList();
+      if(this.form.userType == '4'){
+        this.userList = [{name:'发起人', key:'INITIATOR'}]
+      }else {
+        this.userList = []
+        this.getUserList();
+      }
     },
     // 修改
     change(value){
@@ -371,7 +376,7 @@ export default {
      let that =  this;
       let rejectKey = ''
       if(this.form.backId == 'a78x4anxe'){
-          rejectKey = ''
+          rejectKey = that.form.backId || ""
       }else {
           rejectKey = that.form.backId || ""
       }
