@@ -46,9 +46,9 @@ export function getTbConf() {
 // 修改配置
 export function updateTbConf(query) {
   return request({
-    url: '/threeInterface/gitlabStat/updateTbConf',
-    method: 'get',
-    params: query
+    url: '/threeInterface/gitlabStat/updateTbCookie',
+    method: 'post',
+    data: query
   })
 }
 
