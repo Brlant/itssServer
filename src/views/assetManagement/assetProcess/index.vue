@@ -208,15 +208,26 @@
           {{ statusFormatter(row.procVars.STATUS) }}
         </template>
       </el-table-column>
-      <el-table-column 
+     <el-table-column 
         align="center"
         label="操作"
+        v-if='n==3'
+       
       >
         <template slot-scope="{row}">
           <el-button 
             type="text"
             size="small" 
-            @click="cancel(row)"
+            @click.stop="cancel(row)"
+             v-if='row.procVars.APPLICANT_ID == userId && row.procVars.revoke=="true"'
+          >
+            取消
+          </el-button>
+          <el-button 
+            type="text"
+            size="small" 
+            style='color:#ddd'
+            v-else
           >
             取消
           </el-button>
@@ -238,6 +249,9 @@
 <script>
 import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 import { getPendingList, getProcessedList,getPeople } from "@/api/assetManagement/assetProcess";
+import {
+  stopProcess
+} from '@/api/assetManagement/myAssets'
 import {
   cateList,
   applyList 
@@ -487,7 +501,21 @@ export default {
     },
     // 取消
     cancel(row) {
-
+       this.$confirm('确认取消吗？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        const params = {
+          comment: '',
+          taskId: row.taskId,
+          processInstanceId: row.processInstanceId,
+          userKey: this.$store.state.user.user.userId
+        }
+        stopProcess(params).then(res => {
+          this.$message.success(res.msg)
+          this.queryParams.pageNum = 1
+          this.pendingList()
+        })
+      }).catch(() => {})
     },
     // 分页
     getList() {
@@ -501,10 +529,10 @@ export default {
        const obj = {
         path: "/assetManagement/detailAssetProcess/process/detailAssetProcess",
         query: {
-          // flowId: row.procVars.FLOW_ID,
-          // applyName:row.procVars.CATEGORY_NAME,
-          // applicantName: row.procVars.APPLICANT_NAME,
-          // applyTime: row.procVars.APPLY_TIME,
+          flowId: row.procVars.FLOW_ID,
+          applyName:row.procVars.CATEGORY_NAME,
+          applicantName: row.procVars.APPLICANT_NAME,
+          applyTime: row.procVars.APPLY_TIME,
           status: this.statusFormatter(row.procVars.STATUS),
           taskId: row.taskId,
           processInstanceId: row.processInstanceId,

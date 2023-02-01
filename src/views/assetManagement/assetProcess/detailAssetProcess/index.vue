@@ -22,7 +22,8 @@
         <el-button type="primary" v-if='typeStatus != 4 && !showAllocate' @click='agree'>全部同意</el-button>
         <el-button type="danger"  v-if='typeStatus != 4' @click='reject'>全部拒绝</el-button>
         <!-- typeStatus等于4的时候，只显示已阅 -->
-        <el-button type="danger"  v-if='typeStatus == 4' @click='seeReadShow=true'>已阅</el-button>
+        <!-- <el-button type="danger"  v-if='typeStatus == 4' @click='seeReadShow=true'>已阅</el-button> -->
+        <el-button type="danger"  v-if='typeStatus == 4' @click='seeRead'>已阅</el-button>
         <!-- <el-button type="danger"  v-if="showAllocate"  @click='rejectAllocate '>拒绝</el-button> -->
       </div>
     </header>
@@ -44,13 +45,13 @@
           <div class="item">
             <span class="name">申请人：</span>
             <span class="value">
-              {{ $route.query.procVars.APPLICANT_NAME }}
+              {{ $route.query.applicantName}}
             </span>
           </div>
           <div class="item">
             <span class="name">申请日期：</span>
             <span class="value">
-              {{ $route.query.procVars.APPLY_TIME }}
+              {{ $route.query.applyTime }}
             </span>
           </div>
           <div class="item">
@@ -347,8 +348,8 @@ export default {
       list:[],
       isShow:true,
       show:true,
-      title:this.$route.query.procVars.CATEGORY_NAME,
-      flowId: this.$route.query.procVars.FLOW_ID,
+      title:this.$route.query.applyName,
+      flowId: this.$route.query.flowId,
       tableData: [],
       attribute:'',
       uploadData:{},
@@ -611,14 +612,6 @@ export default {
      cancelFn(){
          this.rejectShow=false
          this.agreeShow=false
-        //  if(this.attachmentId){
-        //    deleteAttachment(this.attachmentId).then(res=>{
-        //   if(res.code==200){
-        //     this.$message.success('取消成功')
-        //   }
-        //  })
-        //  }
-        
     },
     // 表格数据
     getTableData() {
@@ -677,14 +670,11 @@ export default {
     //审批流程查看
     viewFlowOne(){
        this.isShow = false
-     
         params = {
         taskId: this.$route.query.taskId,
         processInstanceId: this.$route.query.processInstanceId,
         deployId: this.$route.query.deployId
       }
-       
-     
       seeFlow(params).then(res => {
         this.list = JSON.parse(res.data.flowProcDefRes.json).list
         console.log(this.list,'this.list')
@@ -706,24 +696,26 @@ export default {
     },
     //已阅
     seeRead(){
-      
-      let params={
-         taskId: this.$route.query.taskId,
-        processInstanceId: this.$route.query.processInstanceId,
-      }
-      read(params).then(res=>{
-          if(res.code==200){
-            this.seeReadShow=false
-             const obj = {
-        path: "/assetManagement/assetProcess",
-        query:{
-            tab:this.$route.query.tab
+       this.$confirm('确认已阅吗？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        let params={
+          taskId: this.$route.query.taskId,
+          processInstanceId: this.$route.query.processInstanceId,
         }
-      };
-      // getToday()
-      this.$tab.closeOpenPage(obj);
-          }
-      })
+        read(params).then(res=>{
+            if(res.code==200){
+              const obj = {
+                path: "/assetManagement/assetProcess",
+                query:{
+                    tab:this.$route.query.tab
+                }
+              };
+        // getToday()
+              this.$tab.closeOpenPage(obj);
+            }
+          })
+        }).catch(() => {})
     }
   }
 }
