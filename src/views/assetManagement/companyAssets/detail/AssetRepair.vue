@@ -147,7 +147,8 @@ export default {
               name: item.name,
               url: item.url
             }
-          })
+          }),
+          revoke: 'true'
         }
         repair(data).then(res => {
           this.dialogVisible = false

@@ -186,7 +186,7 @@ export default {
     },
     onClaimSuccess() {
       if (this.tab == 2) {
-        this.$refs.apply.getTableData()
+        this.$refs.apply.reset()
       }
     },
     // 资产借用

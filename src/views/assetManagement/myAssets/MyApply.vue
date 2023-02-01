@@ -200,8 +200,9 @@
         <template slot-scope="{row}">
           <el-button 
             type="text"
-            size="small" 
-            @click="cancel(row)"
+            size="small"
+            :disabled="row.procVars.revoke != 'true'"
+            @click.stop="cancel(row)"
           >
             取消
           </el-button>
@@ -223,7 +224,8 @@
 <script>
 import {
   cateList,
-  applyList 
+  applyList,
+  stopProcess
 } from '@/api/assetManagement/myAssets'
 
 export default {
@@ -349,6 +351,7 @@ export default {
     // 重置表单
     reset() {
       this.$refs.elForm.resetFields()
+      this.queryParams.pageNum = 1
       this.getTableData()
     },
     // tab切换
@@ -362,7 +365,21 @@ export default {
     },
     // 取消
     cancel(row) {
-
+      this.$confirm('确认取消吗？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        const params = {
+          comment: '',
+          taskId: row.taskId,
+          processInstanceId: row.processInstanceId,
+          userKey: this.$store.state.user.user.userId
+        }
+        stopProcess(params).then(res => {
+          this.$message.success(res.msg)
+          this.queryParams.pageNum = 1
+          this.getTableData()
+        })
+      }).catch(() => {})
     },
     // 分页
     getList() {
@@ -378,6 +395,7 @@ export default {
           applyTime: row.procVars.APPLY_TIME,
           status: this.statusFormatter(row.procVars.STATUS),
           categoryName: row.procVars.CATEGORY_NAME,
+          revoke: row.procVars.revoke,
           taskId: row.taskId,
           processInstanceId: row.processInstanceId,
           deployId: row.deployId

@@ -11,7 +11,12 @@
         </span>
       </div>
       <div class="btns">
-        <el-button type="danger" size="small" @click="cancel">
+        <el-button
+          v-if="$route.query.revoke == 'true'"
+          type="danger" 
+          size="small" 
+          @click="cancel"
+        >
           取消申请
         </el-button>
       </div>

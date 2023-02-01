@@ -44,3 +44,12 @@ export function flowViewer(params) {
     params
   })
 }
+
+// 取消
+export function stopProcess(data) {
+  return request({
+    url: '/flowable/flowable/task/stopProcess',
+    method: 'post',
+    data
+  })
+}

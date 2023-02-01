@@ -514,7 +514,8 @@ export default {
           amount: row.procVars.AMOUNT,
           applyUserId: row.procVars.APPLICANT_ID,
           type:row.procVars.type,
-          procVars:row.procVars
+          procVars:row.procVars,
+          tabFlag: this.n
         }
       };
       // getToday()

@@ -159,7 +159,8 @@ export default {
               name: item.name,
               url: item.url
             }
-          })
+          }),
+          revoke: 'true'
         }
         scrap(data).then(res => {
           this.dialogVisible = false

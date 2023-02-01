@@ -10,20 +10,20 @@
           {{ title }}
         </span>
       </div>
-      <div class="btns">
-          
-        <el-button type="primary" v-if='typeStatus != 4' @click='agree'>全部同意</el-button>
-        <el-button type="danger"  v-if='typeStatus != 4' @click='reject'>全部拒绝</el-button>
-         <el-button type="danger"  v-if='typeStatus == 4' @click='seeReadShow=true'>已阅</el-button>
-         <el-button
-          v-if="showAllocate" 
+      <div class="btns" v-if="$route.query.tabFlag != 4">
+        <!-- 显示分配的时候，不显示全部同意 -->
+        <el-button
+          v-if="showAllocate && typeStatus != 4" 
           type="primary" 
           @click='allocateAssets'
          >
           分配资产
           </el-button>
-        <el-button type="danger"  v-if="showAllocate"  @click='rejectAllocate '>拒绝</el-button>
-    
+        <el-button type="primary" v-if='typeStatus != 4 && !showAllocate' @click='agree'>全部同意</el-button>
+        <el-button type="danger"  v-if='typeStatus != 4' @click='reject'>全部拒绝</el-button>
+        <!-- typeStatus等于4的时候，只显示已阅 -->
+        <el-button type="danger"  v-if='typeStatus == 4' @click='seeReadShow=true'>已阅</el-button>
+        <!-- <el-button type="danger"  v-if="showAllocate"  @click='rejectAllocate '>拒绝</el-button> -->
       </div>
     </header>
     <!-- 资产信息开始 -->
