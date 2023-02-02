@@ -505,13 +505,12 @@ export default {
         }
       })
     },
-    rejectAllocate(){},
-    //拒绝分配资产
-
+   //删除上传的文件
     remove() {
       this.url = ''
       this.name = ''
     },
+    //点击弹框的确认按钮之后调用的方法，上传文件相关
     uploadAttachment(data){
       let params={
         attachments:[
@@ -527,36 +526,40 @@ export default {
          taskId:this.$route.query.taskId,
       }
       uploadSuccess(params).then(res=>{
+        //同意的接口请求事件
         this.sureForm()
-          // this.attachmentId=res.data[0].id
       })
     },
-    //确认同意
+    // 弹框里的同意按钮  确认同意
     sureAgree(){
        this.$refs.diaForm.validate(valid => {
         if (!valid) {
           return
         }
             if(this.attribute=='userconfirmation'){
-              console.log(this.selectAll,'this.selectAll')
+              //this.attribute=='userconfirmation'时，需要将'确认信息'的四个按钮全都选中才能提交
               let count = []
               this.selectAll.forEach((i,index)=>{
-              count.push(i)
-               
+              count.push(i)   
               })
-                 if(!this.selectAll.includes('') && this.selectAll.length==4 && count.length==4){
-                 
+                 if(!this.selectAll.includes('') 
+                 && this.selectAll.length==4 
+                 && count.length==4){//这个条件是判断确认信息的四个按钮有没有全都选中
+                 //全都选中则直接调用接口
                    this.uploadAttachment(this.uploadData)
                  }else{
+                  //未全选中，将this.selectAll赋值给this.selectAllCopy，判断四个按钮是的出现红色阴影提示
                   this.selectAllCopy=JSON.parse(JSON.stringify(this.selectAll))
                  }
           }else{
+             // this.attribute！='userconfirmation'时，'确认信息'的四个按钮不显示
             this.uploadAttachment(this.uploadData)
           }
         
        })
     
     },
+    //同意的接口请求事件
     sureForm(){
       let params={
             processInstanceId:this.$route.query.processInstanceId,
@@ -586,7 +589,7 @@ export default {
           }
         })
     },
-    //确认拒绝
+    //弹框里的确认按钮  确认拒绝
     sureReject(){
         let params={
             processInstanceId:this.$route.query.processInstanceId,
@@ -614,7 +617,7 @@ export default {
             }
         })
     },
-     //取消按钮
+     //弹框里的取消按钮
      cancelFn(){
          this.rejectShow=false
          this.agreeShow=false
@@ -675,6 +678,7 @@ export default {
     },
     //审批流程查看
     viewFlowOne(){
+      //全部同意按钮里的审批流程查看
        this.isShow = false
         let params = {
         taskId: this.$route.query.taskId,
@@ -688,6 +692,7 @@ export default {
       })
     },
      viewFlowTwo(){
+       //全部拒绝按钮里的审批流程查看
        this.show = false
       let params = {
         taskId: this.$route.query.taskId,

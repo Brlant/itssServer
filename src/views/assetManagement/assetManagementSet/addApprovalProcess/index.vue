@@ -139,7 +139,7 @@
                   style="z-index: 1000"
                   >删除</el-button
                 >
-                <div @click="aa(index)">
+                <div @click="clickFlow(index)">
                   <DrawFlowChart
                     :flowData="item.list"
                     :flowType="item.type"
@@ -307,7 +307,7 @@ export default {
 
       this.detailData();
     },
-    aa(index) {
+    clickFlow(index) {
       this.m = index;
       console.log(index, "ddddddddddddddddddddd");
     },

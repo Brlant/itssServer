@@ -476,10 +476,10 @@ export default {
           return
         }
          let count = []
-              this.selectAll.forEach((i,index)=>{
-              count.push(i)
-               
-              })
+            this.selectAll.forEach((i,index)=>{
+            count.push(i)
+              
+            })
            if(!this.selectAll.includes('') && this.selectAll.length==4 && count.length==4){
         
           let attachList={
