@@ -138,7 +138,8 @@ export default {
           isApplying: row.isApplying,
           manageType: row.manageType,
           assetTypeId:row.assetTypeId,
-          departmentId:row.departmentId
+          departmentId:row.departmentId,
+          tabFlag: this.flag
         }
       })
     },

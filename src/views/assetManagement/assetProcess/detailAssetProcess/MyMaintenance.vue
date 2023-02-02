@@ -173,6 +173,7 @@ export default {
         comment: this.formData.comment,
         procVars: {
           attribute: 'maintenance',
+          comment: this.formData.comment,
           CUSTOM_VAR: JSON.stringify([{
             maintenanceDate: this.formData.maintenanceDate,
             maintenancePrice: this.formData.maintenancePrice,

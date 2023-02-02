@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <header>
-      <div class="left" @click="$router.go(-1)">
+      <div class="left" @click="goBack">
         <i class="el-icon-arrow-left"></i>
         <span>资产信息</span>
       </div>
@@ -341,6 +341,7 @@ export default {
       }
     };
     return {
+      tabFlag: '',
       isShow:true,
       span: 6,
       id: this.$route.query.id,
@@ -389,6 +390,10 @@ export default {
     };
   },
   created() {
+    const { tabFlag } = this.$route.query
+    if (tabFlag) {
+      this.tabFlag = tabFlag
+    }
     this.getDetail();
   },
   methods: {
@@ -612,6 +617,21 @@ export default {
       getFlow(params).then(res => {
         this.list = JSON.parse(res.data.json).list
       })
+    },
+    // 返回上一页
+    goBack() {
+      // 如果tabFlag有值，说明是从公司资产列表进来的
+      if (this.tabFlag !== '') {
+        const obj = { 
+          name: "companyAssets",
+          params:{
+            tab: this.tabFlag
+          }
+        };
+        this.$tab.closeOpenPage(obj)
+      } else {
+        this.$router.go(-1)
+      }
     }
   },
 };
