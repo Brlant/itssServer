@@ -175,7 +175,7 @@ export default {
         query: {
           id: row.assetId,
           status: this.statusFormatter(row),
-          isApplying:row.isApplying,
+          isApplying: row.isApplying,
           manageType: row.manageType
         }
       })

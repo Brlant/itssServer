@@ -47,7 +47,15 @@
             <div class="item" style="display:flex">
               <span class="star">*</span>
               <span class="label">资产条码：</span>
-              <div class="qrcode" ref="qrCodeUrl"></div>
+              <div class="box">
+                <el-popover
+                  trigger="hover"
+                  placement="bottom-start"
+                >
+                  <div class="qrcode" ref="qrcode" slot="reference"></div>
+                  <div class="qrcodeLarge" ref="qrcodeLarge"></div>
+                </el-popover>
+              </div>
             </div>
           </el-col>
           <el-col :span="span">
@@ -374,49 +382,44 @@ export default {
       dialogRules: {
         // url: [{ required: true, trigger: "blur", validator: check }],
       },
+      showEntry: false,
+      showRepair: false,
+      showScrap: false,
+      showReturn: false
     };
-  },
-  computed: {
-    // 是否显示入库及编辑
-    showEntry() {
-      if (this.status.includes("入库") && this.info.isApplying == 0) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    // 是否显示维修
-    showRepair() {
-    
-      if (!this.status.includes("入库") && this.manageType == 2) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    // 是否显示报废
-    showScrap() {
-      if (!this.status.includes("入库")) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    //是否显示归还
-    showReturn(){
-      console.log(this.isApplying)
-       if (this.status=="使用中" 
-       && this.manageType == 2 && this.info.isApplying == 0 && this.info.holderId==JSON.parse(window.localStorage.getItem("user")).userId) {
-        return true;
-      } else {
-        return false;
-      }
-    }
   },
   created() {
     this.getDetail();
   },
   methods: {
+    // 控制按钮的显示与隐藏
+    handleShow() {
+      // 入库与编辑
+      if (this.status.includes("入库") && this.info.isApplying == 0) {
+        this.showEntry = true;
+      } else {
+        this.showEntry = false;
+      }
+      // 维修
+      if (!this.status.includes("入库") && this.info.manageType == 2 && this.info.isApplying == 0) {
+        this.showRepair = true;
+      } else {
+        this.showRepair = false;
+      }
+      // 报废
+      if (!this.status.includes("入库") && this.info.manageType == 2 && this.info.isApplying == 0) {
+        this.showScrap = true;
+      } else {
+        this.showScrap = false;
+      }
+      // 归还
+      if (this.status=="使用中" 
+       && this.info.manageType == 2 && this.info.isApplying == 0 && this.info.holderId==JSON.parse(window.localStorage.getItem("user")).userId) {
+        this.showReturn = true;
+      } else {
+        this.showReturn = false;
+      }
+    },
     // 发起维修
     initRepair() {
       this.$refs.repair.open()
@@ -525,10 +528,18 @@ export default {
         this.info = res.data;
         // 生成二维码
         this.$nextTick(() => {
-          new QRCode(this.$refs.qrCodeUrl, {
+          new QRCode(this.$refs.qrcode, {
             text: this.info.assetId, // 需要转换为二维码的内容
-            width: 100,
-            height: 100,
+            width: 25,
+            height: 25,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H,
+          })
+          new QRCode(this.$refs.qrcodeLarge, {
+            text: this.info.assetId, // 需要转换为二维码的内容
+            width: 150,
+            height: 150,
             colorDark: "#000000",
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H,
@@ -553,6 +564,9 @@ export default {
           });
           this.list = list;
         });
+
+        // 控制按钮的显示与隐藏
+        this.handleShow()
       });
     },
     //入库
@@ -570,7 +584,7 @@ export default {
     },
     // 打印条码
     printCode() {
-      Print(document.querySelector('.qrcode'))
+      Print(this.$refs.qrcodeLarge)
     },
     // tab切换
     change() {},
@@ -701,17 +715,22 @@ export default {
   padding:10px 0;
 }
 .current{
-  background:#97b2e98c
+  background:#97b2e98c;
 }
 .noSelect{
   box-shadow: 2px 2px 10px red;;
 }
-.qrcode {
+.box {
   display: inline-block;
-  width: 112px;
-  height: 100px;
-  background-color: #fff;
-  padding: 0 6px;
-  box-sizing: border-box;
+  .qrcode {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+  }
+  .qrcodeLarge {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+  }
 }
 </style>

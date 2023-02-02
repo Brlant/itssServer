@@ -11,6 +11,15 @@
         >
           <span class="text">
             {{ item.label }}
+            <span v-if="index === 0">
+              ({{ approvalCount }})
+            </span>
+            <span v-if="index === 1">
+              ({{ completeCount }})
+            </span>
+            <span v-if="index === 2">
+              ({{ terminatedCount }})
+            </span>
           </span>
         </div>
       </div>
@@ -225,7 +234,8 @@
 import {
   cateList,
   applyList,
-  stopProcess
+  stopProcess,
+  getFlowStatusSum
 } from '@/api/assetManagement/myAssets'
 
 export default {
@@ -233,6 +243,9 @@ export default {
   data() {
     return {
       userId: this.$store.state.user.user.userId,
+      approvalCount: 0,
+      completeCount: 0,
+      terminatedCount: 0,
       options: [
         { label: '审批中', value: '1' },
         { label: '已完成', value: '2' },
@@ -257,6 +270,7 @@ export default {
   mounted() {
     this.getCateList()
     this.getTableData()
+    this.getCount()
   },
   methods: {
     // 流程类型
@@ -343,6 +357,14 @@ export default {
         this.loading = false
       })
     },
+    // 查询数量
+    getCount() {
+      getFlowStatusSum(this.userId).then(res => {
+        this.approvalCount = res.data.approvalCount
+        this.completeCount = res.data.completeCount
+        this.terminatedCount = res.data.terminatedCount
+      })
+    },
     // 点击查询
     query() {
       this.queryParams.pageNum = 1
@@ -398,7 +420,8 @@ export default {
           revoke: row.procVars.revoke,
           taskId: row.taskId,
           processInstanceId: row.processInstanceId,
-          deployId: row.deployId
+          deployId: row.deployId,
+          tabFlag: this.n
         }
       })
     },

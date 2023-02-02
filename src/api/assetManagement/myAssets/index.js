@@ -53,3 +53,11 @@ export function stopProcess(data) {
     data
   })
 }
+
+// 获取数量
+export function getFlowStatusSum(id) {
+  return request({
+    url: `/asset/assetFlow/getFlowStatusSum/${id}`,
+    method: 'get'
+  })
+}

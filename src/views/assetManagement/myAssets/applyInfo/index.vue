@@ -12,7 +12,7 @@
       </div>
       <div class="btns">
         <el-button
-          v-if="$route.query.revoke == 'true'"
+          v-if="$route.query.revoke == 'true' && $route.query.revoke == 0"
           type="danger" 
           size="small" 
           @click="cancel"
