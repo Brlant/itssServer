@@ -86,7 +86,7 @@
           <el-form-item size="large">
             <el-button type="primary" @click="submitForm">查询</el-button>
             <el-button @click="resetForm">重置</el-button>
-            <el-button @click="resetForm">导出</el-button>
+            <!-- <el-button @click="resetForm">导出</el-button> -->
           </el-form-item>
         </el-col>
       </el-form>
