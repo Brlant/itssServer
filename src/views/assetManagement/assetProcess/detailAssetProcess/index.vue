@@ -670,7 +670,7 @@ export default {
     //审批流程查看
     viewFlowOne(){
        this.isShow = false
-        params = {
+        let params = {
         taskId: this.$route.query.taskId,
         processInstanceId: this.$route.query.processInstanceId,
         deployId: this.$route.query.deployId
@@ -683,11 +683,12 @@ export default {
     },
      viewFlowTwo(){
        this.show = false
-      const params = {
+      let params = {
         taskId: this.$route.query.taskId,
         processInstanceId: this.$route.query.processInstanceId,
         deployId: this.$route.query.deployId
       }
+     
       seeFlow(params).then(res => {
         this.list = JSON.parse(res.data.flowProcDefRes.json).list
         console.log(this.list,'this.list')
