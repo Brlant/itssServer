@@ -105,7 +105,9 @@ export default {
       fileList: [],
       agreeShow: false,
       isShow:true,
-      diaForm: {},
+      diaForm: {
+        comment: ''
+      },
       url: '',
       name: '',
       dialogRules: {
