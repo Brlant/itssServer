@@ -20,7 +20,7 @@
           分配资产
           </el-button>
         <el-button type="primary" v-if='typeStatus != 4 && !showAllocate' @click='agree'>全部同意</el-button>
-        <el-button type="danger"  v-if='typeStatus != 4' @click='reject'>全部拒绝</el-button>
+        <el-button type="danger"  v-if='typeStatus != 4 && attribute != "repaircompleted"' @click='reject'>全部拒绝</el-button>
         <!-- typeStatus等于4的时候，只显示已阅 -->
         <!-- <el-button type="danger"  v-if='typeStatus == 4' @click='seeReadShow=true'>已阅</el-button> -->
         <el-button type="danger"  v-if='typeStatus == 4' @click='seeRead'>已阅</el-button>

@@ -481,8 +481,11 @@ export default {
     // 点击查询
     query() {
       this.queryParams.pageNum = 1
-      this.n=3
-      this.pendingList()
+       if(this.n==3){
+         this.pendingList()
+      }else{
+        this.getProcessed()
+      }
     },
     // tab切换
     change(index) {
@@ -519,8 +522,13 @@ export default {
     },
     // 分页
     getList() {
-      this.n=3
-      this.pendingList()
+      // this.n=3
+      if(this.n==3){
+         this.pendingList()
+      }else{
+        this.getProcessed()
+      }
+     
     },
     // 进入入库详情
     goDetail(row) {
