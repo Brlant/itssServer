@@ -101,8 +101,8 @@
         <div
           v-for="(item, index) in options"
           :key="index"
-          :class="{active: index === n}"
-          @click="change(index)"
+          :class="{active: index+3 === n}"
+          @click="change(index+3)"
         >
           <span class="text">
             {{ item.label }}
@@ -261,9 +261,9 @@ export default {
     return {
       userId: this.$store.state.user.user.userId,
       options: [
-        { label: '申请中', value: '0' },
-        { label: '已完成', value: '1' },
-        { label: '已取消', value: '2' },
+        // { label: '申请中', value: '0' },
+        // { label: '已完成', value: '1' },
+        // { label: '已取消', value: '2' },
         { label: '待处理', value: '3' },
         { label: '参与处理记录', value: '4' },
        

@@ -420,6 +420,7 @@ export default {
         
         }else{
           this.selectAll[n]=n
+          // this.selectAll.push(n)
         }
       })
       this.selectAllCopy=[0,1,2,3]
@@ -430,6 +431,7 @@ export default {
     //同意
     agree(){
       this.attribute = this.$refs.process.getAttribute()
+      console.log(this.attribute,'this.attribute')
       if (this.attribute == 'maintenance') {
         this.$refs.maintenance.open()
       } else {
@@ -537,10 +539,14 @@ export default {
         }
             if(this.attribute=='userconfirmation'){
               console.log(this.selectAll,'this.selectAll')
-                 if(!this.selectAll.includes('') && this.selectAll.length==4){
+              let count = []
+              this.selectAll.forEach((i,index)=>{
+              count.push(i)
+               
+              })
+                 if(!this.selectAll.includes('') && this.selectAll.length==4 && count.length==4){
+                 
                    this.uploadAttachment(this.uploadData)
-                  
-                  
                  }else{
                   this.selectAllCopy=JSON.parse(JSON.stringify(this.selectAll))
                  }
