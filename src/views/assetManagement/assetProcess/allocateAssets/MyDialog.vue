@@ -161,6 +161,7 @@ export default {
         comment: this.diaForm.comment,
         procVars:{
           attribute: this.$route.query.attribute,
+          revoke: 'false',
           CUSTOM_VAR: JSON.stringify(this.customVar)
         }
       }
