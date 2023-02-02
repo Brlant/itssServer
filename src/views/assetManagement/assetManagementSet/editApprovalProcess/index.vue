@@ -126,7 +126,7 @@
                   style="z-index: 2000"
                   >删除</el-button
                 >
-                <div @click="aa(index)">
+                <div @click="clickFlow(index)">
                   <DrawFlowChart
                    
                     :flowData="item.list"
@@ -269,7 +269,7 @@ export default {
       this.detailData();
     },
     //点击某个流程图调用方法，获取点击流程图的下标
-    aa(index) {
+    clickFlow(index) {
       this.m = index;
     },
     //添加流程
@@ -321,10 +321,12 @@ export default {
       this.isShowEdit = true;
       this.checkIndex = data.flowTypeId;
       this.checkName = data.flowTypeName;
-      this.n = index;
+      this.n = index;//切换tab的下标
       console.log(this.n, "this.n");
-      this.FlowConfigList = JSON.parse(JSON.stringify(data.flowDefInfoVoList));
+      this.FlowConfigList = JSON.parse(JSON.stringify(data.flowDefInfoVoList));//没一个tab点击之后的数据
       this.$forceUpdate();
+      // 如果修改了流程节点，就会有params，如果this.params不为空的时候，切换tab时，直接从params中取值展示在页面
+      // 这个是为了修改每次切换tab时，再切换回来，之前修改的值没保存的问题
       if(JSON.stringify(this.params)!="{}"){
         let paramsCopy=this.deepClone(this.params)
        this.FlowConfigList=paramsCopy.flowInfoVoList[this.n-1].flowDefInfoVoList
@@ -394,14 +396,14 @@ export default {
             item.deptId.push(i.deptId);
           });
           item.flow = index;
-          console.log(index, "aaaaaaaaaaaaaaaaaaaaaaa");
+          console.log();
           item.list.sysDeptList = item.deptId;
           console.log(
             item.list,
             "this.FlowConfigthis.FlowConfigthis.FlowConfig"
           );
         });
-        console.log(this.FlowConfigList, "this.FlowConfigList");
+        console.log();
       });
     },
     //返回
