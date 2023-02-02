@@ -12,9 +12,9 @@
     align="center"
     prop="description"
    />
-   <el-table-column label="适用资产类型" align="center" prop="assetTypeList">
+   <el-table-column label="当前在用类型" align="center" prop="assetTypeList">
     <template slot-scope="scope">
-     <span v-for='(item,index) in scope.row.assetTypeList' :key='index'>{{item.typeName + '；'}}</span>
+     <span v-for='(item,index) in scope.row.assetTypeList' :key='index'>{{item.allName + '；'}}</span>
     </template>
    </el-table-column>
    <el-table-column label="上次修改时间" align="center" prop="updateTime" />

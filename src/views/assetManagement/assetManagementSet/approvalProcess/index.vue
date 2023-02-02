@@ -12,10 +12,10 @@
         align="center"
         prop="groupDescription"
       />
-      <el-table-column label="适用资产类型" align="center" prop="assetTypeList">
+      <el-table-column label="当前在用类型" align="center" prop="assetTypeList">
         <template slot-scope="scope">
           <span v-for="(item, index) in scope.row.assetTypeList" :key="index">{{
-            item.typeName + "；"
+            item.allName + "；"
           }}</span>
         </template>
       </el-table-column>
