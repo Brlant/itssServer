@@ -1,6 +1,6 @@
 <template>
   <div class="wrap">
-    <header>
+    <header style='min-height:56px;'>
       <div 
         style="cursor: pointer" 
         @click="goBack"
@@ -10,7 +10,7 @@
           {{ title }}
         </span>
       </div>
-      <div class="btns" v-if="$route.query.tabFlag != 4">
+      <div class="btns" v-if="$route.query.tabFlag != 4 && showBtn">
         <!-- 显示分配的时候，不显示全部同意 -->
         <el-button
           v-if="showAllocate && typeStatus != 4" 
@@ -346,6 +346,7 @@ export default {
     return {
       attribute: '',
       list:[],
+      showBtn:false,
       isShow:true,
       show:true,
       title:this.$route.query.applyName,
@@ -469,6 +470,8 @@ export default {
       } else {
         this.showAllocate = false
       }
+      this.showBtn=true
+      console.log(this.showBtn,'this.showBtn')
     },
     //分配资产按钮
     allocateAssets(){
