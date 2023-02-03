@@ -174,6 +174,7 @@ export default {
         pageNum:this.page.pageNum,
         pageSize:this.page.pageSize,
         businessType:8,
+        title:'盘亏记录',
         createStartTime:this.formData.time1 ? this.formData.time1[0] : '',
         createEndTime:this.formData.time1 ? this.formData.time1[1] : '',
         scrapStartTime:this.formData.time2 ? this.formData.time2[0] : '',
@@ -210,7 +211,7 @@ export default {
          processInstanceId:row.processInstanceId,
          deployId:row.deployId,
          flowId:row.flowId,
-          status:this.statusFormatter(row.status),
+          status:this.statusFormatter(row.flowStatus),
           applyTime:row.createTime,
           applicantName:row.creatorName
         }

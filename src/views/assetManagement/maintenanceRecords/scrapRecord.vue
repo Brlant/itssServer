@@ -201,7 +201,8 @@ export default {
          processInstanceId:row.processInstanceId,
          deployId:row.deployId,
          flowId:row.flowId,
-          status:this.statusFormatter(row.status),
+          title:'报废记录',
+          status:this.statusFormatter(row.flowStatus),
           applyTime:row.createTime,
           applicantName:row.creatorName
         }

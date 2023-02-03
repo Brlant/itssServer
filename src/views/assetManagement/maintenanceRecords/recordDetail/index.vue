@@ -7,7 +7,7 @@
       >
         <i class="el-icon-arrow-left"></i>
         <span>
-          {{ title }}
+         {{ '资产'+ $route.query.title +'详情' }}
         </span>
       </div>
       <div>{{'流程ID:'+flowId}}</div>
@@ -138,7 +138,7 @@ export default {
   },
   data() {
     return {
-      title:'资产维修记录详情',
+     
       flowId: this.$route.query.flowId,
       tableData: [],
       diaForm:{},

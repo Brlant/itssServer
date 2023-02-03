@@ -258,10 +258,11 @@ export default {
         path: "/assetManagement/maintenanceRecords/detail/recordDetail",
         query: {
          taskId:row.taskId,
+          title:'维修记录',
          processInstanceId:row.processInstanceId,
          deployId:row.deployId,
          flowId:row.flowId,
-          status:this.statusFormatter(row.status),
+          status:this.statusFormatter(row.flowStatus),
           applyTime:row.createTime,
           applicantName:row.creatorName
         }
