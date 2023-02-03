@@ -394,6 +394,7 @@ export default {
     if (tabFlag) {
       this.tabFlag = tabFlag
     }
+    
     this.getDetail();
   },
   methods: {
@@ -421,7 +422,7 @@ export default {
         this.showScrap = false;
       }
       // 归还
-      if (this.info.status == 3
+      if (this.info.status == 2
        && this.info.manageType == 2 && this.info.isApplying == 0 && this.info.holderId==JSON.parse(window.localStorage.getItem("user")).userId) {
         this.showReturn = true;
       } else {
