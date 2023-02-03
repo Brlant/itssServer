@@ -305,7 +305,7 @@ export default {
       
       let like = {}
       if (ASSET_TYPE.length) {
-        like.ASSET_TYPE = `%${ASSET_TYPE[ASSET_TYPE.length - 1]}%`
+        like.ASSET_TYPE = `%,${ASSET_TYPE[ASSET_TYPE.length - 1]},%`
       }
       if (ASSET_NAME) {
         like.ASSET_NAME = `%${ASSET_NAME}%`
