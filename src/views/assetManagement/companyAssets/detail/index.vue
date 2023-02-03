@@ -412,7 +412,6 @@ export default {
         (this.info.status == 1 || this.info.status == 2)
         && this.info.manageType == 2 
         && this.info.isApplying == 0
-        && this.from == 'companyAssets'
       ) {
         this.showRepair = true;
       } else {
@@ -425,7 +424,7 @@ export default {
       if (
         (this.info.status == 1 || this.info.status == 2)
         && this.info.isApplying == 0
-        && this.from == 'companyAssets'
+        && (this.from == 'companyAssets' || this.info.manageType == 2)
       ) {
         this.showScrap = true;
       } else {
