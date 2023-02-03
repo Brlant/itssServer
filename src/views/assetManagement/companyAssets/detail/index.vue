@@ -412,7 +412,10 @@ export default {
         this.showRepair = false;
       }
       // 报废
-      if (this.info.status != 7 && this.info.manageType == 2 && this.info.isApplying == 0) {
+      // this.info.status == 7 意思是 资产未入库
+      // this.info.manageType == 2  意思是 是固定资产 
+      // this.info.isApplying == 0  意思是 资产不在流程中
+      if (this.info.status != 7 && this.info.isApplying == 0) {
         this.showScrap = true;
       } else {
         this.showScrap = false;

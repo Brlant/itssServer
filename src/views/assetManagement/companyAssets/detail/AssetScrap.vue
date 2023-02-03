@@ -28,6 +28,7 @@
           <el-input-number 
             v-model="formData.amount" 
             :min="1"
+            :max='info.amount'
             :step="1"
             step-strictly
             :disabled="$route.query.manageType == 2"
