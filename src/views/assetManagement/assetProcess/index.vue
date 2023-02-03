@@ -68,7 +68,7 @@
                 v-model="formData.ASSET_TYPE"
                 :options="asset"
                 ref="assetCas"
-                :props="{ label: 'typeName', value: 'id' }"
+                 :props="{ label: 'typeName', value: 'id', checkStrictly: true }"
                 clearable
                 :style="style"
               />
@@ -338,18 +338,19 @@ export default {
       
       let eq = {
         // STATUS: this.options[this.n].value,
-        APPLICANT_ID:  this.formData.APPLICANT_ID
+        APPLICANT_ID:  this.formData.APPLICANT_ID+''
       }
       if (CATEGORY_ID) {
-        eq.CATEGORY_ID = CATEGORY_ID
+        eq.CATEGORY_ID = CATEGORY_ID+''
       }
+      console.log(eq.CATEGORY_ID,' eq.CATEGORY_ID')
       if (FLOW_ID) {
         eq.FLOW_ID = FLOW_ID
       }
       
       let like = {}
       if (ASSET_TYPE.length) {
-        like.ASSET_TYPE = `%${ASSET_TYPE[ASSET_TYPE.length - 1]}%`
+        like.ASSET_TYPE = `%,${ASSET_TYPE[ASSET_TYPE.length - 1]},%`
       }
       if (ASSET_NAME) {
         like.ASSET_NAME = `%${ASSET_NAME}%`
@@ -413,10 +414,10 @@ export default {
       
       let eq = {
         // STATUS: this.options[this.n].value,
-        APPLICANT_ID: this.formData.APPLICANT_ID
+        APPLICANT_ID: this.formData.APPLICANT_ID+''
       }
       if (CATEGORY_ID) {
-        eq.CATEGORY_ID = CATEGORY_ID
+        eq.CATEGORY_ID = CATEGORY_ID+''
       }
       if (FLOW_ID) {
         eq.FLOW_ID = FLOW_ID
@@ -424,7 +425,7 @@ export default {
       
       let like = {}
       if (ASSET_TYPE.length) {
-        like.ASSET_TYPE = `%${ASSET_TYPE[ASSET_TYPE.length - 1]}%`
+        like.ASSET_TYPE = `%,${ASSET_TYPE[ASSET_TYPE.length - 1]},%`
       }
       if (ASSET_NAME) {
         like.ASSET_NAME = `%${ASSET_NAME}%`

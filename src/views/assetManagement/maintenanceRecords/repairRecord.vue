@@ -61,14 +61,14 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="资产类型" prop="assetTypeId">
-            <el-cascader
-                v-model="formData.assetTypeId"
-                :options="asset"
-                ref="assetCas"
-                :props="{ label: 'typeName', value: 'id' }"
-                clearable
-              
-              />
+             <el-cascader
+                  v-model="formData.assetTypeId"
+                  :options="asset"
+                  ref="assetCas"
+                  :props="{ label: 'typeName', value: 'id', checkStrictly: true }"
+                  clearable
+                  
+                />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -144,7 +144,7 @@ export default {
     return {
       asset: [],//资产类型
       formData: {
-       
+       assetTypeId:[]
       },
       page:{
         pageNum:1,
@@ -212,7 +212,26 @@ export default {
   mounted() {},
   methods: {
     initData(){
-
+      let data={
+        ...this.formData
+      }
+      const assetTypeId = data.assetTypeId
+      switch (assetTypeId.length) {
+        case 0:
+          delete data.assetTypeId
+          break
+        case 1:
+          data.oneTypeId = assetTypeId[0]
+          delete data.assetTypeId
+          break
+        case 2:
+          data.twoTypeId = assetTypeId[1]
+          delete data.assetTypeId
+          break
+        case 3:
+          data.assetTypeId = assetTypeId[2]
+          break
+      }
       let params={
         pageNum:this.page.pageNum,
         pageSize:this.page.pageSize,
@@ -221,7 +240,7 @@ export default {
         priceStart:this.formData.priceStart ? this.formData.priceStart*1 : '',
         priceEnd:this.formData.priceEnd ? this.formData.priceEnd*1 : '',
         assetNo:this.formData.assetNo,
-        assetTypeId:this.formData.assetTypeId,
+        assetTypeId:data.assetTypeId,
         assetName:this.formData.assetName
       }
       console.log(params,'params')
