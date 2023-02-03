@@ -348,6 +348,7 @@ export default {
       status: this.$route.query.status,
       isApplying: this.$route.query.isApplying,
       manageType: this.$route.query.manageType,
+      from: this.$route.query.from,
       info: {},
       list: [],
       scaleVal: 100, // 流程图缩放比例 100%
@@ -407,7 +408,12 @@ export default {
         this.showEntry = false;
       }
       // 维修
-      if (this.info.status != 7 && this.info.manageType == 2 && this.info.isApplying == 0) {
+      if (
+        (this.info.status == 1 || this.info.status == 2)
+        && this.info.manageType == 2 
+        && this.info.isApplying == 0
+        && this.from == 'companyAssets'
+      ) {
         this.showRepair = true;
       } else {
         this.showRepair = false;
@@ -416,7 +422,11 @@ export default {
       // this.info.status == 7 意思是 资产未入库
       // this.info.manageType == 2  意思是 是固定资产 
       // this.info.isApplying == 0  意思是 资产不在流程中
-      if (this.info.status != 7 && this.info.isApplying == 0) {
+      if (
+        (this.info.status == 1 || this.info.status == 2)
+        && this.info.isApplying == 0
+        && this.from == 'companyAssets'
+      ) {
         this.showScrap = true;
       } else {
         this.showScrap = false;

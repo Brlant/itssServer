@@ -139,7 +139,8 @@ export default {
           manageType: row.manageType,
           assetTypeId:row.assetTypeId,
           departmentId:row.departmentId,
-          tabFlag: this.flag
+          tabFlag: this.flag,
+          from: 'companyAssets'
         }
       })
     },

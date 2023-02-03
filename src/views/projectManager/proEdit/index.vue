@@ -1027,6 +1027,7 @@ export default {
     // 选择技能之后 的变色逻辑
     changeTextColor(listData, refName) {
       if(listData.length<=0) return false
+      if (!listData) return false
       // 是数组再处理
       this.$nextTick(() => {
         setTimeout(() => {
