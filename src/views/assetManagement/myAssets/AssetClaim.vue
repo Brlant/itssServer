@@ -152,7 +152,6 @@ export default {
     },
     // 选择资产，控制数量
     change(value) {
-      console.log('ccc',value)
       this.manageType = findItemById(value[value.length - 1], this.asset).manageType
       if (this.manageType === 2) {
         this.formData.amount = 1
