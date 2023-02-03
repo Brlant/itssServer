@@ -219,7 +219,7 @@
             type="text"
             size="small" 
             @click.stop="cancel(row)"
-             v-if='row.procVars.APPLICANT_ID == userId && row.procVars.revoke=="true"'
+             v-if='row.procVars.APPLICANT_ID == userId && (row.procVars.processStep==1 || row.procVars.processStep==2)'
           >
             取消
           </el-button>

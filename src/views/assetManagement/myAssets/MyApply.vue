@@ -210,7 +210,7 @@
           <el-button 
             type="text"
             size="small"
-            :disabled="row.procVars.revoke != 'true'"
+            :disabled=" row.procVars.processStep==1 || row.procVars.processStep==2 "
             @click.stop="cancel(row)"
           >
             取消
@@ -417,7 +417,7 @@ export default {
           applyTime: row.procVars.APPLY_TIME,
           status: this.statusFormatter(row.procVars.STATUS),
           categoryName: row.procVars.CATEGORY_NAME,
-          revoke: row.procVars.revoke,
+          processStep: row.procVars.processStep,
           taskId: row.taskId,
           processInstanceId: row.processInstanceId,
           deployId: row.deployId,

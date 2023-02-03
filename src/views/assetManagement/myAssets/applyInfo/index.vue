@@ -12,7 +12,7 @@
       </div>
       <div class="btns">
         <el-button
-          v-if="$route.query.revoke == 'true' && $route.query.tabFlag == 0"
+          v-if="$route.query.tabFlag == 0  && ($route.query.processStep==1 || $route.query.processStep==2)"
           type="danger" 
           size="small" 
           @click="cancel"
