@@ -333,12 +333,17 @@ export default {
         FLOW_ID,
         ASSET_TYPE,
         ASSET_NAME,
-        ASSET_NO
+        ASSET_NO,
+        APPLICANT_ID
       } = this.formData
       
       let eq = {
         // STATUS: this.options[this.n].value,
-        APPLICANT_ID:  this.formData.APPLICANT_ID+''
+        
+      }
+      
+      if (APPLICANT_ID) {
+        eq.APPLICANT_ID = this.formData.APPLICANT_ID+''
       }
       if (CATEGORY_ID) {
         eq.CATEGORY_ID = CATEGORY_ID+''
@@ -409,12 +414,16 @@ export default {
         FLOW_ID,
         ASSET_TYPE,
         ASSET_NAME,
-        ASSET_NO
+        ASSET_NO,
+        APPLICANT_ID
       } = this.formData
       
       let eq = {
         // STATUS: this.options[this.n].value,
-        APPLICANT_ID: this.formData.APPLICANT_ID+''
+       
+      }
+       if (APPLICANT_ID) {
+        eq.APPLICANT_ID = this.formData.APPLICANT_ID+''
       }
       if (CATEGORY_ID) {
         eq.CATEGORY_ID = CATEGORY_ID+''
