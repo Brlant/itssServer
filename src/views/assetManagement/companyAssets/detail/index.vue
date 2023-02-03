@@ -400,25 +400,25 @@ export default {
     // 控制按钮的显示与隐藏
     handleShow() {
       // 入库与编辑
-      if (this.status.includes("入库") && this.info.isApplying == 0) {
+      if (this.info.status == 7 && this.info.isApplying == 0) {
         this.showEntry = true;
       } else {
         this.showEntry = false;
       }
       // 维修
-      if (!this.status.includes("入库") && this.info.manageType == 2 && this.info.isApplying == 0) {
+      if (this.info.status != 7 && this.info.manageType == 2 && this.info.isApplying == 0) {
         this.showRepair = true;
       } else {
         this.showRepair = false;
       }
       // 报废
-      if (!this.status.includes("入库") && this.info.manageType == 2 && this.info.isApplying == 0) {
+      if (this.info.status != 7 && this.info.manageType == 2 && this.info.isApplying == 0) {
         this.showScrap = true;
       } else {
         this.showScrap = false;
       }
       // 归还
-      if (this.status=="使用中" 
+      if (this.info.status == 3
        && this.info.manageType == 2 && this.info.isApplying == 0 && this.info.holderId==JSON.parse(window.localStorage.getItem("user")).userId) {
         this.showReturn = true;
       } else {
