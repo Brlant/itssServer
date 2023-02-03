@@ -572,7 +572,7 @@ export default {
             
             procVars:{
               attribute: this.$refs.process.getAttribute(),
-              revoke: this.$refs.process.getNodeId()=='a78x4anxe' ? 'true': 'false',
+              //revoke: this.$refs.process.getNodeId()=='a78x4anxe' ? 'true': 'false'
             }
         }
         agreeQuery(params).then(res=>{
@@ -601,7 +601,7 @@ export default {
             comment: this.diaFormTwo.comment ? this.diaFormTwo.comment : '',
             procVars:{
               attribute: this.$refs.process.getAttribute(),
-              revoke:this.$route.query.procVars.revoke ? this.$route.query.procVars.revoke : ''
+              //revoke:this.$route.query.procVars.revoke ? this.$route.query.procVars.revoke : ''
             }
         }
         rejectQuery(params).then(res=>{
