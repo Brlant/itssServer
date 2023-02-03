@@ -75,7 +75,7 @@
                 v-model="formData.ASSET_TYPE"
                 :options="asset"
                 ref="assetCas"
-                :props="{ label: 'typeName', value: 'id' }"
+                :props="{ label: 'typeName', value: 'id', checkStrictly: true }"
                 clearable
                 :style="style"
               />
@@ -297,7 +297,7 @@ export default {
         APPLICANT_ID: this.userId + ''
       }
       if (CATEGORY_ID) {
-        eq.CATEGORY_ID = CATEGORY_ID
+        eq.CATEGORY_ID = CATEGORY_ID + ''
       }
       if (FLOW_ID) {
         eq.FLOW_ID = FLOW_ID
