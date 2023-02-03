@@ -17,8 +17,16 @@
                 {{ "流程Id:" + activity.flowId }}
               </span>
           </p>
+          <!--  
+            // businessType = 0 资产入库
+            // businessType = 1 分配资产
+            // businessType = 3 借用
+            // businessType = 4 维修
+            // businessType =5 报废
+            // 新：业务操作类型 1.入库，2.分配，3.归还，4.借用，5.维修，6.报废，7.修改 , 8.盘亏 
+          -->
           <p
-            v-if="activity.businessType == 0 || activity.businessType == 2 || activity.businessType == 4 || activity.businessType == 8 || activity.businessType == 6 || activity.businessType == 10"
+            v-if="activity.businessType == 1 || activity.businessType == 3 || activity.businessType == 4 || activity.businessType == 5 || activity.businessType == 6 || activity.businessType == 8 "
           >
             {{ 
               activity.creatorName + " ,于 " 
@@ -77,37 +85,32 @@ export default {
       // businessType = 3 借用
       // businessType = 4 维修
       // businessType =5 报废
+      // 新：业务操作类型 1.入库，2.分配，3.归还，4.借用，5.维修，6.报废，7.修改 , 8.盘亏
       let businessTypeText = "入库"
       switch (id) {
-          case 0:
+          case 1:
               businessTypeText = "入库"
               break
-          case 1:
+          case 2:
               businessTypeText = "分配"
               break
-          case 2:
+          case 3:
               businessTypeText = "归还"
               break
-          // case 3:
-          //   businessTypeText ="维修"
-          //  break;
           case 4:
-              businessTypeText = "报废"
+              businessTypeText = "借用"
               break
           case 5:
-              businessTypeText = "传递"
+              businessTypeText = "维修"
               break
           case 6:
-              businessTypeText = "借用"
+              businessTypeText = "报废"
               break
           case 7:
               businessTypeText = "修改"
               break
           case 8:
-              businessTypeText = "归还"
-              break
-          case 10:
-              businessTypeText = "报损"
+              businessTypeText = "盘亏"
               break
       }
       return businessTypeText
