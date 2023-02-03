@@ -142,6 +142,7 @@ export default {
             assetName: this.info.assetName,
             assetTypeId: this.info.assetTypeId
           },
+          personalId:this.$route.query.personalId ? this.$route.query.personalId : null,
           attachmentList: this.fileList.map(item => {
             return {
               name: item.name,
@@ -150,6 +151,7 @@ export default {
           }),
           revoke: 'true'
         }
+        console.log(data,'data')
         repair(data).then(res => {
           this.dialogVisible = false
           this.$message.success(res.msg)

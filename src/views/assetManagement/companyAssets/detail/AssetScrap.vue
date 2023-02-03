@@ -154,6 +154,7 @@ export default {
             assetName: this.info.assetName,
             assetTypeId: this.info.assetTypeId
           },
+           personalId:this.$route.query.personalId ? this.$route.query.personalId : null,
           attachmentList: this.fileList.map(item => {
             return {
               name: item.name,

@@ -174,6 +174,7 @@ export default {
         path: '/assetManagement/companyAssets/companyAssets-auth/detail',
         query: {
           id: row.assetId,
+          personalId:row.id,
           status: this.statusFormatter(row),
           isApplying: row.isApplying,
           manageType: row.manageType
