@@ -153,6 +153,13 @@ export default {
         returnAsset(data).then(res => {
           this.dialogVisible = false
           this.$message.success(res.msg)
+           const obj = { 
+            name: "myAssets",
+            params:{
+              tab: 2
+            }
+          };
+          this.$tab.closeOpenPage(obj)
         }).catch(() => {
           this.dialogVisible = false
         })

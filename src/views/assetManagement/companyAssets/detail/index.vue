@@ -229,7 +229,7 @@
 
         <el-row>
           <el-col :span="12">
-            <el-form-item label="证书文件" prop="url">
+            <el-form-item label="附件上传" prop="url">
               <el-upload
                 action
                 :on-change="upChange"
@@ -335,7 +335,7 @@ export default {
     // 上传校验
     const check = (rule, value, callback) => {
       if (!this.url) {
-        callback(new Error("请上传证书文件"));
+        callback(new Error("请上传附件"));
       } else {
         callback();
       }
