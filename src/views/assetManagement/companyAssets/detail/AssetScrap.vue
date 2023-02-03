@@ -185,7 +185,7 @@ export default {
       const params = {
         assetTypeIds: this.info.assetTypeId,
         categoryId: 6,
-        deptId: this.info.departmentId
+        deptId: this.info.departmentId ? this.info.departmentId : JSON.parse(window.localStorage.getItem("user")).deptId
       }
       getFlow(params).then(res => {
         this.list = JSON.parse(res.data.json).list
