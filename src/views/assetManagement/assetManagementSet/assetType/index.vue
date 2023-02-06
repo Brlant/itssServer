@@ -391,7 +391,18 @@ export default {
       addEdit: false,
       title: "",
       typeData: [],
-      diaForm: {},
+      diaForm: {
+        typeName:'',
+        typeNo:'',
+        typePinyinAbbr:"",
+        manageType:'',
+        hasDepreciation:'',
+        infoTemplateId:'',
+        flowGroupId:'',
+        hasMaintainExpire:'',
+        hasUserfulExpire:'',
+        hasCertificate:''
+      },
       n: -1,
       total: 0,
       page: {

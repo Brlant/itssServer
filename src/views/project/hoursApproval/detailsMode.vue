@@ -154,7 +154,7 @@ export default{
         },
         showMorTime(){
             this.$refs.timePick.$refs.reference.childNodes[1].focus()
-             this.$refs.timePick.$refs.reference.childNodes[3].focus()
+            this.$refs.timePick.$refs.reference.childNodes[3].focus()
         },
         pickerChange(val){
             console.log(val,'aaa')
