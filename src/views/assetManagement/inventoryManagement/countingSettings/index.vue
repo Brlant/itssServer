@@ -4,7 +4,9 @@
       <i class="el-icon-arrow-left"></i>
       <span>盘点设置</span>
     </div>
-    <div>
+    <div
+      style='margin:10px 0'
+    >
       <span> 
         盘点审批流程 
       </span>
@@ -16,7 +18,7 @@
       </span>
     </div>
     <div class='process'>
-    
+        <count-asset></count-asset>
     </div>
   </div>
 </template>

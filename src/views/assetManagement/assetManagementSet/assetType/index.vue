@@ -580,6 +580,7 @@ export default {
     add() {
       this.addEdit = true;
       this.isEdit = false;
+      this.title='新增分类'
     },
     // 新增或者编辑分类
     editOrAdd(item, data) {
@@ -588,17 +589,21 @@ export default {
       if (item == 1) {
         //编辑分类
         this.isEdit = true;
-        this.diaForm = data;
+        this.diaForm = this.deepClone(data);
+        this.title='编辑分类'
       } else if (item == 2) {
         //新增分类
         this.diaForm = {};
         this.parentId = data.parentId;
         this.isEdit = false;
+        this.title='新增分类'
+
       } else {
         //新增子分类
         this.diaForm = {};
         this.parentId = data.id;
         this.isEdit = false;
+        this.title='新增分类'
       }
     },
     //删除资产分类
