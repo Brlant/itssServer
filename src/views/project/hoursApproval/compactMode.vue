@@ -250,7 +250,7 @@ export default {
   methods: {
     filterCheck(projectId) {
       return (
-        this.userInfo.userId == 1 || this.projectdirector.includes(projectId)
+        this.userInfo.userId == 1 || this.queryId.includes(projectId)
       );
     },
     styleRed(two, three, four) {

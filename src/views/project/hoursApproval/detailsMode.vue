@@ -125,8 +125,10 @@ export default{
      this.dateRange=a+'-'+b
       this.userInfo = JSON.parse(window.localStorage.getItem("user"))?JSON.parse(window.localStorage.getItem("user")):[]
    },
+
     methods:{
             filterCheck(projectId){
+                  this.projectdirector=this.queryId
                 return this.userInfo.userId == 1 || this.projectdirector.includes(projectId);
             },
             filterStatus(item){

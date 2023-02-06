@@ -339,6 +339,15 @@ export default {
     },
     pickerChange(value, item) {
       console.log(111)
+      this.datalist=[
+        {
+        projectId:'',
+        workTypeId:'',
+        workTime:'',
+        workContent:'',
+        workTitle:''
+      }
+      ]
       this.listTwo=[]
       let time=moment(value).format('YYYY-MM-DD')
        this.weekStart=time

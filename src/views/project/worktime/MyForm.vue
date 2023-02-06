@@ -59,13 +59,13 @@ export default {
         return {
             rules: {
                 projectId: [
-                    { required: true, message: '请输入项目名称', trigger: 'change' },
+                    { required: true, message: '请输入项目名称', trigger: 'blur' },
                 ],
                 workTitle: [
                     { required: true, message: '请输入标题', trigger: 'blur' }
                 ],
                 workTypeId: [
-                    {  required: true, message: '请选择工作类型', trigger: 'change' }
+                    {  required: true, message: '请选择工作类型', trigger: 'blur' }
                 ],
                 workTime: [
                     { required: true, message: '请输入工作时长', trigger: 'blur' },
