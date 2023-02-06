@@ -39,13 +39,62 @@
     <div class="tab-box">
       <my-tabs 
         v-model="tab"
-        :options="tabOptions"
+        :options="options"
         @change="change"
       />
     </div>
     <!-- 表格部分 -->
     <div class="main">
-      
+      <my-tabs 
+        v-model="active"
+        :options="tabOptions"
+        size="small"
+      />
+      <el-table
+        :data="tableData"
+        border
+        class="table"
+      >
+        <el-table-column 
+          align="center"
+          label="资产编号"
+          prop="assetId"
+        />
+        <el-table-column 
+          align="center"
+          label="资产名称"
+          prop="assetName"
+        />
+        <el-table-column 
+          align="center"
+          label="资产类型"
+          prop="assetTypeName"
+        />
+        <el-table-column 
+          align="center"
+          label="保管人"
+          prop="keeper"
+        />
+        <el-table-column 
+          align="center"
+          label="盘点进度"
+        />
+        <el-table-column 
+          align="center"
+          label="资产状态"
+        />
+        <el-table-column
+          align="center"
+          label="操作"
+        >
+          <el-button type="text">
+            确认
+          </el-button>
+          <el-button type="text" class="redBtn">
+            报损
+          </el-button>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -59,10 +108,16 @@ export default {
   },
   data() {
     return {
-      tabOptions: [
+      options: [
         { label: '保管人确认', value: 0 }
       ],
-      tab: 0
+      tabOptions: [
+        { label: '待确认', value: 0 },
+        { label: '已确认', value: 1 }
+      ],
+      tab: 0,
+      active: 0,
+      tableData: [{}]
     }
   },
   methods: {
@@ -105,6 +160,16 @@ export default {
   }
   .tab-box {
     padding: 10px 15px;
+  }
+  .main {
+    background: #fff;
+    padding: 15px;
+    .table {
+      margin-top: 10px;
+      .redBtn {
+        color: #f56c6c;
+      }
+    }
   }
 }
 </style>

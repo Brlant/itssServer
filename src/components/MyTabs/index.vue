@@ -1,6 +1,6 @@
 <template>
   <div class="my-tabs">
-    <div class="tabs">
+    <div :class="['tabs', size]">
       <div
         v-for="(item, index) in options"
         :key="index"
@@ -20,7 +20,8 @@
 export default {
   props: [
     'options',
-    'value'
+    'value',
+    'size'
   ],
   methods: {
     change(index) {
@@ -61,6 +62,9 @@ export default {
         background: #3d70ff;
       }
     }
+  }
+  .small {
+    font-size: 14px;
   }
 }
 </style>
