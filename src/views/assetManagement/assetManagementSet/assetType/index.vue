@@ -512,7 +512,12 @@ export default {
       });
     },
     getTemplate() {
-      getAssetTemplate({}).then((res) => {
+      let params={
+        pageNum:1,
+        pageSize:10000,
+        status:1
+      }
+      getAssetTemplate(params).then((res) => {
         this.detailTemplates = res.rows;
       });
     },
