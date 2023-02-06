@@ -31,7 +31,7 @@
           </div>
         </div>
       </div>
-      <el-button type="text">
+      <el-button type="text" @click="viewScope">
         查看盘点范围
       </el-button>
     </div>
@@ -123,6 +123,9 @@ export default {
   methods: {
     change() {
 
+    },
+    viewScope() {
+      
     }
   }
 }
