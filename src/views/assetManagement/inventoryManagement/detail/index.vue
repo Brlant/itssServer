@@ -43,6 +43,10 @@
         @change="change"
       />
     </div>
+    <!-- 表格部分 -->
+    <div class="main">
+      
+    </div>
   </div>
 </template>
 
