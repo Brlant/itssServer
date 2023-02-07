@@ -6,7 +6,7 @@
       </span>
       <div class="btns">
         <div class="item">
-          <span>发起盘点</span>
+          <span @click="openDialog">发起盘点</span>
         </div>
         <div class="item">
           <span>盘点设置</span>
@@ -52,17 +52,28 @@
         label="当前状态"
       />
     </el-table>
+    <!-- 发起盘点弹窗 -->
+    
   </div>
 </template>
 
 <script>
+
 export default {
+  components: {
+    
+  },
   data() {
     return {
       tableData: [{}]
     }
   },
   methods: {
+    // 打开发起盘点弹窗
+    openDialog() {
+      
+    },
+    // 进入详情
     goDetail() {
       this.$router.push({
         path: '/assetManagement/inventoryManagement-auth/detail'

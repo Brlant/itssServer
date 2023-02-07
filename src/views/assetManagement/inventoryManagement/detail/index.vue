@@ -87,15 +87,43 @@
           align="center"
           label="操作"
         >
-          <el-button type="text">
+          <el-button type="text" size="small">
             确认
           </el-button>
-          <el-button type="text" class="redBtn">
+          <el-button type="text" size="small" class="redBtn">
             报损
           </el-button>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 盘点范围弹窗 -->
+    <el-dialog
+      title="盘点范围"
+      :visible.sync="dialogVisible"
+      center
+      width="30%"
+      destroy-on-close
+    >
+      <div class="content">
+        <div class="row">
+          <p class="row-name">涉及资产类型</p>
+          <p class="row-value">
+            111
+          </p>
+        </div>
+        <div class="row">
+          <p class="row-name">涉及资产状态</p>
+          <p class="row-value">
+            111
+          </p>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -117,7 +145,8 @@ export default {
       ],
       tab: 0,
       active: 0,
-      tableData: [{}]
+      tableData: [{}],
+      dialogVisible: false
     }
   },
   methods: {
@@ -125,7 +154,7 @@ export default {
 
     },
     viewScope() {
-      
+      this.dialogVisible = true
     }
   }
 }
@@ -173,6 +202,23 @@ export default {
         color: #f56c6c;
       }
     }
+  }
+  .content {
+    padding: 0 15px;
+    .row {
+      margin-bottom: 25px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+      .row-name {
+        color: #8294ad;
+      }
+    }
+  }
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
 }
 </style>
