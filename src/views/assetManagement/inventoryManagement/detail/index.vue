@@ -114,7 +114,7 @@
         <div class="row">
           <p class="row-name">涉及资产状态</p>
           <p class="row-value">
-            111
+            222
           </p>
         </div>
       </div>
