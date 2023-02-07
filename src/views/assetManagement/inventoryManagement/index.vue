@@ -8,6 +8,7 @@
         <div class="item">
           <span @click="openDialog">发起盘点</span>
         </div>
+         <!-- @click='countSet'暂时不做 -->
         <div class="item">
           <span>盘点设置</span>
         </div>
@@ -77,6 +78,12 @@ export default {
     goDetail() {
       this.$router.push({
         path: '/assetManagement/inventoryManagement-auth/detail'
+      })
+    },
+    //盘点设置按钮
+    countSet(){
+      this.$router.push({
+        path: '/assetManagement/inventoryManagement-auth/countingSettings'
       })
     }
   }

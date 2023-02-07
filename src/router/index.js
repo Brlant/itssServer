@@ -480,6 +480,20 @@ export const dynamicRoutes = [
     ]
   },
   {
+    path: '/assetManagement/inventoryManagement-auth',
+    component: Layout,
+    hidden: true,
+    permissions: ['inventory'],
+    children: [
+      {
+        path: 'countingSettings',
+        component: () => import('@/views/assetManagement/inventoryManagement/countingSettings/index'),
+        name: 'countingSettings',
+        meta: { title: '盘点任务详情', noCache:false  }
+      }
+    ]
+  },
+  {
     path: '/assetManagement/assetManagementSet/quickAsset-auth',
     component: Layout,
     hidden: true,

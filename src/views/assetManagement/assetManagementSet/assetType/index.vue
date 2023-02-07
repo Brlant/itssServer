@@ -73,8 +73,16 @@
                   新增子分类
                 </div>
                 <div class="select-list" 
-                @click="delAsset(data)">删除分类</div>
+                    style='color:#f56c6c'
+                  @click="stopOrUse(data.id,1)" v-if='data.status==0'>
+                  停用分类
+                </div>
+                <div class="select-list" 
+                  @click="stopOrUse(data.id,0)" v-if='data.status==1'>
+                  启用分类
+                </div>
               </div>
+              
             </span>
           </el-tree>
         </div>
@@ -512,7 +520,12 @@ export default {
       });
     },
     getTemplate() {
-      getAssetTemplate({}).then((res) => {
+      let params={
+        pageNum:1,
+        pageSize:10000,
+        status:1
+      }
+      getAssetTemplate(params).then((res) => {
         this.detailTemplates = res.rows;
       });
     },
@@ -573,8 +586,21 @@ export default {
       });
     },
     add() {
+         this.diaForm={
+         typeName:'',
+        typeNo:'',
+        typePinyinAbbr:"",
+        manageType:'',
+        hasDepreciation:'',
+        infoTemplateId:'',
+        flowGroupId:'',
+        hasMaintainExpire:'',
+        hasUserfulExpire:'',
+        hasCertificate:''
+      },
       this.addEdit = true;
       this.isEdit = false;
+      this.title='新增分类'
     },
     // 新增或者编辑分类
     editOrAdd(item, data) {
@@ -583,17 +609,21 @@ export default {
       if (item == 1) {
         //编辑分类
         this.isEdit = true;
-        this.diaForm = data;
+        this.diaForm = this.deepClone(data);
+        this.title='编辑分类'
       } else if (item == 2) {
         //新增分类
         this.diaForm = {};
         this.parentId = data.parentId;
         this.isEdit = false;
+        this.title='新增分类'
+
       } else {
         //新增子分类
         this.diaForm = {};
         this.parentId = data.id;
         this.isEdit = false;
+        this.title='新增分类'
       }
     },
     //删除资产分类
@@ -659,6 +689,7 @@ export default {
         if (res.code == 200) {
           this.$message.success("操作成功");
           this.getList();
+          this.getTreeselect()
         }
       });
     },
