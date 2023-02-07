@@ -73,8 +73,16 @@
                   新增子分类
                 </div>
                 <div class="select-list" 
-                @click="delAsset(data)">删除分类</div>
+                    style='color:#f56c6c'
+                  @click="stopOrUse(data.id,1)" v-if='data.status==0'>
+                  停用分类
+                </div>
+                <div class="select-list" 
+                  @click="stopOrUse(data.id,0)" v-if='data.status==1'>
+                  启用分类
+                </div>
               </div>
+              
             </span>
           </el-tree>
         </div>
@@ -578,6 +586,18 @@ export default {
       });
     },
     add() {
+         this.diaForm={
+         typeName:'',
+        typeNo:'',
+        typePinyinAbbr:"",
+        manageType:'',
+        hasDepreciation:'',
+        infoTemplateId:'',
+        flowGroupId:'',
+        hasMaintainExpire:'',
+        hasUserfulExpire:'',
+        hasCertificate:''
+      },
       this.addEdit = true;
       this.isEdit = false;
       this.title='新增分类'
@@ -669,6 +689,7 @@ export default {
         if (res.code == 200) {
           this.$message.success("操作成功");
           this.getList();
+          this.getTreeselect()
         }
       });
     },

@@ -8,7 +8,8 @@
         <div class="item">
           <span>发起盘点</span>
         </div>
-        <div class="item" @click='countSet'>
+         <!-- @click='countSet'暂时不做 -->
+        <div class="item">
           <span>盘点设置</span>
         </div>
       </div>
@@ -68,6 +69,7 @@ export default {
         path: '/assetManagement/inventoryManagement-auth/detail'
       })
     },
+    //盘点设置按钮
     countSet(){
       this.$router.push({
         path: '/assetManagement/inventoryManagement-auth/countingSettings'
