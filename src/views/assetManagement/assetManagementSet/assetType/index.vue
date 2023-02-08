@@ -43,7 +43,7 @@
             >
               <span>{{ data.typeName }}</span>
               <span v-if="data.id == n">
-                <el-button type="text" size="mini" 
+                <el-button type="text" size="mini"
                 @click.stop="oper(data)">
                   <i class="el-icon-more" style="transform: rotate(90deg)"></i>
                 </el-button>
@@ -52,7 +52,7 @@
                 v-if="data.id == n && isshow"
                 @mouseleave="leaveOne"
                 style="
-                  
+
                   position: absolute;
                   right:35px;
                   width: 100px;
@@ -60,11 +60,11 @@
                   background: #ffffff;
                 "
               >
-                <div class="select-list" 
+                <div class="select-list"
                 @click.stop="editOrAdd('1', data)">
                   编辑分类
                 </div>
-                <div class="select-list" 
+                <div class="select-list"
                 @click.stop="editOrAdd('2', data)">
                   新增分类
                 </div>
@@ -72,17 +72,17 @@
                  @click.stop="editOrAdd('3', data)">
                   新增子分类
                 </div>
-                <div class="select-list" 
+                 <div class="select-list"
                     style='color:#f56c6c'
                   @click="stopOrUse(data.id,1)" v-if='data.status==0'>
                   停用分类
                 </div>
-                <div class="select-list" 
+                <div class="select-list"
                   @click="stopOrUse(data.id,0)" v-if='data.status==1'>
                   启用分类
                 </div>
               </div>
-              
+
             </span>
           </el-tree>
         </div>
@@ -91,17 +91,17 @@
         <div class="right-header">
           <div>{{ rightTitle }}</div>
           <div>
-            <el-button type="text" 
+            <el-button type="text"
             @click="add">添加</el-button>
           </div>
         </div>
 
         <el-table :data="typeData">
           <!-- <el-table-column type="selection" width="50" align="center" /> -->
-          <el-table-column 
-            sortable 
-            label="类型ID" 
-            align="center" 
+          <el-table-column
+            sortable
+            label="类型ID"
+            align="center"
             prop="id" />
           <el-table-column
             sortable
@@ -110,9 +110,9 @@
             prop="typeNo"
           >
           </el-table-column>
-          <el-table-column 
-            label="类型名称" 
-            align="center" 
+          <el-table-column
+            label="类型名称"
+            align="center"
             prop="typeName">
           </el-table-column>
           <el-table-column
@@ -120,20 +120,20 @@
             align="center"
             prop="typePinyinAbbr"
           />
-          <el-table-column 
-            label="创建时间" 
-            align="center" 
+          <el-table-column
+            label="创建时间"
+            align="center"
             prop="createTime">
           </el-table-column>
-          <el-table-column 
-            label="管理方式" 
-            align="center" 
+          <el-table-column
+            label="管理方式"
+            align="center"
             prop="manageType"
             :formatter="formatter">
           </el-table-column>
-          <el-table-column 
-            label="备注" 
-            align="center" 
+          <el-table-column
+            label="备注"
+            align="center"
             prop="remark">
           </el-table-column>
           <el-table-column
@@ -143,19 +143,19 @@
             class-name="small-padding fixed-width"
           >
             <template slot-scope="scope">
-               <span 
-                  style="margin-left: 10px" 
+               <span
+                  style="margin-left: 10px"
                   v-hasPermi="['system:user:add']">
                 <el-button
                   size="mini"
                   type="text"
-                 
+
                   @click="editOrAdd('1', scope.row)"
                   >编辑</el-button
                 >
               </span>
-               <span 
-                  style="margin-left: 10px" 
+               <span
+                  style="margin-left: 10px"
                   v-hasPermi="['system:user:add']">
                 <el-button
                   size="mini"
@@ -166,7 +166,7 @@
                 >
               </span>
               <span
-                style="margin-left: 10px" 
+                style="margin-left: 10px"
                 v-hasPermi="['system:user:add']">
                 <el-button
                   size="mini"
@@ -177,8 +177,8 @@
                   >停用</el-button
                 >
               </span>
-              <span 
-                style="margin-left: 10px" 
+              <span
+                style="margin-left: 10px"
                 v-hasPermi="['system:user:add']">
                 <el-button
                   size="mini"
@@ -206,6 +206,8 @@
       class="dialogForm"
       width="50%"
       :visible.sync="addEdit"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
     >
       <el-form
         :model="diaForm"
@@ -331,8 +333,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item 
-            label="使用期限提醒" 
+            <el-form-item
+            label="使用期限提醒"
             prop="hasUserfulExpire">
               <el-radio-group v-model="diaForm.hasUserfulExpire">
                 <el-radio
@@ -369,9 +371,11 @@
         </el-row>
       </el-form>
       <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary" 
-        @click="sureEdit">确定</el-button>
-        <el-button 
+        <el-button
+          :disabled="isLoading"
+          type="primary"
+          @click="sureEdit">确定</el-button>
+        <el-button
         @click="cancelFn">取消</el-button>
       </div>
     </el-dialog>
@@ -493,8 +497,9 @@ export default {
             message: "证书管理不能为空",
             trigger: "blur",
           },
-        ]
+        ],
       },
+      isLoading:false
     };
   },
   created() {
@@ -513,7 +518,7 @@ export default {
      defaultData() {
       // console.log(this.$refs.tree,'this.$refs.tree')
       this.$refs.trees.setCurrentKey(this.curren)
-      
+
       this.$nextTick(function () {
         console.log(this.curren,'gggggggggg')
         this.$refs.trees.setCurrentKey(this.curren); //data[0].id为默认选中的节点
@@ -546,7 +551,7 @@ export default {
     handleNodeClick(data) {
       this.curren=data.id
       this.n = data.id;
-      
+
       this.isshow = false;
       console.log(data, "data1111111111");
       if (data.parentId != 0) {
@@ -581,12 +586,12 @@ export default {
       console.log(this.curren,'curren')
       getTypeData().then((response) => {
         this.typeOptions = response.data;
-        console.log(this.typeOptions);
+        console.log(this.typeOptions,'2222');
          this.defaultData()
       });
     },
     add() {
-         this.diaForm={
+      this.diaForm={
          typeName:'',
         typeNo:'',
         typePinyinAbbr:"",
@@ -639,8 +644,9 @@ export default {
     //新增的方法
     newAdd() {
       let data = { ...this.diaForm, parentId: this.parentId };
-      console.log(data, "dddddddddddddd");
+      // console.log(data, "dddddddddddddd");
       // return;
+      this.isLoading = true;
       newAddAsset(data).then((res) => {
         if (res.code == 200) {
           this.$message.success("新增成功");
@@ -649,20 +655,29 @@ export default {
           this.defaultData()
           console.log(this.curren,'cirren')
           this.addEdit = false;
+          this.isLoading = false;
         }
+      }).catch(() =>
+      {
+        this.isLoading = false;
       });
     },
     //编辑的方法
     edit() {
         let data = { ...this.diaForm };
+        this.isLoading = true;
       editAsset(data).then((res) => {
         if (res.code == 200) {
           this.$message.success("编辑成功");
           this.addEdit = false;
+          this.isLoading = false;
           this.getTreeselect();
            this.getList();
           this.defaultData()
         }
+      }).catch(() =>
+      {
+        this.isLoading = false;
       });
     },
     oper(data) {

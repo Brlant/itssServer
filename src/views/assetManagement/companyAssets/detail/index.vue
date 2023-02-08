@@ -258,7 +258,10 @@
       </el-button>
       </el-form>
       <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary" @click="sureApply">确定</el-button>
+        <el-button
+          :disabled="isLoading"
+          type="primary"
+          @click="sureApply">确定</el-button>
         <el-button @click="cancelFn">取消</el-button>
       </div>
     </div>
@@ -388,7 +391,8 @@ export default {
       showEntry: false,
       showRepair: false,
       showScrap: false,
-      showReturn: false
+      showReturn: false,
+      isLoading: false,
     };
   },
   created() {
@@ -528,10 +532,12 @@ export default {
           }
           // console.log(params,'params')
           // return
+             this.isLoading = true
           setWarehousing(params).then(res=>{
             if(res.code==200){
               this.$message.success(res.msg)
               this.dialogShow=false
+              this.isLoading = false
             //   this.$router.push({
             //   name: "myAssets",
             //   params:{
@@ -546,6 +552,8 @@ export default {
               };
               this.$tab.closeOpenPage(obj);
             }
+          }).catch(()=>{
+            this.isLoading = false
           })
       }else{
         this.selectAllCopy=JSON.parse(JSON.stringify(this.selectAll))

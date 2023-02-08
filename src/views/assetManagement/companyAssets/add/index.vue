@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <header>
-      <div 
-        class="left" 
+      <div
+        class="left"
         @click="$router.push('/assetManagement/companyAssets')"
       >
         <i class="el-icon-arrow-left"></i>
@@ -19,10 +19,10 @@
     </header>
     <!-- 表单部分 -->
     <main>
-      <el-form 
+      <el-form
         :model="formData"
         :rules="rules"
-        ref="elForm" 
+        ref="elForm"
         label-width="120px"
       >
         <el-row>
@@ -41,14 +41,14 @@
           </el-col>
           <el-col :span="span">
             <el-form-item label="填充模板:" prop="templateId">
-              <el-select 
+              <el-select
                 v-model="formData.templateId"
                 :disabled="!formData.assetTypeId.length"
                 @change="change"
                 :style="style"
                 clearable
               >
-                <el-option 
+                <el-option
                   v-for="(item, index) in template"
                   :key="index"
                   :label="item.templateName"
@@ -118,10 +118,10 @@
             </el-col>
             <el-col :span="span">
               <el-form-item label="数量:" prop="amount">
-                <el-input 
+                <el-input
                   v-model.number="formData.amount"
                   :disabled="manageType === 2"
-                  :style="style" 
+                  :style="style"
                 />
               </el-form-item>
             </el-col>
@@ -181,7 +181,7 @@
               :span="span"
             >
               <el-form-item :label="item.label" :prop="item.name">
-                <el-input 
+                <el-input
                   v-model.trim="formData[item.name]"
                   :style="style"
                 />
@@ -397,7 +397,7 @@ export default {
         addAssets(data).then(res => {
           this.$message.success(res.msg)
           this.$router.push({
-            name: 'companyAssets',
+            name: 'CompanyAssets',
             params: {
               tab: 10
             }

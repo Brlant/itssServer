@@ -49,6 +49,7 @@
           {{scope.row.status=='1'?'停用':'启用'}}
           </el-button>
           <el-button
+            v-if="scope.row.status!='1'"
             size="mini"
             type="text"
             :disabled="scope.row.status=='1'"

@@ -27,8 +27,8 @@
       </el-form-item>
       <el-form-item label="请输入资产数量" prop="amount">
         <div style="width:100%; display:flex; justify-content:flex-end">
-          <el-input-number 
-            v-model="formData.amount" 
+          <el-input-number
+            v-model="formData.amount"
             :min="1"
             :step="1"
             :disabled="manageType === 2"
@@ -54,8 +54,8 @@
     </el-form>
     <!-- 表单结束 -->
     <!-- 流程开始 -->
-    <div 
-      style="cursor:pointer" 
+    <div
+      style="cursor:pointer"
       v-show="!isShow"
     >
       <span @click="isShow = true">
@@ -72,7 +72,10 @@
     </div>
     <!-- 流程结束 -->
     <div slot="footer" style="display:flex; justify-content:flex-end; align-items:center">
-      <el-button type="primary" @click="submit">
+      <el-button
+        type="primary"
+        :disabled="submitLoading"
+        @click="submit">
         确定
       </el-button>
       <el-button @click="dialogVisible = false">
@@ -83,7 +86,7 @@
 </template>
 
 <script>
-import { 
+import {
   claim,
   getFlow
 } from '@/api/assetManagement/companyAssets'
@@ -114,7 +117,8 @@ export default {
         amount: [
           { required: true, trigger: 'blur', message: '请输入资产数量' }
         ]
-      }
+      },
+      submitLoading: false
     }
   },
   watch: {
@@ -141,12 +145,15 @@ export default {
           deptId: JSON.parse(window.localStorage.getItem("user")).deptId,
           revoke: "true",
         }
+        this.submitLoading = true;
         claim(data).then(res => {
           this.dialogVisible = false
+          this.submitLoading = false;
           this.$message.success(res.msg)
           this.$emit('success')
         }).catch(() => {
           this.dialogVisible = false
+          this.submitLoading = false;
         })
       })
     },
