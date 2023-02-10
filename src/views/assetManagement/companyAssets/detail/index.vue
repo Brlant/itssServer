@@ -176,17 +176,17 @@
     </div>
     <!-- tab切换部分 -->
     <div class="tabs">
-      <easy-tabs 
-        v-model="tab" 
-        :options="tabOptions" 
-        @change="change" 
+      <easy-tabs
+        v-model="tab"
+        :options="tabOptions"
+        @change="change"
       />
       <div class="content">
         <!-- 详细信息 -->
-        <detail-info 
-          v-if="tab === 0" 
-          :info="info" 
-          :list="list" 
+        <detail-info
+          v-if="tab === 0"
+          :info="info"
+          :list="list"
         />
         <!-- 使用记录 -->
         <use-record v-if="tab === 1" />
@@ -262,8 +262,8 @@
         <el-button @click="cancelFn">取消</el-button>
       </div>
     </div>
-     <div 
-      style="cursor:pointer" 
+     <div
+      style="cursor:pointer"
       v-if="!isShow"
     >
       <span @click="isShow = true">
@@ -278,22 +278,22 @@
         />
       </div>
     </div>
-    
+
     </el-dialog>
    <!-- 资产入库发起end -->
     <!-- 发起报废 -->
-    <asset-scrap 
-      ref="scrap" 
-      :info="info" 
+    <asset-scrap
+      ref="scrap"
+      :info="info"
     />
     <!-- 发起维修 -->
     <asset-repair
-      ref="repair" 
-      :info="info" 
+      ref="repair"
+      :info="info"
     />
     <!-- 发起归还 -->
-    <asset-return  
-      ref="return" 
+    <asset-return
+      ref="return"
       :info="info" >
 
     </asset-return>
@@ -395,7 +395,7 @@ export default {
     if (tabFlag) {
       this.tabFlag = tabFlag
     }
-    
+
     this.getDetail();
   },
   methods: {
@@ -410,7 +410,7 @@ export default {
       // 维修
       if (
         (this.info.status == 1 || this.info.status == 2)
-        && this.info.manageType == 2 
+        && this.info.manageType == 2
         && this.info.isApplying == 0
       ) {
         this.showRepair = true;
@@ -419,7 +419,7 @@ export default {
       }
       // 报废
       // this.info.status == 7 意思是 资产未入库
-      // this.info.manageType == 2  意思是 是固定资产 
+      // this.info.manageType == 2  意思是 是固定资产
       // this.info.isApplying == 0  意思是 资产不在流程中
       if (
         (this.info.status == 1 || this.info.status == 2)
@@ -477,7 +477,7 @@ export default {
           console.log('aaaa')
           // this.selectAll.splice(n, 1);
             this.selectAll[n]=''
-        
+
         }else{
           this.selectAll[n]=n
         }
@@ -485,7 +485,7 @@ export default {
       this.selectAllCopy=[0,1,2,3]
       this.$forceUpdate()
       console.log(this.selectAllCopy,'this.selectAll')
-     
+
     },
     //弹框确认
     sureApply() {
@@ -496,10 +496,10 @@ export default {
          let count = []
             this.selectAll.forEach((i,index)=>{
             count.push(i)
-              
+
             })
            if(!this.selectAll.includes('') && this.selectAll.length==4 && count.length==4){
-        
+
           let attachList={
               name:this.name,
               url:this.url,
@@ -529,8 +529,8 @@ export default {
             //     tab:'2'
             //   }
             // });
-             const obj = { 
-              name: "myAssets",
+             const obj = {
+              name: "MyAssets",
               params:{
                 tab:'2'
               }
@@ -541,9 +541,9 @@ export default {
       }else{
         this.selectAllCopy=JSON.parse(JSON.stringify(this.selectAll))
       }
-     
+
        })
-     
+
     },
     // 详情
     getDetail() {
@@ -635,8 +635,8 @@ export default {
     goBack() {
       // 如果tabFlag有值，说明是从公司资产列表进来的
       if (this.tabFlag !== '') {
-        const obj = { 
-          name: "companyAssets",
+        const obj = {
+          name: "CompanyAssets",
           params:{
             tab: this.tabFlag
           }

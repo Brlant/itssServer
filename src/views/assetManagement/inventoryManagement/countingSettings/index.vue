@@ -1,21 +1,32 @@
 <template>
   <div>
     <div class="set-title">
-      <i class="el-icon-arrow-left"></i>
+      <i class="el-icon-arrow-left" @click="goBack"></i>
       <span>盘点设置</span>
     </div>
-    <div
+<!--    <div
       style='margin:10px 0'
     >
-      <span> 
-        盘点审批流程 
+      <span>
+        盘点审批流程
       </span>
       <span>
-         | 
+         |
       </span>
-      <span> 
-        盘点中设置 
+      <span>
+        盘点中设置
       </span>
+
+    </div>-->
+    <div class="select">
+          <span v-for="(data,index) in setList"
+                :key='index'
+                @click="checkSelect(data,index)">
+              <span class="cursor" :class="[{ current: n == index }]">
+                {{ data.name }}
+              </span>
+              <span v-if='index<setList.length-1'>|</span>
+          </span>
     </div>
     <div class='process'>
         <count-asset></count-asset>
@@ -30,9 +41,23 @@ export default {
     },
     data() {
         return {
-            
+          n: 0,
+          setList: [
+            {name: '盘点审批流程'},
+            // {name: '盘点中设置'}
+          ]
         }
+    },
+  methods:{
+    //返回
+    goBack() {
+      this.$router.go(-1);
+    },
+
+    checkSelect(data,index){
+      this.n = index
     }
+  }
 }
 </script>
 
@@ -61,4 +86,15 @@ export default {
         font-size: 15px;
       }
     }
+.select {
+  margin: 10px 0;
+  .cursor {
+    display: inline-block;
+    padding: 0 5px;
+    cursor: pointer;
+  }
+  .current {
+    color: #5f94ff;
+  }
+}
 </style>

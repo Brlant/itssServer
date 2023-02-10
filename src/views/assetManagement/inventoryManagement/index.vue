@@ -10,7 +10,7 @@
         </div>
          <!-- @click='countSet'暂时不做 -->
         <div class="item">
-          <span>盘点设置</span>
+          <span @click='countSet'>盘点设置</span>
         </div>
       </div>
     </div>
@@ -81,16 +81,88 @@
       @pagination="getList"
     />
     <!-- 发起盘点弹窗 -->
+    <el-dialog
+      destroy-on-close
+      title="发起盘点"
+      class="dialogForm"
+      width="30%"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="dialogShow"
+    >
+      <div v-if='isShow'>
+        <el-form
+          :model="diaForm"
+          ref="diaForm"
+          :rules="dialogRules"
+          :inline="false"
+          label-width="120px"
+          class="dialogFormInfo"
+        >
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="附件上传" prop="url">
+                <el-upload
+                  action
+                  :on-change="upChange"
+                  :before-remove="remove"
+                  :limit="1"
+                  accept=".jpg, .png, .pdf"
+                  :auto-upload="false"
+                >
+                  <el-button type="info"> 上传附件 </el-button>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="备注" prop="url">
+                <el-input v-model='diaForm.remark' type='textarea'>
+                </el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-button type="text" @click="viewFlowOne">
+            <span style="text-decoration: underline">
+              审批流程查看
+            </span>
+          </el-button>
+        </el-form>
+        <div class="txtAlignC dialogBtnInfo">
+          <el-button type="primary" @click="sureApply">确定</el-button>
+          <el-button @click="cancelFn">取消</el-button>
+        </div>
+      </div>
+      <div
+        style="cursor:pointer"
+        v-if="!isShow"
+      >
+      <span @click="isShow = true">
+        <i class="el-icon-arrow-left"></i>
+        返回
+      </span>
+        <div class="flow-wrap">
+          <factory-draw-flow
+            :FlowConfig="list"
+            modelType="see"
+            ref="flow"
+          />
+        </div>
+      </div>
 
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAssetInventory } from '@/api/assetManagement/inventoryManagement'
+import { getAssetInventory, fileUpload, getInventoryFlow } from '@/api/assetManagement/inventoryManagement'
+import {initiateInventory} from "../../../api/assetManagement/inventoryManagement";
+import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue";
 
 export default {
   components: {
-
+    FactoryDrawFlow
   },
   data() {
     return {
@@ -101,6 +173,18 @@ export default {
         pageSize: 10
       },
       total: 0,
+      dialogShow: false,
+      isShow: true,
+      diaForm:{
+
+      },
+      dialogRules:{
+
+      },
+      url: "",
+      name: "",
+      type:'',
+      list:[],
     }
   },
   mounted()
@@ -123,8 +207,82 @@ export default {
 
     // 打开发起盘点弹窗
     openDialog() {
+      this.dialogShow = true;
+    },
+
+    // 上传文件
+    upChange(file) {
+      let formData = new FormData();
+      formData.append("file", file.raw);
+      fileUpload(formData).then(res => {
+        this.url = res.data.url
+        this.name = res.data.name
+        this.type=this.name.substring(this.name.lastIndexOf('.'))
+      })
+    },
+
+    // 移除文件
+    remove() {
+      this.url = "";
+      this.name = "";
+      this.type=''
+    },
+
+    //查看流程图
+    viewFlowOne(){
+      console.log(JSON.parse(window.localStorage.getItem("user")).deptId)
+      // return
+      this.isShow = false
+      const params = {
+        // assetTypeIds: this.info.assetTypeId,
+        // categoryId: 1,
+        // deptId: this.info.departmentId ? this.info.departmentId : JSON.parse(window.localStorage.getItem("user")).deptId
+      }
+      getInventoryFlow(params).then(res => {
+        this.list = JSON.parse(res.data.flowInfoVoList[0].flowDefInfoVoList[0].flowProcDefRes.json).list
+      })
+    },
+
+    //弹框确认
+    sureApply() {
+      this.$refs.diaForm.validate(valid => {
+        if (!valid) {
+          return
+        }
+          let attachList={
+            name:this.name,
+            url:this.url,
+            type:this.type,
+            description:''
+          }
+          let attachmentList=[]
+          attachmentList.push(attachList)
+          let params={
+            attachmentList,
+            remark:this.diaForm.remark,
+            // deptId: this.info.departmentId ? this.info.departmentId : JSON.parse(window.localStorage.getItem("user")).deptId
+          }
+          // console.log(params,'params')
+          // return
+          initiateInventory(params).then(res=>{
+            if(res.code==200){
+              this.$message({
+                message: res.msg,
+                type: 'success'
+              });
+              this.dialogShow=false
+            }
+          })
+
+      })
 
     },
+
+    //弹框取消
+    cancelFn() {
+      this.dialogShow = false;
+    },
+
     // 进入详情
     goDetail(row) {
       this.$router.push({
@@ -134,6 +292,7 @@ export default {
         }
       })
     },
+
     //盘点设置按钮
     countSet(){
       this.$router.push({

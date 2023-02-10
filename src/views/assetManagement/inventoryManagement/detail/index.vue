@@ -3,41 +3,52 @@
     <!-- 头部 -->
     <div class="heading">
       <div class="left">
-        <i class="el-icon-arrow-left"></i>
+        <i class="el-icon-arrow-left" @click="goBack"></i>
         <div class="wrap">
           <div class="item">
             <span class="name">盘点任务编号：</span>
             <span class="value">
-              111
+              {{
+                titleInfo.id
+              }}
             </span>
           </div>
           <div class="item">
             <span class="name">创建时间：</span>
             <span class="value">
-              111
+              {{
+                titleInfo.createTime
+              }}
             </span>
           </div>
           <div class="item">
             <span class="name">创建人：</span>
             <span class="value">
-              111
+              {{
+                titleInfo.creatorName
+              }}
             </span>
           </div>
           <div class="item">
             <span class="name">备注：</span>
             <span class="value">
-              111
+              {{
+                titleInfo.remark
+              }}
             </span>
           </div>
         </div>
       </div>
+
+<!--      暂时不做
       <el-button type="text" @click="viewScope">
         查看盘点范围
-      </el-button>
+      </el-button>-->
+
     </div>
     <!-- tab部分 -->
     <div class="tab-box">
-      <my-tabs 
+      <my-tabs
         v-model="tab"
         :options="options"
         @change="change"
@@ -45,41 +56,42 @@
     </div>
     <!-- 表格部分 -->
     <div class="main">
-      <my-tabs 
+      <my-tabs
         v-model="active"
         :options="tabOptions"
         size="small"
+        @change="changeStatus"
       />
       <el-table
         :data="tableData"
         border
         class="table"
       >
-        <el-table-column 
+        <el-table-column
           align="center"
           label="资产编号"
           prop="assetId"
         />
-        <el-table-column 
+        <el-table-column
           align="center"
           label="资产名称"
           prop="assetName"
         />
-        <el-table-column 
+        <el-table-column
           align="center"
           label="资产类型"
           prop="assetTypeName"
         />
-        <el-table-column 
+        <el-table-column
           align="center"
           label="保管人"
           prop="keeper"
         />
-        <el-table-column 
+<!--        <el-table-column
           align="center"
           label="盘点进度"
-        />
-        <el-table-column 
+        />-->
+        <el-table-column
           align="center"
           label="资产状态"
         />
@@ -87,10 +99,18 @@
           align="center"
           label="操作"
         >
-          <el-button type="text" size="small">
+          <el-button
+            type="text"
+            size="small"
+            @click="onConfirm"
+          >
             确认
           </el-button>
-          <el-button type="text" size="small" class="redBtn">
+          <el-button
+            type="text"
+            size="small"
+            class="redBtn"
+          >
             报损
           </el-button>
         </el-table-column>
@@ -124,11 +144,17 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <!--  盘点确认弹框  -->
+    <el-dialog>
+
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import MyTabs from '@/components/MyTabs'
+import {getById,assetConfirm} from "@/api/assetManagement/inventoryManagement";
 
 export default {
   components: {
@@ -137,25 +163,97 @@ export default {
   data() {
     return {
       options: [
-        { label: '保管人确认', value: 0 }
+        {
+          label: '保管人确认',
+          value: 1
+        },
+        {
+          label: '执行人确认',
+          value: 2
+        },
+        {
+          label: '资产管理',
+          value: 3
+        },
       ],
       tabOptions: [
-        { label: '待确认', value: 0 },
-        { label: '已确认', value: 1 }
+        { label: '待确认', value: 1 },
+        { label: '已确认', value: 2 }
       ],
       tab: 0,
       active: 0,
-      tableData: [{}],
-      dialogVisible: false
+      titleInfo:{},
+      tableData: [],
+      dialogVisible: false,
+      loading: false
     }
   },
-  methods: {
-    change() {
+  created() {
+    this.getTableData()
+  },
 
+  methods: {
+    // 表格数据
+    getTableData(){
+      let data = {
+        id: this.$route.query.id,
+        roleType: this.tab + 1,
+        status: this.active + 1,
+      }
+      this.loading = true
+      getById(data).then(res=>{
+        this.titleInfo = res.data
+        this.tableData = res.data.list
+        this.loading = false
+      }).catch(() =>
+      {
+        this.loading = false
+      })
     },
+
     viewScope() {
       this.dialogVisible = true
-    }
+    },
+
+    // 确认
+    onConfirm(){
+      this.$confirm('确认吗？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        const params = {
+
+        }
+        assetConfirm(params).then(res => {
+          this.$message({
+            message: res.msg,
+            type: 'success'
+          });
+        })
+      }).catch(() =>
+      {
+      })
+    },
+
+    // tab切换
+    change() {
+      // this.queryParams.pageNum = 1
+      this.getTableData()
+    },
+
+    // 确认状态tab切换
+    changeStatus(){
+      this.getTableData()
+    },
+
+    // 分页
+    getList() {
+      this.getTableData()
+    },
+
+    // 返回上一页
+    goBack() {
+      this.$router.go(-1)
+    },
   }
 }
 </script>

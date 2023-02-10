@@ -476,23 +476,35 @@ export const dynamicRoutes = [
         component: () => import('@/views/assetManagement/inventoryManagement/detail/index'),
         name: 'inventoryManagementDetail',
         meta: { title: '盘点任务详情', noCache:false  }
-      }
-    ]
-  },
-  {
-    path: '/assetManagement/inventoryManagement-auth',
-    component: Layout,
-    hidden: true,
-    permissions: ['inventory'],
-    children: [
+      },
       {
         path: 'countingSettings',
         component: () => import('@/views/assetManagement/inventoryManagement/countingSettings/index'),
         name: 'countingSettings',
-        meta: { title: '盘点任务详情', noCache:false  }
+        meta: { title: '盘点设置', noCache:false  }
+      },
+      {
+        path: 'editCountAsset',
+        component: () => import('@/views/assetManagement/inventoryManagement/countingSettings/editCountAsset'),
+        name: 'editCountAsset',
+        meta: { title: '编辑盘点审批流程', noCache:false  }
       }
     ]
   },
+  // {
+  //   path: '/assetManagement/inventoryManagement-auth',
+  //   component: Layout,
+  //   hidden: true,
+  //   permissions: ['inventory'],
+  //   children: [
+  //     {
+  //       path: 'countingSettings',
+  //       component: () => import('@/views/assetManagement/inventoryManagement/countingSettings/index'),
+  //       name: 'countingSettings',
+  //       meta: { title: '盘点任务详情', noCache:false  }
+  //     }
+  //   ]
+  // },
   {
     path: '/assetManagement/assetManagementSet/quickAsset-auth',
     component: Layout,
@@ -587,7 +599,7 @@ export const dynamicRoutes = [
       }
     ]
   },
- 
+
   {
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
@@ -615,7 +627,7 @@ export const dynamicRoutes = [
         meta: { title: '新增资产编号规则',noCache:false  }
       }
     ]
-  }, 
+  },
   {
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
@@ -629,7 +641,7 @@ export const dynamicRoutes = [
         meta: { title: '资产编号规则编辑',noCache:false  }
       }
     ]
-  }, 
+  },
   {
     path: '/assetManagement/assetManagementSet/process',
     component: Layout,
@@ -643,7 +655,7 @@ export const dynamicRoutes = [
         meta: { title: '资产编号规则详情',noCache:false  }
       }
     ]
-  }, 
+  },
   {
     path: '/assetManagement/detailAssetProcess/process',
     component: Layout,
@@ -657,7 +669,7 @@ export const dynamicRoutes = [
         meta: { title: '公司资产流程详情',noCache:false  }
       }
     ]
-  }, 
+  },
   {
     path: '/assetManagement/allocateAssets/process',
     component: Layout,
@@ -671,7 +683,7 @@ export const dynamicRoutes = [
         meta: { title: '资产分配',noCache:false  }
       }
     ]
-  }, 
+  },
   {
     path: '/assetManagement/maintenanceRecords/detail',
     component: Layout,
@@ -685,7 +697,7 @@ export const dynamicRoutes = [
         meta: { title: '资产维修记录详情',noCache:false  }
       }
     ]
-  }, 
+  },
 ]
 
 // 防止连续点击多次路由报错
