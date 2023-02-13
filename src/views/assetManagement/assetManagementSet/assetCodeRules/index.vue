@@ -1,7 +1,7 @@
 <template>
  <div class="app-container">
   <div class="process-title">
-   <div style="font-size: 18px">资产管理规则</div>
+   <div style="font-size: 18px">资产编号规则</div>
    <div style="color: #1c6cf7;cursor:pointer" @click="add">+添加</div>
   </div>
   <el-table :data="processData">

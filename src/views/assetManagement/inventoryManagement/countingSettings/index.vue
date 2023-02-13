@@ -35,8 +35,8 @@
   </div>
 </template>
 <script>
-import countAsset from '@/views/assetManagement/inventoryManagement/countingSettings/countAsset'
-import editCountAsset from '@/views/assetManagement/inventoryManagement/countingSettings/editCountAsset'
+import countAsset from './countAsset'
+import editCountAsset from './editCountAsset'
 
 export default {
     components:{
