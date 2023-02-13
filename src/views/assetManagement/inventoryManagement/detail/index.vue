@@ -99,20 +99,29 @@
           align="center"
           label="操作"
         >
-          <el-button
-            type="text"
-            size="small"
-            @click="onConfirm"
-          >
-            确认
-          </el-button>
-          <el-button
-            type="text"
-            size="small"
-            class="redBtn"
-          >
-            报损
-          </el-button>
+          <template slot-scope="{row}">
+            <template v-if="active==0">
+              <el-button
+                type="text"
+                size="small"
+                :disabled="confirmLoading"
+                @click="onConfirm(row)"
+              >
+                确认
+              </el-button>
+              <el-button
+                type="text"
+                size="small"
+                class="redBtn"
+                @click="onScrap(row)"
+              >
+                报损
+              </el-button>
+            </template>
+            <span v-if="active==1">
+              {{ formatStatus(row.status) }}
+            </span>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -149,16 +158,25 @@
     <el-dialog>
 
     </el-dialog>
+
+    <!--  盘点报损弹框  -->
+      <inventory-scrap
+        ref="scrap"
+        :info="info"
+        @success="onScrapSuccess"
+      >
+      </inventory-scrap>
   </div>
 </template>
 
 <script>
 import MyTabs from '@/components/MyTabs'
 import {getById,assetConfirm} from "@/api/assetManagement/inventoryManagement";
-
+import inventoryScrap from "./inventoryScrap";
 export default {
   components: {
-    MyTabs
+    MyTabs,
+    inventoryScrap
   },
   data() {
     return {
@@ -185,7 +203,9 @@ export default {
       titleInfo:{},
       tableData: [],
       dialogVisible: false,
-      loading: false
+      loading: false,
+      confirmLoading: false,
+      info: {},
     }
   },
   created() {
@@ -216,22 +236,37 @@ export default {
     },
 
     // 确认
-    onConfirm(){
-      this.$confirm('确认吗？', '提示', {
-        type: 'warning'
-      }).then(() => {
-        const params = {
-
-        }
-        assetConfirm(params).then(res => {
+    onConfirm(row)
+    {
+      const params = {
+        inventoryInfoId: row.inventoryInfoId,
+        roleType: this.tab + 1,
+      }
+      this.confirmLoading = true;
+      assetConfirm(params)
+        .then(res =>
+        {
           this.$message({
             message: res.msg,
             type: 'success'
           });
+          this.getTableData()
+          this.confirmLoading = false;
         })
-      }).catch(() =>
-      {
-      })
+        .catch(() =>
+        {
+          this.confirmLoading = false;
+        })
+    },
+
+    // 报损
+    onScrap(row){
+      this.info = row;
+      this.$refs.scrap.open()
+    },
+
+    onScrapSuccess(){
+      this.getTableData()
     },
 
     // tab切换
@@ -254,6 +289,26 @@ export default {
     goBack() {
       this.$router.go(-1)
     },
+
+    // 格式化状态
+    formatStatus(val){
+      let label = ''
+      if(val){
+        switch (val) {
+          case 1:
+            label = '待确认'
+            break
+          case 2:
+            label = '已确认'
+            break
+          case 3:
+            label = '已报损'
+            break
+        }
+        return label
+      }
+      return label
+    }
   }
 }
 </script>
