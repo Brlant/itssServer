@@ -25,27 +25,27 @@
         border
         v-loading="loading"
       >
-        <el-table-column 
+        <el-table-column
           align="center"
           label="资产ID"
           prop="assetId"
         />
-        <el-table-column 
+        <el-table-column
           align="center"
           label="资产编号"
           prop="assetNo"
         />
-        <el-table-column 
+        <el-table-column
           align="center"
           label="资产类型"
           prop="assetTypeName"
         />
-        <el-table-column 
+        <el-table-column
           align="center"
           label="资产名称"
           prop="assetName"
         />
-        <el-table-column 
+        <el-table-column
           align="center"
           label="型号"
           prop="model"
@@ -85,23 +85,24 @@
     </div>
 
     <!-- 我的申请tab -->
-    <my-apply 
+    <my-apply
       v-if="tab === 2"
       :asset="asset"
       ref="apply"
     />
 
     <!-- 资产申领弹窗 -->
-    <asset-claim 
+    <asset-claim
       :asset="asset"
       @success="onClaimSuccess"
-      ref="claim" 
+      ref="claim"
     />
 
     <!-- 资产借用弹窗 -->
     <asset-borrow
       :asset="asset"
-      ref="borrow" 
+      @success="onBorrowSuccess"
+      ref="borrow"
     />
   </div>
 </template>
@@ -190,10 +191,17 @@ export default {
         this.$refs.apply.reset()
       }
     },
+
     // 资产借用
     initBorrow() {
       this.$refs.borrow.open()
     },
+    onBorrowSuccess() {
+      if (this.tab == 2) {
+        this.$refs.apply.reset()
+      }
+    },
+
     // tab切换
     change() {
       this.queryParams.pageNum = 1
