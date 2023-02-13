@@ -22,22 +22,26 @@
           <span v-for="(data,index) in setList"
                 :key='index'
                 @click="checkSelect(data,index)">
-              <span class="cursor" :class="[{ current: n == index }]">
+              <span class="cursor" :class="[{ current: n === index }]">
                 {{ data.name }}
               </span>
               <span v-if='index<setList.length-1'>|</span>
           </span>
     </div>
     <div class='process'>
-        <count-asset></count-asset>
+      <count-asset v-if="!isEditCountAsset" @change="changeCountAsset"></count-asset>
+      <edit-count-asset v-if="isEditCountAsset" @change="changeCountAsset"></edit-count-asset>
     </div>
   </div>
 </template>
 <script>
-import countAsset from './countAsset'
+import countAsset from '@/views/assetManagement/inventoryManagement/countingSettings/countAsset'
+import editCountAsset from '@/views/assetManagement/inventoryManagement/countingSettings/editCountAsset'
+
 export default {
     components:{
-        countAsset
+      countAsset,
+      editCountAsset
     },
     data() {
         return {
@@ -45,17 +49,22 @@ export default {
           setList: [
             {name: '盘点审批流程'},
             // {name: '盘点中设置'}
-          ]
+          ],
+          isEditCountAsset: false
         }
     },
   methods:{
-    //返回
+    // 返回
     goBack() {
       this.$router.go(-1);
     },
 
     checkSelect(data,index){
       this.n = index
+    },
+
+    changeCountAsset(val){
+      this.isEditCountAsset = val
     }
   }
 }

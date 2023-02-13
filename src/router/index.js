@@ -484,6 +484,12 @@ export const dynamicRoutes = [
         meta: { title: '盘点设置', noCache:false  }
       },
       {
+        path: 'countAsset',
+        component: () => import('@/views/assetManagement/inventoryManagement/countingSettings/countAsset'),
+        name: 'countAsset',
+        meta: { title: '盘点审批流程', noCache:false  }
+      },
+      {
         path: 'editCountAsset',
         component: () => import('@/views/assetManagement/inventoryManagement/countingSettings/editCountAsset'),
         name: 'editCountAsset',

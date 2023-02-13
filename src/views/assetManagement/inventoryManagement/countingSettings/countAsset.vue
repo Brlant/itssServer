@@ -44,16 +44,12 @@ export default {
     };
   },
   created() {
-    // this.detailId = this.$route.query.detailId;
     this.detailData()
   },
   methods: {
     //编辑
     edit() {
-      const obj = {
-        path: "/assetManagement/inventoryManagement-auth/editCountAsset",
-      };
-      this.$tab.closeOpenPage(obj);
+      this.$emit("change",true)
     },
     detailData(){
       getInventoryFlow().then(res=>{
