@@ -36,12 +36,19 @@
 
         <!-- 显示分配的时候，不显示全部同意 -->
         <el-button
-          v-if="showAllocate && typeStatus != 4"
+          v-if="showAllocate && typeStatus != 4 && attribute == 'assignment'"
           type="primary"
           @click='allocateAssets'
          >
           分配资产
           </el-button>
+        <el-button
+          v-if='typeStatus != 4 && attribute == "safeconfirm"'
+          type="primary"
+          @click='agree'
+        >
+          安全确认
+        </el-button>
         <el-button type="primary" v-if='typeStatus != 4 && !showAllocate' @click='agree'>全部同意</el-button>
         <el-button type="danger"  v-if='typeStatus != 4 && attribute != "repaircompleted"' @click='reject'>全部拒绝</el-button>
         <!-- typeStatus等于4的时候，只显示已阅 -->
@@ -521,14 +528,16 @@ export default {
       console.log(this.attribute,'this.attribute')
       if (this.attribute == 'maintenance') {
         this.$refs.maintenance.open()
-      } else if(this.attribute == 'inventoryconfirm' || this.attribute == 'assetReturnInitiate' || this.attribute == 'notifyconfirm'){
+      } else if(this.attribute == 'inventoryconfirm' || this.attribute == 'assetReturnInitiate' || this.attribute == 'notifyconfirm' || this.attribute == 'safeconfirm'){
         this.dialogTitle = this.attribute == 'inventoryconfirm'
                            ? '盘点确认'
                            : this.attribute == 'assetReturnInitiate'
                              ? '资产归还'
                              : this.attribute == 'notifyconfirm'
                                ? '确认知晓'
-                               : ''
+                               : this.attribute == 'safeconfirm'
+                                 ? '安全确认'
+                                 : ''
         this.dialogVisible = true
       } else {
         this.selectAll=[]
@@ -562,7 +571,7 @@ export default {
       this.attribute = value
       if (value == 'inventoryconfirm' || value == 'assetReturnInitiate' || value == 'notifyconfirm'){
         return
-      } else if (value == 'assignment') {
+      } else if (value == 'assignment' || value == 'safeconfirm') {
         this.showAllocate = true
       } else {
         this.showAllocate = false
