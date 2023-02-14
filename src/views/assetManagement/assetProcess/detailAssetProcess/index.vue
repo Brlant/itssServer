@@ -446,18 +446,19 @@ export default {
           label: "资产型号确认",
           value: 1,
         },
-        {
+        /*{
           label: "资产类型确认",
           value: 2,
         },
         {
           label: "资产型号确认",
           value: 3,
-        },
+        },*/
       ],
       selectAll:[],
-      selectAllCopy:[0,1,2,3],
-       dialogRules: {
+      // selectAllCopy:[0,1,2,3],
+      selectAllCopy:[0,1],
+      dialogRules: {
         // url: [{ required: true, trigger: "blur", validator: check }],
       },
       dialogTitle: '',
@@ -508,8 +509,9 @@ export default {
           // this.selectAll.push(n)
         }
       })
-      this.selectAllCopy=[0,1,2,3]
-      this.$forceUpdate()
+      // this.selectAllCopy=[0,1,2,3]
+        this.selectAllCopy=[0,1]
+        this.$forceUpdate()
       console.log(this.selectAllCopy,'this.selectAll')
 
     },
@@ -640,9 +642,12 @@ export default {
               this.selectAll.forEach((i,index)=>{
               count.push(i)
               })
-                 if(!this.selectAll.includes('')
+                 /*if(!this.selectAll.includes('')
                  && this.selectAll.length==4
-                 && count.length==4){//这个条件是判断确认信息的四个按钮有没有全都选中
+                 && count.length==4){//这个条件是判断确认信息的四个按钮有没有全都选中*/
+              if(!this.selectAll.includes('')
+                && this.selectAll.length==2
+                && count.length==2){//这个条件是判断确认信息的两个按钮有没有全都选中
                  //全都选中则直接调用接口
                    this.uploadAttachment(this.uploadData)
                  }else{

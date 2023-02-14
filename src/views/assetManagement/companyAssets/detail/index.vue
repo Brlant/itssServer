@@ -361,14 +361,14 @@ export default {
           label: "资产型号确认",
           value: 1,
         },
-        {
+        /*{
           label: "资产类型确认",
           value: 2,
         },
         {
           label: "资产型号确认",
           value: 3,
-        },
+        },*/
       ],
       tabOptions: ["详细信息", "使用记录", "维修记录", "保养记录", "证书记录"],
       tab: 0,
@@ -380,7 +380,8 @@ export default {
       name: "",
       type:'',
       selectAll:[],
-      selectAllCopy:[0,1,2,3],
+      // selectAllCopy:[0,1,2,3],
+      selectAllCopy:[0,1],
       dialogRules: {
         // url: [{ required: true, trigger: "blur", validator: check }],
       },
@@ -482,7 +483,8 @@ export default {
           this.selectAll[n]=n
         }
       })
-      this.selectAllCopy=[0,1,2,3]
+      // this.selectAllCopy=[0,1,2,3]
+      this.selectAllCopy=[0,1]
       this.$forceUpdate()
       console.log(this.selectAllCopy,'this.selectAll')
 
@@ -498,7 +500,8 @@ export default {
             count.push(i)
 
             })
-           if(!this.selectAll.includes('') && this.selectAll.length==4 && count.length==4){
+           // if(!this.selectAll.includes('') && this.selectAll.length==4 && count.length==4){
+         if(!this.selectAll.includes('') && this.selectAll.length==2 && count.length==2){
 
           let attachList={
               name:this.name,
@@ -530,7 +533,7 @@ export default {
             //   }
             // });
              const obj = {
-              name: "MyAssets",
+              name: "myAssets",
               params:{
                 tab:'2'
               }
