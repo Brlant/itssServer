@@ -172,7 +172,10 @@ export default {
       })
     },
     // 进入详情页
-    goDetail(row) {
+    goDetail(row, column) {
+      if(column && column.label=='操作'){
+        return;
+      }
       this.$router.push({
         path: '/assetManagement/companyAssets/companyAssets-auth/detail',
         query: {

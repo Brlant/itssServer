@@ -117,7 +117,7 @@
       border
       v-loading="loading"
     >
-      <el-table-column 
+      <el-table-column
         align="center"
         label="流程ID"
       >
@@ -125,7 +125,7 @@
           {{ row.procVars.FLOW_ID }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="流程类型"
       >
@@ -133,7 +133,7 @@
           {{ row.procVars.CATEGORY_NAME }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="流程组名称"
       >
@@ -141,7 +141,7 @@
           {{ row.procVars.FLOWGROUP_NAME }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="申请人"
       >
@@ -149,7 +149,7 @@
           {{ row.procVars.APPLICANT_NAME }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="发起时间"
       >
@@ -157,7 +157,7 @@
           {{ row.procVars.APPLY_TIME }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="资产类型"
       >
@@ -165,7 +165,7 @@
           {{ row.procVars.ASSET_TYPE_NAME }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="资产编号&名称"
       >
@@ -181,7 +181,7 @@
               ...更多
             </el-button>
             <div class="content">
-              <div 
+              <div
                 class="item"
                 v-for="(item, index) in row.noNameArr"
                 :key="index"
@@ -192,7 +192,7 @@
           </el-popover>
         </div>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="数量"
       >
@@ -200,7 +200,7 @@
           {{ row.procVars.AMOUNT }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="状态"
       >
@@ -208,24 +208,24 @@
           {{ statusFormatter(row.procVars.STATUS) }}
         </template>
       </el-table-column>
-     <el-table-column 
+     <el-table-column
         align="center"
         label="操作"
         v-if='n==3'
-       
+
       >
         <template slot-scope="{row}">
-          <el-button 
+          <el-button
             type="text"
-            size="small" 
+            size="small"
             @click.stop="cancel(row)"
              v-if='row.procVars.APPLICANT_ID == userId && (row.procVars.processStep==1 || row.procVars.processStep==2)'
           >
             取消
           </el-button>
-          <el-button 
+          <el-button
             type="text"
-            size="small" 
+            size="small"
             style='color:#ddd'
             v-else
           >
@@ -254,7 +254,7 @@ import {
 } from '@/api/assetManagement/myAssets'
 import {
   cateList,
-  applyList 
+  applyList
 } from '@/api/assetManagement/myAssets'
 export default {
   data() {
@@ -266,7 +266,7 @@ export default {
         // { label: '已取消', value: '2' },
         { label: '待处理', value: '3' },
         { label: '参与处理记录', value: '4' },
-       
+
       ],
       n: 3,
       peopleLists:[],
@@ -303,7 +303,7 @@ export default {
     }else{
       this.pendingList()
     }
-   
+
   },
   methods: {
     //申请人查询
@@ -336,12 +336,12 @@ export default {
         ASSET_NO,
         APPLICANT_ID
       } = this.formData
-      
+
       let eq = {
         // STATUS: this.options[this.n].value,
-        
+
       }
-      
+
       if (APPLICANT_ID) {
         eq.APPLICANT_ID = this.formData.APPLICANT_ID+''
       }
@@ -352,7 +352,7 @@ export default {
       if (FLOW_ID) {
         eq.FLOW_ID = FLOW_ID
       }
-      
+
       let like = {}
       if (ASSET_TYPE.length) {
         like.ASSET_TYPE = `%,${ASSET_TYPE[ASSET_TYPE.length - 1]},%`
@@ -398,7 +398,7 @@ export default {
             tableData[i]['noNameArr'] = arr
           } else {
             tableData[i]['noNameArr'] = []
-          }   
+          }
         }
         this.tableData = tableData
         this.total = res.data.total
@@ -417,10 +417,10 @@ export default {
         ASSET_NO,
         APPLICANT_ID
       } = this.formData
-      
+
       let eq = {
         // STATUS: this.options[this.n].value,
-       
+
       }
        if (APPLICANT_ID) {
         eq.APPLICANT_ID = this.formData.APPLICANT_ID+''
@@ -431,7 +431,7 @@ export default {
       if (FLOW_ID) {
         eq.FLOW_ID = FLOW_ID
       }
-      
+
       let like = {}
       if (ASSET_TYPE.length) {
         like.ASSET_TYPE = `%,${ASSET_TYPE[ASSET_TYPE.length - 1]},%`
@@ -478,12 +478,12 @@ export default {
             tableData[i]['noNameArr'] = arr
           } else {
             tableData[i]['noNameArr'] = []
-          }   
+          }
         }
         this.tableData = tableData
         this.total = res.data.total
         this.loading = false
-      
+
       }).catch(() => {
         this.loading = false
       })
@@ -538,12 +538,15 @@ export default {
       }else{
         this.getProcessed()
       }
-     
+
     },
     // 进入入库详情
-    goDetail(row) {
+    goDetail(row, column) {
+      if(column && column.label=='操作'){
+        return;
+      }
       console.log(row,'scope')
-      // return 
+      // return
        const obj = {
         path: "/assetManagement/detailAssetProcess/process/detailAssetProcess",
         query: {
@@ -590,7 +593,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-  
+
     .btn {
       color: #037dff;
       cursor: pointer;

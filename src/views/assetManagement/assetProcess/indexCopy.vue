@@ -17,7 +17,7 @@
         <el-form
           ref="elForm"
           :model="formData"
-         
+
           size="medium"
           label-width="120px"
         >
@@ -172,7 +172,7 @@
             {{scope.row.procVars.CATEGORY_NAME}}
           </template>
         </el-table-column>
-        
+
         <el-table-column label="流程组名称" align="center" prop="FLOWGROUP_NAME">
            <template slot-scope="scope">
             {{scope.row.procVars.FLOWGROUP_NAME}}
@@ -308,7 +308,7 @@ export default {
         field105: undefined,
       },
       processData: [
-       
+
       ],
       //表单校验
       rules: {
@@ -388,6 +388,9 @@ export default {
     },
     //点击行获取详情
     getDetail(row, column, event) {
+      if(column && column.label=='操作'){
+        return;
+      }
       console.log(row, "row");
     },
     checkActive(index) {
@@ -431,7 +434,7 @@ export default {
                this.$set(item.procVars,'processName',array)
             })
             console.log(array,'array')
-           
+
             //  this.processData.procVars.processName=array
             }
             console.log(this.processData,'this.processData')
@@ -470,7 +473,7 @@ export default {
                this.$set(item.procVars,'processName',array)
             })
             console.log(array,'array')
-           
+
             //  this.processData.procVars.processName=array
             }
             console.log(this.processData,'this.processData')

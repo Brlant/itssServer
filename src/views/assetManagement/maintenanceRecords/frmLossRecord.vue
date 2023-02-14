@@ -57,7 +57,7 @@
                   ref="assetCas"
                   :props="{ label: 'typeName', value: 'id', checkStrictly: true }"
                   clearable
-                 
+
                 />
           </el-form-item>
         </el-col>
@@ -145,7 +145,7 @@ export default {
       },
       frmLossData: [],
       rules: {
-      
+
       },
       asset: [],//资产类型
       page:{
@@ -223,7 +223,10 @@ export default {
       return '已取消'
       }
     },
-    goDetail(row){
+    goDetail(row, column){
+        if(column && column.label=='操作'){
+          return;
+        }
         const obj = {
         path: "/assetManagement/maintenanceRecords/detail/recordDetail",
         query: {

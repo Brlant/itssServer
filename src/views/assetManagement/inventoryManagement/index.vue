@@ -284,7 +284,10 @@ export default {
     },
 
     // 进入详情
-    goDetail(row) {
+    goDetail(row, column) {
+      if(column && column.label=='操作'){
+        return;
+      }
       this.$router.push({
         path: '/assetManagement/inventoryManagement-auth/detail',
         query:{

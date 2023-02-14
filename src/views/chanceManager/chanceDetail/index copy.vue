@@ -411,7 +411,7 @@
                 <el-form-item
                   label="技能需求："
                   :prop="`chanceConfigList.${chanceConfigIndex}.skillIdList`"
-                 
+
                 >
                   <el-select
                     v-model="chanceConfigItem.skillIdList"
@@ -1441,7 +1441,10 @@ export default {
       row.index = rowIndex;
     },
     // 单机行 查看详情
-    showRowDetail(row) {
+    showRowDetail(row, column) {
+      if(column && column.label=='操作'){
+        return;
+      }
       this.id = row.id;
       this.nowIndex = row.index;
       this.resourceEditActive = false;

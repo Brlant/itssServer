@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-     
+
 
     <el-row :gutter="10" class="mb8" type="flex"  justify="end">
       <el-col :span="1.5"  >
@@ -12,7 +12,7 @@
           @click="handleAdd"
         >新增</el-button>
       </el-col>
-<!--       
+<!--
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -32,7 +32,7 @@
       <el-table-column label="描述" align="center" prop="describe" />
       <el-table-column label="创建人" align="center" prop="creatorName" />
           <!-- /// 状态 0停用 1启用 -->
-     
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -46,7 +46,7 @@
             @click.native.stop="handleActive(scope.row)"
             :class="[scope.row.status=='1'?'tingyong':'qiyong']"
           >
-          {{scope.row.status=='1'?'停用':'启用'}} 
+          {{scope.row.status=='1'?'停用':'启用'}}
           </el-button>
           <el-button
             size="mini"
@@ -59,7 +59,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -68,7 +68,7 @@
       @pagination="getList"
     />
 
-     
+
   </div>
 </template>
 
@@ -93,7 +93,7 @@ export default {
       total: 0,
       // 用户信息表格数据
       assetDetailTemplateList: [{
-        
+
           /// 创建时间
            createTime:"",
           /// 创建人
@@ -157,7 +157,10 @@ export default {
       });
     },
     /**查看详情页面*/
-    goDetail(row){
+    goDetail(row, column){
+      if(column && column.label=='操作'){
+        return;
+      }
       //  const obj = { path: "/assetManagement/assetManagementSet/assetDetailTamplateDetail",query:{"id":row.id} };
       const obj = {
         path: '/assetManagement/assetManagementSet/assetDetailTamplate-auth/detail',
@@ -165,7 +168,7 @@ export default {
       }
       this.$tab.closeOpenPage(obj);
     },
-      
+
     /** 新增按钮操作 */
     handleAdd() {
       // this.reset();

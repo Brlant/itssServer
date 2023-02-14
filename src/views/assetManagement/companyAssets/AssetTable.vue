@@ -1,12 +1,12 @@
 <template>
   <div class="table">
-    <el-table 
+    <el-table
       :data="data"
       @row-click="goDetail"
       border
       v-loading="loading"
     >
-      <el-table-column 
+      <el-table-column
         align="center"
         label="资产ID"
         prop="assetId"
@@ -84,7 +84,7 @@
           >
             修改
           </span>
-          <span 
+          <span
             class="del"
             v-if="row.isApplying === 0"
             @click.stop="del(row)"
@@ -129,7 +129,10 @@ export default {
       }).catch(() => {})
     },
     // 进入详情页
-    goDetail(row) {
+    goDetail(row, column) {
+      if(column && column.label=='操作'){
+        return;
+      }
       this.$router.push({
         path: '/assetManagement/companyAssets/companyAssets-auth/detail',
         query: {

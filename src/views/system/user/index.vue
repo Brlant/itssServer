@@ -531,8 +531,11 @@ export default {
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
-    showRowDetail(row) {
-      console.log(row);
+    showRowDetail(row, column) {
+      // console.log(row,"column",column);
+      if(column && column.label=='操作'){
+        return;
+      }
       const obj = {
         path: "/system/user-auth/userInfo",
         query: {

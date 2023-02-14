@@ -15,7 +15,7 @@
         <div class="rightLink" v-show="isProjectByUser(formData)">
           <!-- v-show="isProjectByUser(formData) || isJurisdiction('admin')" -->
           <span
-            
+
             @click="goEditPage"
             style="cursor: pointer"
             v-show="isShowActive == 0 && !isUpdateActive"
@@ -25,7 +25,7 @@
           >
 
           <span
-            
+
             @click="stopProject"
             style="cursor: pointer"
             v-show="isShowActive == 0 && !isUpdateActive"
@@ -841,7 +841,7 @@
     </div>
     <!---点击职业的修改---人员推荐------------------------------------------>
     <div class="hr" v-show="recommendUserActive"></div>
-  
+
 
     <!---项目信息修改---其实就是审核列表------------------------------------------>
     <div class="hr"></div>
@@ -936,7 +936,7 @@
         <el-form-item label="备注信息" >
             <el-input type="textarea" v-model="formData.remark"></el-input>
         </el-form-item>
-       
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="auditMsgVisible = false">取 消</el-button>
@@ -1390,8 +1390,8 @@ export default {
 
       // 提交审核之前 ，处理一下 刚刚添加的资源
       // this.formData.projectUserList = this.deepClone(this.projectTable.projectUserList)
-      
-      
+
+
       let parame = this.deepClone(this.formData);
       parame.projectUserList.unshift(...this.delRow); // 合并删除的行
       let projectUserListTemp = [];
@@ -1558,7 +1558,10 @@ export default {
     del() {
       this.addEditUserActive = false;
     },
-    showRowDetail(row) {
+    showRowDetail(row, column) {
+      if(column && column.label=='操作'){
+        return;
+      }
       // this.delBtn = false;
       // if (this.idTemp === row.idTemp) return;
       this.id = row.id || row.idTemp;
@@ -2133,16 +2136,16 @@ export default {
                 console.log("update-------无id");
             }
             // 我是 有id 说明是后台的数据
-           
+
             // 修改就插入原来的位置
             // 表格数据不变 塞入全量的列【每周计划负荷...】
             this.projectTable.projectUserList[this.nowIndex] = oneUser;
             console.log(JSON.stringify(oneUser));
             console.log(JSON.stringify( this.formData.projectUserList[this.nowIndex]));
             this.$set(this.projectTable.projectUserList,this.nowIndex,oneUser)
-            
 
-            
+
+
             // 所以 深拷贝了一个
             let oneUserTemp = this.deepClone(oneUser);
             oneUserTemp.projectUserScheduleList =  this.formData.projectUserList[this.nowIndex].projectUserScheduleList

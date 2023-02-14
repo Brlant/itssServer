@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-     
+
 
     <el-row :gutter="10" class="mb8" type="flex"  justify="end">
       <el-col :span="1.5"  >
@@ -12,7 +12,7 @@
           @click="handleAdd"
         >新增</el-button>
       </el-col>
-<!--       
+<!--
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -25,47 +25,47 @@
       <!-- </el-col> -->
     </el-row>
 
-    <el-table 
-      v-loading="loading" 
-      :data="tableData" 
+    <el-table
+      v-loading="loading"
+      :data="tableData"
       @row-click="goDetail"
     >
-      <el-table-column 
-        label="模板ID" 
+      <el-table-column
+        label="模板ID"
         align="center"
         width="100"
-        prop="id" 
+        prop="id"
       />
-      <el-table-column 
-        label="模板名称" 
+      <el-table-column
+        label="模板名称"
         align="center"
         prop="templateName"
       />
-      <el-table-column 
-        label="适用资产类型" 
-        align="center" 
-        prop="assetTypeName" 
+      <el-table-column
+        label="适用资产类型"
+        align="center"
+        prop="assetTypeName"
       />
-      <el-table-column 
-        label="品牌" 
-        align="center" 
-        prop="brand" 
+      <el-table-column
+        label="品牌"
+        align="center"
+        prop="brand"
       />
-      <el-table-column 
-        label="型号" 
-        align="center" 
-        prop="model" 
+      <el-table-column
+        label="型号"
+        align="center"
+        prop="model"
       />
-      <el-table-column 
-        label="操作系统" 
-        align="center" 
-        prop="os" 
+      <el-table-column
+        label="操作系统"
+        align="center"
+        prop="os"
       />
           <!-- /// 状态 0停用 1启用 -->
-     
-      <el-table-column 
-        label="操作" 
-        align="center" 
+
+      <el-table-column
+        label="操作"
+        align="center"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
@@ -82,7 +82,7 @@
             @click.native.stop="handleActive(scope.row)"
             :class="[scope.row.status=='1'?'tingyong':'qiyong']"
           >
-          {{scope.row.status=='1'?'停用':'启用'}} 
+          {{scope.row.status=='1'?'停用':'启用'}}
           </el-button> -->
           <!-- <el-button
             size="mini"
@@ -94,7 +94,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -103,7 +103,7 @@
       @pagination="getList"
     />
 
-     
+
   </div>
 </template>
 
@@ -171,7 +171,7 @@ export default {
     this.getList();
   },
   methods: {
-    /** 
+    /**
      * 查询用户信息列表
      *  */
     getList() {
@@ -185,31 +185,34 @@ export default {
     /**
      * 查看详情页面
      * */
-    goDetail(row){
+    goDetail(row, column){
+      if(column && column.label=='操作'){
+        return;
+      }
       //  const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailDetail",query:{"id":row.id} };
-      const obj = { 
+      const obj = {
         path: "/assetManagement/assetManagementSet/quickAsset-auth/detail",
-        query:{"id":row.id} 
+        query:{"id":row.id}
       }
       this.$tab.closeOpenPage(obj);
     },
-      
+
     /**
      *  新增按钮操作
-     * 
+     *
      */
     handleAdd() {
       // this.reset();
       // this.open = true;
       // this.title = "添加用户信息";
       // const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailAdd",query:{"action":'add'} };
-      const obj = { 
+      const obj = {
         path: "/assetManagement/assetManagementSet/quickAsset-auth/add",
-        query:{"action":'add'} 
+        query:{"action":'add'}
       }
       this.$tab.closeOpenPage(obj);
     },
-    /** 
+    /**
      * 修改按钮操作
      *  */
     handleAcitce(row) {
@@ -221,18 +224,18 @@ export default {
         this.title = "修改用户信息";
       });
     },
-    /** 
+    /**
      * 修改按钮操作
      *  */
     handleUpdate(row) {
       // const obj = { path: "/assetManagement/assetManagementSet/quickAssetDetailedit",query:{"id":row.id} };
-      const obj = { 
+      const obj = {
         path: "/assetManagement/assetManagementSet/quickAsset-auth/edit",
-        query:{"id":row.id} 
+        query:{"id":row.id}
       }
       this.$tab.closeOpenPage(obj);
     },
-    /** 
+    /**
      * 提交按钮
      *  */
     submitForm() {
@@ -276,7 +279,7 @@ export default {
       //   this.$modal.msgSuccess("删除成功");
       // }).catch(() => {});
     },
-    /** 
+    /**
      * 删除按钮操作
      *  */
     handleDelete(row) {
@@ -290,7 +293,7 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    /** 
+    /**
      * 导出按钮操作
      *  */
     handleExport() {

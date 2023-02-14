@@ -1302,7 +1302,7 @@ export default {
     },
     // 顶部的点击提交审核
     goAudit() {
-     
+
         // 此处提交的是 全量数据
       // 下面是塞入数据
       // if(this.projectTable.projectUserList && this.projectTable.projectUserList[this.nowIndex].userId){
@@ -1337,7 +1337,7 @@ export default {
           this.isUpdateActive = false; // 点击了立即审批 就删除编辑状态
         }
       });
-       
+
 
     },
     // 顶部的点击取消
@@ -1383,7 +1383,7 @@ export default {
     },
       //点击添加人员到 资源配置中 去
     addUserToProject(row, index) {
-      // 此处需要同样的判断 是否有id 辨别是否有id  
+      // 此处需要同样的判断 是否有id 辨别是否有id
       // 是否有id 代表是否为 新增和 已有的资源配置
         this.addEditFormData.projectUserList[0].userId = row.userId;
         this.addEditFormData.projectUserList[0].userName = row.nickName;
@@ -1418,7 +1418,7 @@ export default {
             this.formData.projectUserList[this.nowIndex].updateType = 1
             // this.formData.projectUserList[this.nowIndex].userList.push(row.userId);
             this.formData.projectUserList[this.nowIndex].userId = row.userId;
-            this.formData.projectUserList[this.nowIndex].userName = row.nickName;   
+            this.formData.projectUserList[this.nowIndex].userName = row.nickName;
             }
           this.projectTable.projectUserList[this.nowIndex].userId = row.userId;
           this.projectTable.projectUserList[this.nowIndex].userName = row.nickName;
@@ -1457,7 +1457,10 @@ export default {
     del() {
       this.addEditUserActive = false;
     },
-    showRowDetail(row) {
+    showRowDetail(row, column) {
+      if(column && column.label=='操作'){
+        return;
+      }
       // this.delBtn = false;
       // if (this.idTemp === row.idTemp) return;
       this.id = row.id||row.idTemp;
@@ -1476,15 +1479,15 @@ export default {
       this.recommendUserActive = false; //显示人选推荐
 
       if(row.id){ // 数据库后台的查看
-    
-        if(row.updateType==null){// 第1次点击 
+
+        if(row.updateType==null){// 第1次点击
 
           let params = {
             id: row.id,
           };
           updateQueryUserById(params).then((res) => {
             let { code, msg } = res;
-  
+
             if (+code == 200) {
               this.addEditFormData = this.deepClone(this.formData); // 填充项目的基础数据
               this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
@@ -1501,7 +1504,7 @@ export default {
               res.data.projectUserScheduleList.map((item) => {
                 item.day = item.weekDay;
               });
-  
+
               let oneUser = this.deepClone(res.data);
               // 修改类型（1.新增,2.删除,3.修改原数据）
               // oneUser.updateType = 3;
@@ -1537,7 +1540,7 @@ export default {
         // console.log(row,1);
            this.addEditFormData.projectUserList =[]
           // 此处逻辑为，显示用存储没有多余的排期的去展示
-           let showRow =this.deepClone(this.formData.projectUserList[row.index]) 
+           let showRow =this.deepClone(this.formData.projectUserList[row.index])
            showRow.planLoad = row.planLoadTemp
           //  console.log(row,2);
            this.addEditFormData.projectUserList[0] = showRow; // 填充项目的基础数据
@@ -1627,7 +1630,7 @@ export default {
       this.$forceUpdate()
       /*----------------以上是 总计的安排的具体计算-------------------*/
     },
-     
+
     // 动态生成 表头样式
     headerClassName(row) {
       // console.log(row.column)
@@ -1760,7 +1763,7 @@ export default {
                };
            updateQueryUserById(params).then((res) => {
              let { code, msg } = res;
-     
+
              if (+code == 200) {
                this.addEditFormData = this.deepClone(this.formData); // 填充项目的基础数据
                this.addEditFormData.projectUserList = []; // 先清空，只留一个空数组
@@ -1805,7 +1808,7 @@ export default {
                  }else{
                      oneUser.costNum =costNumArry.costIn;
                  }
-     
+
                } else {
                  // 没有拿到成本 查找出来的数据返回的是undefined
                  console.log(" 没有拿到成本 查找出来的数据返回的是undefined ---editNext");
@@ -1816,12 +1819,12 @@ export default {
                //因为后台对于生成的三级数据没有id
                // console.log(oneUser);
                this.formData.projectUserList[index] = oneUser; // 引起问题的
-     
+
                // console.log(JSON.stringify(oneUser));
                this.changeChildDateArea(oneUser,index);
-     
+
                this.getRecommendUserHandel(index, row);
-     
+
                // }
                // // 删除成功 只会去查询 审核的方法
                // this.auditStatus = "1"; // 初始化 显示 待审核
@@ -1845,7 +1848,7 @@ export default {
               //因为后台对于生成的三级数据没有id
               // console.log(JSON.stringify(oneUser));
               // this.formData.projectUserList[row.index] = oneUser; // 引起问题的
-            
+
               this.getRecommendUserHandel(index, row);
            }
 
@@ -1856,9 +1859,9 @@ export default {
           this.nowAction = "update"; // 记录我是新增修改操作
           this.nowIndex = index;
           this.addEditFormData.projectUserList =[]
-        
+
            // 此处逻辑为，显示用存储没有多余的排期的去展示
-          //  let showRow = this.deepClone(this.formData.projectUserList[row.index]) 
+          //  let showRow = this.deepClone(this.formData.projectUserList[row.index])
            let showRow = this.formData.projectUserList[row.index]
            showRow.planLoad = row.planLoadTemp
            console.log(row,2);
@@ -1893,15 +1896,15 @@ export default {
         res.data.map((item) => {
           item.showOrCancel = 1; // 默认显示  添加
           //  if(this.nowAction=="update"){
-        
+
               if (this.addEditFormData.projectUserList[0].userId == item.userId) {
                 // 如果 当前点击的行的userID === 当前行id 就显示取消
                 item.showOrCancel = 2;
               }
           // }
         });
-      
-       
+
+
         this.recommendUserTableData = res.data;
       });
     },
@@ -1998,7 +2001,7 @@ export default {
             // console.log(this.formData.projectUserList.length);
             // 新增代码块  end
             this.$forceUpdate();
-             // 显示详情 
+             // 显示详情
             this.detailUserActive = false;
             // 隐藏 编辑
             this.addEditUserActive = false;
@@ -2006,7 +2009,7 @@ export default {
             // this.addEditFormData.projectUserList[0].projectUserScheduleList= oneUserTemp.projectUserScheduleList.filter((el)=>{
             //   return el.isMe
             // })
-          
+
             this.$forceUpdate()
 
             console.log("add");
@@ -2019,7 +2022,7 @@ export default {
               // 因为新增暂存的数据 也可以修改，但是没有id
               this.isUpdateActive = true; // 点击了暂存了 立即隐藏编辑 终止 和展示提交审核
               this.formData.projectUserList[this.nowIndex].updateType = 3;
-            } 
+            }
            else{
               // 修改类型（1.新增,2.删除,3.修改原数据）
               this.formData.projectUserList[this.nowIndex].updateType = 1;
@@ -2033,7 +2036,7 @@ export default {
             this.formData.projectUserList[
               this.nowIndex
             ].userName = this.addEditFormData.projectUserList[0].userName;
-              
+
             this.formData.projectUserList[this.nowIndex] = this.deepClone(
               this.addEditFormData.projectUserList[0]
             );
@@ -2056,10 +2059,10 @@ export default {
             // ];
             // initOneUser.updateType = 1;
             // this.addEditFormData.projectUserList.push(initOneUser);
-             //暂存成功后 
+             //暂存成功后
              //隐藏人选推荐
             this.recommendUserActive = false
-            // 显示详情 
+            // 显示详情
             this.detailUserActive = true;
             // 隐藏 编辑
             this.addEditUserActive = false;

@@ -110,7 +110,7 @@
       border
       v-loading="loading"
     >
-      <el-table-column 
+      <el-table-column
         align="center"
         label="流程ID"
       >
@@ -118,7 +118,7 @@
           {{ row.procVars.FLOW_ID }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="流程类型"
       >
@@ -126,7 +126,7 @@
           {{ row.procVars.CATEGORY_NAME }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="流程组名称"
       >
@@ -134,7 +134,7 @@
           {{ row.procVars.FLOWGROUP_NAME }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="申请人"
       >
@@ -142,7 +142,7 @@
           {{ row.procVars.APPLICANT_NAME }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="发起时间"
       >
@@ -150,7 +150,7 @@
           {{ row.procVars.APPLY_TIME }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="资产类型"
       >
@@ -158,7 +158,7 @@
           {{ row.procVars.ASSET_TYPE_NAME }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="资产编号&名称"
       >
@@ -174,7 +174,7 @@
               ...更多
             </el-button>
             <div class="content">
-              <div 
+              <div
                 class="item"
                 v-for="(item, index) in row.noNameArr"
                 :key="index"
@@ -185,7 +185,7 @@
           </el-popover>
         </div>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="数量"
       >
@@ -193,7 +193,7 @@
           {{ row.procVars.AMOUNT }}
         </template>
       </el-table-column>
-      <el-table-column 
+      <el-table-column
         align="center"
         label="状态"
       >
@@ -202,12 +202,12 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="n === 0" 
+        v-if="n === 0"
         align="center"
         label="操作"
       >
         <template slot-scope="{row}">
-          <el-button 
+          <el-button
             type="text"
             size="small"
             :disabled=" row.procVars.processStep==1 || row.procVars.processStep==2 "
@@ -291,7 +291,7 @@ export default {
         ASSET_NAME,
         ASSET_NO
       } = this.formData
-      
+
       let eq = {
         STATUS: this.options[this.n].value,
         APPLICANT_ID: this.userId + ''
@@ -302,7 +302,7 @@ export default {
       if (FLOW_ID) {
         eq.FLOW_ID = FLOW_ID
       }
-      
+
       let like = {}
       if (ASSET_TYPE.length) {
         like.ASSET_TYPE = `%,${ASSET_TYPE[ASSET_TYPE.length - 1]},%`
@@ -348,7 +348,7 @@ export default {
             tableData[i]['noNameArr'] = arr
           } else {
             tableData[i]['noNameArr'] = []
-          }   
+          }
         }
         this.tableData = tableData
         this.total = res.data.total
@@ -408,7 +408,10 @@ export default {
       this.getTableData()
     },
     // 进入资产申领
-    goDetail(row) {
+    goDetail(row, column) {
+      if(column && column.label=='操作'){
+        return;
+      }
       this.$router.push({
         path: '/assetManagement/myAssets/myAssets-auth/applyInfo',
         query: {
