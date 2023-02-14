@@ -7,7 +7,9 @@
         @change="change"
       />
       <div class="btns">
-        <el-button type="primary">批量归还</el-button>
+<!--        暂时不做
+        <el-button type="primary">批量归还</el-button>-->
+
         <el-button type="primary" @click="initClaim">
           资产申领
         </el-button>

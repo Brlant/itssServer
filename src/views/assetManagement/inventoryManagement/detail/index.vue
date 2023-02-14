@@ -119,7 +119,7 @@
               </el-button>
             </template>
             <span v-if="active==1">
-              {{ formatStatus(row.status) }}
+              {{ formatStatus(row.inventoryInfoStatus) }}
             </span>
           </template>
         </el-table-column>
@@ -221,6 +221,7 @@ export default {
         status: this.active + 1,
       }
       this.loading = true
+      this.tableData = [];
       getById(data).then(res=>{
         this.titleInfo = res.data
         this.tableData = res.data.list

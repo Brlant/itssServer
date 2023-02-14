@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <header style='min-height:56px;'>
-      <div 
-        style="cursor: pointer" 
+      <div
+        style="cursor: pointer"
         @click="goBack"
       >
         <i class="el-icon-arrow-left"></i>
@@ -10,11 +10,34 @@
           {{ title }}
         </span>
       </div>
-      <div class="btns" v-if="$route.query.tabFlag != 4 && showBtn">
+
+      <el-button
+        type="primary"
+        v-if='typeStatus != 4&&attribute == "inventoryconfirm"'
+        @click="agree"
+      >
+        资产盘点确认
+      </el-button>
+      <el-button
+        type="primary"
+        v-if='typeStatus != 4&&attribute == "assetReturnInitiate"'
+        @click="agree"
+      >
+        资产归还
+      </el-button>
+      <el-button
+        type="primary"
+        v-if='typeStatus != 4&&attribute == "notifyconfirm"'
+        @click="agree"
+      >
+        确认知晓
+      </el-button>
+      <div class="btns" v-else-if="$route.query.tabFlag != 4 && showBtn">
+
         <!-- 显示分配的时候，不显示全部同意 -->
         <el-button
-          v-if="showAllocate && typeStatus != 4" 
-          type="primary" 
+          v-if="showAllocate && typeStatus != 4"
+          type="primary"
           @click='allocateAssets'
          >
           分配资产
@@ -117,8 +140,8 @@
           label="操作"
         >
           <template slot-scope="{row}">
-            <el-button 
-              type="text" 
+            <el-button
+              type="text"
               size="small"
               :disabled="!row.id"
               @click="view(row)"
@@ -134,7 +157,7 @@
     <section class="process">
       <approval-process
         @emitAttr="getAttr"
-        ref="process" 
+        ref="process"
       />
     </section>
     <!-- 同意 -->
@@ -144,7 +167,9 @@
       class="dialogForm"
       width="50%"
       :visible.sync="agreeShow"
-    > 
+      :close-on-press-escape="false"
+      :close-on-click-modal="false"
+    >
       <div v-if='isShow'>
       <el-form
         :model="diaForm"
@@ -200,15 +225,15 @@
       </el-button>
       </el-form>
       <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary" 
+        <el-button type="primary"
         @click="sureAgree">确定</el-button>
-        <el-button 
+        <el-button
         @click="cancelFn">取消</el-button>
       </div>
       </div>
          <!-- 流程开始 -->
-    <div 
-      style="cursor:pointer" 
+    <div
+      style="cursor:pointer"
       v-show="!isShow"
     >
       <span @click="isShow = true">
@@ -232,6 +257,8 @@
       class="dialogForm"
       width="50%"
       :visible.sync="rejectShow"
+      :close-on-press-escape="false"
+      :close-on-click-modal="false"
     >
     <div v-if='show'>
        <el-form
@@ -274,14 +301,14 @@
       </el-button>
       </el-form>
       <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary" 
+        <el-button type="primary"
         @click="sureReject">确定</el-button>
-        <el-button 
+        <el-button
         @click="cancelFn">取消</el-button>
       </div>
     </div>
-    <div 
-      style="cursor:pointer" 
+    <div
+      style="cursor:pointer"
       v-show="!show"
     >
       <span @click="show = true">
@@ -304,16 +331,58 @@
       class="dialogForm"
       width="20%"
       :visible.sync="seeReadShow"
-    > 
+    >
      <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary" 
+        <el-button type="primary"
         @click="seeRead">确定</el-button>
-        <el-button 
+        <el-button
         @click="seeReadShow=false">取消</el-button>
       </div>
      </el-dialog>
     <!-- 完成维修弹窗 -->
     <my-maintenance ref="maintenance" />
+
+    <!--  确认弹框  -->
+    <el-dialog
+      :title="dialogTitle"
+      :visible.sync="dialogVisible"
+      center
+      width="30%"
+      destroy-on-close
+      :close-on-press-escape="false"
+      :close-on-click-modal="false"
+    >
+      <!-- 表单开始 -->
+      <el-form
+        :model="formData"
+        :rules="formRules"
+        ref="elForm"
+        label-width="80px"
+      >
+        <el-form-item label-width="0" prop="comment">
+          <div class="label">
+            备注
+          </div>
+          <el-input
+            type="textarea"
+            v-model="formData.comment"
+            style='width:100%'
+          />
+        </el-form-item>
+      </el-form>
+      <!-- 表单结束 -->
+      <div slot="footer" class="dialog-footer">
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="onSubmit">
+          确定
+        </el-button>
+        <el-button @click="dialogVisible = false">
+          取消
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -323,7 +392,7 @@ import { listAsset } from '@/api/assetManagement/myAssets'
 import { tabOptions } from '../../companyAssets/options'
 import { agreeQuery,rejectQuery,deleteAttachment,uploadSuccess,seeFlow,read } from "@/api/assetManagement/assetProcess";
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue";
-import { 
+import {
   fileUpload,
 } from '@/api/assetManagement/companyAssets'
 import MyMaintenance from './MyMaintenance'
@@ -352,7 +421,7 @@ export default {
       title:this.$route.query.applyName,
       flowId: this.$route.query.flowId,
       tableData: [],
-      attribute:'',
+      // attribute:'',
       uploadData:{},
       diaForm:{
         url:''
@@ -391,6 +460,14 @@ export default {
        dialogRules: {
         // url: [{ required: true, trigger: "blur", validator: check }],
       },
+      dialogTitle: '',
+      dialogVisible: false,
+      formData: {
+        comment: ''
+      },
+      formRules: {
+      },
+      submitLoading: false
     }
   },
   watch: {
@@ -402,6 +479,13 @@ export default {
     rejectShow(value) {
       if (value === false) {
        this.cancelFn()
+      }
+    },
+
+    dialogVisible(value) {
+      if (value === false) {
+        // 关闭时清空表单
+        this.$refs.elForm.resetFields()
       }
     }
   },
@@ -418,7 +502,7 @@ export default {
           console.log('aaaa')
           // this.selectAll.splice(n, 1);
             this.selectAll[n]=''
-        
+
         }else{
           this.selectAll[n]=n
           // this.selectAll.push(n)
@@ -427,7 +511,7 @@ export default {
       this.selectAllCopy=[0,1,2,3]
       this.$forceUpdate()
       console.log(this.selectAllCopy,'this.selectAll')
-     
+
     },
     //同意
     agree(){
@@ -435,6 +519,15 @@ export default {
       console.log(this.attribute,'this.attribute')
       if (this.attribute == 'maintenance') {
         this.$refs.maintenance.open()
+      } else if(this.attribute == 'inventoryconfirm' || this.attribute == 'assetReturnInitiate' || this.attribute == 'notifyconfirm'){
+        this.dialogTitle = this.attribute == 'inventoryconfirm'
+                           ? '盘点确认'
+                           : this.attribute == 'assetReturnInitiate'
+                             ? '资产归还'
+                             : this.attribute == 'notifyconfirm'
+                               ? '确认知晓'
+                               : ''
+        this.dialogVisible = true
       } else {
         this.selectAll=[]
         this.selectAllCopy=[0,1,2,3]
@@ -457,15 +550,17 @@ export default {
         this.url = res.data.url
         this.name = res.data.name
         this.uploadData=res.data
-       
+
         }
-       
+
       })
     },
     // 控制分配资产按钮
     getAttr(value) {
       this.attribute = value
-      if (value == 'assignment') {
+      if (value == 'inventoryconfirm' || value == 'assetReturnInitiate' || value == 'notifyconfirm'){
+        return
+      } else if (value == 'assignment') {
         this.showAllocate = true
       } else {
         this.showAllocate = false
@@ -479,7 +574,7 @@ export default {
       //   path: "/assetManagement/allocateAssets/allocate",
       // };
       // getToday()
-      
+
       const {
         applicantName,
         applyTime,
@@ -543,10 +638,10 @@ export default {
               //this.attribute=='userconfirmation'时，需要将'确认信息'的四个按钮全都选中才能提交
               let count = []
               this.selectAll.forEach((i,index)=>{
-              count.push(i)   
+              count.push(i)
               })
-                 if(!this.selectAll.includes('') 
-                 && this.selectAll.length==4 
+                 if(!this.selectAll.includes('')
+                 && this.selectAll.length==4
                  && count.length==4){//这个条件是判断确认信息的四个按钮有没有全都选中
                  //全都选中则直接调用接口
                    this.uploadAttachment(this.uploadData)
@@ -558,9 +653,9 @@ export default {
              // this.attribute！='userconfirmation'时，'确认信息'的四个按钮不显示
             this.uploadAttachment(this.uploadData)
           }
-        
+
        })
-    
+
     },
     //同意的接口请求事件
     sureForm(){
@@ -569,17 +664,19 @@ export default {
             taskId:this.$route.query.taskId,
             userKey:this.$store.state.user.user.userId,
             comment: this.diaForm.comment ? this.diaForm.comment : '',
-            
+
             procVars:{
               attribute: this.$refs.process.getAttribute(),
               //revoke: this.$refs.process.getNodeId()=='a78x4anxe' ? 'true': 'false'
             }
         }
+        this.submitLoading = true
         agreeQuery(params).then(res=>{
             if(res.code==200){
-             
+
                 this.$message.success(res.msg)
                 this.agreeShow=false
+                this.submitLoading = false
                   const obj = {
                 path: "/assetManagement/assetProcess",
                 query:{
@@ -590,6 +687,8 @@ export default {
               this.$tab.closeOpenPage(obj);
               this.getTableData()
           }
+        }).catch(() => {
+          this.submitLoading = false
         })
     },
     //弹框里的确认按钮  确认拒绝
@@ -604,10 +703,12 @@ export default {
               //revoke:this.$route.query.procVars.revoke ? this.$route.query.procVars.revoke : ''
             }
         }
+      this.submitLoading = true
         rejectQuery(params).then(res=>{
             if(res.code==200){
                 this.$message.success(res.msg)
                 this.rejectShow=false
+              this.submitLoading = false
                   const obj = {
                     path: "/assetManagement/assetProcess",
                     query:{
@@ -618,6 +719,8 @@ export default {
                   this.$tab.closeOpenPage(obj);
                 this.getTableData()
             }
+        }).catch(() => {
+          this.submitLoading = false
         })
     },
      //弹框里的取消按钮
@@ -702,7 +805,7 @@ export default {
         processInstanceId: this.$route.query.processInstanceId,
         deployId: this.$route.query.deployId
       }
-     
+
       seeFlow(params).then(res => {
         this.list = JSON.parse(res.data.flowProcDefRes.json).list
         console.log(this.list,'this.list')
@@ -731,7 +834,47 @@ export default {
             }
           })
         }).catch(() => {})
-    }
+    },
+
+    // 资产盘点确认提交
+    onSubmit() {
+      this.$refs.elForm.validate(valid => {
+        if (!valid) {
+          return
+        }
+        this.onConfirm()
+      })
+    },
+    // 提交表单
+    onConfirm() {
+      const params = {
+        processInstanceId: this.$route.query.processInstanceId,
+        taskId: this.$route.query.taskId,
+        userKey: this.$store.state.user.user.userId,
+        comment: this.formData.comment,
+        procVars: {
+          // attribute: 'inventoryconfirm',
+          attribute: this.$refs.process.getAttribute(),
+          comment: this.formData.comment,
+        }
+      }
+      this.submitLoading = true
+      agreeQuery(params).then(res => {
+        this.$message.success(res.msg)
+        this.dialogVisible = false
+        this.submitLoading = false
+        const obj = {
+          path: "/assetManagement/assetProcess",
+          query: {
+            tab:this.$route.query.tab
+          }
+        };
+        this.$tab.closeOpenPage(obj);
+        this.getTableData()
+      }).catch(() => {
+        this.submitLoading = false
+      })
+    },
   }
 }
 </script>
