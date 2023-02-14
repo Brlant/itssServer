@@ -7,13 +7,13 @@
       </div>
       <div class="btns">
         <div class="item" v-if="showEntry">
-          <span @click="warehousing">入库</span>
+          <span v-hasPermi="['companyAssets:warehousing']" @click="warehousing">入库</span>
         </div>
         <div class="item" v-if="showRepair">
           <span @click="initRepair">维修</span>
         </div>
         <div class="item" v-if="showScrap">
-          <span @click="initScrap">报废</span>
+          <span v-hasPermi="['companyAssets:scrap:create']" @click="initScrap">报废</span>
         </div>
         <div class="item" v-if="showReturn">
           <span @click="initReturn">归还</span>

@@ -6,7 +6,7 @@
       </span>
       <div class="btns">
         <div class="item">
-          <span @click="openDialog">发起盘点</span>
+          <span @click="openDialog" v-hasPermi="['inventory:create']">发起盘点</span>
         </div>
          <!-- @click='countSet'暂时不做 -->
         <div class="item">
@@ -41,7 +41,7 @@
         label="完成时间"
         prop="completeTime"
       />
-      <el-table-column
+<!--      <el-table-column
         align="center"
         label="涉及资产类型"
         prop="assetTypeName"
@@ -50,7 +50,7 @@
         align="center"
         label="涉及资产状态"
         prop="assetStatusName"
-      />
+      />-->
       <el-table-column
         align="center"
         label="备注"
@@ -63,8 +63,8 @@
       <template slot-scope="scope">
         <span>
           {{
-            scope.row.name
-            ? formatStatus(scope.row.name)
+            scope.row.status
+            ? formatStatus(scope.row.status)
             : ''
           }}
         </span>
@@ -313,14 +313,17 @@ export default {
       let label = ''
       if(val){
         switch (val) {
-          case '1':
+          case 0:
+            label = '未开始'
+            break
+          case 1:
             label = '进行中'
             break
-          case '2':
+          case 2:
             label = '已完成'
             break
-          case '3':
-            label = '已报损'
+          case 3:
+            label = '已取消'
             break
         }
         return label
