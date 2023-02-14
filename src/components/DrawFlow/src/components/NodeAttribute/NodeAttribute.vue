@@ -19,7 +19,7 @@
                       >
                       <span style="float: left">{{ item.name }}</span>
                     </el-option>
-                  </el-select>   
+                  </el-select>
               </el-form-item>
               <el-form-item label="人员类型：" label-width="100px" prop="userType">
                  <template>
@@ -41,7 +41,7 @@
                       >
                       <span style="float: left">{{ item.name }}</span>
                     </el-option>
-                  </el-select>                                   
+                  </el-select>
               </el-form-item>
                <el-form-item  v-if="form.type == 2" label="审核方式：" label-width="100px" prop="completionCondition">
                  <el-radio-group v-model="form.completionCondition">
@@ -133,7 +133,7 @@ export default {
         userId: [ {required: true, message: "请选择人员", trigger: "blur"}],
         backId: [ {required: true, message: "请选择回退节点", trigger: "blur"}],
         completionCondition: [ {required: true, message: "请选择审核方式", trigger: "blur"}],
-        
+
       },
       conformRules: {
         conTitle: [ {required: true, message: "请输入条件名称", trigger: "blur"}],
@@ -148,7 +148,7 @@ export default {
     },
     nodeList: {
       type: Array,
-      default: null 
+      default: null
     }
   },
   watch: {
@@ -214,6 +214,12 @@ export default {
       // .then(err => {
       //     console.log(err)
       // })
+      if(this.form.userType == '4'){
+        this.userList = [
+          { name: '发起人', key: 'INITIATOR'}
+        ]
+        return
+      }
       getUserListByType(this.form.userType).then(res=>{
         if(res && res.data && res.code == 200){
             this.userList = res.data
@@ -281,9 +287,9 @@ export default {
       }
       if(item.id == this.nodeData.id){
         flag= true
-      } 
-      if(!flag){ 
-        this.backNodeList.push(item) 
+      }
+      if(!flag){
+        this.backNodeList.push(item)
       }
       this.form.backId = this.backNodeList.length ? this.backNodeList[0].id : ''
     },
@@ -305,7 +311,7 @@ export default {
           }else {
             if(item.id == node.groupId){
               this.loopBackNode(item)
-            } 
+            }
             if(item.groupId == node.groupId){
                this.loopBackNode(item)
             }
@@ -330,7 +336,7 @@ export default {
           }else {
               if(item.groupPid == node.groupId){
                 this.loopBackNode(item)
-              } 
+              }
           }
         })
       }
@@ -365,12 +371,12 @@ export default {
               if(node.id == item.groupPid){
                 this.searchConfidentNode(item)
               }
-              
+
             }
           })
 
       }
-      
+
     },
     // 人物节点提交
     submitForm() {
@@ -425,7 +431,7 @@ export default {
 <style>
 .attri-container .el-checkbox {
     display: block;
-} 
+}
 .attri-container .el-form-item__content {
   text-align: left;
 }

@@ -636,7 +636,7 @@ export default {
       // 如果tabFlag有值，说明是从公司资产列表进来的
       if (this.tabFlag !== '') {
         const obj = {
-          name: "CompanyAssets",
+          name: "companyAssets",
           params:{
             tab: this.tabFlag
           }
