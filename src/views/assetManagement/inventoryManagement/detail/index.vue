@@ -64,6 +64,7 @@
       />
       <el-table
         :data="tableData"
+        @row-click="goDetail"
         border
         class="table"
       >
@@ -173,6 +174,7 @@
 import MyTabs from '@/components/MyTabs'
 import {getById,assetConfirm} from "@/api/assetManagement/inventoryManagement";
 import inventoryScrap from "./inventoryScrap";
+import {tabOptions} from "../../companyAssets/options";
 export default {
   components: {
     MyTabs,
@@ -289,6 +291,42 @@ export default {
     // 返回上一页
     goBack() {
       this.$router.go(-1)
+    },
+
+    // 进入详情页
+    goDetail(row, column) {
+      if(column && column.label=='操作'){
+        return;
+      }
+      this.$router.push({
+        path: '/assetManagement/companyAssets/companyAssets-auth/detail',
+        query: {
+          id: row.id,
+          status: this.statusFormatter(row),
+          isApplying: row.isApplying,
+          manageType: row.manageType,
+        }
+      })
+    },
+
+    // 状态处理
+    statusFormatter(row) {
+      let res
+      if (row.specialStatus !== null) {
+        const specialArr = tabOptions.filter(v => v.type == 'specialStatus')
+        res = specialArr.find(v => row.specialStatus == v.value).label
+        return res
+      }
+      if (row.status !== null) {
+        if (row.status == 1) {
+          res = '闲置中'
+          return res
+        } else {
+          const arr = tabOptions.filter(v => v.type == 'status')
+          res = arr.find(v => row.status == v.value).label
+          return res
+        }
+      }
     },
 
     // 格式化状态
