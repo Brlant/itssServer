@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="set-title">
+    <div class="set-title cursor">
       <i class="el-icon-arrow-left" @click="goBack"></i>
       <span>盘点设置</span>
     </div>

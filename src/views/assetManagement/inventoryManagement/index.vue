@@ -185,6 +185,7 @@ export default {
       name: "",
       type:'',
       list:[],
+      submitLoading: false
     }
   },
   mounted()
@@ -264,6 +265,7 @@ export default {
           }
           // console.log(params,'params')
           // return
+        this.submitLoading = true
           initiateInventory(params).then(res=>{
             if(res.code==200){
               this.$message({
@@ -271,7 +273,11 @@ export default {
                 type: 'success'
               });
               this.dialogShow=false
+              this.submitLoading = false
+              this.getTableData()
             }
+          }).catch(()=>{
+            this.submitLoading = false
           })
 
       })
