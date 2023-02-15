@@ -413,6 +413,7 @@ export default {
         (this.info.status == 1 || this.info.status == 2)
         && this.info.manageType == 2
         && this.info.isApplying == 0
+        && this.info.isCheck == 0
       ) {
         this.showRepair = true;
       } else {
@@ -426,6 +427,7 @@ export default {
         (this.info.status == 1 || this.info.status == 2)
         && this.info.isApplying == 0
         && (this.from == 'companyAssets' || this.info.manageType == 2)
+        && this.info.isCheck == 0
       ) {
         this.showScrap = true;
       } else {
@@ -433,7 +435,11 @@ export default {
       }
       // 归还
       if (this.info.status == 2
-       && this.info.manageType == 2 && this.info.isApplying == 0 && this.info.holderId==JSON.parse(window.localStorage.getItem("user")).userId) {
+       && this.info.manageType == 2
+       && this.info.isApplying == 0
+       && this.info.holderId==JSON.parse(window.localStorage.getItem("user")).userId
+       && this.info.isCheck == 0
+      ) {
         this.showReturn = true;
       } else {
         this.showReturn = false;
