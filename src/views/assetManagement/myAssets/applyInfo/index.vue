@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <header>
-      <div 
-        style="cursor: pointer" 
+      <div
+        style="cursor: pointer"
         @click="goBack"
       >
         <i class="el-icon-arrow-left"></i>
@@ -11,14 +11,23 @@
         </span>
       </div>
       <div class="btns">
-        <el-button
+<!--        <el-button
           v-if="$route.query.tabFlag == 0  && ($route.query.processStep==1 || $route.query.processStep==2)"
-          type="danger" 
-          size="small" 
+          type="danger"
+          size="small"
+          @click="cancel"
+        >
+          取消申请
+        </el-button>-->
+        <el-button
+          v-if="$route.query.tabFlag == 0  && ($route.query.commentSize == 1 || $route.query.taskDefKey == 'a78x4anxe')"
+          type="danger"
+          size="small"
           @click="cancel"
         >
           取消申请
         </el-button>
+
       </div>
     </header>
     <!-- 资产信息开始 -->
@@ -111,8 +120,8 @@
           label="操作"
         >
           <template slot-scope="{row}">
-            <el-button 
-              type="text" 
+            <el-button
+              type="text"
               size="small"
               :disabled="!row.id"
               @click="view(row)"
@@ -134,7 +143,7 @@
 
 <script>
 import ApprovalProcess from './ApprovalProcess'
-import { 
+import {
   listAsset,
   stopProcess
 } from '@/api/assetManagement/myAssets'

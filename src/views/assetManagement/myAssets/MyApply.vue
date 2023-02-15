@@ -210,7 +210,7 @@
           <el-button
             type="text"
             size="small"
-            :disabled=" row.procVars.processStep==1 || row.procVars.processStep==2 "
+            :disabled="row.commentSize !== 1 || row.taskDefKey == 'a78x4anxe'"
             @click.stop="cancel(row)"
           >
             取消
@@ -424,7 +424,9 @@ export default {
           taskId: row.taskId,
           processInstanceId: row.processInstanceId,
           deployId: row.deployId,
-          tabFlag: this.n
+          tabFlag: this.n,
+          commentSize: row.commentSize,
+          taskDefKey: row.taskDefKey,
         }
       })
     },
