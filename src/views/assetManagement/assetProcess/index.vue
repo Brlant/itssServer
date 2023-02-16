@@ -564,7 +564,9 @@ export default {
           applyUserId: row.procVars.APPLICANT_ID,
           type:row.procVars.type,
           procVars:row.procVars,
-          tabFlag: this.n
+          tabFlag: this.n,
+          commentSize: row.commentSize,
+          taskDefKey: row.taskDefKey,
         }
       };
       // getToday()

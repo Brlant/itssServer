@@ -39,6 +39,13 @@
       >
         维修完成
       </el-button>
+      <el-button
+        v-if='typeStatus != 4 && restart'
+        type="primary"
+        @click='agree'
+      >
+        重新发起
+      </el-button>
       <div class="btns" v-else-if="$route.query.tabFlag != 4 && showBtn">
 
         <!-- 显示分配的时候，不显示全部同意 -->
@@ -482,7 +489,8 @@ export default {
       },
       formRules: {
       },
-      submitLoading: false
+      submitLoading: false,
+      restart: false
     }
   },
   watch: {
@@ -507,6 +515,7 @@ export default {
   created() {
     this.getTableData()
     this.typeStatus=this.$route.query.type ? this.$route.query.type : ''
+    this.restart = (this.$route.query.commentSize>1&&this.$route.query.taskDefKey == 'a78x4anxe') ? true : false
   },
   methods: {
       select(index){
@@ -535,7 +544,7 @@ export default {
       console.log(this.attribute,'this.attribute')
       if (this.attribute == 'maintenance') {
         this.$refs.maintenance.open()
-      } else if(this.attribute == 'inventoryconfirm' || this.attribute == 'assetReturnInitiate' || this.attribute == 'notifyconfirm' || this.attribute == 'safeconfirm'){
+      } else if(this.attribute == 'inventoryconfirm' || this.attribute == 'assetReturnInitiate' || this.attribute == 'notifyconfirm' || this.attribute == 'safeconfirm' || this.restart){
         this.dialogTitle = this.attribute == 'inventoryconfirm'
                            ? '盘点确认'
                            : this.attribute == 'assetReturnInitiate'
@@ -544,7 +553,9 @@ export default {
                                ? '确认知晓'
                                : this.attribute == 'safeconfirm'
                                  ? '安全确认'
-                                 : ''
+                                 : this.restart
+                                    ? '重新发起'
+                                    : ''
         this.dialogVisible = true
       } else {
         this.selectAll=[]
@@ -576,7 +587,7 @@ export default {
     // 控制分配资产按钮
     getAttr(value) {
       this.attribute = value
-      if (value == 'inventoryconfirm' || value == 'assetReturnInitiate' || value == 'notifyconfirm'){
+      if (value == 'inventoryconfirm' || value == 'assetReturnInitiate' || value == 'notifyconfirm' || this.restart){
         return
       } else if (value == 'assignment' || value == 'safeconfirm') {
         this.showAllocate = true
