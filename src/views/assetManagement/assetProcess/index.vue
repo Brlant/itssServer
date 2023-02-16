@@ -227,6 +227,7 @@
             type="text"
             size="small"
             style='color:#ddd'
+            disabled
             v-else
           >
             取消

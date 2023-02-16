@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="process-title">
       <div style="font-size: 18px">审批流程管理</div>
-      <div style="color: #1c6cf7" @click="add">+添加</div>
+      <div style="color: #1c6cf7;cursor:pointer" @click="add">+添加</div>
     </div>
     <el-table :data="processData">
       <el-table-column label="流程组ID" align="center" prop="id" />
