@@ -14,8 +14,8 @@
             批量管理
             <i class="el-icon-caret-bottom el-icon--right"></i>
           </el-button> -->
-          <el-button 
-            type="primary" 
+          <el-button
+            type="primary"
             size="small"
             @click="$router.push('/assetManagement/companyAssets/companyAssets-auth/add')"
           >
@@ -24,8 +24,8 @@
         </div>
       </div>
       <div :class="['form', {expand: isExpand}]">
-        <el-form 
-          :model="formData" 
+        <el-form
+          :model="formData"
           ref="elForm"
           label-width="100px"
         >
@@ -154,7 +154,7 @@
     <!-- 筛选项结束 -->
     <!-- tab切换 -->
     <div class="tabs">
-      <my-tabs 
+      <my-tabs
         v-model="tab"
         :options="tabOptions"
         @change="change"
@@ -202,7 +202,7 @@
     </div>
     <!-- 计算部分结束 -->
     <!-- 表格部分 -->
-    <asset-table 
+    <asset-table
       :data="tableData"
       @delRow="delRow"
       :flag="tab"
@@ -221,8 +221,8 @@
 
 <script>
 import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
-import { 
-  queryAssetList, 
+import {
+  queryAssetList,
   getTotal,
   updateAssets
 } from '@/api/assetManagement/companyAssets'
@@ -420,6 +420,7 @@ export default {
     }
     .expand {
       height: auto;
+      overflow: visible;
     }
   }
   .tabs {
@@ -448,9 +449,9 @@ export default {
     }
   }
 }
-.el-row { 
-  display:flex; 
-  flex-wrap: wrap; 
+.el-row {
+  display:flex;
+  flex-wrap: wrap;
 }
 .pagination-container {
   background: transparent;
