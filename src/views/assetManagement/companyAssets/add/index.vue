@@ -409,7 +409,7 @@ export default {
         addAssets(data).then(res => {
           this.$message.success(res.msg)
           this.$router.push({
-            name: 'CompanyAssets',
+            name: 'companyAssets',
             params: {
               tab: 10
             }
