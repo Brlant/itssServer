@@ -18,6 +18,7 @@
         <el-cascader
           v-model="formData.assetTypeId"
           :options="asset"
+          @change="change"
           ref="assetCas"
           :props="{ label: 'typeName', value: 'id' }"
           clearable
@@ -30,6 +31,7 @@
             v-model="formData.amount"
             :min="1"
             :step="1"
+            :disabled="manageType === 2"
             step-strictly
           />
         </div>
@@ -89,6 +91,7 @@ import {
   getFlow
 } from '@/api/assetManagement/companyAssets'
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue"
+import findItemById from '@/utils/findItemById'
 
 export default {
   props: ['asset'],
@@ -114,7 +117,8 @@ export default {
           { required: true, trigger: 'blur', message: '请输入资产数量' }
         ]
       },
-      submitLoading: false
+      submitLoading: false,
+      manageType: '',
     }
   },
   watch: {
@@ -150,6 +154,13 @@ export default {
           this.submitLoading = false
         })
       })
+    },
+    // 选择资产，控制数量
+    change(value) {
+      this.manageType = findItemById(value[value.length - 1], this.asset).manageType
+      if (this.manageType === 2) {
+        this.formData.amount = 1
+      }
     },
     // 查看流程
     viewFlow() {
