@@ -413,7 +413,8 @@ export default {
       },
       defaultProps: {
         children: "children",
-        label: "label",
+        // label: "label",
+        label: "name",
       },
       // 用户导入参数
       upload: {
@@ -759,7 +760,7 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
-      treeselect().then((response) => {
+     /* treeselect().then((response) => {
         this.deptOptions = response.data;
         // this.$store.commit('SET_DEPTID',this.deptOptions[0].id)
         //  if(this.$store.state.deptId){
@@ -788,12 +789,42 @@ export default {
         this.getList();
         this.queryUserlistByRole();
         this.defaultData();
-      });
+      });*/
+
+      let reqObj = {};
+
+      reqObj.headers = {
+        userId: this.$store.state.user.user.userId,
+        deptId: this.$store.state.user.user.deptId,
+      };
+      tree(reqObj)
+        .then((d) => {
+          if (d.code === 200) {
+            this.deptOptions = d.data;
+            if (this.$store.state.user.deptId) {
+              console.log(this.$store.state.user.deptId);
+              this.queryParams.deptId = this.$store.state.user.deptId;
+              this.deptTitle = this.$store.state.user.deptTitle;
+              this.curren = this.$store.state.user.deptId;
+            } else {
+              this.queryParams.deptId = this.deptOptions[0].id;
+              this.deptTitle = this.deptOptions[0].name;
+              this.curren = this.deptOptions[0].id;
+            }
+            this.getList();
+            this.queryUserlistByRole();
+            this.defaultData();
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
     // 筛选节点
     filterNode(value, data) {
       if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      // return data.label.indexOf(value) !== -1;
+      return data.name.indexOf(value) !== -1;
     },
     // 节点单击事件
     handleNodeClick(data) {
@@ -801,7 +832,8 @@ export default {
       console.log(data, "data");
       this.queryParams.deptId = data.id;
       this.$store.commit("SET_DEPTID", this.queryParams.deptId);
-      this.deptTitle = data.label;
+      // this.deptTitle = data.label;
+      this.deptTitle = data.name;
       this.$store.commit("SET_DEPTTITLE", this.deptTitle);
       this.queryUserlistByRole();
       this.getList();
