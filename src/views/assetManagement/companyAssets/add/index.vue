@@ -299,12 +299,14 @@ export default {
         this.asset = arr
       })
     },
+
     // 部门查询
     getDept() {
       treeselect().then(res => {
         this.dept = res.data
       })
     },
+
     // 查询填充模板
     getTemplate(assetTypeId) {
       queryAll({ assetTypeId }).then(res => {
@@ -316,6 +318,7 @@ export default {
         this.template = rows
       })
     },
+
     // 查询资产编号
     getAssetId(assetTypeId) {
       queryAssetId(assetTypeId).then(res => {
@@ -365,6 +368,7 @@ export default {
       // d - 获取资产编号
       this.getAssetId(assetTypeId)
     },
+
     // 填充表单
     change(value) {
       const {
@@ -391,6 +395,7 @@ export default {
         }
       }
     },
+
     // 保存表单
     save() {
       this.$refs.elForm.validate(valid => {
@@ -417,6 +422,7 @@ export default {
         })
       })
     },
+
     // 取消
     cancel() {
       this.$confirm('确定返回列表页？', '温馨提示', {
@@ -439,29 +445,35 @@ export default {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
+
     .left {
       cursor: pointer;
     }
   }
+
   main {
     background: #fff;
     padding: 10px;
+
     .heading {
       display: flex;
       align-items: center;
       margin-bottom: 15px;
+
       .bar {
         width: 4px;
         height: 15px;
         background: #333;
         margin-right: 8px;
       }
+
       b {
         font-size: 15px;
       }
     }
   }
 }
+
 .el-row {
   display: flex;
   flex-wrap: wrap;

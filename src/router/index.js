@@ -573,7 +573,7 @@ export const dynamicRoutes = [
         path: 'applyInfo',
         component: () => import('@/views/assetManagement/myAssets/applyInfo/index'),
         name: 'applyInfo',
-        meta: { title: '资产申领', noCache:false  }
+        meta: { title: '申请详情', noCache:false  }
       }
     ]
   },

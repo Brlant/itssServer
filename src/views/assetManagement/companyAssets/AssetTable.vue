@@ -56,10 +56,15 @@
         label="归属部门"
         prop="departmentName"
       />
+      <!--      <el-table-column
+              align="center"
+              label="保管员"
+              prop="keeper"
+            />-->
       <el-table-column
         align="center"
-        label="保管员"
-        prop="keeper"
+        label="持有人"
+        prop="holderName"
       />
       <el-table-column
         align="center"
@@ -120,6 +125,7 @@ export default {
         }
       })
     },
+
     // 删除
     del(row) {
       this.$confirm('确认删除改资产吗？', '提示', {
@@ -128,6 +134,7 @@ export default {
         this.$emit('delRow', row)
       }).catch(() => {})
     },
+
     // 进入详情页
     goDetail(row, column) {
       if(column && column.label=='操作'){
@@ -147,6 +154,7 @@ export default {
         }
       })
     },
+
     // 状态处理
     statusFormatter(row) {
       let res
@@ -169,6 +177,7 @@ export default {
         }
       }
     },
+
     // 处理loading
     startLoading() {
       this.loading = true
@@ -186,6 +195,7 @@ export default {
   margin-right: 5px;
   cursor: pointer;
 }
+
 .del {
   color: #f56c6c;
   cursor: pointer;

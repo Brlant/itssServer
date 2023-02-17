@@ -13,34 +13,34 @@
 
       <el-button
         type="primary"
-        v-if='typeStatus != 4&&attribute == "inventoryconfirm"'
+        v-if='$route.query.tabFlag != 4&&attribute == "inventoryconfirm"'
         @click="agree"
       >
         资产盘点确认
       </el-button>
       <el-button
         type="primary"
-        v-if='typeStatus != 4&&attribute == "assetReturnInitiate"'
+        v-if='$route.query.tabFlag != 4&&attribute == "assetReturnInitiate"'
         @click="agree"
       >
         资产归还
       </el-button>
       <el-button
         type="primary"
-        v-if='typeStatus != 4&&attribute == "notifyconfirm"'
+        v-if='$route.query.tabFlag != 4&&attribute == "notifyconfirm"'
         @click="agree"
       >
         确认知晓
       </el-button>
       <el-button
         type="primary"
-        v-if='typeStatus != 4&&attribute == "maintenance"'
+        v-if='$route.query.tabFlag != 4&&attribute == "maintenance"'
         @click="agree"
       >
         维修完成
       </el-button>
       <el-button
-        v-if='typeStatus != 4 && restart'
+        v-if='$route.query.tabFlag != 4 && restart'
         type="primary"
         @click='agree'
       >
@@ -246,8 +246,13 @@
       </el-button>
       </el-form>
       <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary"
-        @click="sureAgree">确定</el-button>
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="sureAgree"
+        >
+          确定
+        </el-button>
         <el-button
         @click="cancelFn">取消</el-button>
       </div>
@@ -411,7 +416,14 @@
 import ApprovalProcess from './ApprovalProcess.vue'
 import { listAsset } from '@/api/assetManagement/myAssets'
 import { tabOptions } from '../../companyAssets/options'
-import { agreeQuery,rejectQuery,deleteAttachment,uploadSuccess,seeFlow,read } from "@/api/assetManagement/assetProcess";
+import {
+  agreeQuery,
+  rejectQuery,
+  deleteAttachment,
+  uploadSuccess,
+  seeFlow,
+  read
+} from "@/api/assetManagement/assetProcess";
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue";
 import {
   fileUpload,
@@ -505,8 +517,10 @@ export default {
       }
     },
 
-    dialogVisible(value) {
-      if (value === false) {
+    dialogVisible(value)
+    {
+      if (value === false)
+      {
         // 关闭时清空表单
         this.$refs.elForm.resetFields()
       }
@@ -597,6 +611,7 @@ export default {
       this.showBtn=true
       console.log(this.showBtn,'this.showBtn')
     },
+
     //分配资产按钮
     allocateAssets(){
       // const obj = {
@@ -632,6 +647,7 @@ export default {
         }
       })
     },
+
    //删除上传的文件
     remove() {
       this.url = ''
@@ -657,6 +673,7 @@ export default {
         this.sureForm()
       })
     },
+
     // 弹框里的同意按钮  确认同意
     sureAgree(){
        this.$refs.diaForm.validate(valid => {
@@ -689,6 +706,7 @@ export default {
        })
 
     },
+
     //同意的接口请求事件
     sureForm(){
       let params={
@@ -723,6 +741,7 @@ export default {
           this.submitLoading = false
         })
     },
+
     //弹框里的确认按钮  确认拒绝
     sureReject(){
         let params={
@@ -755,11 +774,13 @@ export default {
           this.submitLoading = false
         })
     },
+
      //弹框里的取消按钮
      cancelFn(){
          this.rejectShow=false
          this.agreeShow=false
     },
+
     // 表格数据
     getTableData() {
       listAsset(this.flowId).then(res => {
@@ -772,6 +793,7 @@ export default {
         this.total = total
       })
     },
+
     // 查看详情
      view(row) {
       this.$router.push({
@@ -784,6 +806,7 @@ export default {
         }
       })
     },
+
     // 状态处理
     statusFormatter(row) {
       let res
@@ -803,6 +826,7 @@ export default {
         }
       }
     },
+
     // 返回
     goBack() {
        const obj = {
@@ -814,6 +838,7 @@ export default {
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
+
     //审批流程查看
     viewFlowOne(){
       //全部同意按钮里的审批流程查看
@@ -844,6 +869,7 @@ export default {
         return
       })
     },
+
     //已阅
     seeRead(){
        this.$confirm('确认已阅吗？', '提示', {
@@ -877,6 +903,7 @@ export default {
         this.onConfirm()
       })
     },
+
     // 提交表单
     onConfirm() {
       const params = {
@@ -921,42 +948,52 @@ export default {
     align-items: center;
     margin-bottom: 5px;
   }
+
   .asset-info {
     background: #fff;
     padding: 10px;
     margin-bottom: 5px;
   }
+
   .process {
     background: #fff;
     padding: 10px;
   }
+
   .heading {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
+
     .left {
       display: flex;
       align-items: center;
       margin-bottom: 10px;
+
       .bar {
         width: 4px;
         height: 15px;
         background: #333;
         margin-right: 8px;
       }
+
       b {
         font-size: 15px;
       }
     }
+
     .right {
       display: flex;
+
       .item {
         font-size: 14px;
         margin-right: 50px;
+
         .name {
           color: #8294ad;
         }
+
         &:last-child {
           margin-right: 0;
         }
@@ -964,17 +1001,20 @@ export default {
     }
   }
 }
-.list-style{
+
+.list-style {
   display: inline-block;
-  width:80%;
+  width: 80%;
 }
-.sure-title{
-  display:inline-block;
-  width:13%;
-  vertical-align:top;
-  text-align:right;
-  padding-right:40px;
+
+.sure-title {
+  display: inline-block;
+  width: 13%;
+  vertical-align: top;
+  text-align: right;
+  padding-right: 40px;
 }
+
 .div-style {
   cursor: pointer;
   width: 30%;
@@ -983,12 +1023,14 @@ export default {
   display: inline-block;
   border: 1px solid #ddd;
   text-align: center;
-  padding:10px 0;
+  padding: 10px 0;
 }
-.current{
-  background:#97b2e98c
+
+.current {
+  background: #97b2e98c
 }
-.noSelect{
+
+.noSelect {
   box-shadow: 2px 2px 10px red;;
 }
 </style>
