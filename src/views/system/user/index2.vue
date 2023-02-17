@@ -37,7 +37,10 @@
       </div>
       <div class="right">
         <div class="right-header">
-          <div>{{ deptTitle }}</div>
+          <div>{{
+              deptTitle
+            }}
+          </div>
           <div v-hasPermi="['system:user:add']">
             <el-button type="text" @click="setCommander">设置负责人</el-button>
             <span>
@@ -53,31 +56,34 @@
               <span
                 @click="detail(scope.row.userId)"
                 style="cursor: pointer; color: #3d7dff"
-                ><i
-                  class="el-icon-user-solid"
-                  v-if="scope.row.dept.leader.includes(scope.row.userId)"
-                ></i
-                >{{ scope.row.nickName }}</span
+              ><i
+                class="el-icon-user-solid"
+                v-if="scope.row.dept.leader == scope.row.userId"
+              ></i
+              >{{
+                  scope.row.nickName
+                }}</span
               >
             </template>
           </el-table-column>
-          <el-table-column label="职位" align="center" prop="postName" />
-          <el-table-column label="部门" align="center" prop="deptName" />
-          <el-table-column label="邮箱" align="center" prop="email" />
-          <el-table-column label="手机号码" align="center" prop="phonenumber" />
+          <el-table-column label="职位" align="center" prop="postName"/>
+          <el-table-column label="部门" align="center" prop="deptName"/>
+          <el-table-column label="邮箱" align="center" prop="email"/>
+          <el-table-column label="手机号码" align="center" prop="phonenumber"/>
           <el-table-column label="系统角色" align="center" prop="roles">
             <template slot-scope="scope">
               <span v-for="(item, index) in scope.row.roles" :key="index"
-                ><span v-if="item"
-                  >{{ item.roleName
-                  }}<span v-if="index < scope.row.roles.length - 1"
-                    >,</span
-                  ></span
+              ><span v-if="item"
+              >{{
+                  item.roleName
+                }}<span v-if="index < scope.row.roles.length - 1"
+                >,</span
                 ></span
+              ></span
               >
             </template>
           </el-table-column>
-          <el-table-column label="身份ID" align="center" prop="userId" />
+          <el-table-column label="身份ID" align="center" prop="userId"/>
           <el-table-column
             label="操作"
             align="center"
@@ -91,7 +97,8 @@
                 type="text"
                 v-hasPermi="['system:user:query']"
                 @click.stop="detail(scope.row.userId)"
-                >详情</el-button
+              >详情
+              </el-button
               >
               <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
                 <el-button
@@ -100,7 +107,7 @@
                   style="color: red"
                   @click="stopOrUse(scope.row.userId, 1)"
                   v-if="scope.row.status == 0"
-                  >停用</el-button
+                >停用</el-button
                 >
               </span>
               <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
@@ -109,7 +116,7 @@
                   type="text"
                   @click="stopOrUse(scope.row.userId, 0)"
                   v-if="scope.row.status == 1"
-                  >启用</el-button
+                >启用</el-button
                 >
               </span>
             </template>
@@ -233,7 +240,10 @@
                   v-for="item in statusList"
                   :key="item.value"
                   :label="item.value"
-                  >{{ item.label }}</el-radio
+                >{{
+                    item.label
+                  }}
+                </el-radio
                 >
               </el-radio-group>
             </el-form-item>
@@ -266,9 +276,6 @@
       class="dialogForm"
       width="30%"
       :visible.sync="editShow"
-      destroy-on-close
-      :close-on-press-escape="false"
-      :close-on-click-modal="false"
     >
       <el-form
         :model="diaForm"
@@ -284,7 +291,6 @@
               <el-select
                 v-model="diaForm.commander"
                 :collapse-tags="true"
-                multiple
                 filterable
                 clearable
                 size="medium"
@@ -325,12 +331,19 @@ import {
   setuser,
   queryUserlistByRole,
 } from "@/api/system/user";
-import { getToken } from "@/utils/auth";
-import { treeselect, listDept, addDept } from "@/api/system/dept";
+import {getToken} from "@/utils/auth";
+import {
+  treeselect,
+  listDept,
+  addDept
+} from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import { reqList, status } from "@/api/OrgManage/OrgManage.js";
-import { all } from "@/api/PostManage/PostManage.js";
+import {
+  reqList,
+  status
+} from "@/api/OrgManage/OrgManage.js";
+import {all} from "@/api/PostManage/PostManage.js";
 import {
   tree,
   add,
@@ -339,13 +352,17 @@ import {
   deptStatus,
 } from "@/api/DeptMange/DeptManage.js";
 // import { directive } from 'vue/types/umd';
-import { dictDataAll } from "@/api/dataDict";
+import {dictDataAll} from "@/api/dataDict";
 
 export default {
   name: "User",
-  dicts: ["sys_normal_disable", "sys_user_sex"],
-  components: { Treeselect },
-  data() {
+  dicts: [
+    "sys_normal_disable",
+    "sys_user_sex"
+  ],
+  components: {Treeselect},
+  data()
+  {
     return {
       // 遮罩层
       loading: true,
@@ -382,25 +399,40 @@ export default {
       // 表单参数
       form: {},
       diaForm: {
-        commander: [],
+        commander: "",
       },
       stop: false,
       // 表单校验
       rules: {
         parentId: [
-          { required: true, message: "上级部门不能为空", trigger: "blur" },
+          {
+            required: true,
+            message: "上级部门不能为空",
+            trigger: "blur"
+          },
         ],
         deptName: [
-          { required: true, message: "部门名称不能为空", trigger: "blur" },
+          {
+            required: true,
+            message: "部门名称不能为空",
+            trigger: "blur"
+          },
         ],
         orderNum: [
-          { required: true, message: "显示排序不能为空", trigger: "blur" },
+          {
+            required: true,
+            message: "显示排序不能为空",
+            trigger: "blur"
+          },
         ],
         email: [
           {
             type: "email",
             message: "请输入正确的邮箱地址",
-            trigger: ["blur", "change"],
+            trigger: [
+              "blur",
+              "change"
+            ],
           },
         ],
         phone: [
@@ -426,7 +458,7 @@ export default {
         // 是否更新已经存在的用户数据
         updateSupport: 0,
         // 设置上传的请求头部
-        headers: { Authorization: "Bearer " + getToken() },
+        headers: {Authorization: "Bearer " + getToken()},
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + "/system/user/importData",
       },
@@ -448,13 +480,41 @@ export default {
       },
       // 列信息
       columns: [
-        { key: 0, label: `用户编号`, visible: true },
-        { key: 1, label: `用户名称`, visible: true },
-        { key: 2, label: `用户昵称`, visible: true },
-        { key: 3, label: `部门`, visible: true },
-        { key: 4, label: `手机号码`, visible: true },
-        { key: 5, label: `状态`, visible: true },
-        { key: 6, label: `创建时间`, visible: true },
+        {
+          key: 0,
+          label: `用户编号`,
+          visible: true
+        },
+        {
+          key: 1,
+          label: `用户名称`,
+          visible: true
+        },
+        {
+          key: 2,
+          label: `用户昵称`,
+          visible: true
+        },
+        {
+          key: 3,
+          label: `部门`,
+          visible: true
+        },
+        {
+          key: 4,
+          label: `手机号码`,
+          visible: true
+        },
+        {
+          key: 5,
+          label: `状态`,
+          visible: true
+        },
+        {
+          key: 6,
+          label: `创建时间`,
+          visible: true
+        },
       ],
 
       deptForm: {
@@ -486,29 +546,51 @@ export default {
       },
       dialogRules: {
         commander: [
-          { required: true, message: "请选择负责人", trigger: "blur" },
+          {
+            required: true,
+            message: "请选择负责人",
+            trigger: "blur"
+          },
         ],
       },
       deptRules: {
-        name: [{ required: true, message: "请输入部门名称", trigger: "blur" }],
+        name: [
+          {
+            required: true,
+            message: "请输入部门名称",
+            trigger: "blur"
+          }
+        ],
         // parentDept: [
         //     { required: false, message: '请选择上级部门', trigger: 'blur' },
         // ],
-        orgId: [{ required: true, message: "请选择关联机构", trigger: "blur" }],
+        orgId: [
+          {
+            required: true,
+            message: "请选择关联机构",
+            trigger: "blur"
+          }
+        ],
         sort: [
-          { required: true, message: "请输入显示排序", trigger: "change" },
+          {
+            required: true,
+            message: "请输入显示排序",
+            trigger: "change"
+          },
         ],
       },
     };
   },
   watch: {
     // 根据名称筛选部门树
-    deptName(val) {
+    deptName(val)
+    {
       this.$refs.tree.filter(val);
     },
   },
 
-  created() {
+  created()
+  {
     // this.getList();
 
     this.getTreeselect();
@@ -519,25 +601,37 @@ export default {
     this.getSkills();
   },
   methods: {
-    getSkills() {
+    getSkills()
+    {
       const params = {
         dictType: "skill_type",
         status: "0",
       };
-      dictDataAll(params).then((res) => {
-        let { rows } = res;
-        rows.forEach((v) => (v.tick = false));
-        sessionStorage.setItem("skills", JSON.stringify(rows));
-      });
+      dictDataAll(params)
+        .then((res) =>
+        {
+          let {rows} = res;
+          rows.forEach((v) => (v.tick = false));
+          sessionStorage.setItem("skills", JSON.stringify(rows));
+        });
     },
-    detailInfo(id) {
-      const obj = { path: "/user/profile", query: { userId: id, isUser: 1 } };
+    detailInfo(id)
+    {
+      const obj = {
+        path: "/user/profile",
+        query: {
+          userId: id,
+          isUser: 1
+        }
+      };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
-    showRowDetail(row, column) {
+    showRowDetail(row, column)
+    {
       // console.log(row,"column",column);
-      if(column && column.label=='操作'){
+      if (column && column.label == '操作')
+      {
         return;
       }
       const obj = {
@@ -551,61 +645,64 @@ export default {
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
-    defaultData() {
+    defaultData()
+    {
       // console.log(this.$refs.tree,'this.$refs.tree')
       // this.$refs.trees.setCurrentKey(this.deptOptions[0].label)
-      this.$nextTick(function () {
+      this.$nextTick(function ()
+      {
         this.$refs.trees.setCurrentKey(this.curren); //data[0].id为默认选中的节点
       });
     },
-    sureEdit() {
-      this.$refs["diaForm"].validate((valid) => {
-        if (valid) {
+    sureEdit()
+    {
+      this.$refs["diaForm"].validate((valid) =>
+      {
+        if (valid)
+        {
           let data = {
             deptId: this.queryParams.deptId,
-            leader: this.diaForm.commander.toString(),
+            leader: this.diaForm.commander,
           };
-          setuser(data).then((res) => {
-            if (res.code == 200) {
-              this.$message.success(res.msg);
-              this.editShow = false;
-              this.getList();
-            }
-          });
+          setuser(data)
+            .then((res) =>
+            {
+              if (res.code == 200)
+              {
+                this.$message.success(res.msg);
+                this.editShow = false;
+                this.getList();
+              }
+            });
         }
       });
     },
-    setCommander() {
-      // 筛选出列表中的负责人
-      let leader = this.user.length > 1
-                   ? this.user[0].dept.leader
-                   : '';
-      // 筛选出可设置的负责人数据源中的负责人
-      const newList = this.projectUserIdOptions.filter((item) =>
-        leader.includes(item.userId)
-      );
-      // 取出userId回显已设置的负责人
-      const commander = newList.map(item =>
-      {
-        return item.userId
-      })
+    setCommander()
+    {
       this.diaForm = {
-        commander: commander,
+        commander: "",
       };
       this.editShow = true;
     },
     /* 查询是项目主管的用户列表 */
-    queryUserlistByRole() {
-      let data = { deptId: this.queryParams.deptId, hasChild: false };
+    queryUserlistByRole()
+    {
+      let data = {
+        deptId: this.queryParams.deptId,
+        hasChild: false
+      };
       console.log(data, "dd");
-      queryUserlistByRole(data).then((res) => {
-        // res.data.map((item) => {
-        //   item.userNameAndPost = item.nickName + "（" + item.postName + "）";
-        // });
-        this.projectUserIdOptions = res.data; // 初始化填充给 项目负责人的 永远是所有用户
-      });
+      queryUserlistByRole(data)
+        .then((res) =>
+        {
+          // res.data.map((item) => {
+          //   item.userNameAndPost = item.nickName + "（" + item.postName + "）";
+          // });
+          this.projectUserIdOptions = res.data; // 初始化填充给 项目负责人的 永远是所有用户
+        });
     },
-    reqParentDeptFn() {
+    reqParentDeptFn()
+    {
       let reqObj = {};
 
       // 测试数据
@@ -614,20 +711,28 @@ export default {
         deptId: 1, // 当前登陆人的部门 ID   < 必填 >
       };
 
-      let _fn = (arr) => {
+      let _fn = (arr) =>
+      {
         let result = arr;
 
-        result.forEach((item) => {
+        result.forEach((item) =>
+        {
           // 有无children项
-          if (item.children && item.children.length !== 0) {
+          if (item.children && item.children.length !== 0)
+          {
             let newChildren = [];
             newChildren = _fn(item.children);
             item.children = newChildren;
-          } else {
-            if (item.type !== 2) {
+          }
+          else
+          {
+            if (item.type !== 2)
+            {
               // 非部门类型数据
               item.disabled = true;
-            } else {
+            }
+            else
+            {
               // type : 2 为部门数据, 只有部门数据可选择
               item.disabled = false;
             }
@@ -638,29 +743,38 @@ export default {
       };
 
       tree(reqObj)
-        .then((d) => {
-          if (d.code === 200) {
+        .then((d) =>
+        {
+          if (d.code === 200)
+          {
             this.parentDeptData = _fn(d.data);
           }
         })
-        .catch((err) => {
+        .catch((err) =>
+        {
           console.error(err);
         });
     },
-    reqAllListFn() {
+    reqAllListFn()
+    {
       all({})
-        .then((d) => {
-          if (d.code === 200) {
-            if (d.data) {
+        .then((d) =>
+        {
+          if (d.code === 200)
+          {
+            if (d.data)
+            {
               this.postList = d.data;
             }
           }
         })
-        .catch((err) => {
+        .catch((err) =>
+        {
           console.error(err);
         });
     },
-    reqOrgListFn() {
+    reqOrgListFn()
+    {
       let reqObj = {};
 
       // 测试数据
@@ -670,22 +784,30 @@ export default {
       };
 
       reqList(reqObj)
-        .then((d) => {
-          if (d.code === 200) {
+        .then((d) =>
+        {
+          if (d.code === 200)
+          {
             this.orgData = d.data;
           }
         })
-        .catch((err) => {
+        .catch((err) =>
+        {
           console.error(err);
         });
     },
-    reqStatusFn() {
+    reqStatusFn()
+    {
       status({})
-        .then((d) => {
-          if (d.code === 200) {
-            if (d.data) {
+        .then((d) =>
+        {
+          if (d.code === 200)
+          {
+            if (d.data)
+            {
               let statusArr = [];
-              for (let a in d.data) {
+              for (let a in d.data)
+              {
                 statusArr.push({
                   label: d.data[a],
                   value: +a,
@@ -694,27 +816,31 @@ export default {
               this.statusList = statusArr;
               this.statusList.map((v) =>
                 v.label === "启用" || v.value === 1
-                  ? (this.deptForm.status = v.value)
-                  : ""
+                ? (this.deptForm.status = v.value)
+                : ""
               );
             }
           }
         })
-        .catch((err) => {
+        .catch((err) =>
+        {
           console.error(err);
         });
     },
-    add() {
-      const obj = { path: "/system/user-auth/editAddInfo" };
+    add()
+    {
+      const obj = {path: "/system/user-auth/editAddInfo"};
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
-    searchTable() {
-      const obj = { path: "/system/user-auth/search" };
+    searchTable()
+    {
+      const obj = {path: "/system/user-auth/search"};
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
-    detail(id) {
+    detail(id)
+    {
       // window.localStorage.setItem('depttId',this.queryParams.deptId)
       // window.localStorage.setItem('deptTitle',this.deptTitle)
       const obj = {
@@ -728,27 +854,40 @@ export default {
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
-    show(data) {
+    show(data)
+    {
       console.log(data);
     },
     //停用启用
-    stopOrUse(id, code) {
-      stopUse({ status: code, userId: id }).then((res) => {
-        if (res.code == 200) {
-          this.$message.success(res.msg);
-          this.getList();
-        }
-      });
+    stopOrUse(id, code)
+    {
+      stopUse({
+        status: code,
+        userId: id
+      })
+        .then((res) =>
+        {
+          if (res.code == 200)
+          {
+            this.$message.success(res.msg);
+            this.getList();
+          }
+        });
     },
     /** 查询用户列表 */
-    getList() {
-      queryUserList({ deptId: this.queryParams.deptId }).then((response) => {
-        this.user = response.data;
-      });
+    getList()
+    {
+      queryUserList({deptId: this.queryParams.deptId})
+        .then((response) =>
+        {
+          this.user = response.data;
+        });
     },
     /** 转换部门数据结构 */
-    normalizer(node) {
-      if (node.children && !node.children.length) {
+    normalizer(node)
+    {
+      if (node.children && !node.children.length)
+      {
         delete node.children;
       }
       return {
@@ -758,45 +897,56 @@ export default {
       };
     },
     /** 查询部门下拉树结构 */
-    getTreeselect() {
-      treeselect().then((response) => {
-        this.deptOptions = response.data;
-        // this.$store.commit('SET_DEPTID',this.deptOptions[0].id)
-        //  if(this.$store.state.deptId){
+    getTreeselect()
+    {
+      treeselect()
+        .then((response) =>
+        {
+          this.deptOptions = response.data;
+          // this.$store.commit('SET_DEPTID',this.deptOptions[0].id)
+          //  if(this.$store.state.deptId){
 
-        //       this.queryParams.deptId = window.localStorage.getItem('depttId')
-        //        this.deptTitle =window.localStorage.getItem('deptTitle');
-        //         this.curren=window.localStorage.getItem('depttId')
+          //       this.queryParams.deptId = window.localStorage.getItem('depttId')
+          //        this.deptTitle =window.localStorage.getItem('deptTitle');
+          //         this.curren=window.localStorage.getItem('depttId')
 
-        //     }else{
-        // this.queryParams.deptId = this.deptOptions[0].id;
-        if (this.$store.state.user.deptId) {
-          console.log(this.$store.state.user.deptId);
-          this.queryParams.deptId = this.$store.state.user.deptId;
-          this.deptTitle = this.$store.state.user.deptTitle;
-          this.curren = this.$store.state.user.deptId;
-        } else {
-          this.queryParams.deptId = this.deptOptions[0].id;
-          this.deptTitle = this.deptOptions[0].label;
-          this.curren = this.deptOptions[0].id;
-        }
+          //     }else{
+          // this.queryParams.deptId = this.deptOptions[0].id;
+          if (this.$store.state.user.deptId)
+          {
+            console.log(this.$store.state.user.deptId);
+            this.queryParams.deptId = this.$store.state.user.deptId;
+            this.deptTitle = this.$store.state.user.deptTitle;
+            this.curren = this.$store.state.user.deptId;
+          }
+          else
+          {
+            this.queryParams.deptId = this.deptOptions[0].id;
+            this.deptTitle = this.deptOptions[0].label;
+            this.curren = this.deptOptions[0].id;
+          }
 
-        // }
+          // }
 
-        console.log(this.deptTitle, " this.deptTitle");
+          console.log(this.deptTitle, " this.deptTitle");
 
-        this.getList();
-        this.queryUserlistByRole();
-        this.defaultData();
-      });
+          this.getList();
+          this.queryUserlistByRole();
+          this.defaultData();
+        });
     },
     // 筛选节点
-    filterNode(value, data) {
-      if (!value) return true;
+    filterNode(value, data)
+    {
+      if (!value)
+      {
+        return true;
+      }
       return data.label.indexOf(value) !== -1;
     },
     // 节点单击事件
-    handleNodeClick(data) {
+    handleNodeClick(data)
+    {
       console.log(this.defaultData, "defaultData");
       console.log(data, "data");
       this.queryParams.deptId = data.id;
@@ -807,27 +957,37 @@ export default {
       this.getList();
     },
     // 用户状态修改
-    handleStatusChange(row) {
-      let text = row.status === "0" ? "启用" : "停用";
+    handleStatusChange(row)
+    {
+      let text = row.status === "0"
+                 ? "启用"
+                 : "停用";
       this.$modal
-        .confirm('确认要"' + text + '""' + row.userName + '"用户吗？')
-        .then(function () {
-          return changeStatus(row);
-        })
-        .then(() => {
-          this.$modal.msgSuccess(text + "成功");
-        })
-        .catch(function () {
-          row.status = row.status === "0" ? "1" : "0";
-        });
+          .confirm('确认要"' + text + '""' + row.userName + '"用户吗？')
+          .then(function ()
+          {
+            return changeStatus(row);
+          })
+          .then(() =>
+          {
+            this.$modal.msgSuccess(text + "成功");
+          })
+          .catch(function ()
+          {
+            row.status = row.status === "0"
+                         ? "1"
+                         : "0";
+          });
     },
     // 取消按钮
-    cancel() {
+    cancel()
+    {
       this.open = false;
       this.reset();
     },
     // 表单重置
-    reset() {
+    reset()
+    {
       (this.deptForm = {
         name: "",
         deptNo: "",
@@ -843,31 +1003,43 @@ export default {
         this.resetForm("form");
     },
 
-    newAdd() {
+    newAdd()
+    {
       this.deptForm.posts =
         this.deptForm.posts && Array.isArray(this.deptForm.posts)
-          ? this.deptForm.posts.join(",")
-          : "";
+        ? this.deptForm.posts.join(",")
+        : "";
 
-      add({ method: "post", data: { ...this.deptForm } })
-        .then((d) => {
-          if (d.code === 200) {
+      add({
+        method: "post",
+        data: {...this.deptForm}
+      })
+        .then((d) =>
+        {
+          if (d.code === 200)
+          {
             // this.$message.success('新增部门成功')
             this.open = false;
             this.getTreeselect(); // 刷新列表数据
           }
 
           this.$message({
-            message: d.code === 200 ? "新增成功!" : "新增异常!",
-            type: d.code === 200 ? "success" : "warning",
+            message: d.code === 200
+                     ? "新增成功!"
+                     : "新增异常!",
+            type: d.code === 200
+                  ? "success"
+                  : "warning",
           });
         })
-        .catch((err) => {
+        .catch((err) =>
+        {
           console.error(err);
         });
     },
     /** 新增按钮操作 */
-    handleAdd() {
+    handleAdd()
+    {
       this.reset();
       // this.getTreeselect();
       // getUser().then((response) => {
@@ -893,29 +1065,41 @@ export default {
         remark: "",
       }; // deptForm.status statusList
       this.reqStatusFn();
-      treeselect().then((response) => {
-        this.deptOption = response.data;
+      treeselect()
+        .then((response) =>
+        {
+          this.deptOption = response.data;
 
-        // this.form.password = this.initPassword;
-      });
+          // this.form.password = this.initPassword;
+        });
     },
 
     /** 提交按钮 */
-    submitForm: function () {
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.deptId != undefined) {
-            updateDept(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addDept(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
+    submitForm: function ()
+    {
+      this.$refs["form"].validate((valid) =>
+      {
+        if (valid)
+        {
+          if (this.form.deptId != undefined)
+          {
+            updateDept(this.form)
+              .then((response) =>
+              {
+                this.$modal.msgSuccess("修改成功");
+                this.open = false;
+                this.getList();
+              });
+          }
+          else
+          {
+            addDept(this.form)
+              .then((response) =>
+              {
+                this.$modal.msgSuccess("新增成功");
+                this.open = false;
+                this.getList();
+              });
           }
         }
       });
