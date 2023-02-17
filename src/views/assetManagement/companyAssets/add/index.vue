@@ -141,9 +141,14 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="span">
+<!--            <el-col :span="span">
               <el-form-item label="保管员:" prop="keeper">
                 <el-input v-model.trim="formData.keeper" :style="style" />
+              </el-form-item>
+            </el-col>-->
+            <el-col :span="span">
+              <el-form-item label="持有人:" prop="holderName">
+                <el-input v-model.trim="formData.holderName" :style="style" />
               </el-form-item>
             </el-col>
             <el-col :span="span">
