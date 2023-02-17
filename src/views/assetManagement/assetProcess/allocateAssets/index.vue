@@ -8,15 +8,15 @@
         </span>
       </div>
       <div class="btns">
-        <el-button 
+        <el-button
           type="primary"
-          :disabled="tableData.length == 0" 
+          :disabled="tableData.length == 0"
           @click="sure"
         >
           确定
         </el-button>
         <el-button type="danger" @click="cancel">取消</el-button>
-       
+
       </div>
     </header>
     <!-- 资产信息开始 -->
@@ -30,7 +30,7 @@
           <div class="item">
             <span class="name">需分配数：</span>
             <span class="value">
-              {{ amount }} 
+              {{ amount }}
             </span>
           </div>
           <div class="item">
@@ -128,8 +128,8 @@
           label="操作"
         >
           <template slot-scope="{row}">
-            <el-button 
-              type="text" 
+            <el-button
+              type="text"
               size="small"
               style='color:red'
               :disabled="!row.id"
@@ -226,7 +226,7 @@
     <!-- 确定弹窗 -->
     <my-dialog
       :customVar="CUSTOM_VAR"
-      ref="dialog" 
+      ref="dialog"
     />
   </div>
 </template>
@@ -371,7 +371,9 @@ export default {
       this.$refs.dialog.open()
     },
     //拒绝
-    cancel(){},
+    cancel(){
+      this.$router.go(-1)
+    },
     handleSelectionChange(){},
     // 返回
     goBack() {

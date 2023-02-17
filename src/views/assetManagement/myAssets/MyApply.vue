@@ -208,9 +208,9 @@
       >
         <template slot-scope="{row}">
           <el-button
+            v-if="row.commentSize == 1 || row.taskDefKey == 'a78x4anxe'"
             type="text"
             size="small"
-            :disabled="row.commentSize !== 1 || row.taskDefKey == 'a78x4anxe'"
             @click.stop="cancel(row)"
           >
             取消
