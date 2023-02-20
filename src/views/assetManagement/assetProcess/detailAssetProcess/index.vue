@@ -295,7 +295,7 @@
         class="dialogFormInfo"
       >
         <el-row>
-          <el-col :span="24">
+<!--          <el-col :span="24">
             <el-form-item label="附件上传" prop="url">
                <el-upload
               action
@@ -310,7 +310,7 @@
               </el-button>
             </el-upload>
             </el-form-item>
-          </el-col>
+          </el-col>-->
         </el-row>
          <el-row>
           <el-col :span="12">
