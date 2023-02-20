@@ -237,3 +237,49 @@ export function queryUserlistByRole(query) {
     params: query
   })
 }
+
+
+/** 权限分配 */
+// 新增我授权人
+export function addSysGrant(data) {
+  return request({
+    url: '/system/sysGrant/add',
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询给我授权人的列表
+export function grantToList(query) {
+  return request({
+    url: '/system/sysGrant/grantTolist',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询我授权人的列表
+export function grantFromList(query) {
+  return request({
+    url: '/system/sysGrant/grantFromlist',
+    method: 'get',
+    params: query
+  })
+}
+
+// 删除授权人
+export function deleteGrant(grantId) {
+  return request({
+    url: '/system/sysGrant/' + grantId,
+    method: 'get',
+  })
+}
+
+// 可授权人员列表
+export function queryGrantUserlist(data) {
+  return request({
+    url: '/system/sysGrant/queryGrantUserlist',
+    method: 'post',
+    data: data
+  })
+}
