@@ -220,6 +220,7 @@
               action
               :on-change="onChange"
               :before-remove="remove"
+              :file-list="fileList"
               :limit="1"
               accept=".jpg, .png, .pdf"
               :auto-upload="false"
@@ -502,13 +503,15 @@ export default {
       formRules: {
       },
       submitLoading: false,
-      restart: false
+      restart: false,
+      fileList: [],
     }
   },
   watch: {
     agreeShow(value) {
       if (value === false) {
        this.cancelFn()
+       this.fileList = []
       }
     },
     rejectShow(value) {
@@ -585,7 +588,7 @@ export default {
          this.agreeShow=false
     },
       // 上传文件
-    onChange(file) {
+    onChange(file, fileList) {
       let formData = new FormData()
       formData.append('file', file.raw)
       fileUpload(formData).then(res => {
@@ -593,7 +596,7 @@ export default {
         this.url = res.data.url
         this.name = res.data.name
         this.uploadData=res.data
-
+        this.fileList = fileList
         }
 
       })

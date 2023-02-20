@@ -234,6 +234,7 @@
                 action
                 :on-change="upChange"
                 :before-remove="remove"
+                :file-list="fileList"
                 :limit="1"
                 accept=".jpg, .png, .pdf"
                 :auto-upload="false"
@@ -393,7 +394,15 @@ export default {
       showScrap: false,
       showReturn: false,
       isLoading: false,
+      fileList: [],
     };
+  },
+  watch: {
+    diaForm(value) {
+      if (value === false) {
+        this.fileList = []
+      }
+    },
   },
   created() {
     const { tabFlag } = this.$route.query
@@ -462,13 +471,14 @@ export default {
       this.$refs.return.open()
     },
     // 上传文件
-    upChange(file) {
+    upChange(file, fileList) {
       let formData = new FormData();
       formData.append("file", file.raw);
       fileUpload(formData).then(res => {
         this.url = res.data.url
         this.name = res.data.name
         this.type=this.name.substring(this.name.lastIndexOf('.'))
+        this.fileList = fileList
       })
     },
     remove() {

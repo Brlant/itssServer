@@ -106,6 +106,7 @@
                   action
                   :on-change="upChange"
                   :before-remove="remove"
+                  :file-list="fileList"
                   :limit="1"
                   accept=".jpg, .png, .pdf"
                   :auto-upload="false"
@@ -117,7 +118,7 @@
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="备注" prop="url">
+              <el-form-item label="备注" prop="remark">
                 <el-input v-model='diaForm.remark' type='textarea'>
                 </el-input>
               </el-form-item>
@@ -185,8 +186,16 @@ export default {
       name: "",
       type:'',
       list:[],
-      submitLoading: false
+      submitLoading: false,
+      fileList: [],
     }
+  },
+  watch: {
+    dialogShow(value) {
+      if (value === false) {
+        this.fileList = []
+      }
+    },
   },
   mounted()
   {
@@ -212,13 +221,14 @@ export default {
     },
 
     // 上传文件
-    upChange(file) {
+    upChange(file, fileList) {
       let formData = new FormData();
       formData.append("file", file.raw);
       fileUpload(formData).then(res => {
         this.url = res.data.url
         this.name = res.data.name
         this.type=this.name.substring(this.name.lastIndexOf('.'))
+        this.fileList = fileList
       })
     },
 
