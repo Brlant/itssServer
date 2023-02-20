@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <header>
-      <div 
-        class="left" 
+      <div
+        class="left"
         @click="$router.push('/assetManagement/assetManagementSet/quickAssetDetailIndex')"
       >
         <i class="el-icon-arrow-left"></i>
@@ -19,10 +19,10 @@
     </header>
     <!-- 表单部分 -->
     <main>
-      <el-form 
+      <el-form
         :model="formData"
         :rules="rules"
-        ref="elForm" 
+        ref="elForm"
         label-width="120px"
       >
         <el-row>
@@ -92,8 +92,8 @@
               <el-form-item label="数量:" prop="amount">
                 <el-input
                   :disabled="manageType === 2"
-                  v-model.number="formData.amount" 
-                  :style="style" 
+                  v-model.number="formData.amount"
+                  :style="style"
                 />
               </el-form-item>
             </el-col>
@@ -113,9 +113,14 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="span">
+<!--            <el-col :span="span">
               <el-form-item label="保管员:" prop="keeper">
                 <el-input v-model.trim="formData.keeper" :style="style" />
+              </el-form-item>
+            </el-col>-->
+            <el-col :span="span">
+              <el-form-item label="持有人:" prop="holderName">
+                <el-input v-model.trim="formData.holderName" :style="style" />
               </el-form-item>
             </el-col>
             <el-col :span="span">
@@ -153,7 +158,7 @@
               :span="span"
             >
               <el-form-item :label="item.label" :prop="item.name">
-                <el-input 
+                <el-input
                   v-model.trim="formData[item.name]"
                   :style="style"
                 />

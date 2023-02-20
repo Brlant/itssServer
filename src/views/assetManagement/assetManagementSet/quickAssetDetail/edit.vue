@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <header>
-      <div 
-        class="left" 
+      <div
+        class="left"
         @click="$router.go(-1)"
       >
         <i class="el-icon-arrow-left"></i>
@@ -18,10 +18,10 @@
       </div>
     </header>
     <main>
-      <el-form 
+      <el-form
         :model="formData"
         :rules="rules"
-        ref="elForm" 
+        ref="elForm"
         label-width="120px"
       >
         <el-row>
@@ -89,10 +89,10 @@
             </el-col>
             <el-col :span="span">
               <el-form-item label="数量:" prop="amount">
-                <el-input 
+                <el-input
                   v-model.number="formData.amount"
                   :disabled="manageType === 2"
-                  :style="style" 
+                  :style="style"
                 />
               </el-form-item>
             </el-col>
@@ -112,9 +112,14 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="span">
+<!--            <el-col :span="span">
               <el-form-item label="保管员:" prop="keeper">
                 <el-input v-model.trim="formData.keeper" :style="style" />
+              </el-form-item>
+            </el-col>-->
+            <el-col :span="span">
+              <el-form-item label="持有人:" prop="holderName">
+                <el-input v-model.trim="formData.holderName" :style="style" />
               </el-form-item>
             </el-col>
             <el-col :span="span">
@@ -152,7 +157,7 @@
               :span="span"
             >
               <el-form-item :label="item.label" :prop="item.name">
-                <el-input 
+                <el-input
                   v-model.trim="formData[item.name]"
                   :style="style"
                 />
@@ -167,8 +172,8 @@
 
 <script>
 import { treeselect } from "@/api/system/dept"
-import { 
-  searchDetail, 
+import {
+  searchDetail,
   queryAsset,
   updateOrDelete
 } from '@/api/assetManagement/quickAssetDetail'
@@ -324,7 +329,7 @@ export default {
     },
     // 选择资产类型
     change() {
-      
+
     },
     // 取消
     cancel() {

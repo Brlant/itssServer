@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <header>
-      <div 
-        style="cursor: pointer" 
+      <div
+        style="cursor: pointer"
         @click="goBack"
       >
         <i class="el-icon-arrow-left"></i>
@@ -11,7 +11,7 @@
         </span>
       </div>
       <div>{{'流程ID:'+flowId}}</div>
-     
+
     </header>
     <!-- 资产信息开始 -->
     <section class="asset-info">
@@ -103,8 +103,8 @@
           label="操作"
         >
           <template slot-scope="{row}">
-            <el-button 
-              type="text" 
+            <el-button
+              type="text"
               size="small"
               :disabled="!row.id"
               @click="view(row)"
@@ -120,7 +120,7 @@
     <section class="process">
       <approval-process ref="process" />
     </section>
-   
+
   </div>
 </template>
 
@@ -129,7 +129,7 @@ import ApprovalProcess from './ApprovalProcess.vue'
 import { listAsset } from '@/api/assetManagement/myAssets'
 import { tabOptions } from '../../companyAssets/options'
 import { agreeQuery,rejectQuery,deleteAttachment,uploadSuccess } from "@/api/assetManagement/assetProcess";
-import { 
+import {
   fileUpload,
 } from '@/api/assetManagement/companyAssets'
 export default {
@@ -138,7 +138,7 @@ export default {
   },
   data() {
     return {
-     
+
       flowId: this.$route.query.flowId,
       tableData: [],
       diaForm:{},
@@ -191,6 +191,12 @@ export default {
         if (row.status == 1) {
           res = '闲置中'
           return res
+        } else if (row.status === 7) {
+          if (row.isApplying === 0) {
+            return '未入库'
+          } else if (row.isApplying === 1) {
+            return '待审批入库'
+          }
         } else {
           const arr = tabOptions.filter(v => v.type == 'status')
           res = arr.find(v => row.status == v.value).label

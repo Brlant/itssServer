@@ -215,11 +215,19 @@
 
       >
         <template slot-scope="{row}">
-          <el-button
+<!--          <el-button
             type="text"
             size="small"
             @click.stop="cancel(row)"
              v-if='row.procVars.APPLICANT_ID == userId && (row.procVars.processStep==1 || row.procVars.processStep==2)'
+          >
+            取消
+          </el-button>-->
+          <el-button
+            type="text"
+            size="small"
+            @click.stop="cancel(row)"
+            v-if="row.procVars.APPLICANT_ID == userId && (row.commentSize == 1 || row.taskDefKey == 'a78x4anxe')"
           >
             取消
           </el-button>

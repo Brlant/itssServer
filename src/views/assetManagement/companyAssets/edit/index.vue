@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <header>
-      <div 
-        class="left" 
+      <div
+        class="left"
         @click="$router.go(-1)"
       >
         <i class="el-icon-arrow-left"></i>
@@ -41,14 +41,14 @@
           </el-col>
           <el-col :span="span">
             <el-form-item label="填充模板:" prop="templateId">
-              <el-select 
-                v-model="formData.templateId" 
+              <el-select
+                v-model="formData.templateId"
                 @change="change"
                 :disabled="!formData.assetTypeId.length"
                 :style="style"
                 clearable
               >
-                <el-option 
+                <el-option
                   v-for="(item, index) in template"
                   :key="index"
                   :label="item.templateName"
@@ -118,10 +118,10 @@
             </el-col>
             <el-col :span="span">
               <el-form-item label="数量:" prop="amount">
-                <el-input 
+                <el-input
                   v-model.number="formData.amount"
                   :disabled="manageType === 2"
-                  :style="style" 
+                  :style="style"
                 />
               </el-form-item>
             </el-col>
@@ -141,9 +141,14 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="span">
+<!--            <el-col :span="span">
               <el-form-item label="保管员:" prop="keeper">
                 <el-input v-model.trim="formData.keeper" :style="style" />
+              </el-form-item>
+            </el-col>-->
+            <el-col :span="span">
+              <el-form-item label="持有人:" prop="holderName">
+                <el-input v-model.trim="formData.holderName" :style="style" />
               </el-form-item>
             </el-col>
             <el-col :span="span">
@@ -181,7 +186,7 @@
               :span="span"
             >
               <el-form-item :label="item.label" :prop="item.name">
-                <el-input 
+                <el-input
                   v-model.trim="formData[item.name]"
                   :style="style"
                 />
@@ -195,10 +200,10 @@
 </template>
 
 <script>
-import { 
-  assetDetail, 
-  updateAssets, 
-  queryAssetId 
+import {
+  assetDetail,
+  updateAssets,
+  queryAssetId
 } from '@/api/assetManagement/companyAssets'
 import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 import { queryAll } from '@/api/assetManagement/quickAssetDetail'

@@ -1,8 +1,8 @@
 <template>
   <div class="detail">
     <header>
-      <div 
-        class="left" 
+      <div
+        class="left"
         @click="$router.push('/assetManagement/assetManagementSet/quickAssetDetailIndex')"
       >
         <i class="el-icon-arrow-left"></i>
@@ -82,12 +82,12 @@
               <span class="value">{{ info.departmentName }}</span>
             </div>
           </el-col>
-          <el-col :span="span">
+<!--          <el-col :span="span">
             <div class="item">
               <span class="label">保管员：</span>
               <span class="value">{{ info.keeper }}</span>
             </div>
-          </el-col>
+          </el-col>-->
           <el-col :span="span">
             <div class="item">
               <span class="label">备注：</span>
@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import { 
+import {
   searchDetail,
   queryAsset
 } from '@/api/assetManagement/quickAssetDetail'

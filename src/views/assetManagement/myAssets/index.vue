@@ -116,6 +116,7 @@ import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 import MyApply from './MyApply'
 import AssetBorrow from './AssetBorrow'
 import AssetClaim from './AssetClaim'
+import {tabOptions} from "../companyAssets/options";
 
 export default {
   components: {
@@ -217,7 +218,7 @@ export default {
       this.getTableData()
     },
     // 状态
-    statusFormatter(row) {
+    /*statusFormatter(row) {
       let status
       switch (row.status) {
         case 1:
@@ -243,7 +244,30 @@ export default {
           break
       }
       return status
-    }
+    }*/
+
+    // 状态处理
+    statusFormatter(row) {
+      let res
+      if (row.specialStatus !== null) {
+        const specialArr = tabOptions.filter(v => v.type == 'specialStatus')
+        res = specialArr.find(v => row.specialStatus == v.value).label
+        return res
+      }
+      if (row.status !== null) {
+        if (row.status === 7) {
+          if (row.isApplying === 0) {
+            return '未入库'
+          } else if (row.isApplying === 1) {
+            return '待审批入库'
+          }
+        } else {
+          const arr = tabOptions.filter(v => v.type == 'status')
+          res = arr.find(v => row.status == v.value).label
+          return res
+        }
+      }
+    },
   }
 }
 </script>

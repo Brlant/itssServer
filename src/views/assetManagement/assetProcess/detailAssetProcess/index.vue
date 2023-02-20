@@ -822,6 +822,12 @@ export default {
         if (row.status == 1) {
           res = '闲置中'
           return res
+        } else if (row.status === 7) {
+          if (row.isApplying === 0) {
+            return '未入库'
+          } else if (row.isApplying === 1) {
+            return '待审批入库'
+          }
         } else {
           const arr = tabOptions.filter(v => v.type == 'status')
           res = arr.find(v => row.status == v.value).label
