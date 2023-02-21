@@ -196,7 +196,7 @@
               :data="grantToList"
               style="min-width: 500px"
               border>
-              <el-table-column label="已授权用户" prop="grantToName"/>
+              <el-table-column label="授权用户" prop="grantFromName"/>
               <el-table-column label="授权时间" prop="createTime"/>
               <el-table-column label="操作" align="center">
                 <template slot-scope="scope">
