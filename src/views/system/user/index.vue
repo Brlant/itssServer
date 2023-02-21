@@ -38,7 +38,7 @@
       <div class="right">
         <div class="right-header">
           <div>{{ deptTitle }}</div>
-          <div v-hasPermi="['system:user:add']">
+          <div v-if="showSetCommander" v-hasPermi="['system:user:add']">
             <el-button type="text" @click="setCommander">设置负责人</el-button>
             <span>
               <span>|</span>
@@ -500,6 +500,10 @@ export default {
           { required: true, message: "请输入显示排序", trigger: "change" },
         ],
       },
+      // 是否显示设置负责人
+      showSetCommander: false,
+      // 当前点击节点
+      currentNode: {}
     };
   },
   watch: {
@@ -518,6 +522,10 @@ export default {
     this.reqOrgListFn();
     this.reqParentDeptFn();
     this.getSkills();
+    const { currentNode } = this.$route.params
+    if (currentNode && typeof currentNode == "object") {
+      this.handleNodeClick(currentNode)
+    }
   },
   methods: {
     getSkills() {
@@ -547,6 +555,7 @@ export default {
           userId: row.userId,
           deptId: this.queryParams.deptId,
           deptTitle: this.deptTitle,
+          currentNode: this.currentNode
         },
       };
       // getToday()
@@ -706,7 +715,12 @@ export default {
         });
     },
     add() {
-      const obj = { path: "/system/user-auth/editAddInfo" };
+      const obj = {
+        path: "/system/user-auth/editAddInfo",
+        query: {
+          currentNode: this.currentNode
+        }
+      };
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
@@ -724,6 +738,7 @@ export default {
           userId: id,
           deptId: this.queryParams.deptId,
           deptTitle: this.deptTitle,
+          currentNode: this.currentNode
         },
       };
       // getToday()
@@ -743,8 +758,11 @@ export default {
     },
     /** 查询用户列表 */
     getList() {
+      this.user = [];
       queryUserList({ deptId: this.queryParams.deptId }).then((response) => {
         this.user = response.data;
+      }).catch(()=>{
+        this.user = [];
       });
     },
     /** 转换部门数据结构 */
@@ -828,6 +846,10 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
+      this.showSetCommander = (data.id == this.$store.state.user.user.deptId || data.parentId == this.$store.state.user.user.deptId)
+                              ? true
+                              : false
+      this.currentNode = data
       console.log(this.defaultData, "defaultData");
       console.log(data, "data");
       this.queryParams.deptId = data.id;

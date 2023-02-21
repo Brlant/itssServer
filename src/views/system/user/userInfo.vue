@@ -289,7 +289,9 @@ export default {
       // 授权给我条数
       grantToTotal: 0,
       // 授权给我的列表
-      grantToList: []
+      grantToList: [],
+
+      currentNode:{}
     }
   },
 
@@ -298,6 +300,7 @@ export default {
       this.getSkills()
     // window.localStorage.setItem('depttId',this.$route.query.deptId)
     // window.localStorage.setItem('deptTitle',this.$route.query.deptTitle)
+    this.currentNode = this.$route.query.currentNode
   },
 
   methods:{
@@ -328,13 +331,27 @@ export default {
     //         query:{deptId:this.deptId,deptTitle:this.deptTitle}
     //     };
     //   this.$tab.closeOpenPage(obj);
-    this.$router.go(-1)
+    // this.$router.go(-1)
+      const obj = {
+        name:"user",
+        params:{
+          currentNode: this.currentNode
+        }
+      }
+      this.$tab.closeOpenPage(obj);
     },
 
     //编辑
     editInfo(){
          window.localStorage.setItem("userId",this.info.userId)
-        const obj = { path:'/system/user-auth/editAddInfo',query:{userInfo:this.info,isEdit:1}};
+        const obj = {
+          path:'/system/user-auth/editAddInfo',
+          query:{
+            userInfo: this.info,
+            isEdit: 1,
+            currentNode: this.currentNode
+          }
+         };
             // getToday()
         this.$tab.closeOpenPage(obj);
     },

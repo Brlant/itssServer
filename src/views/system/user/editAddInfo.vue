@@ -346,7 +346,9 @@ export default {
         ],
         deptId:[{ required: true, message: "请选择所属部门", trigger: "blur" }]
       },
-      isEdit: ''
+      isEdit: '',
+
+      currentNode: {}
     };
   },
   created() {
@@ -365,6 +367,8 @@ export default {
     this.positinType("post_type");
     this.getTreeselect();
     this.role();
+
+    this.currentNode = this.$route.query.currentNode
   },
   mounted() {
     // 表单数据回显
@@ -507,7 +511,15 @@ export default {
               if (res.code == 200) {
                 this.$message.success(res.msg);
                 //  this.detailInfo();
-                this.$router.go(-1)
+                // this.$router.go(-1)
+                const obj = {
+                  path: "/system/user-auth/userInfo",
+                  query: {
+                    userId: this.userId,
+                    currentNode: this.currentNode
+                  },
+                };
+                this.$tab.closeOpenPage(obj);
               }
             });
           }
@@ -531,9 +543,15 @@ export default {
 
                 this.$refs.elForm.resetFields()
 
-                const obj = {
+                /*const obj = {
                   path: "/system/user",
-                };
+                };*/
+                const obj = {
+                  name:"user",
+                  params:{
+                    currentNode: this.currentNode
+                  }
+                }
                 // getToday()
                 this.$tab.closeOpenPage(obj);
               }
@@ -554,7 +572,15 @@ export default {
       })
         .then(() => {
           // this.$refs["elForm"].resetFields();
-             this.$router.go(-1)
+          //    this.$router.go(-1)
+          const obj = {
+            path: "/system/user-auth/userInfo",
+            query: {
+              userId: this.userId,
+              currentNode: this.currentNode
+            },
+          };
+          this.$tab.closeOpenPage(obj);
         })
         .catch(() => {});
 
@@ -566,7 +592,14 @@ export default {
       })
         .then(() => {
           this.$refs["elForm"].resetFields();
-          this.$router.go(-1)
+          // this.$router.go(-1)
+          const obj = {
+            name:"user",
+            params:{
+              currentNode: this.currentNode
+            }
+          }
+          this.$tab.closeOpenPage(obj);
         })
         .catch(() => {});
      }
@@ -635,7 +668,26 @@ export default {
       // };
       // // getToday()
       // this.$tab.closeOpenPage(obj);
-      this.$router.go(-1)
+      // this.$router.go(-1)
+      if(this.$route.query.isEdit == 1){
+        const obj = {
+          path: "/system/user-auth/userInfo",
+          query: {
+            userId: this.userId,
+            currentNode: this.currentNode
+          },
+        };
+        this.$tab.closeOpenPage(obj);
+      } else {
+        const obj = {
+          name:"user",
+          params:{
+            currentNode: this.currentNode
+          }
+        }
+        this.$tab.closeOpenPage(obj);
+      }
+
     },
   },
 };
