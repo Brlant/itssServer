@@ -625,7 +625,7 @@ export default {
     // 控制分配资产按钮
     getAttr(value) {
       this.attribute = value
-      if (value == 'inventoryconfirm' || value == 'assetReturnInitiate' || value == 'notifyconfirm' || this.restart){
+      if (value == 'inventoryconfirm' || value == 'assetReturnInitiate' || value == 'notifyconfirm' || value == 'maintenance' || this.restart){
         return
       } else if (value == 'assignment' || value == 'safeconfirm') {
         this.showAllocate = true
