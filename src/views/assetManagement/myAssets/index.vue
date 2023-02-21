@@ -218,7 +218,7 @@ export default {
       this.getTableData()
     },
     // 状态
-    /*statusFormatter(row) {
+    statusFormatter(row) {
       let status
       switch (row.status) {
         case 1:
@@ -244,9 +244,9 @@ export default {
           break
       }
       return status
-    }*/
+    }
 
-    // 状态处理
+    /*// 状态处理
     statusFormatter(row) {
       let res
       if (row.specialStatus !== null) {
@@ -267,7 +267,7 @@ export default {
           return res
         }
       }
-    },
+    },*/
   }
 }
 </script>
