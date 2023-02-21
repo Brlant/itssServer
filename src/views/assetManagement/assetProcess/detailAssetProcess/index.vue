@@ -216,7 +216,19 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="附件上传" prop="url">
-               <el-upload
+              <el-upload
+                action
+                :on-change="onChange"
+                :before-remove="onRemove"
+                :file-list="fileList"
+                accept=".jpg, .png, .pdf"
+                :auto-upload="false"
+              >
+                <el-button type="info">
+                  上传附件
+                </el-button>
+              </el-upload>
+<!--               <el-upload
               action
               :on-change="onChange"
               :before-remove="remove"
@@ -228,7 +240,7 @@
               <el-button type="info">
                 上传附件
               </el-button>
-            </el-upload>
+            </el-upload>-->
             </el-form-item>
           </el-col>
         </el-row>
@@ -593,10 +605,19 @@ export default {
       formData.append('file', file.raw)
       fileUpload(formData).then(res => {
         if(res.code==200){
-        this.url = res.data.url
+        /*this.url = res.data.url
         this.name = res.data.name
         this.uploadData=res.data
-        this.fileList = fileList
+        this.fileList = fileList*/
+          // 文件列表格式处理
+          let fileArr = this.deepClone(fileList)
+          const index = fileArr.findIndex(item => {
+            return item.uid == file.uid
+          })
+          fileArr[index].status = 'success'
+          fileArr[index].name = res.data.name
+          fileArr[index].url = res.data.url
+          this.fileList = fileArr
         }
 
       })
@@ -652,29 +673,41 @@ export default {
     },
 
    //删除上传的文件
-    remove() {
+    /*remove() {
       this.url = ''
       this.name = ''
+    },*/
+    onRemove(file, fileList){
+      this.fileList = fileList
     },
+
     //点击弹框的确认按钮之后调用的方法，上传文件相关
     uploadAttachment(data){
-      let params={
-        attachments:[
+      if (this.fileList.length) {
+        let params = {
+          attachments: [
+            {
+              description: '',
+              name: data.name,
+              url: data.url,
+              type: data.name
+                    ? data.name.substring(data.name.lastIndexOf('.'))
+                    : '',
+              userId: this.$store.state.user.user.userId,
+            }
+          ],
+          processInstanceId: this.$route.query.processInstanceId,
+          taskId: this.$route.query.taskId,
+        }
+        uploadSuccess(params)
+          .then(res =>
           {
-            description:'',
-            name:data.name,
-            url:data.url,
-            type:data.name ? data.name.substring(data.name.lastIndexOf('.')) : '',
-            userId:this.$store.state.user.user.userId,
-          }
-        ],
-         processInstanceId:this.$route.query.processInstanceId,
-         taskId:this.$route.query.taskId,
-      }
-      uploadSuccess(params).then(res=>{
-        //同意的接口请求事件
+            //同意的接口请求事件
+            this.sureForm()
+          })
+      } else {
         this.sureForm()
-      })
+      }
     },
 
     // 弹框里的同意按钮  确认同意
