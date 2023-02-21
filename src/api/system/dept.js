@@ -66,3 +66,13 @@ export function delDept(deptId) {
     method: 'delete'
   })
 }
+
+// 根据部门编号获取所有子部门信息
+export function queryChildDeptById(query) {
+  return request({
+    url: '/system/dept_manage/queryChildDeptById',
+    method: 'get',
+    params: query
+  })
+}
+

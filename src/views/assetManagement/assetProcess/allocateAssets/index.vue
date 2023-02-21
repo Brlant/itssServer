@@ -115,6 +115,7 @@
             <treeselect
               v-model="row.departmentId"
               :options="dept"
+              :normalizer="normalizer"
               ref="deptTree"
               :show-count="true"
               appendToBody
@@ -232,7 +233,7 @@
 </template>
 <script>
 import { assigned } from "@/api/assetManagement/assetProcess";
-import { treeselect } from "@/api/system/dept";
+import { treeselect, queryChildDeptById } from "@/api/system/dept";
 import { tabOptions } from '../../companyAssets/options'
 import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css"
@@ -295,10 +296,29 @@ export default {
     },
     // 部门查询
     getDept() {
-      treeselect().then(res => {
+      /*treeselect().then(res => {
+        this.dept = res.data
+      })*/
+      let params = {
+        deptId:  this.$store.state.user.user.deptId
+      }
+      queryChildDeptById(params).then(res => {
         this.dept = res.data
       })
     },
+
+    normalizer(node) {
+      //当子节点也就是children=[]时候去掉子节点
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.deptId,
+        label: node.deptName,
+        children: node.children
+      };
+    },
+
     // 单选操作
     input() {
       let row = this.deepClone(this.list.find(item => {

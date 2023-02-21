@@ -109,7 +109,7 @@
                 <el-select
                   v-model="formData.regionId"
                   placeholder="请选择区域"
-                 
+
                   @change="changePosition('area')"
                   @blur="changePosition('area')"
                 >
@@ -130,7 +130,7 @@
                 <el-select
                   v-model="formData.postTypeId"
                   placeholder="请选择职位类型"
-                
+
                   @change="changePosition('postType')"
                   @blur="changePosition('postType')"
                 >
@@ -146,7 +146,7 @@
             <el-col :span="8">
               <el-form-item label="职位名称" prop='postNameId'>
                 <el-select
-                
+
                   v-model="formData.postNameId"
                   placeholder="请选择职位名称"
                   @change="changePosition('postName')"
@@ -167,7 +167,7 @@
                 <el-select
                   v-model="formData.postLevelId"
                   placeholder="请选择等级"
-                  
+
                   :disabled="!formData.postNameId"
                   @change='dd'
                 >
@@ -203,7 +203,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-        
+
           <el-row>
             <el-col>
               <el-form-item>
@@ -212,10 +212,10 @@
               </el-form-item>
             </el-col>
           </el-row>
-     
+
         <div>
           <div class="titleinfo">权限信息</div>
-         
+
             <el-row>
               <el-col :span="12">
                 <el-form-item label="系统角色">
@@ -243,13 +243,14 @@
                   <treeselect
                     v-model="formData.deptId"
                     :options="deptOptions"
+                    :normalizer="normalizer"
                     :show-count="true"
                     placeholder="请选择归属部门"
                   />
                 </el-form-item>
               </el-col>
             </el-row>
-         
+
         </div>
          </el-form>
       </div>
@@ -285,7 +286,7 @@ import {
   userDetail,
 } from "@/api/system/user";
 import SkillSelect from "@/components/SkillSelect/index";
-import { treeselect } from "@/api/system/dept";
+import { treeselect, queryChildDeptById } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import moment from "moment";
@@ -350,16 +351,16 @@ export default {
   },
   created() {
     this.isEdit = this.$route.query.isEdit
-    
+
     if (this.$route.query.isEdit == 1) {
-     
+
       let id=window.localStorage.getItem("userId")
       this.userId = id;
       this.detailInfo();
       this.position();
       this.level()
     }
-    
+
     this.positinType("region");
     this.positinType("post_type");
     this.getTreeselect();
@@ -369,7 +370,7 @@ export default {
     // 表单数据回显
     const formData = sessionStorage.getItem('editAddInfo')
     if (formData) {
-      this.formData = JSON.parse(formData) 
+      this.formData = JSON.parse(formData)
     }
   },
   beforeDestroy() {
@@ -393,7 +394,7 @@ export default {
       }
           }
         })
-     
+
     },
     // 详情
     detailInfo() {
@@ -482,7 +483,7 @@ export default {
     //保存
     save() {
       if (this.$route.query.isEdit == 1) {
-      
+
         this.$refs["elForm"].validate((valid) => {
           // console.log(this.formData.skillIds,'this.formData.skillIds')
           if (valid) {
@@ -499,9 +500,9 @@ export default {
            let data = {
               ...this.formData,
             };
-          
+
             console.log(data, "ssssssssss");
-          
+
             updateUser(data).then((res) => {
               if (res.code == 200) {
                 this.$message.success(res.msg);
@@ -545,7 +546,7 @@ export default {
     cancle() {
     //  this.cancelShow=true
      if(this.$route.query.isEdit == 1){
-      
+
        this.$confirm(`当前页面修改内容尚未保存，是否确认退出？`, "温馨提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -556,7 +557,7 @@ export default {
              this.$router.go(-1)
         })
         .catch(() => {});
-    
+
      }else{
        this.$confirm(`此操作会重置本页面所有填写的内容!`, "温馨提示", {
         confirmButtonText: "确定",
@@ -565,14 +566,14 @@ export default {
       })
         .then(() => {
           this.$refs["elForm"].resetFields();
-            //  this.$router.go(-1)
+          this.$router.go(-1)
         })
         .catch(() => {});
      }
-     
-     
+
+
     },
-  
+
     cancelForm(){
       this.cancelShow=false
     },
@@ -598,10 +599,29 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
-      treeselect().then((response) => {
+      /*treeselect().then((response) => {
         this.deptOptions = response.data;
-      });
+      });*/
+      let params = {
+        deptId:  this.$store.state.user.user.deptId
+      }
+      queryChildDeptById(params).then(res => {
+        this.deptOptions = res.data
+      })
     },
+
+    normalizer(node) {
+      //当子节点也就是children=[]时候去掉子节点
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.deptId,
+        label: node.deptName,
+        children: node.children
+      };
+    },
+
     //添加技能
     addSkill() {},
     isDel(index) {

@@ -44,7 +44,7 @@
                 clearable
                 size="medium"
               >
-               
+
               </el-select>
             </el-col>
 
@@ -56,7 +56,7 @@
                 clearable
                 size="medium"
               >
-             
+
               </el-select>
             </el-col>
           </el-row>
@@ -89,7 +89,7 @@
                 clearable
                 size="medium"
               >
-               
+
               </el-select>
             </el-form-item>
           </el-col>
@@ -131,7 +131,7 @@
                   height: 820px;
                   margin-top: 20px;
                 "
-               
+
               >
                 <el-button
                   type="primary"
@@ -157,6 +157,7 @@
                           @input="searchDept(item.deptId, index)"
                           v-model="item.deptId"
                           :options="deptOptions"
+                          :normalizer="normalizer"
                           :show-count="true"
                           placeholder="请选择适用部门"
                         />
@@ -182,7 +183,7 @@ import {
   newGroup,
   getProcessType
 } from "@/api/assetManagement/assetManagementSet";
-import { treeselect } from "@/api/system/dept";
+import { treeselect, queryChildDeptById } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
@@ -346,15 +347,34 @@ export default {
       this.flowData = data;
       // this.FlowConfigList[index].type='edit'
       this.$set(this.FlowConfigList[index], "type", "edit");
-     
+
       this.$forceUpdate();
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
-      treeselect().then((response) => {
+      /*treeselect().then((response) => {
         this.deptOptions = response.data;
-      });
+      });*/
+      let params = {
+        deptId:  this.$store.state.user.user.deptId
+      }
+      queryChildDeptById(params).then(res => {
+        this.deptOptions = res.data
+      })
     },
+
+    normalizer(node) {
+      //当子节点也就是children=[]时候去掉子节点
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.deptId,
+        label: node.deptName,
+        children: node.children
+      };
+    },
+
     //不复制新增切换类型
     checkSelectNoCopy(data,index){
        this.n = index;
@@ -364,7 +384,7 @@ export default {
         let paramsCopy=this.deepClone(this.params)
        this.FlowConfigList=paramsCopy.flowInfoVoList[this.n-1].flowDefInfoVoList
          console.log(this.FlowConfigList, ",,,,,,,,,,,,");
-         
+
          this.FlowConfigList.forEach((item,index)=>{
           if(item.modelDefinition){
             item.list=item.modelDefinition.list
@@ -400,7 +420,7 @@ export default {
           },
         ],
        }]
-       
+
         this.FlowConfigListCopy = [ {
           sysDeptList: [],
           modelDeployId: "",
@@ -414,7 +434,7 @@ export default {
     },
     //切换类型触发事件
     checkSelect(data, index) {
-     
+
      console.log(this.params,'thispppp')
        this.deptIds=[]
       this.isShowEdit = true;
@@ -430,7 +450,7 @@ export default {
         let paramsCopy=this.deepClone(this.params)
        this.FlowConfigList=paramsCopy.flowInfoVoList[this.n-1].flowDefInfoVoList
          console.log(this.FlowConfigList, ",,,,,,,,,,,,");
-         
+
          this.FlowConfigList.forEach((item,index)=>{
           if(item.modelDefinition){
             item.list=item.modelDefinition.list
@@ -566,7 +586,7 @@ export default {
       if (this.isCopy == 2) {
         //为复制新增时
         if (this.FlowConfigListCopy[this.m]) {
-         
+
           this.FlowConfigListCopy[this.m].sysDeptList = sysDeptList;
           console.log(
             this.FlowConfigListCopy[this.m].sysDeptList,
@@ -576,7 +596,7 @@ export default {
 
         this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
           this.FlowConfigListCopy;
-          
+
       } else if (this.isCopy == 1) {
         //为新增不复制
           this.FlowConfigListCopy[this.m].sysDeptList = sysDeptList;
@@ -593,7 +613,7 @@ export default {
     },
     //子组件触发
     childClick(data) {
-     
+
       this.dataCopy = data;
       let sysDeptList = [];
       if (this.deptIds) {
@@ -639,7 +659,7 @@ export default {
         this.flowInfoVoListCopy[this.n - 1].flowTypeName = this.checkName;
         this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
           this.FlowConfigListCopy;
-        
+
       }
          this.params = {
         // groupName: this.form.groupName,

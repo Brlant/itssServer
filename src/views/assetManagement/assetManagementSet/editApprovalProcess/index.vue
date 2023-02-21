@@ -44,7 +44,7 @@
                 clearable
                 size="medium"
               >
-               
+
               </el-select>
             </el-col>
 
@@ -56,7 +56,7 @@
                 clearable
                 size="medium"
               >
-             
+
               </el-select>
             </el-col>
           </el-row>
@@ -89,7 +89,7 @@
                 clearable
                 size="medium"
               >
-               
+
               </el-select>
             </el-form-item>
           </el-col>
@@ -118,7 +118,7 @@
                   height: 820px;
                   margin-top: 20px;
                 "
-               
+
               >
                 <el-button
                   type="primary"
@@ -128,7 +128,7 @@
                 >
                 <div @click="clickFlow(index)">
                   <DrawFlowChart
-                   
+
                     :flowData="item.list"
                     :flowType="item.type"
                     :groupGetCategory="n"
@@ -147,6 +147,7 @@
                           @input="searchDept(item.deptId, index)"
                           v-model="item.deptId"
                           :options="deptOptions"
+                          :normalizer="normalizer"
                           :show-count="true"
                           placeholder="请选择适用部门"
                         />
@@ -171,7 +172,7 @@ import {
   getDetailProcess,
   editGroup,
 } from "@/api/assetManagement/assetManagementSet";
-import { treeselect } from "@/api/system/dept";
+import { treeselect, queryChildDeptById } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
@@ -311,10 +312,29 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
-      treeselect().then((response) => {
+      /*treeselect().then((response) => {
         this.deptOptions = response.data;
-      });
+      });*/
+      let params = {
+        deptId:  this.$store.state.user.user.deptId
+      }
+      queryChildDeptById(params).then(res => {
+        this.deptOptions = res.data
+      })
     },
+
+    normalizer(node) {
+      //当子节点也就是children=[]时候去掉子节点
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.deptId,
+        label: node.deptName,
+        children: node.children
+      };
+    },
+
     //切换类型触发事件
     checkSelect(data, index) {
        console.log(data.flowDefInfoVoList,'data.flowDefInfoVoList')
@@ -331,7 +351,7 @@ export default {
         let paramsCopy=this.deepClone(this.params)
        this.FlowConfigList=paramsCopy.flowInfoVoList[this.n-1].flowDefInfoVoList
          console.log(this.FlowConfigList, ",,,,,,,,,,,,");
-         
+
          this.FlowConfigList.forEach((item,index)=>{
           if(item.modelDefinition){
             item.list=item.modelDefinition.list
@@ -348,7 +368,7 @@ export default {
          })
          this.FlowConfigListCopy = this.deepClone(this.FlowConfigList);
       }else{
-        
+
           this.FlowConfigList.forEach((item, index) => {
         let { des, json, modelType, modelKey, processId } = item.flowProcDefRes;
         let processData = JSON.parse(json);
@@ -361,14 +381,14 @@ export default {
         });
         item.flow = index;
         item.list.sysDeptList = item.deptId;
-       
+
       });
         this.FlowConfigListCopy = this.deepClone(this.FlowConfigList);
      console.log(this.FlowConfigList, "this.FlowConfigthis.FlowConfigthis.FlowConfig");
       }
-    
-      
-    
+
+
+
     },
     //页面初始化时数据获取
     detailData() {
@@ -495,10 +515,10 @@ export default {
       // return
        this.FlowConfigListCopy[this.m].modelDeployId = "";
         this.FlowConfigListCopy[this.m].modelDefinition = data.modelDefinition;
-         
+
         this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
         this.FlowConfigListCopy;
-      
+
     },
     //子组件触发（右侧弹窗）
     childClick(data) {
@@ -506,7 +526,7 @@ export default {
       this.dataCopy = data;
       this.$nextTick(() => {
         let sysDeptList = [];
-    
+
         // 当流程定义没有修改时 modelDeployId 保持原样
         if (
           this.FlowConfigListCopy &&
@@ -536,10 +556,10 @@ export default {
           this.FlowConfigListCopy;
       });
        this.params = {
-        
+
         // groupName: this.form.groupName,
         // groupDescription: this.form.groupDescription,
-       
+
         flowInfoVoList: this.flowInfoVoListCopy,
       };
     },
@@ -547,9 +567,9 @@ export default {
     del(i) {
      console.log(i)
       this.FlowConfigList.splice(i, 1);
-      
+
       this.FlowConfigListCopy.splice(i, 1);
-    
+
        this.flowInfoVoListCopy[this.n - 1].flowDefInfoVoList =
           this.FlowConfigListCopy;
     },
