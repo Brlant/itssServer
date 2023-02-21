@@ -172,7 +172,7 @@ import {
   getDetailProcess,
   editGroup,
 } from "@/api/assetManagement/assetManagementSet";
-import { treeselect, queryChildDeptById } from "@/api/system/dept";
+import { treeselect, queryChildDepts } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
@@ -318,7 +318,7 @@ export default {
       let params = {
         deptId:  this.$store.state.user.user.deptId
       }
-      queryChildDeptById(params).then(res => {
+      queryChildDepts(params).then(res => {
         this.deptOptions = res.data
       })
     },
@@ -329,8 +329,8 @@ export default {
         delete node.children;
       }
       return {
-        id: node.deptId,
-        label: node.deptName,
+        id: node.id,
+        label: node.label,
         children: node.children
       };
     },

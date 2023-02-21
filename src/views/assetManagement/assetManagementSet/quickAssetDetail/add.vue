@@ -173,7 +173,7 @@
 </template>
 
 <script>
-import { treeselect, queryChildDeptById } from "@/api/system/dept"
+import { treeselect, queryChildDepts } from "@/api/system/dept"
 import {
   queryAsset,
   createInfo
@@ -290,7 +290,7 @@ export default {
       let params = {
         deptId:  this.$store.state.user.user.deptId
       }
-      queryChildDeptById(params).then(res => {
+      queryChildDepts(params).then(res => {
         this.dept = res.data
       })
     },
@@ -301,8 +301,8 @@ export default {
         delete node.children;
       }
       return {
-        id: node.deptId,
-        label: node.deptName,
+        id: node.id,
+        label: node.label,
         children: node.children
       };
     },

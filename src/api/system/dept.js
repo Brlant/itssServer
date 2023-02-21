@@ -76,3 +76,12 @@ export function queryChildDeptById(query) {
   })
 }
 
+// 根据部门编号获取所有子部门信息 返回树形结构
+export function queryChildDepts(query) {
+  return request({
+    url: '/system/dept_manage/queryChildDepts',
+    method: 'get',
+    params: query
+  })
+}
+
