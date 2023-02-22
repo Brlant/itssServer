@@ -1819,6 +1819,8 @@ export default {
         type: "warning",
       })
         .then(() => {
+          this.$refs["elForm"].resetFields();
+          sessionStorage.removeItem("addProject");
           const obj = { path: "/projectManager/proManager" };
           this.$tab.closeOpenPage(obj);
           // this.$refs["elForm"].resetFields();

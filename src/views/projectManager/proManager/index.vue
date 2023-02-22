@@ -6,9 +6,10 @@
         <div class="rightBtns" >
           <!-- 必须是项目主管的角色 -->
           <el-button size="mini" type="primary" v-hasPermi="['projectManager:proManager:create']">
-            <router-link :replace="true"  :to="'/projectManager/proManager-auth/addProject'"
+<!--            <router-link :replace="true"  :to="'/projectManager/proManager-auth/addProject'"
               >新建项目</router-link
-            >
+            >-->
+            <span @click="onAddProject">新建项目</span>
           </el-button>
 
           <el-button size="mini" @click="exportExcelHandel" type="success">导出Excel</el-button>
@@ -425,6 +426,12 @@ export default {
     // console.log(getToday()+"--------");
   },
   methods: {
+    // 新建项目
+    onAddProject(){
+      sessionStorage.removeItem("addProject");
+      this.$router.replace("/projectManager/proManager-auth/addProject")
+    },
+
     // 导出
     exportExcelHandel(){
       if(this.searchForm.projectStartEndTime){
