@@ -55,7 +55,7 @@
                 style="cursor: pointer; color: #3d7dff"
                 ><i
                   class="el-icon-user-solid"
-                  v-if="scope.row.dept.leader.includes(scope.row.userId)"
+                  v-if="scope.row.dept.leader&&scope.row.dept.leader.includes(scope.row.userId)"
                 ></i
                 >{{ scope.row.nickName }}</span
               >
@@ -587,7 +587,7 @@ export default {
     },
     setCommander() {
       // 筛选出列表中的负责人
-      let leader = this.user.length > 1
+      let leader = this.user.length > 0
                    ? this.user[0].dept.leader
                    : '';
       // 筛选出可设置的负责人数据源中的负责人
@@ -819,11 +819,15 @@ export default {
         .then((d) => {
           if (d.code === 200) {
             // this.deptOptions = d.data;
-            d.data.map(item=>{
-              if(item.type==1){
-               return  this.deptOptions = item.children
-              }
-            })
+            if(this.$store.state.user.user.userId == 1){
+              this.deptOptions = d.data;
+            }else {
+              d.data.map(item=>{
+                if(item.type == 1){
+                   this.deptOptions = item.children
+                }
+              })
+            }
             if (this.$store.state.user.deptId) {
               console.log(this.$store.state.user.deptId);
               this.queryParams.deptId = this.$store.state.user.deptId;
