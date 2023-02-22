@@ -397,8 +397,8 @@
                     :label="dict.dictLabel"
                     :value="dict.dictCode"
                     :disabled="dict.disabled"
-                    
-                    
+
+
                   >
                     <!-- v.classList && v.classList.add("skillcc"); // 添加类名
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名 -->
@@ -754,7 +754,7 @@ export default {
         projectUserList: [] /**项目成员列表*/,
         tbProjectId: "",
         costUp: '',
-        
+
         /*
           //快速调试
           priority: 3,
@@ -975,8 +975,8 @@ export default {
       ],
       projectChanceOptions: [],
 
-      userObj : {} 
-      
+      userObj : {}
+
     };
   },
 
@@ -1055,7 +1055,7 @@ export default {
     // 点击确定生成多条 资源配置
     createBatchUser() {
       this.batchUserFormVisible = false;
-      
+
       // 赋值默认
       this.formData.projectUserList.forEach( item => {
         this.userObj[ `${ item.deptId }-${ item.deptName }-${item.userId}-${ item.nickName }-${item.phonenumber}` ] = item ;
@@ -1065,7 +1065,7 @@ export default {
         // cssClass:"color1"
         // skillId:48
         // skillName:"web前端"
-        
+
         let skillIdListTemp = [];
         item.userSkills.map((skiItem) => {
           skiItem.dictCode = skiItem.skillId;
@@ -1078,17 +1078,17 @@ export default {
         item.startEndTime = this.formData.projectTimeArea;
 
         // console.error( 11, item, `${ item.deptId }-${ item.deptName }-${item.userId}-${ item.nickName }-${item.phonenumber}`, this.projectUserList ) ;
-        
+
         // item = Object.assign(this.projectUserList, item); // 之前逻辑
 
         // 赋值 key
         this.userObj[ `${ item.deptId }-${ item.deptName }-${item.userId}-${ item.nickName }-${item.phonenumber}` ] = item ;
       });
       // console.error( 22, this.batchUser, this.userObj, Object.keys(this.userObj).length ) ;
-      
+
       // 之前逻辑
-      // this.formData.projectUserList.push(...this.batchUser); 
-   
+      // this.formData.projectUserList.push(...this.batchUser);
+
       // 提取数据
       this.formData.projectUserList = [ ...Object.values( this.userObj ) ];
 
@@ -1165,7 +1165,7 @@ export default {
         之前逻辑
         this.batchUserFormVisible = true;
       */
-      
+
     },
     // 动态生成 表头样式
     headerUserClassName(row) {
@@ -1482,6 +1482,8 @@ export default {
           this.formData.projectUserList[index].planLoad = 0;
         } else {
           if (action == "add") {
+            this.formData.projectUserList[index].workTime = 0;
+            this.formData.projectUserList[index].workDay = 0;
             this.formData.projectUserList[index].planLoad = 0;
           } else {
             this.formData.projectUserList[index].planLoad = this.autoFixed(

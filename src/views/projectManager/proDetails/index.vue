@@ -211,7 +211,7 @@
     </div>
     <!---项目成员安排--------------------------------------------->
     <div class="whiteBox" style="padding: 1%">
-      <b>| 项目资源配置111</b>
+      <b>| 项目资源配置</b>
       <p style="height: 20px"></p>
       <!-- <p
         v-show="projectTable.projectUserList && projectTable.projectUserList.length == 0"
@@ -292,9 +292,9 @@
             <template slot-scope="{ row }">
               <span>
                 {{
-                  row.projectUserScheduleList[m].planLoadCh +
+                  (row.projectUserScheduleList[m] ? row.projectUserScheduleList[m].planLoadCh : 0) +
                   "%（" +
-                  row.projectUserScheduleList[m].planLoadWorkDayCh +
+                  (row.projectUserScheduleList[m] ? row.projectUserScheduleList[m].planLoadWorkDayCh : 0) +
                   "人日）"
                 }}
               </span>
@@ -302,11 +302,11 @@
           </el-table-column>
           <el-table-column label="实际负荷" min-width="130" align="center">
             <template slot-scope="{ row }">
-              <span :class="['loadType' + row.projectUserScheduleList[m].loadType]">
+              <span :class="[row.projectUserScheduleList[m]?('loadType' + row.projectUserScheduleList[m].loadType):'']">
                 {{
-                  row.projectUserScheduleList[m].realLoadCh +
+                 (row.projectUserScheduleList[m] ? row.projectUserScheduleList[m].realLoadCh : 0) +
                   "%（" +
-                  row.projectUserScheduleList[m].realLoadWorkDayCh +
+                  (row.projectUserScheduleList[m] ? row.projectUserScheduleList[m].realLoadWorkDayCh : 0) +
                   "人日）"
                 }}</span
               >
@@ -1918,6 +1918,12 @@ export default {
               );
               console.log("我是修改的----",oneUser);
               this.addEditFormData.projectUserList.push(oneUser);
+              this.addEditFormData.projectUserList.map((o,oIndex)=>{
+                o.projectUserScheduleList.map((item,index)=> {
+                  this.changePlanLoad(item.planLoad,item.weekDay,oIndex,index)
+                })
+              })
+
               this.$forceUpdate();
               //因为后台对于生成的三级数据没有id
               // console.log(oneUser);
@@ -2207,8 +2213,8 @@ export default {
         endDate: dates[1],
       };
       getTimeProcess(params).then((res) => {
-        this.addEditFormData.projectUserList[index].workDay = res.data.day; // 总共多少人日
-        this.addEditFormData.projectUserList[index].workTime = res.data.day * 8; // 总共多少工时
+        // this.addEditFormData.projectUserList[index].workDay = res.data.day; // 总共多少人日
+        // this.addEditFormData.projectUserList[index].workTime = res.data.day * 8; // 总共多少工时
         if (res.data.day === 0) {
           this.addEditFormData.projectUserList[index].planLoad = 0;
         } else {
@@ -2295,7 +2301,7 @@ export default {
             checkItem.realLoadCh = 0;
             checkItem.realLoadWorkDayCh = 0;
             console.log(checkItem.planLoad,checkItem.workDay);
-            checkItem.planLoadCh = checkItem.planLoad;
+            checkItem.planLoadCh = checkItem.planLoad ? checkItem.planLoad : 0;
             checkItem.planLoadWorkDayCh = checkItem.workDay;
             allweekArr[i] = checkItem;
           }else{

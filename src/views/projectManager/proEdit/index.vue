@@ -241,7 +241,7 @@
                 placeholder="缺陷管理ID"
               ></el-input>
             </el-form-item>
-            
+
           </el-col>
             <el-col :span="10" :offset="1">
               <el-form-item label="成本上限" prop="costUp">
@@ -380,7 +380,7 @@
             <el-col :span="18">
               <el-form-item
                 label="技能需求："
-                
+
               >
                 <el-select
                   v-model="addUserList.skillIdList"
@@ -773,7 +773,7 @@ export default {
             trigger: "change",
           },
         ],
-        
+
         costUp: [
           {
             required: true,
@@ -926,7 +926,7 @@ export default {
       this.formData.projectUserList[index].userId = "";
       this.formData.projectUserList[index].userName = "";
       this.$forceUpdate();
-       
+
       // 点击添加成功后 显示取消按钮
       this.formData.projectUserList[index].recommendUserTableData.map((item) => {
         item.showOrCancel = 1; // 全部 显示添加
@@ -985,7 +985,7 @@ export default {
           getPostName(params).then((PostNameres) => {
             item.postNameIdOptions = PostNameres.data;
           });
-         
+
 
           queryUserByPostId(params).then((userRes) => {
               userRes.data.map((useritem) => {
@@ -1004,10 +1004,17 @@ export default {
             item.recommendUserTableData = userRes.data
             this.$forceUpdate()
           });
-         
+
         });
 
         this.formData = res.data; // 填充详情的 projectTimeArea
+
+        // 期间计划负荷全部为0时，修改配置安排默认为0
+        this.formData.projectUserList.map((m,mIndex)=>{
+          m.projectUserScheduleList.map((n,nIndex)=>{
+            this.changePlanLoad(n.planLoad,n.weekDay,mIndex,nIndex)
+          })
+        })
 
 
         this.team();
@@ -1033,7 +1040,7 @@ export default {
         setTimeout(() => {
           let arr = []; // 对应数据对象数组
           console.log(listData);
-        
+
           listData.map((ind) => {
             this.techniqueOptions.map((v) => {
               if (v.dictCode === +ind) {
@@ -1239,8 +1246,8 @@ export default {
         endDate: dates[1],
       };
       getTimeProcess(params).then((res) => {
-        this.formData.projectUserList[index].workDay = res.data.day; // 总共多少人日
-        this.formData.projectUserList[index].workTime = res.data.day * 8; // 总共多少工时
+        // this.formData.projectUserList[index].workDay = res.data.day; // 总共多少人日
+        // this.formData.projectUserList[index].workTime = res.data.day * 8; // 总共多少工时
         if (res.data.day === 0) {
           this.formData.projectUserList[index].planLoad = 0;
         } else {
@@ -1287,7 +1294,7 @@ export default {
           );
           }
         });
-        this.formData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
+        // this.formData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
       });
     },
     // 点击 新增用户的
@@ -1456,7 +1463,7 @@ export default {
         }
       });
     },
-    /* 查询是项目主管的用户列表 
+    /* 查询是项目主管的用户列表
     * // 2022.12.1 产品要求修改成全部人员
     */
     queryUserlistByRole() {
@@ -1620,7 +1627,7 @@ export default {
     height: 30px;
     padding: 5px 0px;
     color: white !important;
-   
+
 }
 .skillcolor1 {
   background: rgb(0, 113, 189) !important;
