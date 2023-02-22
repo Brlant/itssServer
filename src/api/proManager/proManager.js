@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import { parseStrEmpty } from "@/utils/ruoyi";
 
-// 导出excel 
+// 导出excel
 export function exportExcel(data) {
   return request({
     url: '/projectManage/project/export',
@@ -43,9 +43,9 @@ export function addProjectList(data){
   })
 }
 // 列表页面 项目管理查询接口
-export function searchProjectList(data){  
+export function searchProjectList(data, pageNum, pageSize){
   return request({
-    url: '/projectManage/project/list',
+    url: '/projectManage/project/list?pageNum=' + pageNum + '&pageSize=' + pageSize,
     method: 'post',
     data: data
   })
@@ -59,7 +59,7 @@ export function updateProjectStatus(query) {
   })
 }
 // 列表页面 实际完成工作修改
-export function updateProjectById(data){  
+export function updateProjectById(data){
   return request({
     url: '/projectManage/project/updateProjectById',
     method: 'post',
@@ -67,15 +67,15 @@ export function updateProjectById(data){
   })
 }
 // 详情页面的  新增 和修改 项目成员
-export function updateProjectUserAddEdit(data){  
+export function updateProjectUserAddEdit(data){
   return request({
     url: '/projectManage/project/updateProject',
     method: 'post',
     data: data
   })
 }
-// 详情页 点击成员 去查询具体的list 
-export function updateQueryUserById(data){  
+// 详情页 点击成员 去查询具体的list
+export function updateQueryUserById(data){
   return request({
     url: '/projectManage/project-user/queryUserById',
     method: 'post',
@@ -84,7 +84,7 @@ export function updateQueryUserById(data){
 }
 
 // 项目管理的详情页
-export function queryInfoById(data){  
+export function queryInfoById(data){
   // console.log(data);
   return request({
     url: '/projectManage/project/queryInfoById',
@@ -93,7 +93,7 @@ export function queryInfoById(data){
   })
 }
 // 查询正在审核的 项目修改的日志记录
-export function queryProjectAudit(data){  
+export function queryProjectAudit(data){
   // console.log(data);
   return request({
     url: '/projectManage/projectAudit/list',
@@ -131,14 +131,14 @@ export function queryUserlistByRole(data) {
 }
 
 // 获取所有职位
-// 
+//
 export function getPostOptions() {
   return request({
     url: '/system/post_manage/optionselect',
     method: 'get',
   })
 }
- 
+
 // 项目组查询
 export function teamQuery(query) {
   return request({
@@ -148,7 +148,7 @@ export function teamQuery(query) {
   })
 }
 // 人员推荐  点击修改 or other
-// 
+//
 export function queryUserByPostId(data) {
   return request({
     url: '/projectManage/project/queryUserByPostId',

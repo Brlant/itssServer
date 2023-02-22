@@ -108,6 +108,7 @@
     <div class="pageTitle cls">
       <el-table
         :data="tableData"
+        v-loading="loading"
         show-summary
         :summary-method="totalOutYear"
         class="myTable"
@@ -260,8 +261,8 @@
       <pagination
         v-show="total>0"
         :total="total"
-        :page.sync="searchForm.pageNum"
-        :limit.sync="searchForm.pageSize"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
         @pagination="init"
       />
 
@@ -382,10 +383,13 @@ export default {
         projectEndTime: endDate,
         // 项目状态（1.进行中，2.已结束，3.未开始，4.已终止）
         projectStatus: 1,
+      },
+      queryParams: {
         pageNum: 1,
         pageSize: 10
       },
       total: 0,
+      loading: false
     };
   },
   mounted() {
@@ -572,7 +576,9 @@ export default {
         this.searchForm.projectStartTime = "";
         this.searchForm.projectEndTime = "";
       }
-      searchProjectList(this.searchForm).then((res) => {
+      this.loading = true;
+      searchProjectList(this.searchForm, this.queryParams.pageNum, this.queryParams.pageSize).then((res) => {
+        this.loading = false;
         let { msg } = res;
         // 添加额外的字段，用于展示 预算偏差or 进度偏差是否小于0
         res.rows.map(item=>{
@@ -589,9 +595,13 @@ export default {
              item.isPink =true // 小于才给粉色
           }
         })
+        // this.tableData = res.data;
         this.tableData = res.rows;
         this.total = res.total;
         // this.$message.success(msg);
+      }).catch(()=>{
+        this.loading = false;
+        this.tableData = [];
       });
     },
 
