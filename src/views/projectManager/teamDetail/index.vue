@@ -33,7 +33,7 @@
                 </el-date-picker>
               </el-form-item>
             <!-- </el-col>
-          
+
             <el-col :span="3"> -->
               <el-form-item label="状态">
                 <el-select
@@ -82,6 +82,7 @@
     <div class="pageTitle cls">
       <el-table
         :data="tableData"
+        v-loading="loading"
         show-summary
         :summary-method="totalOutYear"
         class="myTable"
@@ -220,6 +221,15 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="init"
+      />
+
     </div>
     <!---------弹出层-------------------------------------->
     <el-dialog :visible.sync="realWorkActive" title="手动记录资源配置"   width="30%">
@@ -336,6 +346,12 @@ export default {
         // 项目状态（1.进行中，2.已结束，3.未开始，4.已终止）
         projectStatus: "",
       },
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10
+      },
+      total: 0,
+      loading: false
     };
   },
   mounted() {
@@ -396,7 +412,7 @@ export default {
       // countScope://统计范围 1.全部，2.仅我负责，3.仅部门成员
       // this.$router.push({ path:'/projectManager/proDetails/', query:{ projectId:row.projectId,projectName:row.projectName,countScope:this.searchForm.countScope,
       // startTime:row.projectStartTime,endTime:getToday()}})
-    
+
        const obj = { path:'/projectManager/proManager-auth/proDetails', query:{ projectId:row.projectId,projectName:row.projectName,countScope:'1',
             startTime:row.projectStartTime,endTime:row.projectEndTime}};
             // getToday()
@@ -439,11 +455,18 @@ export default {
         projectEndTime:this.searchForm.projectEndTime
 
       }
-      searchProjectList(data).then((res) => {
+      this.loading = true;
+      searchProjectList(data, this.queryParams.pageNum, this.queryParams.pageSize).then((res) => {
+        this.loading = false;
         let { msg } = res;
-        this.tableData = res.data;
-       
+        // this.tableData = res.data;
+        this.tableData = res.rows;
+        this.total = res.total;
+
         // this.$message.success(msg);
+      }).catch(()=>{
+        this.loading = false;
+        this.tableData = [];
       });
     },
     totalOutYear(param) {
