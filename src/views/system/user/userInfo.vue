@@ -8,7 +8,7 @@
             </div>
             <div style='cursor: pointer;'>
                 <!-- <span @click='sendInvitation' v-hasPermi="['system:user:add']">发送邀请 |</span> -->
-              <span @click='onGrant' v-hasPermi="['system:user:grant']">授权管理 |</span>
+<!--              <span @click='onGrant' v-hasPermi="['system:user:grant']">授权管理 |</span>-->
                 <span v-hasPermi="['system:user:add']">
                     <span @click='skillLock(1)' v-if='info.skillLock==0'> 技能锁定 |</span><span @click='skillLock(0)'  v-if='info.skillLock==1'> 技能解锁 |</span>
                 </span>

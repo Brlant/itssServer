@@ -818,7 +818,12 @@ export default {
       tree(reqObj)
         .then((d) => {
           if (d.code === 200) {
-            this.deptOptions = d.data;
+            // this.deptOptions = d.data;
+            d.data.map(item=>{
+              if(item.type==1){
+               return  this.deptOptions = item.children
+              }
+            })
             if (this.$store.state.user.deptId) {
               console.log(this.$store.state.user.deptId);
               this.queryParams.deptId = this.$store.state.user.deptId;
