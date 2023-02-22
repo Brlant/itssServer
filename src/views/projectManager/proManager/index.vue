@@ -256,6 +256,15 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="searchForm.pageNum"
+        :limit.sync="searchForm.pageSize"
+        @pagination="init"
+      />
+
     </div>
     <!---------弹出层-------------------------------------->
     <el-dialog :visible.sync="realWorkActive" title="手动记录资源配置"   width="30%">
@@ -270,7 +279,7 @@
           <el-input
             v-model="realFormData.realWork"
             placeholder="请输入实际使用"
-            clearable   @input="handleEdit" 
+            clearable   @input="handleEdit"
             :style="{ width: '100%' }"
           >
             <template slot="append">人日</template>
@@ -372,8 +381,11 @@ export default {
         // 项目结束时间
         projectEndTime: endDate,
         // 项目状态（1.进行中，2.已结束，3.未开始，4.已终止）
-        projectStatus: "",
+        projectStatus: 1,
+        pageNum: 1,
+        pageSize: 10
       },
+      total: 0,
     };
   },
   mounted() {
@@ -440,11 +452,11 @@ export default {
             URL.revokeObjectURL(elink.href) // 释放URL 对象
             document.body.removeChild(elink)
           this.$message.success("导出成功！");
-         
+
         });
         // /projectManage/project/export
     },
- 
+
     handleEdit(e) {
       // 只允许输入数字+小数点，小数点后2位，且保证小数点不能为第一位
      let checkPlan = '' + this.realFormData.realWork
@@ -563,7 +575,7 @@ export default {
       searchProjectList(this.searchForm).then((res) => {
         let { msg } = res;
         // 添加额外的字段，用于展示 预算偏差or 进度偏差是否小于0
-        res.data.map(item=>{
+        res.rows.map(item=>{
           item.costUp = 123
           // jdSchedule    ysDeviation
           item.isYellow = false // 默认没有黄色
@@ -577,10 +589,12 @@ export default {
              item.isPink =true // 小于才给粉色
           }
         })
-        this.tableData = res.data;
+        this.tableData = res.rows;
+        this.total = res.total;
         // this.$message.success(msg);
       });
     },
+
     totalOutYear(param) {
       const { columns, data } = param;
       const sums = [];
