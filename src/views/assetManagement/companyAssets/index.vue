@@ -17,6 +17,21 @@
           <el-button
             type="primary"
             size="small"
+            @click="handleImport"
+          >
+            批量导入
+          </el-button>
+          <el-button
+            type="primary"
+            size="small"
+            :disabled="exportLoading"
+            @click="handleExport"
+          >
+            导出
+          </el-button>
+          <el-button
+            type="primary"
+            size="small"
             @click="$router.push('/assetManagement/companyAssets/companyAssets-auth/add')"
           >
             录入资产
@@ -222,6 +237,108 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+
+    <!--  批量导入  -->
+    <el-dialog
+      title="批量导入"
+      width="50%"
+      v-if="importDialog"
+      :visible.sync="importDialog"
+      destroy-on-close
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      class="import-dialog"
+      @close="cancelFn"
+    >
+      <div v-if="!imported" class="h450">
+        <el-form
+          :model="importForm"
+          :rules="importRules"
+          ref="importForm"
+          :inline="false"
+        >
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="资产类型选择" prop="assetTypeId">
+                <el-cascader
+                  v-model="importForm.assetTypeId"
+                  :options="filterAsset"
+                  ref="assetCas"
+                  :props="{ label: 'typeName', value: 'id'}"
+                  clearable
+                  :style="style"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col>
+              <el-form-item
+                v-if="importForm.assetTypeId"
+                label="请选择要导入的数据文件（Excel格式）"
+                prop="fileList"
+              >
+                <br>
+                <el-upload
+                  v-loading="importLoading"
+                  action
+                  list-type="picture-card"
+                  :on-change="onChange"
+                  :on-remove="onRemove"
+                  :file-list="importForm.fileList"
+                  accept=".xlsx"
+                  :show-file-list="false"
+                  :auto-upload="false"
+                >
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <el-alert
+          v-if="failMsg"
+          class="mb10"
+          :title="failMsg"
+          type="error"
+          :closable="false">
+        </el-alert>
+        <el-alert
+          title="文件上传要求"
+          type="success"
+          :closable="false">
+        </el-alert>
+        <ol class="contentText">
+          <li> 文件格式详见
+            <a href="./文件上传模板.xlsx" download="./文件上传模板.xlsx" class="fileTmpl">
+              文件上传模板
+            </a>
+            ，模板中
+            <span class="redFont">*</span> 为必填项
+          </li>
+          <li>单次上传文件不得超过200M</li>
+        </ol>
+      </div>
+      <div v-if="imported" class="flexC h450">
+          <div v-if="progressLoading" class="flexC">
+            <el-progress
+              :show-text="false"
+              :stroke-width="10"
+              style="width:50%"
+              :percentage="percentage"
+            ></el-progress>
+          </div>
+          <div v-else>
+            <span>上传成功</span>
+            <i type="success" size="50" class="el-icon-circle-check import-success"/>
+          </div>
+      </div>
+
+        <div class="txtAlignR dialogBtnInfo">
+          <el-button v-if="imported" type="primary" @click="cancelFn">确定</el-button>
+          <el-button v-if="!imported" @click="cancelFn">取消</el-button>
+        </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -230,7 +347,10 @@ import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
 import {
   queryAssetList,
   getTotal,
-  updateAssets
+  updateAssets,
+  fileUpload,
+  importAsset,
+  exportAsset
 } from '@/api/assetManagement/companyAssets'
 import { treeselect, queryChildDepts } from "@/api/system/dept"
 import Treeselect from "@riophae/vue-treeselect"
@@ -266,6 +386,31 @@ export default {
       total: 0,
       paramData: {},
       calcData: {},
+
+      /**批量导入*/
+      importDialog: false,
+      importForm: {
+        assetTypeId:'',
+        fileList:[],
+      },
+      importRules:{
+        assetTypeId: [
+          { required: true, trigger: 'change', message: '请选择资产类型' }
+        ],
+        fileList: [
+          { required: true, trigger: 'change', message: '请上传文件' }
+        ],
+      },
+      imported: false,
+      failMsg: '',
+      filterAsset: [],
+      importLoading: false,
+
+      /** 批量导入成功进度条 */
+      percentage: 0,
+      progressLoading: false,
+
+      exportLoading: false
     }
   },
   created() {
@@ -293,6 +438,19 @@ export default {
     getAsset() {
       queryAsset().then(res => {
         this.asset = res.data
+        let arr = res.data
+        arr.forEach((m) => {
+          if ((m.children ?? '')!=='') {
+            m.children.forEach((item) => {
+              if ((item.children ?? '')=='') {
+                item.disabled = true
+              }
+            });
+          }else if ((m.children ?? '')=='') {
+            m.disabled = true
+          }
+        });
+        this.filterAsset = arr
       })
     },
     // 部门查询
@@ -411,7 +569,160 @@ export default {
     // 分页
     getList() {
       this.getTableData()
+    },
+
+    onChange(file, fileList) {
+      this.importForm.fileList = fileList
+      let fileLength = this.importForm.fileList.length
+      const isSize = file.size / 1024 / 1024 < 200
+      if (!isSize)
+      {
+        this.$message.warning('仅支持Excel格式,不超过200MB的文件!')
+        this.importForm.fileList.splice(fileLength - 1, 1)
+        return
+      }
+      let flatArr = this.getFlatArr(this.filterAsset)
+      let assetTypeId = this.importForm.assetTypeId[this.importForm.assetTypeId.length - 1]
+      let manageType = flatArr.find(item => item.id == assetTypeId).manageType
+      let formData = new FormData()
+      formData.append('file', file.raw)
+      formData.append('assetTypeId', assetTypeId)
+      formData.append('manageType', manageType)
+      // console.log("formData", formData)
+      this.importLoading = true
+      importAsset(formData)
+        .then(res =>
+        {
+          this.importLoading = false
+          if (res.code == 200)
+          {
+            if (this.$refs['importForm']) {
+              this.$refs['importForm'].resetFields();
+            }
+            this.imported = true
+            this.progressLoading = true
+            let timer = setInterval(() => {
+              this.percentage += 10
+              if (this.percentage = 100) {
+                clearInterval(timer)
+                this.progressLoading = false
+              }
+            }, 100)
+          }
+          else
+          {
+            console.log("res.msg",res.msg)
+            this.failMsg = res.msg
+          }
+        })
+        .catch((err) =>
+        {
+          this.importLoading = false
+          this.failMsg = err
+        })
+    },
+    getFlatArr(arr) {
+      return arr.reduce((a, item) => {
+        let flatArr = [...a, item];
+
+        // 可以在此处限制各种需要的条件，在展示字段前加空格，——之类的，以及其它情况
+
+        if (item.children) {
+          flatArr = [...flatArr, ...this.getFlatArr(item.children)];
+        }
+        return flatArr;
+      }, []);
+    },
+
+    onRemove(){
+
+    },
+
+    // 批量导入
+    handleImport(){
+      this.importDialog = true
+    },
+
+    // 关闭批量导入
+    cancelFn(){
+      if (this.$refs['importForm']) {
+        this.$refs['importForm'].resetFields();
+      }
+      this.percentage = 0;
+      this.imported = false;
+      this. progressLoading = false;
+      this.importDialog = false;
+    },
+
+    // 导出
+    handleExport(){
+      // this.$refs.table.startLoading()
+      // 传参数据的一些处理
+      let data = {
+        ...this.formData
+      }
+      if (data.purchasingDate) {
+        data.purchasingDateStart = data.purchasingDate[0]
+        data.purchasingDateEnd = data.purchasingDate[1]
+        delete data.purchasingDate
+      }
+      const assetTypeId = data.assetTypeId
+      switch (assetTypeId.length) {
+        case 0:
+          delete data.assetTypeId
+          break
+        case 1:
+          data.oneTypeId = assetTypeId[0]
+          delete data.assetTypeId
+          break
+        case 2:
+          data.twoTypeId = assetTypeId[1]
+          delete data.assetTypeId
+          break
+        case 3:
+          data.assetTypeId = assetTypeId[2]
+          break
+      }
+      if (data.depreciation) {
+        data.startDate = data.depreciation[0]
+        data.endDate = data.depreciation[1]
+        delete data.depreciation
+      }
+      const tabData = tabOptions.find(v => {
+        return this.tab == v.name
+      })
+      if (tabData.type == 'status') {
+        data.status = tabData.value
+      } else if (tabData.type == 'specialStatus') {
+        data.specialStatus = tabData.value
+      }
+      this.paramData = data
+      this.exportLoading = true
+      exportAsset(this.paramData).then(res=>{
+        this.exportLoading = false
+        let blob = new Blob([res], {
+          // type:"application/vnd.ms-excel",
+          type: "application/octet-stream;charset=UTF-8",
+        });
+        console.log(blob);
+        let timeString =  moment().format("YYYYMMDDhhmmss");
+        const fileName = `资产管理${timeString}.xlsx` // 下载文件名称
+        const elink = document.createElement('a')
+        elink.download = fileName
+        elink.style.display = 'none'
+        elink.href = URL.createObjectURL(blob)
+        document.body.appendChild(elink)
+        elink.click()
+        URL.revokeObjectURL(elink.href) // 释放URL 对象
+        document.body.removeChild(elink)
+        this.$message.success("导出成功！");
+        this.exportLoading = false
+
+      }).catch(()=>{
+        this.exportLoading = false
+      })
     }
+
   }
 }
 </script>
@@ -480,5 +791,43 @@ export default {
 }
 .pagination-container {
   background: transparent;
+}
+
+.import-dialog {
+  .el-alert--success.is-light {
+    background-color: #ccecfb;
+    color: #2984e7;
+  }
+
+  .contentText li {
+    color: #999;
+    padding: 2px 0;
+
+    .fileTmpl {
+      color: #2984e7;
+    }
+
+    .redFont {
+      color: red;
+    }
+  }
+
+  .flexC {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+    .import-success {
+      display: block;
+      font-size: 50px;
+      color: #3de58f;
+      margin-top: 20px;
+    }
+  }
+
+  .h450 {
+    height: 450px;
+  }
 }
 </style>

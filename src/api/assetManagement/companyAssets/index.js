@@ -184,3 +184,22 @@ export function returnAsset(data) {
     data
   })
 }
+
+// 批量导入
+export function importAsset(data) {
+  return request({
+    url: `/asset/asset/import`,
+    method: 'post',
+    data
+  })
+}
+
+// 导出
+export function exportAsset(data) {
+  return request({
+    url: `/asset/asset/export`,
+    method: 'post',
+    responseType: 'blob',
+    data
+  })
+}
