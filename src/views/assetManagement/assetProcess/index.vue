@@ -34,15 +34,16 @@
             </el-form-item>
           </el-col>
            <el-col :span="8">
-            <el-form-item label="申请人" prop="APPLICANT_ID">
-               <el-select v-model="formData.APPLICANT_ID" clearable :style="style">
+            <el-form-item label="申请人" prop="APPLICANT_NAME">
+              <el-input v-model.trim="formData.APPLICANT_NAME" :style="style" />
+<!--               <el-select v-model="formData.APPLICANT_ID" clearable :style="style">
                 <el-option
                   v-for="(item, index) in peopleLists"
                   :key="index"
                   :label="item.nickName"
                   :value="item.userId"
                 />
-              </el-select>
+              </el-select>-->
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -88,7 +89,7 @@
             <el-button type="primary" @click="query">
               查询
             </el-button>
-            <el-button>
+            <el-button @click="resetForm">
               重置
             </el-button>
           </el-col>
@@ -343,7 +344,8 @@ export default {
         ASSET_TYPE,
         ASSET_NAME,
         ASSET_NO,
-        APPLICANT_ID
+        APPLICANT_ID,
+        APPLICANT_NAME
       } = this.formData
 
       let eq = {
@@ -371,6 +373,10 @@ export default {
       }
       if (ASSET_NO) {
         like.ASSET_NO = `%${ASSET_NO}%`
+      }
+
+      if (APPLICANT_NAME) {
+        like.APPLICANT_NAME = `%${APPLICANT_NAME}%`
       }
 
       let lte = {}
@@ -424,13 +430,15 @@ export default {
         ASSET_TYPE,
         ASSET_NAME,
         ASSET_NO,
-        APPLICANT_ID
+        APPLICANT_ID,
+        APPLICANT_NAME
       } = this.formData
 
       let eq = {
         // STATUS: this.options[this.n].value,
 
       }
+
        if (APPLICANT_ID) {
         eq.APPLICANT_ID = this.formData.APPLICANT_ID+''
       }
@@ -450,6 +458,10 @@ export default {
       }
       if (ASSET_NO) {
         like.ASSET_NO = `%${ASSET_NO}%`
+      }
+
+      if (APPLICANT_NAME) {
+        like.APPLICANT_NAME = `%${APPLICANT_NAME}%`
       }
 
       let lte = {}
@@ -581,6 +593,12 @@ export default {
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
+
+    // 重置表单
+    resetForm() {
+      this.$refs["elForm"].resetFields();
+    },
+
     formatter(row) {
       return row.ASSET_NO + row.ASSET_NAME
     },
