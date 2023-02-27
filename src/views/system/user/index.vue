@@ -413,8 +413,8 @@ export default {
       },
       defaultProps: {
         children: "children",
-        // label: "label",
-        label: "name",
+        label: "label",
+        // label: "name",
       },
       // 用户导入参数
       upload: {
@@ -778,7 +778,7 @@ export default {
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
-     /* treeselect().then((response) => {
+      treeselect().then((response) => {
         this.deptOptions = response.data;
         // this.$store.commit('SET_DEPTID',this.deptOptions[0].id)
         //  if(this.$store.state.deptId){
@@ -807,9 +807,9 @@ export default {
         this.getList();
         this.queryUserlistByRole();
         this.defaultData();
-      });*/
+      });
 
-      let reqObj = {};
+     /* let reqObj = {};
 
       reqObj.headers = {
         userId: this.$store.state.user.user.userId,
@@ -845,7 +845,7 @@ export default {
         })
         .catch((err) => {
           console.error(err);
-        });
+        });*/
     },
     // 筛选节点
     filterNode(value, data) {
