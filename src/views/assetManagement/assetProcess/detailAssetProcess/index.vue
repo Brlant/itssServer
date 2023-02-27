@@ -685,7 +685,7 @@ export default {
     uploadAttachment(data){
       if (this.fileList.length) {
         let params = {
-          attachments: [
+          /*attachments: [
             {
               description: '',
               name: data.name,
@@ -695,7 +695,18 @@ export default {
                     : '',
               userId: this.$store.state.user.user.userId,
             }
-          ],
+          ],*/
+          attachments: this.fileList.map(item => {
+            return {
+              description: '',
+              name: item.name,
+              url: item.url,
+              type: item.name
+                    ? item.name.substring(item.name.lastIndexOf('.'))
+                    : '',
+              userId: this.$store.state.user.user.userId
+            }
+          }),
           processInstanceId: this.$route.query.processInstanceId,
           taskId: this.$route.query.taskId,
         }
