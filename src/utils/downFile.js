@@ -1,10 +1,10 @@
 const downFile = (url) => {
   const a = document.createElement('a');
   a.style.display = 'none';
-  a.download = 'xx';
+  // a.download = 'xx';
   a.href = url;
   document.body.appendChild(a);
-  a.click(); 
+  a.click();
   document.body.removeChild(a);
   /*
   * download: HTML5新增的属性
