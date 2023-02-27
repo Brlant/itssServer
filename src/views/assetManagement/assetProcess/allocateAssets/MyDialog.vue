@@ -5,7 +5,7 @@
     width="50%"
     :visible.sync="agreeShow"
     destroy-on-close
-  > 
+  >
     <div v-if='isShow'>
     <el-form
       :model="diaForm"
@@ -48,15 +48,20 @@
       </el-button>
       </el-form>
       <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary" 
-        @click="sureAgree">确定</el-button>
-        <el-button 
+        <el-button
+          type="primary"
+          @click="sureAgree"
+          :disabled="submitLoading"
+        >
+          确定
+        </el-button>
+        <el-button
         @click="cancelFn">取消</el-button>
       </div>
       </div>
           <!-- 流程开始 -->
-    <div 
-      style="cursor:pointer" 
+    <div
+      style="cursor:pointer"
       v-show="!isShow"
     >
       <span @click="isShow = true">
@@ -77,10 +82,10 @@
 
 <script>
 import { fileUpload } from '@/api/assetManagement/companyAssets'
-import { 
+import {
   agreeQuery,
   uploadSuccess,
-  seeFlow 
+  seeFlow
 } from "@/api/assetManagement/assetProcess"
 import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow.vue"
 
@@ -131,6 +136,7 @@ export default {
           value: 3,
         },
       ],
+      submitLoading: false
     }
   },
   watch: {
@@ -167,7 +173,9 @@ export default {
           CUSTOM_VAR: JSON.stringify(this.customVar)
         }
       }
+      this.submitLoading = true
       agreeQuery(params).then(res=>{
+        this.submitLoading = false
         if(res.code == 200) {
             this.$message.success(res.msg)
             this.agreeShow = false
@@ -179,6 +187,8 @@ export default {
           };
           this.$tab.closeOpenPage(obj);
         }
+      }).catch(()=>{
+        this.submitLoading = false
       })
     },
     // 上传文件
