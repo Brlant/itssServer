@@ -855,7 +855,7 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.showSetCommander = (data.id == this.$store.state.user.user.deptId || data.parentId == this.$store.state.user.user.deptId)
+      this.showSetCommander = (this.$store.state.user.user.userId == 1 || data.id == this.$store.state.user.user.deptId || data.parentId == this.$store.state.user.user.deptId)
                               ? true
                               : false
       this.currentNode = data
