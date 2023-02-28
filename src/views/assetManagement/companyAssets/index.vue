@@ -310,7 +310,7 @@
         </el-alert>
         <ol class="contentText">
           <li> 文件格式详见
-            <a href="./文件上传模板.xlsx" download="./文件上传模板.xlsx" class="fileTmpl">
+            <a href="./文件上传模板.xlsx" download="文件上传模板.xlsx" class="fileTmpl">
               文件上传模板
             </a>
             ，模板中
