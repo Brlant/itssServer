@@ -16,6 +16,23 @@
                     </el-form-item>
                 </el-col>
             </el-row>
+            <el-row v-if="$store.state.user.user.userId == 1">
+              <el-col :span="24">
+                <el-form-item
+                  label="所属机构" prop="orgIdList"
+                  :rules="[{ required: true, message: '请选择所属机构', trigger: 'change' }]"
+                >
+                  <el-cascader
+                    disabled
+                    v-model="formmodel.orgIdList"
+                    :options="orgList"
+                    ref="org"
+                    :props="{ label: 'name', value: 'id', checkStrictly: true }"
+                    clearable
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
             <el-row>
                 <el-col :span="24">
                     <el-form-item label="菜单" prop="menuIds">
@@ -45,6 +62,8 @@
 import menuTree from './components/menuTree.vue'
 import { updateRole,getRole } from "@/api/system/role";
 import { roleMenuTreeselect,treeselect } from "@/api/system/menu"
+import { reqList } from '@/api/OrgManage/OrgManage.js' ;
+import recursion from '@/utils/recursion'
     export default {
         name:'roleDetail',
         components:{ menuTree },
@@ -56,6 +75,8 @@ import { roleMenuTreeselect,treeselect } from "@/api/system/menu"
                     roleKey:'', // 权限校验
                     remark: '',
                     menuIds:[],  // 右侧菜单树的id集合
+                    orgId:'',
+                    orgIdList:[], // 所属机构
                 },
                 fromData:[    //源数据 类型：Array 必填：true 补充：数据格式同element-ui tree组件，但必须有id和pid
                         // {
@@ -101,6 +122,7 @@ import { roleMenuTreeselect,treeselect } from "@/api/system/menu"
                     id:'id',
                     children: 'children'
                 },
+                orgList:[], // 机构列表
             }
         },
         mounted(){
@@ -118,6 +140,7 @@ import { roleMenuTreeselect,treeselect } from "@/api/system/menu"
                     this.formmodel.roleName = res.data.roleName
                     this.formmodel.roleKey = res.data.roleKey
                     this.formmodel.remark = res.data.remark
+                    this.formmodel.orgId = res.data.orgId
                 })
             },
             dealdata(data,keymap){
@@ -175,6 +198,19 @@ import { roleMenuTreeselect,treeselect } from "@/api/system/menu"
                         this.getRoleMenuTreeselect(this.formmodel.roleId)
                     }
                 });
+
+                if (this.formmodel.orgId) {
+                    // 查询机构数据
+                    let reqObj = {} ;
+                    reqObj.headers = {
+                      userId : 1,
+                      parentId : 0
+                    } ;
+                    reqList(reqObj).then(res=>{
+                      this.orgList = res.data
+                      this.formmodel.orgIdList = recursion(this.orgList, this.formmodel.orgId)
+                    })
+                }
             },
             /** 根据角色ID查询菜单树结构 */
             getRoleMenuTreeselect(roleId) {
@@ -190,14 +226,14 @@ import { roleMenuTreeselect,treeselect } from "@/api/system/menu"
                         this.menu.forEach(item => {  //el-tree-transfer组件的第一个pid必须为0
                         item.parentId = 0
                         this.toData = this.menu
-                    })    
+                    })
                     } else {
                         let menuData = this.dealdata(this.temData,keymap)
                         this.fromData = menuData.excluded
                         this.fromData.forEach(item => {  //el-tree-transfer组件的第一个pid必须为0
                             item.parentId = 0
                         })
-                        this.toData = menuData.included 
+                        this.toData = menuData.included
                     }
                 });
             },

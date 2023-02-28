@@ -16,6 +16,21 @@
                     </el-form-item>
                 </el-col>
             </el-row>
+            <el-row v-if="$store.state.user.user.userId == 1">
+              <el-col :span="24">
+                <el-form-item label="所属机构" prop="orgIdList"
+                  :rules="[{ required: true, message: '请选择所属机构', trigger: 'change' }]"
+                >
+                  <el-cascader
+                    v-model="formmodel.orgIdList"
+                    :options="orgList"
+                    ref="org"
+                    :props="{ label: 'name', value: 'id', checkStrictly: true }"
+                    clearable
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
             <el-row>
                 <el-col :span="24">
                     <el-form-item label="菜单" prop="menuIds">
@@ -45,6 +60,7 @@
 import menuTree from './components/menuTree.vue'
 import {  addRole } from "@/api/system/role";
 import { treeselect } from "@/api/system/menu"
+import { reqList } from '@/api/OrgManage/OrgManage.js' ;
     export default {
         name:'roleAdd',
         components:{ menuTree },
@@ -56,6 +72,7 @@ import { treeselect } from "@/api/system/menu"
                     roleKey:'', // 权限校验
                     remark: '',
                     menuIds:[],  // 右侧菜单树的id集合
+                    orgIdList:[], // 所属机构
                 },
                 fromData:[    //源数据 类型：Array 必填：true 补充：数据格式同element-ui tree组件，但必须有id和pid
                         // {
@@ -93,6 +110,7 @@ import { treeselect } from "@/api/system/menu"
                 temData:[], // 临时数据(存放全部树数据)
                 checkedKeys:[], //已勾选的id数组（右侧树的id数组）
                 receiveData:[], //接受子组件的右侧树形数据
+                orgList:[], // 机构列表
             }
         },
         mounted(){
@@ -106,10 +124,22 @@ import { treeselect } from "@/api/system/menu"
                     this.formloading = false
                     this.menu = response.data
                     if(this.menu && this.menu.length){
-                            this.fromData = this.menu;  // 
+                            this.fromData = this.menu;  //
                             this.toData = []
                     }
                 });
+
+                if(this.$store.state.user.user.userId == 1){
+                    let reqObj = {} ;
+                    reqObj.headers = {
+                      userId : 1,
+                      parentId : 0
+                    } ;
+                    reqList(reqObj).then(res=>{
+                      this.orgList = res.data
+                    })
+                }
+
             },
             getRightData(val){
                 console.log(JSON.stringify(val));
@@ -126,18 +156,26 @@ import { treeselect } from "@/api/system/menu"
             // 保存
             formSumbit() { //
                 // 提交时，需要把右边树的所有id提取出来放进一个数组内传给后端
-                this.sumbitloading = true;
+                // this.sumbitloading = true;
                 this.$refs.roleform.validate(valid => {
                     if(valid){
                         this.recursive(this.receiveData) // 得到
                         // if(this.type == 'add'){
-                            addRole(this.formmodel).then(res=>{
+                      this.sumbitloading = true;
+                      let orgId = this.formmodel.orgIdList[this.formmodel.orgIdList.length-1] ?? ''
+                      let formmodel = {
+                        ...this.formmodel,
+                        orgId: orgId
+                      }
+                      addRole(formmodel).then(res=>{
                                 console.log(res);
                                 this.sumbitloading = false
                                 this.$message.success(res.msg)
                                 this.$store.dispatch("tagsView/delView", this.$route);
                                 this.$router.replace({ path: "/system/role" }); // 关闭之后要返回的页面  会自动刷新
-                            }) 
+                            }).catch(()=>{
+                              this.sumbitloading = false
+                            })
                         // } else {
                         //     updateRole(this.formmodel).then(res=>{
                         //         console.log(res);
