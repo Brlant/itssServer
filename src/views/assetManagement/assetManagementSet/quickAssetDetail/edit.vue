@@ -9,7 +9,11 @@
         <span>快速填充模板编辑</span>
       </div>
       <div class="btns">
-        <el-button type="primary" size="small" @click="save">
+        <el-button
+          type="primary"
+          size="small"
+          :disabled="submitLoading"
+          @click="save">
           保存
         </el-button>
         <el-button size="small" @click="cancel">
@@ -247,7 +251,9 @@ export default {
         preTaxPrice: [
           { validator: checkNumber, trigger: 'blur' }
         ]
-      }
+      },
+      submitLoading: false
+
     }
   },
   mounted() {
@@ -341,9 +347,13 @@ export default {
           data.departmentName = null
         }
         data.id = this.id
+        this.submitLoading = true
         updateOrDelete(data).then(res => {
+          this.submitLoading = false
           this.$message.success(res.msg)
           this.$router.go(-1)
+        }).catch(()=>{
+          this.submitLoading = false
         })
       })
     },

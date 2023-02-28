@@ -8,7 +8,13 @@
             <b>审批流程</b>
           </div>
           <div>
-            <el-button type="primary" @click="sureSave">保存</el-button>
+            <el-button
+              type="primary"
+              :disabled="submitLoading"
+              @click="sureSave"
+            >
+              保存
+            </el-button>
             <el-button @click='cancel'>取消</el-button>
           </div>
 
@@ -110,6 +116,8 @@ export default {
           ],
         },
       ],
+      submitLoading: false
+
     };
   },
   created() {
@@ -315,13 +323,17 @@ export default {
       this.params.groupSetting= null
       this.params.id = this.detailId
         // return
-        updateInventory(this.params).then((res) => {
-          if (res.code == 200) {
+      this.submitLoading = true
+      updateInventory(this.params).then((res) => {
+        this.submitLoading = false
+        if (res.code == 200) {
             this.n = 1;
             this.$message.success("操作成功");
             this.$emit("change",false)
           }
-        });
+        }).catch(()=>{
+        this.submitLoading = false
+      });
     },
 
     //页面取消按钮

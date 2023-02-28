@@ -27,9 +27,9 @@
         </el-col>
         <el-col :span="span / 2">
           <el-form-item label="维修金额" prop="maintenancePrice">
-            <el-input 
-              v-model.trim="formData.maintenancePrice" 
-              :style="style" 
+            <el-input
+              v-model.trim="formData.maintenancePrice"
+              :style="style"
             />
           </el-form-item>
         </el-col>
@@ -92,7 +92,11 @@
     </el-form>
     <!-- 表单结束 -->
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="submit">
+      <el-button
+        type="primary"
+        :disabled="submitLoading"
+        @click="submit"
+      >
         确定
       </el-button>
       <el-button @click="dialogVisible = false">
@@ -140,7 +144,9 @@ export default {
         maintenancePrice: [
           { validator: checkNumber, trigger: 'blur' }
         ]
-      }
+      },
+      submitLoading: false
+
     }
   },
   watch: {
@@ -182,7 +188,9 @@ export default {
           }])
         }
       }
+      this.submitLoading = true
       agreeQuery(params).then(res => {
+        this.submitLoading = false
         this.$message.success(res.msg)
         const obj = {
           path: "/assetManagement/assetProcess",
@@ -193,6 +201,7 @@ export default {
         this.$tab.closeOpenPage(obj);
         this.getTableData()
       }).catch(() => {
+        this.submitLoading = false
         this.dialogVisible = false
       })
     },
@@ -239,7 +248,7 @@ export default {
 
 <style lang="scss" scoped>
 .label {
-  color: #606266; 
+  color: #606266;
   font-weight: 700;
   text-indent: 10px;
 }

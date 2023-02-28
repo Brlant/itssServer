@@ -131,8 +131,18 @@
           </el-button>
         </el-form>
         <div class="txtAlignC dialogBtnInfo">
-          <el-button type="primary" @click="sureApply">确定</el-button>
-          <el-button @click="cancelFn">取消</el-button>
+          <el-button
+            type="primary"
+            :disabled="submitLoading"
+            @click="sureApply"
+          >
+            确定
+          </el-button>
+          <el-button
+            @click="cancelFn"
+          >
+            取消
+          </el-button>
         </div>
       </div>
       <div

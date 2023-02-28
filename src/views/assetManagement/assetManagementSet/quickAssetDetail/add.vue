@@ -9,7 +9,11 @@
         <span>新增快速填充模板</span>
       </div>
       <div class="btns">
-        <el-button type="primary" size="small" @click="save">
+        <el-button
+          type="primary"
+          size="small"
+          :disabled="submitLoading"
+          @click="save">
           保存
         </el-button>
         <el-button size="small" @click="cancel">
@@ -248,7 +252,9 @@ export default {
         preTaxPrice: [
           { validator: checkNumber, trigger: 'blur' }
         ]
-      }
+      },
+      submitLoading: false
+
     }
   },
   mounted() {
@@ -329,9 +335,13 @@ export default {
         } else {
           data.departmentName = null
         }
+        this.submitLoading = true
         createInfo(data).then(res => {
+          this.submitLoading = false
           this.$message.success(res.msg)
           this.$router.push('/assetManagement/assetManagementSet/quickAssetDetailIndex')
+        }).catch(()=>{
+          this.submitLoading = false
         })
       })
     },

@@ -77,7 +77,11 @@
         </el-form>
       <!-- 表单结束 -->
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submit">
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="submit"
+        >
           确定
         </el-button>
         <el-button @click="dialogVisible = false">
@@ -89,8 +93,8 @@
 </template>
 
 <script>
-import { 
-  certificateList, 
+import {
+  certificateList,
   fileUpload,
   addCertificate
 } from '@/api/assetManagement/companyAssets'
@@ -127,7 +131,8 @@ export default {
         endTime: [
           { required: true, trigger: 'blur', message: '请选择证书失效时间' }
         ]
-      }
+      },
+      submitLoading: false
     }
   },
   created() {
@@ -185,10 +190,14 @@ export default {
           startTime: this.formData.startTime,
           endTime: this.formData.endTime
         }
+        this.submitLoading = true
         addCertificate(data).then(res => {
+          this.submitLoading = false
           this.dialogVisible = false
           this.$message.success(res.msg)
           this.getCertificateList()
+        }).catch(()=>{
+          this.submitLoading = false
         })
       })
     },

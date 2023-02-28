@@ -9,7 +9,12 @@
         <span>编辑资产</span>
       </div>
       <div class="btns">
-        <el-button type="primary" size="small" @click="save">
+        <el-button
+          type="primary"
+          size="small"
+          :disabled="saveLoading"
+          @click="save"
+        >
           保存
         </el-button>
         <el-button size="small" @click="cancel">
@@ -285,7 +290,8 @@ export default {
         ]
       },
       formItems: [],
-      formDataCopy: {}
+      formDataCopy: {},
+      saveLoading: false
     }
   },
   mounted() {
@@ -419,7 +425,9 @@ export default {
           data.departmentName = null
         }
         data.id = this.id
+        this.saveLoading = true
         updateAssets(data).then(res => {
+          this.saveLoading = false
           this.$message.success(res.msg)
           this.$router.push({
             path: '/assetManagement/companyAssets',
@@ -427,6 +435,8 @@ export default {
               tab: 9
             }
           })
+        }).catch(()=>{
+          this.saveLoading = false
         })
       })
     },

@@ -6,7 +6,13 @@
         <span>资产编号规则</span>
       </div>
       <div>
-        <el-button type="primary" @click="sureSave"> 保存 </el-button>
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="sureSave"
+        >
+          保存
+        </el-button>
         <el-button @click="cancel">取消</el-button>
       </div>
     </div>
@@ -372,6 +378,7 @@ export default {
           },
         ],
       },
+      submitLoading: false
     };
   },
   computed: {},
@@ -623,15 +630,19 @@ export default {
         rule: JSON.stringify(this.ruleForm.ruleList),
       };
       }
-   
 
+
+      this.submitLoading = true
       newAddRule(data).then((res) => {
+        this.submitLoading = false
         if (res.code == 200) {
           this.$message.success("新增成功");
            this.$router.push('/assetManagement/assetManagementSet/assetCodeRules')
         }else{
           this.$message.error(res.msg)
         }
+      }).catch(()=>{
+        this.submitLoading = false
       });
     },
     //返回

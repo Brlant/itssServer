@@ -7,7 +7,7 @@
     destroy-on-close
   >
     <!-- 表单开始 -->
-    <el-form 
+    <el-form
       :model="formData"
       :rules="rules"
     >
@@ -15,12 +15,16 @@
         <asset-select />
       </el-form-item>
       <el-form-item label="涉及资产状态">
-        
+
       </el-form-item>
     </el-form>
     <!-- 表单结束 -->
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="submit">
+      <el-button
+        type="primary"
+        :disabled="submitLoading"
+        @click="submit"
+      >
         确定
       </el-button>
       <el-button @click="dialogVisible = false">
@@ -45,7 +49,9 @@ export default {
       },
       rules: {
 
-      }
+      },
+      submitLoading: false
+
     }
   },
   methods: {

@@ -25,8 +25,8 @@
       </el-form-item>
       <el-form-item label="请输入资产数量" prop="amount">
         <div style="width:100%; display:flex; justify-content:flex-end">
-          <el-input-number 
-            v-model="formData.amount" 
+          <el-input-number
+            v-model="formData.amount"
             :min="1"
             :max='info.amount'
             :step="1"
@@ -67,8 +67,8 @@
     </el-form>
     <!-- 表单结束 -->
     <!-- 流程开始 -->
-    <div 
-      style="cursor:pointer" 
+    <div
+      style="cursor:pointer"
       v-show="!isShow"
     >
       <span @click="isShow = true">
@@ -85,7 +85,10 @@
     </div>
     <!-- 流程结束 -->
     <div slot="footer" style="display:flex; justify-content:flex-end; align-items:center">
-      <el-button type="primary" @click="submit">
+      <el-button
+        type="primary"
+        :disabled="submitLoading"
+        @click="submit">
         确定
       </el-button>
       <el-button @click="dialogVisible = false">
@@ -96,7 +99,7 @@
 </template>
 
 <script>
-import { 
+import {
   fileUpload,
   scrap,
   getFlow
@@ -127,7 +130,8 @@ export default {
         amount: [
           { required: true, trigger: 'blur', message: '请输入资产数量' }
         ]
-      }
+      },
+      submitLoading: false
     }
   },
   watch: {
@@ -164,10 +168,12 @@ export default {
           }),
           revoke: 'true'
         }
+        this.submitLoading = true
         scrap(data).then(res => {
+          this.submitLoading = false
           this.dialogVisible = false
           this.$message.success(res.msg)
-          const obj = { 
+          const obj = {
             name: "myAssets",
             params:{
               tab: 2
@@ -175,6 +181,7 @@ export default {
           };
           this.$tab.closeOpenPage(obj)
         }).catch(() => {
+          this.submitLoading = false
           this.dialogVisible = false
         })
       })

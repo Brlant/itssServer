@@ -2,15 +2,19 @@
   <div class="app-container">
     <div class="process-title">
       <div style="font-size: 18px; cursor: pointer" @click="goBack">
-        <i class="el-icon-arrow-left"> 
+        <i class="el-icon-arrow-left">
         </i>
         <span>
             资产编号规则编辑
         </span>
       </div>
       <div>
-        <el-button type="primary" @click="sureSave"> 
-            保存 
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="sureSave"
+        >
+            保存
         </el-button>
         <el-button @click='cancel'>
             取消
@@ -100,7 +104,7 @@
               v-if="item.type != 1 && item.type != 5"
               :label="item.label"
               label-width="120px"
-            
+
             >
               <el-input
                 v-if='item.ruleLable &&  item.ruleLable.label'
@@ -387,13 +391,14 @@ export default {
           },
         ],
       },
+      submitLoading: false
     };
   },
   computed: {},
   watch: {},
   created() {
     this.ruleForm = this.$route.query.detailData;
-    
+
     let pushAssetType = [];
     this.$route.query.detailData.assetTypeList.forEach((item) =>
       pushAssetType.push(item.id)
@@ -613,12 +618,15 @@ export default {
         ...this.ruleForm,
         rule: JSON.stringify(this.ruleForm.ruleList),
       };
-
+      this.submitLoading = true
       editRule(data).then((res) => {
+        this.submitLoading = false
         if (res.code == 200) {
           this.$message.success("编辑成功");
             this.$router.push('/assetManagement/assetManagementSet/assetCodeRules')
         }
+      }).catch(()=>{
+        this.submitLoading = false
       });
     },
     //返回

@@ -17,7 +17,13 @@
       <el-col :span="12" >
         <div class="grid-content bg-purple-light">
           <div class="right-button">
-            <el-button type="primary" @click="saveAseet">保存</el-button>
+            <el-button
+              type="primary"
+              :disabled="submitLoading"
+              @click="saveAseet"
+            >
+              保存
+            </el-button>
             <el-button type="info" @click="cancelDetail">取消</el-button>
           </div>
         </div>
@@ -29,7 +35,7 @@
         <div class="base-row">
           <div class="title">
             <span class="title-name c333">模板信息</span>
-           
+
           </div>
           <br />
           <div class="base">
@@ -65,7 +71,7 @@
             </el-radio-group>
           </div>
         </div>
-        
+
         <div class="base-row">
           <div class="title">
             <span class="title-name c999">折旧信息</span>
@@ -186,7 +192,7 @@ export default {
           id: 11,
           name: "税后价格",
         },
-        
+
         {
           id: 12,
           name: "数量",
@@ -410,6 +416,8 @@ export default {
         //   status: "belongDepartmentId",
         // },
       ],
+      submitLoading: false
+
     };
   },
   components: {
@@ -503,7 +511,9 @@ export default {
       if(this.$route.query.id){
         // 有id 则说明是修改
         params.id= this.$route.query.id
+        this.submitLoading = true
         updateOrDelete(params).then((res) => {
+          this.submitLoading = false
           if (res.code == 200) {
             this.$message({
               message: "修改成功！",
@@ -512,10 +522,13 @@ export default {
             const obj = { path: "/assetManagement/assetManagementSet/list" };
         this.$tab.closeOpenPage(obj);
           }
+        }).catch(()=>{
+          this.submitLoading = false
         });
       }else{
-
+        this.submitLoading = true
         createDictionary(params).then((res) => {
+          this.submitLoading = false
           // if (res.code == 200) {
             this.$message({
               message: "新增成功！",
@@ -524,6 +537,8 @@ export default {
             const obj = { path: "/assetManagement/assetManagementSet/list" };
         this.$tab.closeOpenPage(obj);
           // }
+        }).catch(()=>{
+          this.submitLoading = false
         });
       }
     },
@@ -583,7 +598,7 @@ p {
     border-left: 4px #999999 solid;
   padding-left: 12px;
 }
- 
+
 .title-name {
   font-size: 18px;
   font-weight: bold;
