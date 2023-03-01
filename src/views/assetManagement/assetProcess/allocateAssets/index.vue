@@ -271,7 +271,10 @@ export default {
       } else {
         let total = 0
         this.tableData.forEach(value => {
-          total += value.amount
+          // total += value.amount
+          if (value.amount) {
+            total += parseFloat(value.amount)
+          }
         })
         return total
       }

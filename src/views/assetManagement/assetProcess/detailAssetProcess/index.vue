@@ -835,7 +835,10 @@ export default {
         // 总件数
         let total = 0
         this.tableData.forEach(value => {
-          total += value.amount
+          // total += value.amount
+          if (value.amount) {
+            total += parseFloat(value.amount)
+          }
         })
         this.total = total
       })
