@@ -107,7 +107,7 @@
           <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
         </template>
       </el-table-column>
-  
+
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -191,7 +191,13 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="submitForm"
+        >
+          确 定
+        </el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -277,7 +283,8 @@ export default {
         dictSort: [
           { required: true, message: "数据顺序不能为空", trigger: "blur" }
         ]
-      }
+      },
+      submitLoading: false
     };
   },
   created() {
@@ -372,18 +379,26 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.dictCode != undefined) {
+            this.submitLoading = true
             updateData(this.form).then(response => {
+              this.submitLoading = false
               this.$store.dispatch('dict/removeDict', this.queryParams.dictType);
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).catch(()=>{
+              this.submitLoading = false
             });
           } else {
+            this.submitLoading = true
             addData(this.form).then(response => {
+              this.submitLoading = false
               this.$store.dispatch('dict/removeDict', this.queryParams.dictType);
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).catch(()=>{
+              this.submitLoading = false
             });
           }
         }

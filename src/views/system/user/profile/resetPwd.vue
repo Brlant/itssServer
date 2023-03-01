@@ -10,7 +10,14 @@
       <el-input v-model="user.confirmPassword" placeholder="请确认新密码" type="password" show-password/>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" size="mini" @click="submit">保存</el-button>
+      <el-button
+        type="primary"
+        size="mini"
+        :disabled="submitLoading"
+        @click="submit"
+      >
+        保存
+      </el-button>
       <el-button type="danger" size="mini" @click="close">关闭</el-button>
     </el-form-item>
   </el-form>
@@ -47,16 +54,21 @@ export default {
           { required: true, message: "确认密码不能为空", trigger: "blur" },
           { required: true, validator: equalToPassword, trigger: "blur" }
         ]
-      }
+      },
+      submitLoading: false
     };
   },
   methods: {
     submit() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.submitLoading = true
           updateUserPwd(this.user.oldPassword, this.user.newPassword).then(response => {
+            this.submitLoading = false
             this.$modal.msgSuccess("修改成功");
             this.$store.dispatch('GetInfo') // 修改密码成功后，更新个人信息
+          }).catch(()=>{
+            this.submitLoading = false
           });
         }
       });

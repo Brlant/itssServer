@@ -14,7 +14,7 @@
           v-model="queryParams.postName"
           placeholder="请输入职位名称"
           clearable
-        
+
         />
       </el-form-item>
       <el-form-item label="区域" prop="regionId" v-if='areas.length != 0'>
@@ -97,7 +97,7 @@
       <el-table-column label="等级" align="center" prop="postLevel" />
       <el-table-column label="成本内部预设（元/天）" align="center" prop="costIn" />
       <el-table-column label="成本外部预设（元/天）" align="center" prop="costOut" />
-     
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -166,7 +166,13 @@
         </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="submitForm"
+        >
+          确 定
+        </el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -217,7 +223,7 @@ export default {
           { required: true, message: "职位名称不能为空", trigger: "blur" }
         ],
         postType:[{
-          required: true, message: "职位类型不能为空", trigger: "blur" 
+          required: true, message: "职位类型不能为空", trigger: "blur"
         }],
         postLevel:[
           { required: true, message: "职位等级不能为空", trigger: "blur" }
@@ -231,7 +237,8 @@ export default {
         // postSort: [
         //   { required: true, message: "岗位顺序不能为空", trigger: "blur" }
         // ]
-      }
+      },
+      submitLoading: false
     };
   },
   created() {
@@ -308,7 +315,7 @@ export default {
       getPost(postId).then(response => {
         // // 因为憨批后台返回了一个字符串，
         // // 导致展示的结果是数字，
-        // // 而字典的类型是int 
+        // // 而字典的类型是int
         // // 估有此行代码
         // response.data.postType = parseInt(response.data.postType)
         this.form = response.data;
@@ -320,20 +327,28 @@ export default {
     /** 提交按钮 */
     submitForm: function() {
       console.log(this.form)
-      // return 
+      // return
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.postId != undefined) {
+            this.submitLoading = true
             updatePost(this.form).then(response => {
+              this.submitLoading = false
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).catch(()=>{
+              this.submitLoading = false
             });
           } else {
+            this.submitLoading = true
             addPost(this.form).then(response => {
+              this.submitLoading = false
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).catch(()=>{
+              this.submitLoading = false
             });
           }
         }

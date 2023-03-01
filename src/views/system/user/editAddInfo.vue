@@ -6,7 +6,13 @@
         <span>成员信息新增/编辑</span>
       </div>
       <div>
-        <el-button type="primary" @click="saveDialog">保存</el-button>
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="saveDialog"
+        >
+          保存
+        </el-button>
         <el-button @click="cancle">取消</el-button>
       </div>
     </div>
@@ -348,7 +354,9 @@ export default {
       },
       isEdit: '',
 
-      currentNode: {}
+      currentNode: {},
+
+      submitLoading: false
     };
   },
   created() {
@@ -506,8 +514,9 @@ export default {
             };
 
             console.log(data, "ssssssssss");
-
+            this.submitLoading = true
             updateUser(data).then((res) => {
+              this.submitLoading = false
               if (res.code == 200) {
                 this.$message.success(res.msg);
                 //  this.detailInfo();
@@ -521,6 +530,8 @@ export default {
                 };
                 this.$tab.closeOpenPage(obj);
               }
+            }).catch(()=>{
+              this.submitLoading = false
             });
           }
         });
@@ -537,6 +548,7 @@ export default {
               ...this.formData,
             };
             console.log(data, "ssssssssss");
+            this.submitLoading = true
             addUser(data).then((res) => {
               if (res.code == 200) {
                 this.$message.success(res.msg);

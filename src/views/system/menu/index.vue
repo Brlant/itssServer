@@ -33,7 +33,7 @@
           </el-col>
         </el-row>
       </el-form>
-    </div>  
+    </div>
     <div>
       <div class="headerBtn">
           <el-button
@@ -49,7 +49,7 @@
           >展开/折叠</el-button>
       </div>
 
-    
+
     <el-table
       v-if="refreshTable"
       v-loading="loading"
@@ -82,7 +82,7 @@
         <template slot-scope="scope">
           <span class="text-primary cursor"  style="margin-right:20px" @click="handleUpdate(scope.row)" >编辑</span>
           <span class="text-danger cursor"  @click="handleDelete(scope.row)" >删除</span>
-          <!-- <el-button 
+          <!-- <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
@@ -277,7 +277,13 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="submitForm"
+        >
+          确 定
+        </el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -335,6 +341,7 @@ export default {
         {label:'启用',value:'0'},
         {label:'停用',value:'1'},
       ],
+      submitLoading: false
     };
   },
   created() {
@@ -438,16 +445,24 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.menuId != undefined) {
+            this.submitLoading = true
             updateMenu(this.form).then(response => {
+              this.submitLoading = false
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).catch(()=>{
+              this.submitLoading = false
             });
           } else {
+            this.submitLoading = true
             addMenu(this.form).then(response => {
+              this.submitLoading = false
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).catch(()=>{
+              this.submitLoading = false
             });
           }
         }

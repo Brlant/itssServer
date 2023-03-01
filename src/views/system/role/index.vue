@@ -221,7 +221,13 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="submitForm"
+        >
+          确 定
+        </el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -369,7 +375,8 @@ export default {
         roleSort: [
           { required: true, message: "角色顺序不能为空", trigger: "blur" }
         ]
-      }
+      },
+      submitLoading: false
     };
   },
   mounted() {
@@ -608,17 +615,25 @@ export default {
         if (valid) {
           if (this.form.roleId != undefined) {
             this.form.menuIds = this.getMenuAllCheckedKeys();
+            this.submitLoading = true
             updateRole(this.form).then(response => {
+              this.submitLoading = false
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).catch(()=>{
+              this.submitLoading = false
             });
           } else {
             this.form.menuIds = this.getMenuAllCheckedKeys();
+            this.submitLoading = true
             addRole(this.form).then(response => {
+              this.submitLoading = false
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).catch(()=>{
+              this.submitLoading = false
             });
           }
         }

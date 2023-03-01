@@ -5,11 +5,16 @@
       <span @click="goManagerPage" style="cursor: pointer; color: #409eff">
         &lt; 编辑项目组
       </span>
-      <!-- 
+      <!--
       <span> （仅项目负责人可对此项目下列对内进行编辑）</span> -->
       <div class="rightBox">
-        <el-button size="mini" @click="submitForm" type="primary"
-          >保存</el-button
+        <el-button
+          size="mini"
+          @click="submitForm"
+          type="primary"
+          >
+          保存
+        </el-button
         >
         <el-button size="mini" @click="backDetail" type="default"
           >取消</el-button

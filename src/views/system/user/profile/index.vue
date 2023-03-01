@@ -176,6 +176,7 @@
               <el-button
                 type="primary"
                 :loading="grantLoading"
+                :disabled="submitLoading"
                 @click="onGrantSubmit"
               >
                 确定
@@ -361,7 +362,7 @@ export default {
       grantToTotal: 0,
       // 授权给我的列表
       grantToList: [],
-
+      submitLoading: false
     };
   },
   mounted() {

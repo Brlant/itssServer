@@ -7,7 +7,13 @@
       </div>
       <div style="cursor: pointer" class="ope">
         <!-- <span @click='changeAccount'>账号更改 |</span> -->
-        <el-button type='primary' @click='save'>保存</el-button>
+        <el-button
+          type='primary'
+          :disabled="submitLoading"
+          @click='save'
+        >
+          保存
+        </el-button>
          <el-button @click='cancle'>取消</el-button>
       </div>
     </div>
@@ -34,22 +40,22 @@
                     <span>{{info.userName}}</span>
                 </div>
                  <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>工号:</span>
                     <span>{{info.employeeNo}}</span>
                 </div>
                  <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>邮箱:</span>
                     <span>{{info.email}}</span>
                 </div>
                    <div style="margin:20px;0;font-size:18px;">
-                  
+
                     <span class='title'>区域:</span>
                     <span>{{info.regionName}}</span>
                 </div>
                   <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>职位类型:</span>
                     <span class="content">{{info.postType}}</span>
                     <span class='title'>职位名称:</span>
@@ -58,29 +64,29 @@
                     <span class="content">{{info.postLevel}}</span>
                 </div>
                    <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>入职时间:</span>
                     <span class="content">{{info.inTime}}</span>
                     <span class='title'>离职时间:</span>
                     <span>{{info.outTime}}</span>
-                  
+
                 </div>
                  <div style="margin:20px;font-size:18px;" v-if='info.skillLock==1'>
-                 
+
                    <i class='el-icon-lock' v-if='info.skillLock==1'></i>
                     <span class='title'>工作技能:</span>
                     <span class='work' v-for='(item,index) in info.userSkills' :key='index' :style="{background: matchColor(item.cssClass)}">{{item.skillName}}</span>
 
                 </div>
                  <div style="margin:20px;font-size:18px;display:flex;"  v-else>
-                  
+
                    <div slot="label"><i class='el-icon-unlock' v-if='info.skillLock==0'></i>
                   工作技能：</div>
                     <skill-select v-model="skillIds" />
-                    
+
                 </div>
                  <div style="font-size:18px;display:flex;">
-                  
+
                     <el-form
                       ref="elForm"
                       :model="info"
@@ -97,7 +103,7 @@
                         </el-form-item>
                         </el-col>
                       </el-row>
-                      
+
                        <el-row>
                         <el-col :span='24'>
                           <el-form-item label="git账号:" prop="gitAccount">
@@ -109,7 +115,7 @@
                         </el-col>
                       </el-row>
                       </el-form>
-                    
+
                 </div>
             </div>
         </div>
@@ -117,7 +123,7 @@
              <div class="titleinfo">权限信息</div>
             <div style="font-size:18px;">
                    <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>系统角色:</span>
                     <span v-for='(item,index) in info.roles' :key='index'>
                         <span>{{item.roleName}}</span>
@@ -125,7 +131,7 @@
                     </span>
                 </div>
                   <div style="margin:20px;font-size:18px;">
-                  
+
                     <span class='title'>所属部门:</span>
                     <span v-if='info.dept' class="content">{{info.dept.deptName}}</span>
                     <span class='title'>负责人:</span>
@@ -182,12 +188,13 @@ export default {
       skillIds:[],
        rules: {
           tel: [
-            { required: true, message: '请输入新手机号', trigger: 'blur' }, 
+            { required: true, message: '请输入新手机号', trigger: 'blur' },
           ],
            verification: [
-            { required: true, message: '请输入短信验证码', trigger: 'blur' }, 
+            { required: true, message: '请输入短信验证码', trigger: 'blur' },
           ],
-        }
+        },
+      submitLoading: false
     };
   },
   created() {
@@ -210,7 +217,9 @@ export default {
 
         }
         console.log(data)
+        this.submitLoading = true
        editSkill(data).then(res=>{
+         this.submitLoading = false
             if(res.code==200){
                 this.$message.success(res.msg)
             //      const obj = {
@@ -220,6 +229,8 @@ export default {
             // this.$tab.closeOpenPage(obj);
              this.$router.go(-1)
             }
+       }).catch(()=>{
+         this.submitLoading = false
        })
     },
     cancle(){
@@ -233,14 +244,14 @@ export default {
       }else{
          id=this.$store.state.user.user.userId
       }
-      
+
         userDetail(id).then(res=>{
             this.info=res.data
              this.skillIds = res.data.userSkills.map((v) => v.skillId);
              console.log(this.skillIds,'this.skillIds')
-            
+
         })
-    
+
     },
     goBack(){
       //   const obj = {
@@ -262,9 +273,9 @@ export default {
             return false;
           }
         });
-      
+
     }
-  
+
   },
 };
 </script>

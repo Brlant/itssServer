@@ -112,7 +112,7 @@
           @pagination="getList"
         />
     </div>
-    
+
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
@@ -137,7 +137,13 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="submitForm"
+        >
+          确 定
+        </el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -190,7 +196,8 @@ export default {
         dictType: [
           { required: true, message: "字典类型不能为空", trigger: "blur" }
         ]
-      }
+      },
+      submitLoading: false
     };
   },
   created() {
@@ -265,16 +272,24 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.dictId != undefined) {
+            this.submitLoading = true
             updateType(this.form).then(response => {
+              this.submitLoading = false
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+            }).catch(()=>{
+              this.submitLoading = false
             });
           } else {
+            this.submitLoading = true
             addType(this.form).then(response => {
+              this.submitLoading = false
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+            }).catch(()=>{
+              this.submitLoading = false
             });
           }
         }
