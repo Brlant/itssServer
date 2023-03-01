@@ -964,7 +964,7 @@ export default {
          // 循环 回显 职位名称和职位等级
           res.data.projectUserList.map((item, index) => {
          // 循环 回显 职位名称和职位等级
-          this.constAll(item.startEndTime, index,'update');
+         //  this.constAll(item.startEndTime, index,'update');
           let params = {
             regionId: res.data.projectUserList[index].regionId,
             postTypeId: res.data.projectUserList[index].postTypeId,
