@@ -137,6 +137,19 @@ import recursion from '@/utils/recursion'
                     this.formmodel.roleKey = res.data.roleKey
                     this.formmodel.remark = res.data.remark
                     this.formmodel.orgId = res.data.orgId
+
+                  if (this.formmodel.orgId) {
+                    // 查询机构数据
+                    let reqObj = {} ;
+                    reqObj.headers = {
+                      userId : 1,
+                      parentId : 0
+                    } ;
+                    reqList(reqObj).then(res=>{
+                      this.orgList = res.data
+                      this.formmodel.orgIdList = recursion(this.orgList, this.formmodel.orgId)
+                    })
+                  }
                 })
             },
             dealdata(data,keymap){
@@ -191,19 +204,6 @@ import recursion from '@/utils/recursion'
                         this.getRoleMenuTreeselect(this.formmodel.roleId)
                     }
                 });
-
-                if (this.formmodel.orgId) {
-                    // 查询机构数据
-                    let reqObj = {} ;
-                    reqObj.headers = {
-                      userId : 1,
-                      parentId : 0
-                    } ;
-                    reqList(reqObj).then(res=>{
-                      this.orgList = res.data
-                      this.formmodel.orgIdList = recursion(this.orgList, this.formmodel.orgId)
-                    })
-                }
             },
             /** 根据角色ID查询菜单树结构 */
             getRoleMenuTreeselect(roleId) {
