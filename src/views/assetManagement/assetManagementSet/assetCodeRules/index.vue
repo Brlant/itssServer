@@ -15,7 +15,7 @@
    <el-table-column label="当前在用类型" align="center" prop="assetTypeList">
     <template slot-scope="scope">
       <el-popover
-        v-if="scope.row.assetTypeList.length > 1"
+        v-if="scope.row.assetTypeList&&scope.row.assetTypeList.length > 1"
         width="400"
         trigger="hover">
           <span v-for="(item, index) in scope.row.assetTypeList" :key="index">
