@@ -299,7 +299,7 @@ export default {
   mounted() {
     this.getAsset()
     this.getCateList()
-    this.peopleList()
+    // this.peopleList()
     console.log(this.$route.query.tab,'this.$route.query.tab')
     if(this.$route.query.tab){
       this.n=this.$route.query.tab-0
