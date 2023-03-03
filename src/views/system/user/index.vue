@@ -638,7 +638,7 @@ export default {
     },
     changeOrgId(val){
       this.deptForm.parentId = null
-      this.reqParentDeptFn()
+      val ? this.reqParentDeptFn() : this.parentDeptData = []
     },
 
     reqParentDeptFn() {
