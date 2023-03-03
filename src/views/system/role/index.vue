@@ -39,6 +39,17 @@
                   </el-select>
                 </el-form-item>
             </el-col>
+            <el-col :span="6" v-if="$store.state.user.user.userId == 1">
+              <el-form-item label="所属机构" prop="orgId">
+                <el-cascader
+                  v-model="queryParams.orgId"
+                  :options="orgList"
+                  ref="org"
+                  :props="{ label: 'name', value: 'id', checkStrictly: true, emitPath: false }"
+                  clearable
+                />
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
                 <el-form-item>
                   <el-button type="primary" v-hasPermi="['system:role:list']"  @click="handleQuery">搜索</el-button>
@@ -109,6 +120,9 @@
       <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="180" />
       <!-- <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="180" /> -->
       <!-- <el-table-column label="显示顺序" prop="roleSort" width="100" /> -->
+
+      <el-table-column label="所属机构" prop="orgName" width="120" />
+
       <el-table-column label="状态"  width="180">
         <template slot-scope="scope">
           <span class='enabledStatus' :class="{ error : scope.row.status != 0 }">{{ scope.row.status == 0 ? '启用' : '停用' }}</span>
@@ -279,6 +293,7 @@
 <script>
 import { listRole, getRole, delRole, addRole, updateRole, dataScope, changeRoleStatus, deptTreeSelect,batchChangeStatus } from "@/api/system/role";
 import { treeselect as menuTreeselect, roleMenuTreeselect } from "@/api/system/menu";
+import { reqList } from '@/api/OrgManage/OrgManage.js' ;
 
 export default {
   name: "Role",
@@ -356,7 +371,8 @@ export default {
         pageNum: 1,
         pageSize: 10,
         roleName: '',
-        status: ''
+        status: '',
+        orgId:'',
       },
       // 表单参数
       form: {},
@@ -376,13 +392,25 @@ export default {
           { required: true, message: "角色顺序不能为空", trigger: "blur" }
         ]
       },
-      submitLoading: false
+      submitLoading: false,
+      orgList: []
     };
   },
   mounted() {
     this.getList();
+    this.getOrgList()
   },
   methods: {
+    /** 查询机构列表 */
+    getOrgList() {
+      let reqObj = {} ;
+      reqObj.headers = {
+        userId : 1,
+      } ;
+      reqList(reqObj).then(res=>{
+        this.orgList = res.data
+      })
+    },
     /** 查询角色列表 */
     getList() {
       this.loading = true;
