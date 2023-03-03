@@ -79,6 +79,21 @@
           </el-table-column>
           <el-table-column label="身份ID" align="center" prop="userId" />
           <el-table-column
+            label="状态"
+            align="center"
+          >
+            <template slot-scope="scope">
+              <span>
+                {{
+                  scope.row.status == 0
+                  ? '启用'
+                  : scope.row.status == 1
+                    ? '停用'
+                    : '' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
             label="操作"
             align="center"
             width="160"
@@ -169,6 +184,7 @@
                 clearable
                 :options="orgData"
                 :props="orgPropsObj"
+                @change="changeOrgId"
               ></el-cascader>
             </el-form-item>
           </el-col>
@@ -256,7 +272,10 @@
       </el-form>
 
       <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary" @click="newAdd">确定</el-button>
+        <el-button
+          type="primary"
+          :disabled="addLoading"
+          @click="newAdd">确定</el-button>
         <!-- <el-button @click="cancelFn">取消</el-button> -->
       </div>
     </el-dialog>
@@ -472,7 +491,8 @@ export default {
       },
       propsObj: {
         value: "id",
-        label: "name",
+        // label: "name",
+        label: "label",
         children: "children",
         expandTrigger: "hover",
         checkStrictly: true,
@@ -503,7 +523,8 @@ export default {
       // 是否显示设置负责人
       showSetCommander: false,
       // 当前点击节点
-      currentNode: {}
+      currentNode: {},
+      addLoading: false,
     };
   },
   watch: {
@@ -520,7 +541,7 @@ export default {
 
     this.reqAllListFn();
     this.reqOrgListFn();
-    this.reqParentDeptFn();
+    // this.reqParentDeptFn();
     this.getSkills();
     const { currentNode } = this.$route.params
     if (currentNode && typeof currentNode == "object") {
@@ -615,6 +636,11 @@ export default {
         this.projectUserIdOptions = res.data; // 初始化填充给 项目负责人的 永远是所有用户
       });
     },
+    changeOrgId(val){
+      this.deptForm.parentId = null
+      this.reqParentDeptFn()
+    },
+
     reqParentDeptFn() {
       let reqObj = {};
 
@@ -647,7 +673,7 @@ export default {
         return result;
       };
 
-      tree(reqObj)
+      /*tree(reqObj)
         .then((d) => {
           if (d.code === 200) {
             this.parentDeptData = _fn(d.data);
@@ -655,7 +681,20 @@ export default {
         })
         .catch((err) => {
           console.error(err);
-        });
+        });*/
+
+
+      let params = {
+        orgId: this.deptForm.orgId
+      }
+      treeselect(params).then((d) => {
+        if (d.code === 200) {
+          this.parentDeptData = d.data;
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
     },
     reqAllListFn() {
       all({})
@@ -911,23 +950,35 @@ export default {
         this.deptForm.posts && Array.isArray(this.deptForm.posts)
           ? this.deptForm.posts.join(",")
           : "";
-
-      add({ method: "post", data: { ...this.deptForm } })
-        .then((d) => {
-          if (d.code === 200) {
-            // this.$message.success('新增部门成功')
-            this.open = false;
-            this.getTreeselect(); // 刷新列表数据
-          }
-
-          this.$message({
-            message: d.code === 200 ? "新增成功!" : "新增异常!",
-            type: d.code === 200 ? "success" : "warning",
-          });
+      this.$refs.deptForm.validate(valid => {
+        if (!valid) return
+        this.addLoading = true
+        add({
+          method: "post",
+          data: {...this.deptForm}
         })
-        .catch((err) => {
-          console.error(err);
-        });
+          .then((d) => {
+            this.addLoading = false
+            if (d.code === 200) {
+              // this.$message.success('新增部门成功')
+              this.open = false;
+              this.getTreeselect(); // 刷新列表数据
+            }
+
+            this.$message({
+              message: d.code === 200
+                       ? "新增成功!"
+                       : "新增异常!",
+              type: d.code === 200
+                    ? "success"
+                    : "warning",
+            });
+          })
+          .catch((err) => {
+            this.addLoading = false
+            console.error(err);
+          });
+      })
     },
     /** 新增按钮操作 */
     handleAdd() {

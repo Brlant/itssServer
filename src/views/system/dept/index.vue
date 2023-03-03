@@ -3,7 +3,7 @@
 
         <!--
             <sinopharm-dept-manage /> 组件:
-                绑定属性 :  
+                绑定属性 :
                     isLoaded <Boolean>      :   【 必须: 否 】列表数据是否在加载, true : 加载中       false : 不加载
                     isSearch <Boolean>      :   【 必须: 否 】是否可搜索, true : 不可搜索       false : 可搜索
                     statusList <Array>      :   【 必须: 是 】部门状态列表数据
@@ -11,8 +11,8 @@
                     listData <Array>        :   【 必须: 是 】部门列表数据
                     orgData <Array>        :   【 必须: 是 】关联机构列表数据
                     parentDeptData <Array>   :   【 必须: 是 】上级部门列表数据
-                        
-                        
+
+
                 绑定函数:
                     @add <Function>         :   新增部门时
                     @edit <Function>        :   编辑部门时
@@ -25,6 +25,7 @@
         -->
 
         <sinopharm-dept-manage
+            ref="deptManage"
             :isLoaded = 'isLoaded'
             :isSearch = 'isSearch'
             :statusList = 'statusList'
@@ -32,6 +33,9 @@
             :listData = 'listData'
             :orgData = 'orgData'
             :parentDeptData = 'parentDeptData'
+            :isShowOrgId = 'isShowOrgId'
+            :isShowPosts = 'isShowPosts'
+            :isDeptType = 'isDeptType'
             @add="addFn"
             @edit="editFn"
             @remove="removeFn"
@@ -39,6 +43,7 @@
             @refresh="refreshFn"
             @detail="detailFn"
             @search="searchFn"
+            @orgChange="orgChangeFn"
         />
     </div>
 </template>
@@ -46,7 +51,8 @@
     import { tree, add, update, remove, deptStatus } from '@/api/DeptMange/DeptManage.js' ;
     import { reqList, status } from '@/api/OrgManage/OrgManage.js' ; // 导入机构请求
     import { all }  from '@/api/PostManage/PostManage.js' ; // 导入岗位请求
-    
+    import { treeselect } from "@/api/system/dept";
+
     export default {
         name : 'testDept',
         data(){
@@ -57,7 +63,10 @@
                 postList : [],
                 parentDeptData : [],
                 orgData : [],
-                listData : []
+                listData : [],
+                isShowOrgId: true,
+                isShowPosts: false,
+                isDeptType: false,
             }
         },
         mounted(){
@@ -65,9 +74,9 @@
         },
         methods : {
             initFn(){
-                this.reqDeptListFn() ; // 请求部门列表数据 
-                this.reqOrgListFn() ; // 请求机构列表数据 
-                this.reqAllListFn() ; // 请求岗位列表数据 
+                this.reqDeptListFn() ; // 请求部门列表数据
+                this.reqOrgListFn() ; // 请求机构列表数据
+                this.reqAllListFn() ; // 请求岗位列表数据
                 this.reqParentDeptFn() ; // 请求父级部门 数据
                 this.reqStatusFn() ; // 请求部门状态 数据
             },
@@ -100,7 +109,7 @@
                             this.postList = d.data ;
                         }
                     }
-                    
+
                 } )
                 .catch( err => {
                     console.error( err ) ;
@@ -110,7 +119,7 @@
                 let reqObj = {} ;
 
                 // 测试数据
-                reqObj.headers = { 
+                reqObj.headers = {
                     userId : 1, // 当前登陆用户 ID         < 必填 >
                     orgId : 3 // 当前登陆人的所属机构 ID    < 必填 >
                 } ;
@@ -120,7 +129,7 @@
                     if( d.code === 200 ){
                         this.orgData = d.data ;
                     }
-                    
+
                 } )
                 .catch( err => {
                     console.error( err ) ;
@@ -134,7 +143,7 @@
                 this.isSearch = true ;
 
                 // 测试数据
-                reqObj.headers = { 
+                reqObj.headers = {
                     userId : 1, // 当前登陆用户 ID   < 必填 >
                     deptId : 1 // 当前登陆人的部门 ID   < 必填 >
                 } ;
@@ -149,7 +158,7 @@
                     this.isSearch = false ;
                     if( d.code === 200 ){
                         this.listData = d.data ;
-                       
+
                     }
                 } )
                 .catch( err => {
@@ -158,16 +167,20 @@
                     this.isSearch = false ;
                 } );
             },
-            reqParentDeptFn(){
+            orgChangeFn(val){
+              this.$refs.deptManage.deptForm.parentId = null
+              val ? this.reqParentDeptFn(val) : this.parentDeptData = []
+            },
+            reqParentDeptFn(orgId){
                 console.log(1111111111111,'ssss')
                 let reqObj = {} ;
-                
+
 
                 // 测试数据
-                reqObj.headers = { 
+                reqObj.headers = {
                     userId : 1, // 当前登陆用户 ID   < 必填 >
                     deptId : 1 ,// 当前登陆人的部门 ID   < 必填 >
-                   
+
                 } ;
                 reqObj.orgId=1
                 let _fn = arr => {
@@ -193,7 +206,7 @@
 
                 } ;
 
-                tree( reqObj )
+                /*tree( reqObj )
 
                 .then( d => {
                     if( d.code === 200 ){
@@ -202,7 +215,36 @@
                 } )
                 .catch( err => {
                     console.error( err ) ;
-                } );
+                } );*/
+
+              let params = {
+                orgId: orgId
+              }
+
+              let _cfn = arr => {
+                let result = arr ;
+
+                result.forEach((item) => {
+                  // 有无children项
+                  if (item.children && item.children.length !== 0) {
+                    let newChildren = [];
+                    newChildren = _cfn( item.children ) ;
+                    item.children = newChildren;
+                  }
+                  item.name = item.label
+                });
+
+                return result;
+
+              } ;
+              treeselect(params).then((d) => {
+                if (d.code === 200) {
+                  this.parentDeptData = _cfn(d.data);
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+              });
             },
             reqDeptStatusFn( data ){
                 deptStatus( { method : 'post', ...data} )
@@ -286,7 +328,8 @@
             },
             removeFn( data ){
                 console.log('111', data)
-                this.reqRemoveFn( data.id ) ;
+                // this.reqRemoveFn( data.id ) ;
+                this.reqRemoveFn( data.row.id ) ;
             },
             statusFn( data ){
                 // console.log(data.row.id,'data')
