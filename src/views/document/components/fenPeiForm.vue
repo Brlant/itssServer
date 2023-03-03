@@ -125,7 +125,13 @@
     </div>
     <div slot="footer" class="dialog-footer">
       <el-button @click="closeForm">取消分配</el-button>
-      <el-button type="primary" @click="submitForm">确认分配</el-button>
+      <el-button
+        type="primary"
+        :disabled="submitLoading"
+        @click="submitForm"
+      >
+        确认分配
+      </el-button>
     </div>
   </el-dialog>
 </template>
@@ -152,6 +158,7 @@ export default {
       default: {},
       required: true
     },
+    submitLoading: false
   },
   data() {
     return {
@@ -181,7 +188,9 @@ export default {
         carryType:this.formItemFenPeiForm.carryType,
         carrierId:this.formItemFenPeiForm.carrierId,
       }
+      this.submitLoading = true
       new orderList().order(query).then(res=>{
+        this.submitLoading = false
         this.$notify.success({
           duration: 2000,
           name: '成功',
@@ -189,6 +198,7 @@ export default {
         });
         this.$emit('refreshSubmitForm')
       }).catch(error=>{
+        this.submitLoading = false
         this.$notify.success({
           duration: 2000,
           name: '成功',

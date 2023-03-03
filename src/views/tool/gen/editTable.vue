@@ -119,7 +119,13 @@
     </el-tabs>
     <el-form label-width="100px">
       <el-form-item style="text-align: center;margin-left:-100px;margin-top:10px;">
-        <el-button type="primary" @click="submitForm()">提交</el-button>
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="submitForm()"
+        >
+          提交
+        </el-button>
         <el-button @click="close()">返回</el-button>
       </el-form-item>
     </el-form>
@@ -155,7 +161,8 @@ export default {
       // 菜单信息
       menus: [],
       // 表详细信息
-      info: {}
+      info: {},
+      submitLoading: false
     };
   },
   created() {
@@ -193,11 +200,15 @@ export default {
             treeParentCode: genTable.treeParentCode,
             parentMenuId: genTable.parentMenuId
           };
+          this.submitLoading = true
           updateGenTable(genTable).then(res => {
+            this.submitLoading = false
             this.$modal.msgSuccess(res.msg);
             if (res.code === 200) {
               this.close();
             }
+          }).catch(()=>{
+            this.submitLoading = false
           });
         } else {
           this.$modal.msgError("表单校验未通过，请重新检查提交内容");
