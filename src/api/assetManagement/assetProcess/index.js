@@ -3,72 +3,82 @@ import request from '@/utils/request'
 export function getPendingList(query) {
     return request({
       url: `flowable/flowable/task/todoList`,
-      method: 'get',  
-      params:query   
+      method: 'get',
+      params:query
     })
   }
   //已处理
   export function getProcessedList(query) {
     return request({
       url: `flowable/flowable/task/finishedList`,
-      method: 'get',  
-      params:query      
+      method: 'get',
+      params:query
     })
   }
+
+  // 参与处理记录
+  export function finishedList(query) {
+    return request({
+      url: `flowable/bizFlow/finishedList`,
+      method: 'get',
+      params:query
+    })
+  }
+
   //查询人员
   export function getPeople() {
     return request({
       url: '/system/user/listByDeptId',
-      method: 'get',  
-            
+      method: 'get',
+
     })
   }
   //同意
   export function agreeQuery(data) {
     return request({
       url: `flowable/flowable/task/complete`,
-      method: 'post',  
-      data  
+      method: 'post',
+      data
     })
   }
   //拒绝
   export function rejectQuery(data) {
     return request({
       url: `flowable/flowable/task/return`,
-      method: 'post',  
-      data    
+      method: 'post',
+      data
     })
   }
   //上传附件
   export function uploadSuccess(data) {
     return request({
       url: `flowable/flowable/task/addAttachment`,
-      method: 'post',  
-      data  
+      method: 'post',
+      data
     })
   }
   //删除附件
   export function deleteAttachment(attachmentId) {
     return request({
       url: `flowable/flowable/task/deleteAttachment?attachmentId=${attachmentId}`,
-      method: 'post',  
-       
+      method: 'post',
+
     })
-  } 
+  }
   //查看流程图
   export function seeFlow(query) {
     return request({
       url: `flowable/flowable/task/flowViewer`,
-      method: 'get',  
+      method: 'get',
        params:query
     })
-  } 
-  
+  }
+
 // 待分配资产
 export function assigned(query) {
   return request({
     url: `/asset/asset/listToBeAssigned`,
-    method: 'get',  
+    method: 'get',
      params:query
   })
 }
@@ -76,7 +86,7 @@ export function assigned(query) {
 export function read(data) {
   return request({
     url: `flowable/flowable/task/readTask`,
-    method: 'post',  
+    method: 'post',
     data
   })
 }

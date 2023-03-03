@@ -258,7 +258,7 @@
 
 <script>
 import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
-import { getPendingList, getProcessedList,getPeople } from "@/api/assetManagement/assetProcess";
+import { getPendingList, getProcessedList,getPeople, finishedList } from "@/api/assetManagement/assetProcess";
 import {
   stopProcess
 } from '@/api/assetManagement/myAssets'
@@ -400,7 +400,7 @@ export default {
           gt: {}
         })
       }
-      getProcessedList(params).then(res => {
+      finishedList(params).then(res => {
         let tableData = res.data.data
         for (let i = 0; i < tableData.length; i ++) {
           if (tableData[i].procVars.ASSET_NO) {
