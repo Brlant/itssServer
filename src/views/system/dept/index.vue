@@ -36,6 +36,8 @@
             :isShowOrgId = 'isShowOrgId'
             :isShowPosts = 'isShowPosts'
             :isDeptType = 'isDeptType'
+            :checkStrictly = 'checkStrictly'
+            :isShowOrgStatus = 'isShowOrgStatus'
             @add="addFn"
             @edit="editFn"
             @remove="removeFn"
@@ -67,6 +69,8 @@
                 isShowOrgId: true,
                 isShowPosts: false,
                 isDeptType: false,
+                checkStrictly: true,
+                isShowOrgStatus: false,
             }
         },
         mounted(){

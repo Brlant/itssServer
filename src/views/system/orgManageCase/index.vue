@@ -2,15 +2,15 @@
     <div>
         <!--
             <sinopharm-org-manage /> 机构管理 组件:
-                绑定属性 :  
+                绑定属性 :
                     isLoaded <Boolean>      :   【 必须: 否 】列表数据是否在加载, true : 加载中       false : 不加载
                     isSearch <Boolean>      :   【 必须: 否 】是否可搜索, true : 不可搜索       false : 可搜索
                     isRefList <Boolean>     :   【 必须: 否 】是否刷新列表, true : 刷新列表中       false : 刷新列表后
                     statusList <Array>      :   【 必须: 是 】机构状态列表数据
                     listData <Array>        :   【 必须: 是 】机构列表数据
                     parentOrgData <Array>   :   【 必须: 是 】上级机构列表数据
-                        
-                        
+
+
                 绑定函数:
                     @add <Function>         :   新增机构时
                     @edit <Function>        :   编辑机构时
@@ -23,12 +23,13 @@
         -->
 
         <sinopharm-org-manage
-            :isLoaded = 'isLoaded' 
+            :isLoaded = 'isLoaded'
             :isSearch = 'isSearch'
-            :isRefList = 'isRefList' 
+            :isRefList = 'isRefList'
             :statusList = 'statusList'
             :listData = 'listData'
             :parentOrgData = 'parentOrgData'
+            :isShowStatus = 'isShowStatus'
             @add="addFn"
             @edit="editFn"
             @remove="removeFn"
@@ -41,7 +42,7 @@
 </template>
 <script>
     import { reqList, add, remove, status, changeStatus, update } from '@/api/OrgManage/OrgManage.js' ;
-    
+
     export default {
         name : 'testOrg',
         data(){
@@ -51,8 +52,9 @@
                 isRefList : false,
                 statusList : [],
                 parentOrgData : [],
-                listData : []
-                
+                listData : [],
+                isShowStatus: false
+
             }
         },
         mounted(){
@@ -69,9 +71,9 @@
 
                 this.isLoaded = true ;
                 this.isSearch = true ;
-                
+
                 // 测试数据
-                reqObj.headers = { 
+                reqObj.headers = {
                     userId : 1, // 当前登陆用户 ID
                     orgId : 3 // 当前登陆人的所属机构 ID
                 } ;
@@ -98,7 +100,7 @@
 
                 reqList({
                     // 测试数据
-                    headers : { 
+                    headers : {
                         userId : 1, // 当前登陆用户 ID
                         orgId : 1 // 当前登陆人的所属机构 ID
                     }
@@ -146,7 +148,7 @@
                         message: d.code === 200 ? '添加成功!' : '添加异常!' ,
                         type: d.code === 200 ? 'success' : 'warning'
                     });
-                    
+
                 } )
                 .catch( err => {
                     this.isLoaded = false ;
@@ -165,7 +167,7 @@
                         message: d.code === 200 ? '编辑成功!' : '编辑异常!' ,
                         type: d.code === 200 ? 'success' : 'warning'
                     });
-                    
+
                 } )
                 .catch( err => {
                     this.isLoaded = false ;
@@ -184,7 +186,7 @@
                         message: d.code === 200 ? '删除成功!' : '删除异常!' ,
                         type: d.code === 200 ? 'success' : 'warning'
                     });
-                    
+
                 } )
                 .catch( err => {
                     this.isLoaded = false ;
@@ -203,7 +205,7 @@
                         message: d.code === 200 ? '修改成功!' : '修改异常!' ,
                         type: d.code === 200 ? 'success' : 'warning'
                     });
-                    
+
                 } )
                 .catch( err => {
                     this.isLoaded = false ;
@@ -221,7 +223,7 @@
             // pageFn( data ){
             //     console.error( 'page: ', data ) ;
             // },
-            detailFn( data ){ 
+            detailFn( data ){
                 // console.error( 'detail : ', data ) ;
             },
         }
