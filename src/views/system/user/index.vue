@@ -612,9 +612,12 @@ export default {
                    ? this.user[0].dept.leader
                    : '';
       // 筛选出可设置的负责人数据源中的负责人
-      const newList = this.projectUserIdOptions.filter((item) =>
-        leader.includes(item.userId)
-      );
+      let newList = []
+      if (leader) {
+         newList = this.projectUserIdOptions.filter((item) =>
+          leader.includes(item.userId)
+        );
+      }
       // 取出userId回显已设置的负责人
       const commander = newList.map(item =>
       {
@@ -846,6 +849,9 @@ export default {
         this.getList();
         this.queryUserlistByRole();
         this.defaultData();
+        if (this.deptOptions.length > 0) {
+          this.handleNodeClick(this.deptOptions[0])
+        }
       });
 
      /* let reqObj = {};
