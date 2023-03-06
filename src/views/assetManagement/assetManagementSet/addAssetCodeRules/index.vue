@@ -502,7 +502,7 @@ export default {
 
           break;
         case 4:
-          this.value4.ruleLable = this.dates.find((item) => {
+          this.value4.ruleLable = this.types.find((item) => {
             if (item.value == this.value4.value) {
               return item.label;
             }

@@ -3,7 +3,14 @@
     <div class="routerBar">
       <router-link :to="'/chanceManager/chanceList'"> &lt; 新建机会</router-link>
       <div class="rightBox">
-        <el-button size="mini" @click="submitForm" type="primary">保存</el-button>
+        <el-button
+          size="mini"
+          @click="submitForm"
+          type="primary"
+          :disabled="submitLoading"
+        >
+          保存
+        </el-button>
         <el-button size="mini" @click="resetForm" type="default">取消</el-button>
       </div>
     </div>
@@ -140,10 +147,10 @@
           <el-col :span="5">
             <el-form-item label="区域：" :prop="`chanceConfigList.${chanceConfigIndex}.regionId`"
              :rules="rules.chanceConfigItemregionId">
-              <el-select v-model="chanceConfigItem.regionId" placeholder="请选择区域" 
+              <el-select v-model="chanceConfigItem.regionId" placeholder="请选择区域"
                 :style="{width: '100%'}"
               @change="(dates) => editNext('region',dates, chanceConfigIndex)">
-                <el-option v-for="(dict, index) in regionOptions"   
+                <el-option v-for="(dict, index) in regionOptions"
                     :key="dict.dictCode"
                     :label="dict.dictLabel"
                     :value="dict.dictCode"
@@ -153,7 +160,7 @@
           </el-col>
           <el-col :span="5">
             <el-form-item label="职位类型：" :prop="`chanceConfigList.${chanceConfigIndex}.postTypeId`" :rules="rules.chanceConfigItemPostTypeId">
-              <el-select v-model="chanceConfigItem.postTypeId" placeholder="请选择职位类型" 
+              <el-select v-model="chanceConfigItem.postTypeId" placeholder="请选择职位类型"
               :disabled="chanceConfigItem.postTypeActive"   :style="{width: '100%'}"
               @change="(dates) => editNext('postType',dates, chanceConfigIndex)">
                 <el-option v-for="(dict, index) in postTypeOptions"  :key="dict.dictCode"
@@ -165,7 +172,7 @@
           </el-col>
            <el-col :span="5">
             <el-form-item label="职位名称：" :prop="`chanceConfigList.${chanceConfigIndex}.postNameId`" :rules="rules.chanceConfigItempostNameId">
-              <el-select v-model="chanceConfigItem.postNameId" placeholder="请选择职位名称" 
+              <el-select v-model="chanceConfigItem.postNameId" placeholder="请选择职位名称"
               :disabled="chanceConfigItem.postNameIdActive"   :style="{width: '100%'}"
               @change="(dates) => editNext('postNameId',dates, chanceConfigIndex)">
                 <el-option v-for="(dict, index) in postNameIdOptions"  :key="dict.postNameId"
@@ -177,7 +184,7 @@
           </el-col>
           <el-col :span="5">
             <el-form-item label="等级：" :prop="`chanceConfigList.${chanceConfigIndex}.postLevelId`" :rules="rules.chanceConfigItempostLevelId">
-              <el-select v-model="chanceConfigItem.postLevelId" placeholder="请选择等级"  
+              <el-select v-model="chanceConfigItem.postLevelId" placeholder="请选择等级"
               :disabled="chanceConfigItem.postLevelIdActive"   :style="{width: '100%'}"
               @change="(dates) => editNext('postLevelId',dates, chanceConfigIndex)">
                 <el-option v-for="(dict, index) in postLevelIdOptions"  :key="dict.postLevelId"
@@ -199,7 +206,7 @@
           <el-form-item label="技能需求：" :prop="`chanceConfigList.${chanceConfigIndex}.skillIdList`"   >
             <el-select v-model="chanceConfigItem.skillIdList" multiple  placeholder="请选择技能需求"  @change="chageTextColor($event,'mySkillIdList')" ref="mySkillIdList"
             :disabled="chanceConfigItem.nextActive"    :style="{width: '100%',}" >
-              <el-option v-for="(dict, index) in techniqueOptions"  
+              <el-option v-for="(dict, index) in techniqueOptions"
                   :key="dict.dictCode"
                   :label="dict.dictLabel"
                   :value="dict.dictCode"
@@ -215,7 +222,7 @@
           <el-form-item label="配置安排：" :prop="`chanceConfigList.${chanceConfigIndex}.startEndTime`"   :rules="rules.chanceConfigItemStartEndTime" >
             <el-date-picker type="daterange" v-model="chanceConfigItem.startEndTime" format="yyyy-MM-dd"
               value-format="yyyy-MM-dd" :style="{width: '100%'}" start-placeholder="开始日期"
-              end-placeholder="结束日期" range-separator="至" :disabled="chanceConfigItem.nextActive" 
+              end-placeholder="结束日期" range-separator="至" :disabled="chanceConfigItem.nextActive"
               @change="(dates) => constAll(dates, chanceConfigIndex)"
               :picker-options="childDateArea"></el-date-picker>
           </el-form-item>
@@ -259,9 +266,9 @@
                         chanceConfigScheduleIndex
                       );
                     }
-                  " 
+                  "
                 ></el-input-number> -->
-                  <!-- 
+                  <!--
                   @input.native="changeInput($event)"
                  -->
                  <!-- 小时  -->
@@ -276,9 +283,9 @@
             :key="chanceConfigScheduleIndex"
           >
             <el-col :span="3" :offset="2"  class="lineTT">
-             
+
                 {{chanceConfigScheduleItem.startTime}} -- {{chanceConfigScheduleItem.endTime}}
-             
+
             </el-col>
             <el-col :span="4" :offset="1" class="lineTT">
               <div>
@@ -324,7 +331,7 @@
 </template>
 <script>
 import {
-  queryDict,// 字典查询 传入字典名称 
+  queryDict,// 字典查询 传入字典名称
   addChance,
 } from "@/api/chanceManager/chanceManager";
 import {
@@ -356,7 +363,7 @@ export default {
       regionOptions:[], // 区域
       postTypeOptions:[], // 职位类型
       postNameIdOptions:[], // 职位名称
-      postLevelIdOptions:[],  // 职位等级  
+      postLevelIdOptions:[],  // 职位等级
       formData: {
         chanceName: "", //          机会名称
           chanceStatus: "", //          机会状态：1.新建、2.跟进中、3.已结束、4.已转项目
@@ -379,28 +386,28 @@ export default {
           chanceConfigList:[]
 
           /*------------测试用-----------------*/
-          // chanceName: "机会测试1", 
-          // chanceStatus: 1, 
-          // priority: 3, 
-          // // projectId:null, 
-          // // projectName:null, 
+          // chanceName: "机会测试1",
+          // chanceStatus: 1,
+          // priority: 3,
+          // // projectId:null,
+          // // projectName:null,
           // chanceUserId: 2,
-          // // chanceUserName:"测试", 
-          // customer: "国药控股合肥奇兵有限公司", 
-          // customerLink: "周佩煌", 
-          // tel: "13817242305", 
-          // budget: 250000, 
-          // successRate: 85, 
-          // expectStartTime: "2022-10-01", 
-          // expectEndTime: "2022-11-20", 
-          // expectWork: 66, 
-          // expectOffer: 660000, 
-          // chanceService: 1, 
-          // remark: "都很棒", 
+          // // chanceUserName:"测试",
+          // customer: "国药控股合肥奇兵有限公司",
+          // customerLink: "周佩煌",
+          // tel: "13817242305",
+          // budget: 250000,
+          // successRate: 85,
+          // expectStartTime: "2022-10-01",
+          // expectEndTime: "2022-11-20",
+          // expectWork: 66,
+          // expectOffer: 660000,
+          // chanceService: 1,
+          // remark: "都很棒",
           // chanceConfigList:[]
       },
       // 配置的基本信息
-      chanceConfigList: 
+      chanceConfigList:
       {
         postTypeId:"",//职位类型id
         postNameId: "", //职位id 老字段  postId
@@ -430,7 +437,7 @@ export default {
         workTime:"",//工时
         weekDay:"",//工作日
         planLoad:"",//计划负荷
-      },      
+      },
       rules: {
         chanceName: [{
           required: true,
@@ -509,7 +516,7 @@ export default {
           trigger: 'change'
         }],
       },
-       
+
       chanceStatusOptions: [{
         "label": "新建",
         "value": 1
@@ -544,7 +551,7 @@ export default {
         "label": "对外",
         "value": 2
       }],
-      
+      submitLoading: false
     }
   },
   mounted() {
@@ -555,7 +562,7 @@ export default {
     }
 
     this.getDictList("post_type");  //职位类型
-    this.getDictList("skill_type");  // 技能 technique 
+    this.getDictList("skill_type");  // 技能 technique
     // this.getDictList("post_name");   // 职位名称 post_name
     this.getDictList("region");     //区域
     // this.getDictList("post_level"); // 职位等级 post_level
@@ -575,7 +582,7 @@ export default {
     },
     //职位名称
      position() {
-    
+
         let data = {
           regionId: this.regionId,
           postTypeId: this.postTypeId,
@@ -583,11 +590,11 @@ export default {
         positionName(data).then((res) => {
          this.postNameIdOptions = res.data;
         });
-      
+
     },
     //等级
     level() {
-   
+
         let data = {
           regionId: this.regionId,
           postTypeId: this.postTypeId,
@@ -596,14 +603,14 @@ export default {
         levelList(data).then((res) => {
           this.postLevelIdOptions = res.data;
         });
-      
+
     },
- 
+
     chageTextColor(listData, refName) {
         /**
          * 之前逻辑
          */
-          
+
         //   this.techniqueOptions.map(item=>{
         //   listData.map((jtem,j)=>{
         //       console.log(item.dictCode==jtem)
@@ -613,7 +620,7 @@ export default {
         //       }
         //   })
         //  })
-          
+
 
             this.$nextTick( () => {
               setTimeout( () => {
@@ -628,7 +635,7 @@ export default {
                 } ) ;
 
                 let eles = this.$refs[refName][0].$el.querySelectorAll( '.el-select__tags .el-tag' ) ; // 获取节点
-                
+
                 eles.forEach( ( v, i ) => {
                   if( arr[i].dictCode === +listData[i] ){
                     // 'skill' skillcc
@@ -640,8 +647,8 @@ export default {
               }, 100 ) ;
 
             } ) ;
-          
-      
+
+
     },
     /*查询字典的接口*/
     getDictList(dictCode) {
@@ -661,7 +668,7 @@ export default {
         if(dictCode =="post_name"){ // 职位名称
           this.postNameIdOptions = res.data
         }
-       
+
       });
     },
     init() {},
@@ -670,19 +677,23 @@ export default {
         if (!valid) return
         // TODO 提交表单
         console.log(this.formData);
-        
+
           let parame = {
             ...this.formData,
             // carrierId:this.temData.carrierId,
             // status:0
           };
+        this.submitLoading = true
           addChance(parame).then((res) => {
+            this.submitLoading = false
             let { code, msg } = res;
             this.$message.success(msg);
             this.$refs.elForm.resetFields();
             if (+code == 200) {
               this.$router.push("/chanceManager/chanceList");
             }
+          }).catch(()=>{
+            this.submitLoading = false
           });
       })
     },
@@ -728,7 +739,7 @@ export default {
         console.log(data,'data')
         this.postTypeId=data
         this.position()
-        
+
       }
       if(who=='postNameId'){
         this.formData.chanceConfigList[index].postLevelIdActive = false
@@ -815,14 +826,14 @@ export default {
           item.planLoad = (((item.weekDay * 8) / (item.weekDay * 8)) * 100 || 0).toFixed(2);
         });
         this.formData.chanceConfigList[index].chanceConfigScheduleList = res.data.list; // 此人的 每周安排
-       
+
       });
       this.$forceUpdate()
     },
     changePlanLoad(number, weekDay, fatherIndex, myIndex){
       // 修改每周期间 计划负荷
-      // 工作时间为固定的8  
-      if(number!=0){// 不等于0  就拿修改之后的百分比 除以 100 拿到比例  
+      // 工作时间为固定的8
+      if(number!=0){// 不等于0  就拿修改之后的百分比 除以 100 拿到比例
         this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workDay = ((number/100)*weekDay).toFixed(2) //人日==> 现有百分比除以100 乘以天数
         this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workTime = ((number/100)*8).toFixed(2)      //每日工时==> 现有百分比除以100 乘以 8
       }else{
@@ -839,8 +850,8 @@ export default {
             totalDay += parseFloat(item.workDay); // 总天数 == 每周人日累计
             totalTime += parseFloat(item.workDay*8);// 总时长 == 每周人日*8
           })
-          this.formData.chanceConfigList[fatherIndex].workTime = totalTime.toFixed(2) 
-          this.formData.chanceConfigList[fatherIndex].workDay = totalDay.toFixed(2)    
+          this.formData.chanceConfigList[fatherIndex].workTime = totalTime.toFixed(2)
+          this.formData.chanceConfigList[fatherIndex].workDay = totalDay.toFixed(2)
           const tempWorkDay = this.formData.chanceConfigList[fatherIndex].workDayTemp; // 之前的总天数
           console.log(tempWorkDay);
            if (totalDay === 0) { // 防止憨批选到 节假日
@@ -849,7 +860,7 @@ export default {
             this.formData.chanceConfigList[fatherIndex].planLoad = ((totalDay/tempWorkDay)*100).toFixed(2) //计划负荷 == 实际人日/计划的人日 *100%
           }
           this.formData.chanceConfigList[fatherIndex].expectedCost = (totalDay*this.formData.chanceConfigList[fatherIndex].costNum).toFixed(2) /**预计成本*/
-           
+
       /*----------------以上是 总计的安排的具体计算-------------------*/
 
     },
@@ -976,7 +987,7 @@ export default {
 
 
 </style>
- 
+
 <style>
     .skillcolor1 {
       background: rgb(0,113,189) !important; color:white!important;

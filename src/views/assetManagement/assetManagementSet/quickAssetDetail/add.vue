@@ -123,11 +123,11 @@
                 <el-input v-model.trim="formData.keeper" :style="style" />
               </el-form-item>
             </el-col>-->
-            <el-col :span="span">
+<!--            <el-col :span="span">
               <el-form-item label="持有人:" prop="holderName">
                 <el-input v-model.trim="formData.holderName" :style="style" />
               </el-form-item>
-            </el-col>
+            </el-col>-->
             <el-col :span="span">
               <el-form-item label="备注:" prop="remark">
                 <el-input v-model="formData.remark" type="textarea" :style="style" />

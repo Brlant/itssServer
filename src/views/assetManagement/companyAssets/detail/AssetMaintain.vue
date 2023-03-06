@@ -126,10 +126,10 @@ export default {
           { required: true, trigger:'blur', validator: check }
         ],
         nowTime: [
-          { required: true, trigger: 'blur', message: '请选择证书生效时间' }
+          { required: true, trigger: 'change', message: '请选择本次保养日期' }
         ],
         nextTime: [
-          { required: true, trigger: 'blur', message: '请选择证书失效时间' }
+          { required: true, trigger: 'change', message: '请选择下次保养日期' }
         ]
       },
       submitLoading: false
