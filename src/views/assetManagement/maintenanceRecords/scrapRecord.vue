@@ -132,7 +132,11 @@ export default {
   data() {
     return {
       formData: {
-        assetTypeId:[]
+        time1: [],
+        time2: [],
+        assetNo: '',
+        assetTypeId: [],
+        assetName: '',
       },
       scrapRecordData: [],
       rules: {
@@ -202,7 +206,15 @@ export default {
       this.initData()
     },
     resetForm() {
-      this.formData={}
+      this.formData = {
+        time1: [],
+        time2: [],
+        assetNo: '',
+        assetTypeId: [],
+        assetName: '',
+      }
+      this.page.pageNum = 1
+      this.initData()
     },
      statusFormatter(status) {
       if (status=='1') {

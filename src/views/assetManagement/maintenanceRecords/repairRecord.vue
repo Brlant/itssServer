@@ -144,7 +144,12 @@ export default {
     return {
       asset: [],//资产类型
       formData: {
-       assetTypeId:[]
+        time:[],
+        priceStart: '',
+        priceEnd: '',
+        assetNo: '',
+        assetTypeId: [],
+        assetName: '',
       },
       page:{
         pageNum:1,
@@ -259,7 +264,16 @@ export default {
       this.initData()
     },
     resetForm() {
-      this.formData={}
+      this.formData = {
+        time:[],
+        priceStart: '',
+        priceEnd: '',
+        assetNo: '',
+        assetTypeId: [],
+        assetName: '',
+      }
+      this.page.pageNum = 1
+      this.initData()
     },
     statusFormatter(status) {
       if (status=='1') {
