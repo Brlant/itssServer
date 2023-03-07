@@ -53,7 +53,7 @@
                 statusList : [],
                 parentOrgData : [],
                 listData : [],
-                isShowStatus: false
+                isShowStatus: true
 
             }
         },
