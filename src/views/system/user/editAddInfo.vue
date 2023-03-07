@@ -69,6 +69,23 @@
               </el-form-item>
             </el-col>
           </el-row>
+
+          <el-row v-if="$store.state.user.user.userId == 1">
+            <el-col :span="12">
+              <el-form-item label="所属机构" prop="orgId"
+                            :rules="[{ required: true, message: '请选择所属机构', trigger: 'change' }]"
+              >
+                <el-cascader
+                  v-model="formData.orgId"
+                  :options="orgList"
+                  ref="org"
+                  :props="{ label: 'name', value: 'id', checkStrictly: true, emitPath: false }"
+                  @change="changeOrgId"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+
           <el-row>
             <el-col :span="12">
               <el-form-item label="工号" prop="employeeNo">
@@ -138,7 +155,6 @@
                   placeholder="请选择职位类型"
 
                   @change="changePosition('postType')"
-                  @blur="changePosition('postType')"
                 >
                   <el-option
                     v-for="(dict, index) in typeList"
@@ -156,7 +172,6 @@
                   v-model="formData.postNameId"
                   placeholder="请选择职位名称"
                   @change="changePosition('postName')"
-                  @blur="changePosition('postName')"
                   :disabled="!formData.postTypeId || !formData.regionId"
                 >
                   <el-option
@@ -224,6 +239,20 @@
 
             <el-row>
               <el-col :span="12">
+                <el-form-item label="所属部门" prop="deptId">
+                  <treeselect
+                    v-model="formData.deptId"
+                    :options="deptOptions"
+                    :normalizer="normalizer"
+                    :show-count="true"
+                    placeholder="请选择归属部门"
+                  />
+                </el-form-item>
+              </el-col>
+            </el-row>
+
+            <el-row>
+              <el-col :span="12">
                 <el-form-item label="系统角色">
                   <el-select
                     v-model="formData.roleIds"
@@ -243,20 +272,6 @@
               </el-col>
             </el-row>
 
-            <el-row>
-              <el-col :span="12">
-                <el-form-item label="所属部门" prop="deptId">
-                  <treeselect
-                    v-model="formData.deptId"
-                    :options="deptOptions"
-                    :normalizer="normalizer"
-                    :show-count="true"
-                    placeholder="请选择归属部门"
-                  />
-                </el-form-item>
-              </el-col>
-            </el-row>
-
         </div>
          </el-form>
       </div>
@@ -267,7 +282,13 @@
     >
       <span style='font-size:18px;display:inline-block;padding-bottom:20px'>职位、等级信息不完整，会影响部门项目统计数值</span>
       <div class="txtAlignC dialogBtnInfo">
-        <el-button type="primary" @click="save">确定</el-button>
+        <el-button
+          type="primary"
+          :disabled="submitLoading"
+          @click="save"
+        >
+          确定
+        </el-button>
         <el-button @click="cancelFn">取消</el-button>
       </div>
     </el-dialog>
@@ -297,6 +318,9 @@ import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import moment from "moment";
 import "moment/locale/zh-cn";
+import { reqList } from '@/api/OrgManage/OrgManage.js' ;
+import { listRole } from "@/api/system/role";
+
 export default {
   components: {
     SkillSelect,
@@ -325,6 +349,8 @@ export default {
         roleIds:[],
         deptId:null,
         skillIds: [],
+        orgId: null,
+        gitAccount:'',
       },
       areas: [],
       typeList: [],
@@ -337,6 +363,7 @@ export default {
       skillId: [],
       positions: [],
       levelList: [],
+      orgList: [],
       userId: "",
       ss: -1,
       cancelShow:false,
@@ -356,7 +383,7 @@ export default {
 
       currentNode: {},
 
-      submitLoading: false
+      submitLoading: false,
     };
   },
   created() {
@@ -370,11 +397,16 @@ export default {
       this.position();
       this.level()
     }
-
+    if (this.$store.state.user.user.userId == 1) { // 管理员时需要选所属机构
+      this.getOrgList()
+    }
     this.positinType("region");
     this.positinType("post_type");
-    this.getTreeselect();
-    this.role();
+
+    if(this.$store.state.user.user.userId !== 1){
+      this.getTreeselect();
+      this.role();
+    }
 
     this.currentNode = this.$route.query.currentNode
   },
@@ -383,6 +415,10 @@ export default {
     const formData = sessionStorage.getItem('editAddInfo')
     if (formData) {
       this.formData = JSON.parse(formData)
+      if (this.$store.state.user.user.userId == 1 && this.formData.orgId) {
+        this.getDeptList(this.formData.orgId)
+        this.getRoleList(this.formData.orgId)
+      }
     }
   },
   beforeDestroy() {
@@ -412,18 +448,31 @@ export default {
     detailInfo() {
       userDetail(this.userId).then((res) => {
         console.log(res.data,'res.data')
-        this.formData = res.data;
+        this.formData = {
+          ...res.data
+        };
         this.formData.skillIds = res.data.userSkills.map((v) => v.skillId);
         console.log(this.formData.skillIds,'this.formData.skillIds')
         if (this.formData.regionId && this.formData.postTypeId) {
-         this.positions =[res.data]
-         if(this.formData.postNameId){
-         this.levelList =  this.positions;
-         this.levelList.forEach(i=>{
-          i.postLevelName=i.postLevel
-         })
-         }
+          this.position()
+          this.level()
+          if(this.$store.state.user.user.userId !== 1){
+            this.positions =[res.data]
+            if(this.formData.postNameId){
+              this.levelList =  this.positions;
+              this.levelList.forEach(i=>{
+                i.postLevelName=i.postLevel
+              })
+            }
+          }
+
         }
+        if(this.$store.state.user.user.userId == 1 && this.formData.orgId) {
+          this.getDeptList(this.formData.orgId)
+          this.getRoleList(this.formData.orgId)
+        }
+
+
         // if (this.formData.postNameId) {
         //   this.level();
         // }
@@ -461,6 +510,84 @@ export default {
         });
       }
     },
+
+    // 获取机构列表数据
+    getOrgList(){
+      let reqObj = {} ;
+      reqObj.headers = {
+        userId : 1,
+        // parentId : 0
+      } ;
+      reqList(reqObj).then(res=>{
+        this.orgList = res.data
+      })
+    },
+
+    changeOrgId(val) {
+      this.formData.deptId = null
+      this.formData.roleIds = []
+      val ? this.getDeptList(this.formData.orgId) : this.deptOptions = []
+      val ? this.getRoleList() : this.roleOptions = []
+    },
+
+    changePower(val, type){
+      if(this.$store.state.user.user.userId == 1){
+        if (type == 'orgId') {
+            this.formData.deptId = null
+            this.formData.roleIds = []
+            val ? this.getDeptList(this.formData.orgId) : this.deptOptions = []
+        } else if (type == 'deptId') {
+            this.formData.roleIds = []
+            val ? this.getRoleList() : this.roleOptions = []
+        }
+      }
+    },
+
+    getDeptList(orgId){
+      let params = {
+        orgId: orgId
+      }
+
+      let _cfn = arr => {
+        let result = arr ;
+
+        result.forEach((item) => {
+          // 有无children项
+          if (item.children && item.children.length !== 0) {
+            let newChildren = [];
+            newChildren = _cfn( item.children ) ;
+            item.children = newChildren;
+          }
+          item.name = item.label
+        });
+
+        return result;
+
+      } ;
+      treeselect(params).then((d) => {
+        if (d.code === 200) {
+          this.deptOptions = _cfn(d.data);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    },
+
+    /** 管理员获取角色列表 */
+    getRoleList(){
+      let queryParams = {
+        pageNum: 1,
+        pageSize: 100,
+        orgId: this.formData.orgId,
+      }
+      listRole(queryParams)
+        .then(response => {
+            this.roleOptions = response.rows;
+          }
+        );
+    },
+
     changePosition(index){
       if(index == 'area'){
         this.position()
@@ -550,6 +677,7 @@ export default {
             console.log(data, "ssssssssss");
             this.submitLoading = true
             addUser(data).then((res) => {
+              this.submitLoading = false
               if (res.code == 200) {
                 this.$message.success(res.msg);
 
@@ -567,6 +695,8 @@ export default {
                 // getToday()
                 this.$tab.closeOpenPage(obj);
               }
+            }).catch(()=>{
+              this.submitLoading = false
             });
           }
         });
@@ -604,6 +734,7 @@ export default {
       })
         .then(() => {
           this.$refs["elForm"].resetFields();
+          sessionStorage.removeItem("editAddInfo");
           // this.$router.go(-1)
           const obj = {
             name:"user",

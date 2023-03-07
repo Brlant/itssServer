@@ -757,6 +757,7 @@ export default {
         });
     },
     add() {
+      sessionStorage.removeItem("editAddInfo");
       const obj = {
         path: "/system/user-auth/editAddInfo",
         query: {
