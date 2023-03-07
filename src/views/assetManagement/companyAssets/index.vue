@@ -248,7 +248,7 @@
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       class="import-dialog"
-      @close="cancelFn"
+      @close="closeFn"
     >
       <div v-if="!imported" class="h450">
         <el-form
@@ -335,8 +335,8 @@
       </div>
 
         <div class="txtAlignR dialogBtnInfo">
-          <el-button v-if="imported" type="primary" @click="cancelFn">确定</el-button>
-          <el-button v-if="!imported" @click="cancelFn">取消</el-button>
+          <el-button v-if="imported" type="primary" @click="closeFn('import')">确定</el-button>
+          <el-button v-if="!imported" @click="closeFn">取消</el-button>
         </div>
     </el-dialog>
   </div>
@@ -644,7 +644,7 @@ export default {
     },
 
     // 关闭批量导入
-    cancelFn(){
+    closeFn(type){
       if (this.$refs['importForm']) {
         this.$refs['importForm'].resetFields();
       }
@@ -652,6 +652,9 @@ export default {
       this.imported = false;
       this. progressLoading = false;
       this.importDialog = false;
+      if (type == "import") {
+        this.query()
+      }
     },
 
     // 导出
