@@ -13,8 +13,8 @@
     </div>
     <!-- 审批进度开始 -->
     <el-timeline>
-      <el-timeline-item 
-        v-for="(activity, index) in flowExamineList" 
+      <el-timeline-item
+        v-for="(activity, index) in flowExamineList"
         :key="index"
         placement="top"
         :timestamp="activity.createTime"
@@ -35,7 +35,7 @@
           </p>
           <p v-if="activity.flowUploads.length">
             附件 :
-            <span 
+            <span
               class="link"
               v-for="(item, index) in activity.flowUploads"
               :key="index"
@@ -75,7 +75,7 @@
           </p>
           <p v-if="activity.flowUploads.length">
             附件 :
-            <span 
+            <span
               class="link"
               v-for="(item, index) in activity.flowUploads"
               :key="index"
@@ -86,6 +86,17 @@
           </p>
         </el-timeline-item>
       </el-timeline>
+    </el-dialog>
+
+    <!--  预览附件弹框  -->
+    <el-dialog
+      :visible.sync="attachmentDialog"
+      class="attachment"
+      fullscreen
+    >
+      <div>
+        <iframe :src="attachmentUrl" frameborder="0" width="100%" height="100%"></iframe>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -117,18 +128,21 @@ export default {
         1: '#073dff', // going
         2: '#303133' // finished
       },
-      list: []
+      list: [],
+
+      attachmentDialog: false, // 预览附件
+      attachmentUrl: '', // 附件地址
     }
   },
   created() {
     this.getFlow()
   },
   methods: {
-    getFlow() {  
+    getFlow() {
       let params
        console.log(1111,'typeStatus')
        if(this.$route.query.procVars.type==4){
-        
+
         params = {
         taskId: this.$route.query.procVars.parentTaskId,
         processInstanceId: this.$route.query.procVars.parentProcessInstanceId,
@@ -141,7 +155,7 @@ export default {
       }
        }
       flowViewer(params).then(res => {
-        let { 
+        let {
           flowCommentResGroupList,
           flowCommentResList,
           flowProcDefRes,
@@ -215,7 +229,15 @@ export default {
     },
     // 下载
     downFlowLoad(url) {
-      downFile(url)
+      if (url) {
+        let lowerCase = url.toLowerCase()
+        if (lowerCase.includes('.jpg') || lowerCase.includes('.png') || lowerCase.includes('.pdf')) {
+          this.attachmentUrl = url;
+          this.attachmentDialog = true;
+        }
+      } else {
+        downFile(url)
+      }
     }
   }
 }
@@ -243,12 +265,30 @@ export default {
   }
 }
 .current {
-  color: #073dff; 
+  color: #073dff;
 }
 .link {
   cursor: pointer;
   color: #073dff;
   text-decoration: underline;
   margin-right: 5px;
+}
+
+::v-deep .attachment {
+  .el-dialog.is-fullscreen {
+    .el-dialog__header {
+      padding-bottom: 0;
+
+      .el-dialog__headerbtn {
+        top: 12px;
+      }
+    }
+
+    .el-dialog__body {
+      div {
+        height: calc(100vh - 120px);
+      }
+    }
+  }
 }
 </style>

@@ -89,6 +89,17 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <!--  预览附件弹框  -->
+    <el-dialog
+      :visible.sync="attachmentDialog"
+      class="attachment"
+      fullscreen
+    >
+      <div>
+        <iframe :src="attachmentUrl" frameborder="0" width="100%" height="100%"></iframe>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -132,7 +143,10 @@ export default {
           { required: true, trigger: 'change', message: '请选择下次保养日期' }
         ]
       },
-      submitLoading: false
+      submitLoading: false,
+
+      attachmentDialog: false, // 预览附件
+      attachmentUrl: '', // 附件地址
     }
   },
   created() {
@@ -203,7 +217,15 @@ export default {
     },
     // 查看文件
     downFlowLoad(url) {
-      downFile(url)
+      if (url) {
+        let lowerCase = url.toLowerCase()
+        if (lowerCase.includes('.jpg') || lowerCase.includes('.png') || lowerCase.includes('.pdf')) {
+          this.attachmentUrl = url;
+          this.attachmentDialog = true;
+        }
+      } else {
+        downFile(url)
+      }
     }
   }
 }
@@ -288,6 +310,24 @@ export default {
 .pagination-container {
   background: transparent;
 }
+}
+
+::v-deep .attachment {
+  .el-dialog.is-fullscreen {
+    .el-dialog__header {
+      padding-bottom: 0;
+
+      .el-dialog__headerbtn {
+        top: 12px;
+      }
+    }
+
+    .el-dialog__body {
+      div {
+        height: calc(100vh - 120px);
+      }
+    }
+  }
 }
 
 </style>
