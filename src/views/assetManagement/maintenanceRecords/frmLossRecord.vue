@@ -197,7 +197,7 @@ export default {
       let params={
         pageNum:this.page.pageNum,
         pageSize:this.page.pageSize,
-        businessType:8,
+        businessType:7,
         title:'盘亏记录',
         createStartTime:this.formData.time1 ? this.formData.time1[0] : '',
         createEndTime:this.formData.time1 ? this.formData.time1[1] : '',
