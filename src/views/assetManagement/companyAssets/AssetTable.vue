@@ -8,7 +8,7 @@
     >
       <el-table-column
         align="center"
-        label="资产ID"
+        label="资产编号"
         prop="assetId"
       />
       <el-table-column
