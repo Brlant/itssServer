@@ -171,10 +171,36 @@ export default {
     // 资产类型查询
     getAsset() {
       queryAsset().then(res => {
-        this.asset = res.data
+        // this.asset = res.data
+        let arr = res.data
+        arr.forEach((m) => {
+          if ((m.children ?? '')!=='') {
+            m.children.forEach((item) => {
+              if ((item.children ?? '')=='') {
+                item.disabled = true
+              }
+            });
+          }else if ((m.children ?? '')=='') {
+            m.disabled = true
+          }
+        });
+        this.asset = arr
       })
       queryAssetBorrow().then(res=>{
-        this.assetBorrow = res.data
+        // this.assetBorrow = res.data
+        let arr = res.data
+        arr.forEach((m) => {
+          if ((m.children ?? '') !== '') {
+            m.children.forEach((item) => {
+              if ((item.children ?? '') == '') {
+                item.disabled = true
+              }
+            });
+          }else if ((m.children ?? '') == '') {
+            m.disabled = true
+          }
+        });
+        this.assetBorrow = arr
       })
     },
     // 进入详情页
