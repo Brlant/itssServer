@@ -352,6 +352,7 @@ export default {
         }
         this.tableData = tableData
         this.total = res.data.total
+        this.getCount()
         this.loading = false
       }).catch(() => {
         this.loading = false

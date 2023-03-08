@@ -16,16 +16,43 @@
         label="资产类型"
         prop="assetTypeName"
       />
+<!--      <el-table-column
+        align="center"
+        label="资产编号&名称"
+        prop="assetIdName"
+      />-->
       <el-table-column
         align="center"
         label="资产编号&名称"
         prop="assetIdName"
-      />
+      >
+        <template slot-scope="{row}">
+          <span>
+            {{ row.assetIdName }}
+          </span>
+          <span
+            class="tag useTag"
+            v-if="row.useStatus === 1"
+          >
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         label="购入时间"
         prop="purchasingDate"
-      />
+      >
+        <template slot-scope="{row}">
+            <span>
+              {{ row.purchasingDate }}
+            </span>
+          <span
+            class="tag maintainTag"
+            v-if="row.maintainStatus === 1"
+          >
+            </span>
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         label="型号"
@@ -70,7 +97,18 @@
         align="center"
         label="状态"
         :formatter="statusFormatter"
-      />
+      >
+        <template slot-scope="{row}">
+          <span>
+            {{ statusFormatter(row) }}
+          </span>
+          <span
+            class="tag certificateTag"
+            v-if="row.certificateStatus === 1"
+          >
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         align="center"
         label="录入人员"
@@ -199,5 +237,27 @@ export default {
 .del {
   color: #f56c6c;
   cursor: pointer;
+}
+.tag {
+  width: 40px;
+  height: 40px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 0;
+  position: absolute;
+  left: 1px;
+  top: 2px;
+  color: red;
+  font-size: 10px;
+  line-height: 15px;
+}
+.useTag{
+  background-image: url("../../../assets/images/useTag.png");
+}
+.maintainTag{
+  background-image: url("../../../assets/images/maintainTag.png");
+}
+.certificateTag{
+  background-image: url("../../../assets/images/certificateTag.png");
 }
 </style>
