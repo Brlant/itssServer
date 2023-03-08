@@ -442,11 +442,13 @@ export default {
       // this.info.status == 7 意思是 资产未入库
       // this.info.manageType == 2  意思是 是固定资产
       // this.info.isApplying == 0  意思是 资产不在流程中
+      // this.info.status == 2 && this.info.amount && this.info.amount != 0 意思是 已耗尽
       if (
         (this.info.status == 1 || this.info.status == 2)
         && this.info.isApplying == 0
         && (this.from == 'companyAssets' || this.info.manageType == 2)
         && this.info.isCheck == 0
+        && (this.info.status == 2 && this.info.amount && this.info.amount != 0)
       ) {
         this.showScrap = true;
       } else {

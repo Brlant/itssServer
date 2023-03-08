@@ -10,41 +10,44 @@
         <div>
           <p style="font-weight:800">
             {{ businessTypeToText(activity.businessType) }}
-              <span
+              <span 
+                v-if="activity.businessType != 7"
                 style="font-size:12px;color:#ccc;font-weight:200"
               >
                 {{ "流程Id:" + activity.flowId }}
               </span>
           </p>
-          <!--
+          <!--  
             // businessType = 0 资产入库
             // businessType = 1 分配资产
             // businessType = 3 借用
             // businessType = 4 维修
             // businessType =5 报废
-            // 新：业务操作类型 1.入库，2.分配，3.归还，4.借用，5.维修，6.报废，7.盘亏
+            // 新：业务操作类型 1.入库，2.分配，3.归还，4.借用，5.维修，6.报废，7.修改 , 8.盘亏 
           -->
           <p
-            v-if="activity.businessType == 1 || activity.businessType == 3 || activity.businessType == 4 || activity.businessType == 5 || activity.businessType == 6 || activity.businessType == 7 "
+            v-if="activity.businessType == 1 || activity.businessType == 3 || activity.businessType == 4 || activity.businessType == 5 || activity.businessType == 6 || activity.businessType == 8 "
           >
-            {{
-              activity.creatorName + " ,于 "
-              + ((activity.businessType == 6 || activity.businessType == 7) ? formatDateTime(activity.scarpTime, "YYYY-MM-DD") : formatDateTime(activity.createTime, "YYYY-MM-DD hh: mm: ss"))  + ", "
-              + businessTypeToText(activity.businessType) + "了 "
+            {{ 
+              activity.creatorName + " ,于 " 
+              + formatDateTime(activity.createTime, "YYYY-MM-DD hh: mm: ss") + ", " 
+              + businessTypeToText(activity.businessType) + "了 " 
               + activity.amount
-              + " 个【" + activity.assetName + "】"
+              + " 个【" + activity.assetName + "】" 
             }}
           </p>
+          <p v-else-if="activity.businessType == 7">
+              {{ activity.remark }}
+          </p>
           <p v-else>
-            {{
-              activity.creatorName + " ,于 "
-              + formatDateTime(activity.createTime, "YYYY-MM-DD hh: mm: ss") + ", "
+            {{ 
+              activity.creatorName + " ,于 " 
+              + formatDateTime(activity.createTime, "YYYY-MM-DD hh: mm: ss") + ", " 
               + businessTypeToText(activity.businessType) + "了 "
               + activity.amount
               + " 个【" + activity.assetName + "】，给" + activity.holderName
             }}
           </p>
-
         </div>
       </el-timeline-item>
     </el-timeline>
@@ -104,9 +107,11 @@ export default {
               businessTypeText = "报废"
               break
           case 7:
+              businessTypeText = "修改"
+              break
+          case 8:
               businessTypeText = "盘亏"
               break
-
       }
       return businessTypeText
     },

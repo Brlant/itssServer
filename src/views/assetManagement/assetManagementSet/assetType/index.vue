@@ -265,7 +265,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="计算折旧" prop="hasDepreciation">
+            <el-form-item  v-if="diaForm.manageType == 2" label="计算折旧" prop="hasDepreciation">
               <el-radio-group v-model="diaForm.hasDepreciation">
                 <el-radio
                   v-for="item in depreciationSelect"
@@ -643,7 +643,11 @@ export default {
     },
     //新增的方法
     newAdd() {
-      let data = { ...this.diaForm, parentId: this.parentId };
+      let data = {
+        ...this.diaForm,
+        parentId: this.parentId,
+        hasDepreciation: (this.diaForm.manageType == 1 || !this.diaForm.hasDepreciation) ? 0 : this.diaForm.hasDepreciation
+      };
       // console.log(data, "dddddddddddddd");
       // return;
       this.isLoading = true;
@@ -664,7 +668,10 @@ export default {
     },
     //编辑的方法
     edit() {
-        let data = { ...this.diaForm };
+        let data = {
+          ...this.diaForm,
+          hasDepreciation: (this.diaForm.manageType == 1 || !this.diaForm.hasDepreciation) ? 0 : this.diaForm.hasDepreciation
+        };
         this.isLoading = true;
       editAsset(data).then((res) => {
         if (res.code == 200) {
