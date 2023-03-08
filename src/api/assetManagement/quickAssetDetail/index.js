@@ -8,7 +8,7 @@ import {
   parseStrEmpty
 } from "@/utils/ruoyi";
 // import {queryAll,searchDetail,createInfo,updateOrDelete}  from '@/api/'
-// 
+//
 /** * 列表查询-分页 GET /asset/assetTemplateInfo/list
 接口ID：56815680
 接口地址：https://www.apifox.cn/web/project/1611498/apis/api-56815680 */
@@ -54,6 +54,15 @@ export function updateOrDelete(data) {
 export function queryAsset(params = {status: 0}) {
   return request({
     url: '/asset/assetType/tree',
+    method: 'get',
+    params
+  })
+}
+
+// 按分类查询资产类型
+export function queryAssetBorrow(params = {manageType: 2}) {
+  return request({
+    url: '/asset/assetType/typeTree',
     method: 'get',
     params
   })

@@ -38,6 +38,7 @@
             :isDeptType = 'isDeptType'
             :checkStrictly = 'checkStrictly'
             :isShowOrgStatus = 'isShowOrgStatus'
+            :isRequiredParentId = 'isRequiredParentId'
             @add="addFn"
             @edit="editFn"
             @remove="removeFn"
@@ -71,6 +72,7 @@
                 isDeptType: false,
                 checkStrictly: true,
                 isShowOrgStatus: false,
+                isRequiredParentId: false
             }
         },
         mounted(){

@@ -202,7 +202,9 @@ export default {
         return res
       }
       if (row.status !== null) {
-        if (row.status === 7) {
+        if (row.status === 2 && row.amount !== null && row.amount == 0) {
+          return '已耗尽'
+        } else if (row.status === 7) {
           if (row.isApplying === 0) {
             return '未入库'
           } else if (row.isApplying === 1) {

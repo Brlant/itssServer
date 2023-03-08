@@ -102,7 +102,7 @@
 
     <!-- 资产借用弹窗 -->
     <asset-borrow
-      :asset="asset"
+      :asset="assetBorrow"
       @success="onBorrowSuccess"
       ref="borrow"
     />
@@ -112,7 +112,7 @@
 <script>
 import MyTabs from '@/components/MyTabs'
 import { personalAssetList } from '@/api/assetManagement/myAssets'
-import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
+import { queryAsset, queryAssetBorrow } from '@/api/assetManagement/quickAssetDetail'
 import MyApply from './MyApply'
 import AssetBorrow from './AssetBorrow'
 import AssetClaim from './AssetClaim'
@@ -140,7 +140,9 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
-      asset: []
+      asset: [],
+      // 资产借用数据源
+      assetBorrow: []
     }
   },
   created() {
@@ -170,6 +172,9 @@ export default {
     getAsset() {
       queryAsset().then(res => {
         this.asset = res.data
+      })
+      queryAssetBorrow().then(res=>{
+        this.assetBorrow = res.data
       })
     },
     // 进入详情页

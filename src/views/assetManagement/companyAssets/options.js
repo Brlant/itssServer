@@ -6,7 +6,8 @@ export const tabOptions = [
     type: null
   },
   {
-    label: '在库(固定资产)',
+    // label: '在库(固定资产)',
+    label: '已入库(固定资产)',
     name: 1,
     value: 1,
     type: 'specialStatus'
@@ -30,7 +31,8 @@ export const tabOptions = [
     type: 'status'
   },
   {
-    label: '在库(耗材)',
+    // label: '在库(耗材)',
+    label: '已入库(耗材)',
     name: 5,
     value: 2,
     type: 'specialStatus'

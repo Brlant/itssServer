@@ -135,6 +135,12 @@
           </el-col>-->
           <el-col :span="span">
             <div class="item">
+              <span class="label">持有人：</span>
+              <span class="value">{{ info.holderName }}</span>
+            </div>
+          </el-col>
+          <el-col :span="span">
+            <div class="item">
               <span class="label">备注：</span>
               <span class="value">{{ info.remark }}</span>
             </div>
