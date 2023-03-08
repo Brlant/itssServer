@@ -51,6 +51,7 @@
                 <el-col :span="24">
                     <el-form-item label=" " style="margin: 25px 275px 25px 0;">
                         <el-button :loading="sumbitloading" type="primary" @click="formSumbit">保存</el-button>
+                        <el-button class="cancel-btn" @click="cancelFn">取消</el-button>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -263,6 +264,21 @@ import recursion from '@/utils/recursion'
                         })
                     }
                 })
+            },
+
+            // 取消
+            cancelFn(){
+              this.$confirm(`当前页面修改内容尚未保存，是否确认退出？`, "温馨提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+              })
+                  .then(() => {
+                    this.$refs["roleform"].resetFields();
+                    this.$store.dispatch("tagsView/delView", this.$route);
+                    this.$router.replace({ path: "/system/role" }); // 关闭之后要返回的页面  会自动刷新
+                  })
+                  .catch(() => {});
             }
         },
     }
