@@ -240,6 +240,7 @@
                       :key="index"
                       :label="item.label"
                       :value="item.value"
+                      :disabled="item.disabled"
                     >
                     </el-option>
                   </el-select>
@@ -321,13 +322,21 @@ export default {
         { value: 3, label: "序列号" },
       ],
       //当天日期
-      dates: [
+      /*dates: [
         { value: 1, label: "年(2位,如2022年,为22)" },
         { value: 2, label: "年(4位,如2022年,为2022)" },
         { value: 3, label: "月(有效位,如2月,为2)" },
         { value: 4, label: "月(2位,如2月,为02)" },
         { value: 5, label: "日(有效位,如2月2日,为2)" },
         { value: 6, label: "日(2位,如2月2日,为02)" },
+      ],*/
+      dates: [
+        { value: 1, label: "年(2位,如2022年,为22)", disabled: false },
+        { value: 2, label: "年(4位,如2022年,为2022)", disabled: false },
+        { value: 3, label: "月(有效位,如2月,为2)", disabled: false },
+        { value: 4, label: "月(2位,如2月,为02)", disabled: false },
+        { value: 5, label: "日(有效位,如2月2日,为2)", disabled: false },
+        { value: 6, label: "日(2位,如2月2日,为02)", disabled: false },
       ],
       //子序列号
       childNo: [
@@ -382,7 +391,16 @@ export default {
     };
   },
   computed: {},
-  watch: {},
+  watch: {
+    'value5.value':{
+      deep: true,
+      handler(val){
+        console.log("val----",val)
+        this.setDisabled(val)
+      }
+
+    }
+  },
   created() {
     if (this.$route.query.detailData) {
       this.ruleForm = this.$route.query.detailData;
@@ -603,6 +621,39 @@ export default {
         this.diaForm.radioSelect = 5 + "";
       }
     },
+
+    // 当天日期中 年/月/日 只能选其中一种模式
+    setDisabled(value) {
+      if (value.length > 0) {
+        if (value.includes(1)) {
+          this.dates[0].disabled = false
+          this.dates[1].disabled = true
+        }
+        if (value.includes(2)) {
+          this.dates[0].disabled = true
+          this.dates[1].disabled = false
+        }
+        if (value.includes(3)) {
+          this.dates[2].disabled = false
+          this.dates[3].disabled = true
+        }
+        if (value.includes(4)) {
+          this.dates[2].disabled = true
+          this.dates[3].disabled = false
+        }
+        if (value.includes(5)) {
+          this.dates[4].disabled = false
+          this.dates[5].disabled = true
+        }
+        if (value.includes(6)) {
+          this.dates[4].disabled = true
+          this.dates[5].disabled = false
+        }
+      } else {
+        this.dates.map(item => item.disabled = false)
+      }
+    },
+
     delThis(item, i) {
       //item 暂时用不着，留着
       this.ruleForm.ruleList.splice(i, 1);
