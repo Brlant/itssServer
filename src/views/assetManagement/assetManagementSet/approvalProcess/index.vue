@@ -18,9 +18,9 @@
             v-if="scope.row.assetTypeList&&scope.row.assetTypeList.length > 1"
             width="400"
             trigger="hover">
-          <span v-for="(item, index) in scope.row.assetTypeList" :key="index">
+          <div v-for="(item, index) in scope.row.assetTypeList" :key="index">
             {{ item.allName + '；' }}
-          </span>
+          </div>
             <span slot="reference">
             <span>{{ scope.row.assetTypeList ? (scope.row.assetTypeList[0].allName + '...') : '' }}</span>
           </span>
