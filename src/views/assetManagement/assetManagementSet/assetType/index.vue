@@ -64,14 +64,14 @@
                 @click.stop="editOrAdd('1', data)">
                   编辑分类
                 </div>
-                <div class="select-list"
+<!--                <div class="select-list"
                 @click.stop="editOrAdd('2', data)">
                   新增分类
                 </div>
                 <div class="select-list"
                  @click.stop="editOrAdd('3', data)">
                   新增子分类
-                </div>
+                </div>-->
                  <div class="select-list"
                     style='color:#f56c6c'
                   @click="stopOrUse(data.id,1)" v-if='data.status==0'>
@@ -81,6 +81,12 @@
                   @click="stopOrUse(data.id,0)" v-if='data.status==1'>
                   启用分类
                 </div>
+                <div class="select-list"
+                     style='color:#f56c6c'
+                     @click="delAsset(data)">
+                  删除分类
+                </div>
+
               </div>
 
             </span>
@@ -144,8 +150,7 @@
           >
             <template slot-scope="scope">
                <span
-                  style="margin-left: 10px"
-                  v-hasPermi="['system:user:add']">
+                  style="margin-left: 10px">
                 <el-button
                   size="mini"
                   type="text"
@@ -155,8 +160,7 @@
                 >
               </span>
                <span
-                  style="margin-left: 10px"
-                  v-hasPermi="['system:user:add']">
+                  style="margin-left: 10px">
                 <el-button
                   size="mini"
                   type="text"
@@ -166,8 +170,7 @@
                 >
               </span>
               <span
-                style="margin-left: 10px"
-                v-hasPermi="['system:user:add']">
+                style="margin-left: 10px">
                 <el-button
                   size="mini"
                   type="text"
@@ -251,7 +254,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row v-if="!hasHidden">
           <el-col :span="12">
             <el-form-item label="管理方式" prop="manageType">
               <el-radio-group v-model="diaForm.manageType">
@@ -277,7 +280,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row v-if="!hasHidden">
           <el-col :span="24">
             <el-form-item label="详情模板" prop="infoTemplateId">
               <el-select
@@ -298,7 +301,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row v-if="!hasHidden">
           <el-col :span="24">
             <el-form-item label="审批流程" prop="flowGroupId">
               <el-select
@@ -319,7 +322,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row v-if="!hasHidden">
           <el-col :span="12">
             <el-form-item label="保养管理" prop="hasMaintainExpire">
               <el-radio-group v-model="diaForm.hasMaintainExpire">
@@ -347,7 +350,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
+        <el-row v-if="!hasHidden">
           <el-col :span="12">
             <el-form-item label="证书管理" prop="hasCertificate">
               <el-radio-group v-model="diaForm.hasCertificate">
@@ -361,7 +364,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-         <el-row>
+         <el-row v-if="!hasHidden">
           <el-col :span="12">
             <el-form-item label="备注" prop="remark">
               <el-input v-model="diaForm.remark" type='textarea'>
@@ -428,6 +431,8 @@ export default {
       isEdit: true,
       isshow: false,
       parentId: null,
+      rank: null,
+      hasHidden: true,
       curren:'',
       manageSelect: [
         { value: 1, label: "按耗材" },
@@ -558,13 +563,22 @@ export default {
         console.log("ffff");
         this.typeId = data.id;
         this.rightTitle = data.typeName;
+        this.rank = data.rank;
+        this.hasHidden  = data.rank == 1 ? true : false;
         this.getList();
       } else {
+        this.typeId = data.id;
+        this.rightTitle = data.typeName;
+        this.typeData = [];
+        this.total = 0;
+        this.parentId = this.typeId;
+        this.rank = data.rank;
+        this.hasHidden  = true;
         return;
       }
     },
     getList() {
-      if (!this.typeId) {
+      if (!this.typeId || (this.rank == 1)) {
         return
       }
       querySubcategory({
