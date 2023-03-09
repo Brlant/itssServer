@@ -1482,8 +1482,6 @@ export default {
           this.formData.projectUserList[index].planLoad = 0;
         } else {
           if (action == "add") {
-            this.formData.projectUserList[index].workTime = 0;
-            this.formData.projectUserList[index].workDay = 0;
             this.formData.projectUserList[index].planLoad = 0;
           } else {
             this.formData.projectUserList[index].planLoad = this.autoFixed(

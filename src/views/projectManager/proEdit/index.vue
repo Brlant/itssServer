@@ -964,7 +964,7 @@ export default {
          // 循环 回显 职位名称和职位等级
           res.data.projectUserList.map((item, index) => {
          // 循环 回显 职位名称和职位等级
-         //  this.constAll(item.startEndTime, index,'update');
+          this.constAll(item.startEndTime, index,'update');
           let params = {
             regionId: res.data.projectUserList[index].regionId,
             postTypeId: res.data.projectUserList[index].postTypeId,
@@ -1008,13 +1008,6 @@ export default {
         });
 
         this.formData = res.data; // 填充详情的 projectTimeArea
-
-        // 期间计划负荷全部为0时，修改配置安排默认为0
-        this.formData.projectUserList.map((m,mIndex)=>{
-          m.projectUserScheduleList.map((n,nIndex)=>{
-            this.changePlanLoad(n.planLoad,n.weekDay,mIndex,nIndex)
-          })
-        })
 
 
         this.team();
@@ -1246,8 +1239,8 @@ export default {
         endDate: dates[1],
       };
       getTimeProcess(params).then((res) => {
-        // this.formData.projectUserList[index].workDay = res.data.day; // 总共多少人日
-        // this.formData.projectUserList[index].workTime = res.data.day * 8; // 总共多少工时
+        this.formData.projectUserList[index].workDay = res.data.day; // 总共多少人日
+        this.formData.projectUserList[index].workTime = res.data.day * 8; // 总共多少工时
         if (res.data.day === 0) {
           this.formData.projectUserList[index].planLoad = 0;
         } else {
@@ -1294,7 +1287,7 @@ export default {
           );
           }
         });
-        // this.formData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
+        this.formData.projectUserList[index].projectUserScheduleList = res.data.list; // 此人的 每周安排
       });
     },
     // 点击 新增用户的
