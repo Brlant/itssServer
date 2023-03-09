@@ -39,6 +39,7 @@
             :checkStrictly = 'checkStrictly'
             :isShowOrgStatus = 'isShowOrgStatus'
             :isRequiredParentId = 'isRequiredParentId'
+            :isShowContact = 'isShowContact'
             @add="addFn"
             @edit="editFn"
             @remove="removeFn"
@@ -72,7 +73,8 @@
                 isDeptType: false,
                 checkStrictly: true,
                 isShowOrgStatus: false,
-                isRequiredParentId: false
+                isRequiredParentId: false,
+                isShowContact: false
             }
         },
         mounted(){
