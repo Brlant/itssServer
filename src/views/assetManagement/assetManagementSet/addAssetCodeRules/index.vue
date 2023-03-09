@@ -395,10 +395,8 @@ export default {
     'value5.value':{
       deep: true,
       handler(val){
-        console.log("val----",val)
         this.setDisabled(val)
       }
-
     }
   },
   created() {
@@ -624,6 +622,7 @@ export default {
 
     // 当天日期中 年/月/日 只能选其中一种模式
     setDisabled(value) {
+      this.dates.map(item => item.disabled = false)
       if (value.length > 0) {
         if (value.includes(1)) {
           this.dates[0].disabled = false
