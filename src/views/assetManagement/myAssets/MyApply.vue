@@ -65,7 +65,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="流程编号" prop="FLOW_ID">
+            <el-form-item label="流程ID" prop="FLOW_ID">
               <el-input v-model.trim="formData.FLOW_ID" :style="style" />
             </el-form-item>
           </el-col>
