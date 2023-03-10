@@ -628,6 +628,7 @@ export default {
       if (item == 1) {
         //编辑分类
         this.isEdit = true;
+        this.hasHidden = (data.rank == 1 || data.rank == 2) ? true : false
         this.diaForm = this.deepClone(data);
         this.title='编辑分类'
       } else if (item == 2) {
