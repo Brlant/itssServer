@@ -248,7 +248,7 @@
               </el-col>
             </el-row>
           </el-radio-group>
-          <el-radio-group v-model="diaForm.radioSelect1">
+<!--          <el-radio-group v-model="diaForm.radioSelect1">
             <el-row>
               <el-col :span="24">
                 <el-radio label="6" style="margin-left: 20px">
@@ -268,7 +268,7 @@
                 </el-radio>
               </el-col>
             </el-row>
-          </el-radio-group>
+          </el-radio-group>-->
           <el-radio-group v-model="diaForm.radioSelect">
             <el-row>
               <el-col :span="24">
