@@ -448,9 +448,12 @@ export default {
         && this.info.isApplying == 0
         && (this.from == 'companyAssets' || this.info.manageType == 2)
         && this.info.isCheck == 0
-        && (this.info.status == 2 && this.info.amount && this.info.amount != 0)
       ) {
         this.showScrap = true;
+        // 如果是耗材类 且数量小于0 不显示报废按钮
+        if(this.info.manageType ==1 && this.info.amount && this.info.amount <= 0){
+          this.showScrap = false;
+        }
       } else {
         this.showScrap = false;
       }
