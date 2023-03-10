@@ -258,16 +258,23 @@
                 deptStatus( { method : 'post', ...data} )
                 .then( d => {
 
-                    if( d.code === 200 ){
-                        this.reqDeptListFn() ; // 刷新列表数据
-                    }
+                  /* if( d.code === 200 ){
+                      this.reqDeptListFn() ; // 刷新列表数据
+                  }
 
-                    this.$message({
-                        message: d.code === 200 ? '修改成功!' : '修改异常!' ,
-                        type: d.code === 200 ? 'success' : 'warning'
-                    });
+                  this.$message({
+                      message: d.code === 200 ? '修改成功!' : '修改异常!' ,
+                      type: d.code === 200 ? 'success' : 'warning'
+                  });*/
+
+                  this.reqDeptListFn() ; // 刷新列表数据
+                  this.$message({
+                    message: d.msg,
+                    type: d.code === 200 ? 'success' : 'warning'
+                  });
                 } )
                 .catch( err => {
+                    this.reqDeptListFn() ; // 刷新列表数据
                     console.error( err ) ;
                 } );
             },

@@ -197,17 +197,24 @@
                 .then( d => {
                     this.isLoaded = false ;
 
-                    if( d.code === 200 ){
-                        this.reqListFn() ; // 刷新列表数据
-                    }
+                  /* if( d.code === 200 ){
+                       this.reqListFn() ; // 刷新列表数据
+                   }
 
-                    this.$message({
-                        message: d.code === 200 ? '修改成功!' : '修改异常!' ,
-                        type: d.code === 200 ? 'success' : 'warning'
-                    });
+                   this.$message({
+                       message: d.code === 200 ? '修改成功!' : '修改异常!' ,
+                       type: d.code === 200 ? 'success' : 'warning'
+                   });*/
+
+                  this.reqListFn() ; // 刷新列表数据
+                  this.$message({
+                    message: d.msg,
+                    type: d.code === 200 ? 'success' : 'warning'
+                  });
 
                 } )
                 .catch( err => {
+                  this.reqListFn() ; // 刷新列表数据
                     this.isLoaded = false ;
                 } );
             },
