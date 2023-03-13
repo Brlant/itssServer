@@ -162,6 +162,8 @@
       class="dialogForm"
       width="50%"
       :visible.sync="dialogShow"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
     >
       <el-form
         :model="diaForm"

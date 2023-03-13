@@ -102,7 +102,7 @@
              </span>
           </template>
         </el-table-column>
-        <el-table-column label="报废数量" align="center" prop="amount" />
+        <el-table-column label="报废数量" align="center" prop="scarpAmount" />
         <el-table-column label="税后价格" align="center" prop="afterTaxPrice" />
         <el-table-column label="累计折旧" align="center" prop="depreciation" />
         <el-table-column label="资产净值" align="center" prop="surplusValue" />
@@ -161,7 +161,20 @@ export default {
       // 资产类型查询
     getAsset() {
       queryAsset().then(res => {
-        this.asset = res.data
+        // this.asset = res.data
+        let arr = res.data
+        arr.forEach((m) => {
+          if ((m.children ?? '')!=='') {
+            m.children.forEach((item) => {
+              if ((item.children ?? '')=='') {
+                item.disabled = true
+              }
+            });
+          }else if ((m.children ?? '')=='') {
+            m.disabled = true
+          }
+        });
+        this.asset = arr
       })
     },
     initData(){
