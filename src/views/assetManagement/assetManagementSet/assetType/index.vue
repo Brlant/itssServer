@@ -507,17 +507,27 @@ export default {
       isLoading:false
     };
   },
-  created() {
-    this.getTreeselect();
-    this.getTemplate();
-    this.getFlowGroup();
-  },
   watch: {
     addEdit(value) {
       if (value === false) {
         this.$refs.diaForm.resetFields()
       }
     }
+  },
+  created() {
+    this.getTreeselect();
+    this.getTemplate();
+    this.getFlowGroup();
+  },
+  mounted(){
+    document.addEventListener('click',e=>{
+      if (!this.$el.contains(e.target)) {
+        this.handleClickOutside()
+      }
+    })
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.handleClickOutside)
   },
   methods: {
      defaultData() {
@@ -655,6 +665,15 @@ export default {
           this.getList();
         }
       });
+    },
+    handleClickOutside(){
+      console.log("hhhhhhh")
+      this.parentId = null
+      this.$refs.trees.setCurrentKey()
+      this.curren = '';
+      this.n = -1;
+      this.isshow = false;
+      this.hasHidden  = true;
     },
     //新增的方法
     newAdd() {
