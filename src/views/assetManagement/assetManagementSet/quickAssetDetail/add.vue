@@ -143,7 +143,7 @@
           <el-row>
             <el-col :span="span">
               <el-form-item label="折旧年限:" prop="depreciableLife">
-                <el-input v-model.trim="formData.depreciableLife" :style="style">
+                <el-input v-model.trim="formData.depreciableLife"  @input="formData.depreciableLife=formData.depreciableLife.replace(/^(0+)|[^\d]+/g,'')"  :style="style">
                   <span slot="suffix">年</span>
                 </el-input>
               </el-form-item>
