@@ -492,11 +492,19 @@ export default {
       let checkedNum = parseInt(this.diaForm.radioSelect);
       switch (checkedNum) {
         case 1:
+          if (this.value1.value.length == 0) {
+            break;
+          }
+
           let params = this.deepClone(this.value1);
           console.log(params, "params");
           this.ruleForm.ruleList.push(params);
           break;
         case 2:
+          if (this.value2.value.length == 0) {
+            break;
+          }
+
           this.value2.ruleLable = this.types.find((item) => {
             console.log(item.value, this.value2.value);
             if (item.value == this.value2.value) {
@@ -507,6 +515,10 @@ export default {
 
           break;
         case 3:
+          if (this.value3.value.length == 0) {
+            break;
+          }
+
           this.value3.ruleLable = this.types.find((item) => {
             if (item.value == this.value3.value) {
               return item.label;
@@ -517,6 +529,10 @@ export default {
 
           break;
         case 4:
+          if (this.value4.value.length == 0) {
+            break;
+          }
+
           this.value4.ruleLable = this.dates.find((item) => {
             if (item.value == this.value4.value) {
               return item.label;
@@ -527,6 +543,10 @@ export default {
 
           break;
         case 5:
+          if (this.value5.value.length == 0) {
+            break;
+          }
+
           console.log(this.value5);
           let ruleList5 = [];
           this.value5.value.map((codes) => {
@@ -552,6 +572,10 @@ export default {
 
           break;
         case 6:
+          if (this.value6.value.length == 0) {
+            break;
+          }
+
           this.value5.value = [1]; // 默认选择第一项
           let ruleList55 = [];
           this.value5.value.map((codes) => {
@@ -575,6 +599,10 @@ export default {
 
           break;
         case 7:
+          if (this.value7.value.length == 0) {
+            break;
+          }
+
           this.value7.ruleLable = this.childNo.find((item) => {
             if (item.value == this.value7.value) {
               return item.label;
