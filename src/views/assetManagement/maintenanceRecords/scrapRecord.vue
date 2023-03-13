@@ -164,14 +164,11 @@ export default {
         // this.asset = res.data
         let arr = res.data
         arr.forEach((m) => {
+          m.disabled = true
           if ((m.children ?? '')!=='') {
             m.children.forEach((item) => {
-              if ((item.children ?? '')=='') {
-                item.disabled = true
-              }
-            });
-          }else if ((m.children ?? '')=='') {
-            m.disabled = true
+              item.disabled = true
+            })
           }
         });
         this.asset = arr
