@@ -138,8 +138,8 @@ export default {
   data() {
     return {
       assetTemplate: {
-        templateName: "周测试1",
-        describe: "周测试1描述",
+        templateName: "",
+        describe: "",
         detailRadius: [],
       },
       // dialog控制参数
@@ -490,10 +490,10 @@ export default {
         this.$message.error("请输入模板名称!");
         return;
       }
-      if (this.assetTemplate.detailRadius=="") {
+      /*if (this.assetTemplate.detailRadius=="") {
         this.$message.error("请选择详细信息!");
         return;
-      }
+      }*/
 
       let params = {
         templateName: this.assetTemplate.templateName,

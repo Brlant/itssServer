@@ -33,7 +33,7 @@
         <div class="base-row">
           <div class="title">
             <span class="title-name c333">模板信息</span>
-           
+
           </div>
           <br />
           <div class="base">
@@ -63,7 +63,7 @@
             </el-radio-group>
           </div>
         </div>
-        
+
         <div class="base-row">
           <div class="title">
             <span class="title-name c333">折旧信息</span>
@@ -184,7 +184,7 @@ export default {
           id: 11,
           name: "税后价格",
         },
-        
+
         {
           id: 12,
           name: "数量",
@@ -524,10 +524,10 @@ export default {
         this.$message.error("请输入标题名称!");
         return;
       }
-      if (this.assetTemplate.detailRadius=="") {
+      /*if (this.assetTemplate.detailRadius=="") {
         this.$message.error("请选择详细信息!");
         return;
-      }
+      }*/
 
       let params = {
         templateName: this.assetTemplate.templateName,
@@ -579,7 +579,7 @@ export default {
 .tingyong{
   color: crimson;
 }
- 
+
 p {
   margin: 0%;
   padding: 0;
@@ -631,7 +631,7 @@ p {
     border-left: 4px #999999 solid;
   padding-left: 12px;
 }
- 
+
 .title-name {
   font-size: 18px;
   font-weight: bold;
