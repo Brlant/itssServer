@@ -38,7 +38,8 @@
       <div class="right">
         <div class="right-header">
           <div>{{ deptTitle }}</div>
-          <div v-if="showSetCommander" v-hasPermi="['system:user:add']">
+<!--          <div v-if="showSetCommander" v-hasPermi="['system:user:add']">-->
+          <div v-hasPermi="['system:user:add']">
             <el-button type="text" @click="setCommander">设置负责人</el-button>
             <span>
               <span>|</span>
@@ -521,7 +522,7 @@ export default {
         ],
       },
       // 是否显示设置负责人
-      showSetCommander: false,
+      // showSetCommander: false,
       // 当前点击节点
       currentNode: {},
       addLoading: false,
@@ -901,9 +902,10 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.showSetCommander = (this.$store.state.user.user.userId == 1 || data.id == this.$store.state.user.user.deptId || data.parentId == this.$store.state.user.user.deptId)
+      console.log("data",data)
+      /*this.showSetCommander = (this.$store.state.user.user.userId == 1 || data.id == this.$store.state.user.user.deptId || data.parentId == this.$store.state.user.user.deptId)
                               ? true
-                              : false
+                              : false*/
       this.currentNode = data
       console.log(this.defaultData, "defaultData");
       console.log(data, "data");
