@@ -1244,10 +1244,10 @@ export default {
           };
           getPostName(parame).then((res) => {
             // this.formData.projectUserList[index].postNameIdOptions = res.data;
-            this.$set( this.formData.projectUserList[index], 'postNameIdOptions', res.data ) ;
-
+            this.formData.projectUserList[index].postNameIdOptions.push(res.data);
+            this.$set( this.formData.projectUserList[index], 'postNameIdOptions', res.data );
+            this.$forceUpdate() ;
           });
-          this.$forceUpdate() ;
           break;
         case "postNameId": // 选择职位名称
           this.formData.projectUserList[index].postLevelIdActive = false; // 初始化展示下一个
@@ -1265,9 +1265,10 @@ export default {
           };
           getLevelCostNum(parame).then((res) => {
             // this.formData.projectUserList[index].postLevelIdOptions = res.data;
+            this.formData.projectUserList[index].postLevelIdOptions.push(res.data);
             this.$set(this.formData.projectUserList[index], "postLevelIdOptions", res.data)
+            this.$forceUpdate()
           });
-          this.$forceUpdate()
 
           break;
         case "postLevelId": // 选择职位等级
@@ -1348,31 +1349,37 @@ export default {
       //   params.id=row?.id||this.formData.projectUserList[index]?.id||"" //项目配置表主键第二级的主键
       // }
       queryUserByPostId(params).then((res) => {
-        res.data.map((item) => {
-          item.showOrCancel = 1; // 默认显示  添加
-          //  if(this.nowAction=="update"){
+        if(res.data){
 
-          if (this.formData.projectUserList[index].userId == item.userId) {
-            // 如果 当前点击的行的userID === 当前行id 就显示取消
-            item.showOrCancel = 2;
-          }
-          // }
-        });
+          res.data.map((item) => {
+            item.showOrCancel = 1; // 默认显示  添加
+            //  if(this.nowAction=="update"){
 
-        // this.formData.projectUserList  [index].recommendUserTableData = res.data;
-        this.$set(
-          this.formData.projectUserList[index],
-          "recommendUserTableData",
-          res.data
-        );
-        this.$forceUpdate();
+            if (this.formData.projectUserList[index].userId == item.userId) {
+              // 如果 当前点击的行的userID === 当前行id 就显示取消
+              item.showOrCancel = 2;
+            }
+            // }
+          });
+
+          this.formData.projectUserList[index].recommendUserTableData = res.data;
+          this.$set(
+            this.formData.projectUserList[index],
+            "recommendUserTableData",
+            res.data
+          );
+          this.$forceUpdate();
+        }
       });
+          this.$forceUpdate();
+
     },
     // 取消当前的人
     delUserToProject(row, index) {
       // 下面是塞入数据
       this.formData.projectUserList[index].userId = "";
       this.formData.projectUserList[index].userName = "";
+      // this.formData.projectUserList[index].nickName = "";
       this.$forceUpdate();
 
       // 点击添加成功后 显示取消按钮
@@ -1393,6 +1400,7 @@ export default {
       // this.formData.projectUserList[this.nowIndex].userList.push(row.userId);
       this.formData.projectUserList[index].userId = row.userId;
       this.formData.projectUserList[index].userName = row.nickName;
+      // this.formData.projectUserList[index].nickName = row.nickName;
       //  以上是展示
       this.$forceUpdate();
       // 点击添加成功后 显示取消按钮
@@ -1405,7 +1413,11 @@ export default {
     },
     DelPostList(index) {
       // 直接删除单行
+      let item = this.formData.projectUserList[index];
+      let delKey = `${ item.deptId }-${ item.deptName }-${item.userId}-${ item.nickName }-${item.phonenumber}`
+      delete this.userObj[delKey]
       this.formData.projectUserList.splice(index, 1);
+
     },
     // 选择职位之后的逻辑
 
@@ -1443,8 +1455,8 @@ export default {
           totalTime += parseFloat(item.workDay * 8); // 总时长 == 每周人日*8
         }
       );
-      this.formData.projectUserList[fatherIndex].workTime = totalTime;
-      this.formData.projectUserList[fatherIndex].workDay = totalDay;
+      this.formData.projectUserList[fatherIndex].workTime = (totalTime).toFixed(2);
+      this.formData.projectUserList[fatherIndex].workDay = (totalDay).toFixed(2);
       const tempWorkDay = this.formData.projectUserList[fatherIndex].workDayTemp; // 之前的总天数
       console.log(tempWorkDay);
       if (totalDay === 0) {
@@ -1801,8 +1813,16 @@ export default {
             addProjectList(parame).then((res) => {
               let { code, msg } = res;
               this.$message.success(msg);
+
               if (+code == 200) {
-                this.$router.push("/projectManager/proManager");
+                // this.$router.push("/projectManager/proManager");
+                 const obj = { path: "/projectManager/proManager" };
+                  this.$tab.closeOpenPage(obj);
+                /***
+                 * 保存成功 之后删除缓存
+                */
+                // sessionStorage.setItem("addProject", "");
+                // this.formData = {}
               }
             });
           }

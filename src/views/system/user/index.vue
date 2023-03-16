@@ -902,7 +902,7 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      console.log("data",data)
+      // console.log("data",data)
       /*this.showSetCommander = (this.$store.state.user.user.userId == 1 || data.id == this.$store.state.user.user.deptId || data.parentId == this.$store.state.user.user.deptId)
                               ? true
                               : false*/
