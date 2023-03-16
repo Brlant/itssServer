@@ -1,5 +1,5 @@
 <template>
-  <div class="approval">
+  <div class="approval" ref="approval">
     <div class="heading">
       <div class="left">
         <span class="bar"></span>
@@ -94,8 +94,8 @@
       class="attachment"
       fullscreen
     >
-      <div>
-        <iframe :src="attachmentUrl" frameborder="0" width="100%" height="100%"></iframe>
+      <div id="previewDiv" ref="previewDiv">
+        <iframe id="previewIframe" :src="attachmentUrl" frameborder="0" width="100%" height="100%" @load="iframeLoad"></iframe>
       </div>
     </el-dialog>
   </div>
@@ -202,12 +202,46 @@ export default {
       if (url) {
         let lowerCase = url.toLowerCase()
         if (lowerCase.includes('.jpg') || lowerCase.includes('.png') || lowerCase.includes('.pdf')) {
-          this.attachmentUrl = url;
+          // this.attachmentUrl = url;
+          this.attachmentUrl = this.convertUrl(url)
           this.attachmentDialog = true;
+          // setTimeout(()=>{
+          //   this.createdIframe()
+          // })
         }
       } else {
         downFile(url)
       }
+    },
+
+    convertUrl(path){
+      let reg = /^(https?:\/\/)([0-9a-z.]+)(:[0-9]+)?([/0-9a-z.]+)?(\?[0-9a-z&=]+)?(#[0-9-a-z]+)?/i
+      path = path.replace(reg, "https://$2$3$4$5$6");
+      return path
+    },
+
+    /*createdIframe() {
+      const previewDiv = document.getElementById("previewDiv")
+      var doc = null;
+      var iframe = document.createElement('iframe');
+
+      previewDiv.appendChild(iframe);
+      iframe.id = "previewIframe";
+      iframe.frameborder = "0";
+      iframe.width = "100%";
+      iframe.height = "100%";
+      iframe.src = ''
+      doc = iframe.contentWindow.document;
+      const meta = document.createElement('meta');
+      meta.httpEquiv = 'Content-Security-Policy';
+      meta.content = 'upgrade-insecure-requests';
+      doc.getElementsByTagName('head')[0].appendChild(meta);
+      this.$nextTick(()=>{
+        iframe.src = this.attachmentUrl;
+      })
+    },*/
+    iframeLoad() {
+
     }
   }
 }

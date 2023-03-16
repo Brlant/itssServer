@@ -209,13 +209,20 @@ export default {
       if (url) {
         let lowerCase = url.toLowerCase()
         if (lowerCase.includes('.jpg') || lowerCase.includes('.png') || lowerCase.includes('.pdf')) {
-          this.attachmentUrl = url;
+          // this.attachmentUrl = url;
+          this.attachmentUrl = this.convertUrl(url)
           this.attachmentDialog = true;
         }
       } else {
         downFile(url)
       }
-    }
+    },
+
+    convertUrl(path){
+      let reg = /^(https?:\/\/)([0-9a-z.]+)(:[0-9]+)?([/0-9a-z.]+)?(\?[0-9a-z&=]+)?(#[0-9-a-z]+)?/i
+      path = path.replace(reg, "https://$2$3$4$5$6");
+      return path
+    },
   }
 }
 </script>
