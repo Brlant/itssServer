@@ -802,4 +802,10 @@ export default {
   line-height: 30px;
   text-align: center;
 }
+::v-deep {
+  .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+    color: #3D7DFF;
+    background: rgba(61, 125, 255, 0.3);
+  }
+}
 </style>
