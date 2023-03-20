@@ -65,6 +65,11 @@
       />
       <el-table-column
         align="center"
+        label="税后价格"
+        prop="afterTaxPrice"
+      />
+      <el-table-column
+        align="center"
         label="期间折旧"
         prop="periodDepreciation"
       />
