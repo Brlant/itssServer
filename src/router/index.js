@@ -443,7 +443,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/companyAssets/companyAssets-auth',
     component: Layout,
     hidden: true,
-    permissions: ['companyAssets:list'||'myAssets:detail'],
+    permissions: ['companyAssets:list','myAssets:detail'],
     children: [
       {
         path: 'add',
