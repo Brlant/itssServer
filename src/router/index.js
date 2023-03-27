@@ -567,7 +567,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/myAssets/myAssets-auth',
     component: Layout,
     hidden: true,
-    permissions: ['companyAssets:list'],
+    permissions: ['companyAssets:list','myAssets:detail'],
     children: [
       {
         path: 'applyInfo',
