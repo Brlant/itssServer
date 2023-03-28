@@ -589,7 +589,7 @@ export default {
         let { msg } = res;
         // 添加额外的字段，用于展示 预算偏差or 进度偏差是否小于0
         res.rows.map(item=>{
-          item.costUp = 123
+          // item.costUp = 123
           // jdSchedule    ysDeviation
           item.isYellow = false // 默认没有黄色
           item.isPink = false // 默认无粉色
