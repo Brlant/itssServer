@@ -666,7 +666,7 @@ export const dynamicRoutes = [
     path: '/assetManagement/detailAssetProcess/process',
     component: Layout,
     hidden: true,
-    permissions: ['companyAssets:list'],
+    permissions: ['assetProcess:list'],
     children: [
       {
         path: 'detailAssetProcess',
