@@ -65,7 +65,7 @@
       />
       <el-table-column
         align="center"
-        label="税后价格"
+        label="原值"
         prop="afterTaxPrice"
       />
       <el-table-column
