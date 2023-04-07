@@ -656,7 +656,6 @@
                     :header-row-style="{ height: '14px', 'line-height': '14px' }"
                     :header-cell-class-name="headerUserClassName"
                     style="width: 90%"
-                    max-height="650"
                   >
                     <el-table-column prop="nickName" label="姓名"></el-table-column>
                     <el-table-column prop="regionName" label="区域"></el-table-column>
