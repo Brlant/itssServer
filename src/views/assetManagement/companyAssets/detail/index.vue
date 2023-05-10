@@ -241,7 +241,6 @@
                 :on-change="upChange"
                 :before-remove="remove"
                 :file-list="fileList"
-                :limit="1"
                 accept=".jpg, .png, .pdf"
                 :auto-upload="false"
               >
@@ -486,16 +485,26 @@ export default {
       let formData = new FormData();
       formData.append("file", file.raw);
       fileUpload(formData).then(res => {
-        this.url = res.data.url
+        /*this.url = res.data.url
         this.name = res.data.name
         this.type=this.name.substring(this.name.lastIndexOf('.'))
-        this.fileList = fileList
+        this.fileList = fileList*/
+        // 文件列表格式处理
+        let fileArr = this.deepClone(fileList)
+        const index = fileArr.findIndex(item => {
+          return item.uid == file.uid
+        })
+        fileArr[index].status = 'success'
+        fileArr[index].name = res.data.name
+        fileArr[index].url = res.data.url
+        this.fileList = fileArr
       })
     },
-    remove() {
-      this.url = "";
-      this.name = "";
-      this.type=''
+    remove(file, fileList) {
+      // this.url = "";
+      // this.name = "";
+      // this.type=''
+      this.fileList = fileList
     },
     //弹框取消
     cancelFn() {
@@ -534,15 +543,21 @@ export default {
            // if(!this.selectAll.includes('') && this.selectAll.length==4 && count.length==4){
          if(!this.selectAll.includes('') && this.selectAll.length==2 && count.length==2){
 
-          let attachList={
+          /*let attachList={
               name:this.name,
               url:this.url,
               type:this.type,
               description:''
-          }
+          }*/
           let attachmentList=[]
           let assetList=[]
-          attachmentList.push(attachList)
+          // attachmentList.push(attachList)
+           attachmentList = this.fileList.map(item => {
+             return {
+               name: item.name,
+               url: item.url
+             }
+           }),
           assetList.push(this.info)
           let params={
             assetList,
