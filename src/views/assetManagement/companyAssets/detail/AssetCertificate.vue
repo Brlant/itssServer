@@ -221,7 +221,9 @@ export default {
         let lowerCase = url.toLowerCase()
         if (lowerCase.includes('.jpg') || lowerCase.includes('.png') || lowerCase.includes('.pdf')) {
           // this.attachmentUrl = url;
-          this.attachmentUrl = this.convertUrl(url)
+          // this.attachmentUrl = this.convertUrl(url)
+          const substringUrl = url.substring(url.indexOf('/itss') + 1, url.length)
+          this.attachmentUrl = process.env.BASE_URL + substringUrl
           this.attachmentDialog = true;
         }
       } else {
