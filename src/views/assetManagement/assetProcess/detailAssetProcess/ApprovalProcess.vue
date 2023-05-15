@@ -237,9 +237,9 @@ export default {
           const substringUrl = url.substring(url.indexOf('/itss') + 1, url.length)
           this.attachmentUrl = process.env.BASE_URL + substringUrl
           this.attachmentDialog = true;
+        } else {
+          downFile(url)
         }
-      } else {
-        downFile(url)
       }
     },
 

@@ -210,9 +210,9 @@ export default {
           // setTimeout(()=>{
           //   this.createdIframe()
           // })
+        } else {
+          downFile(url)
         }
-      } else {
-        downFile(url)
       }
     },
 

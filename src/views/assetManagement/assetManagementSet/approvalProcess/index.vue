@@ -43,22 +43,22 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <span style="margin-left: 10px">
             <el-button size="mini" type="text" @click="copy(scope.row)"
               >复制</el-button
             >
           </span>
-          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <span style="margin-left: 10px">
             <el-button size="mini" type="text" @click="edit(scope.row)"
               >编辑</el-button
             >
           </span>
-          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <span style="margin-left: 10px">
             <el-button size="mini" type="text" @click="detail(scope.row)"
               >详情</el-button
             >
           </span>
-          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <span style="margin-left: 10px">
             <el-button
               size="mini"
               type="text"
@@ -68,7 +68,7 @@
               >停用</el-button
             >
           </span>
-          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <span style="margin-left: 10px">
             <el-button
               size="mini"
               type="text"
@@ -77,7 +77,7 @@
               >启用</el-button
             >
           </span>
-          <span style="margin-left: 10px" v-hasPermi="['system:user:add']">
+          <span style="margin-left: 10px">
             <el-button size="mini" type="text" @click="del(scope.row.id, 0)"
               >删除</el-button
             >
