@@ -221,7 +221,7 @@
                 :on-change="onChange"
                 :before-remove="onRemove"
                 :file-list="fileList"
-                accept=".jpg, .png, .pdf"
+                accept=".jpg, .png, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt"
                 :auto-upload="false"
               >
                 <el-button type="info">
@@ -234,7 +234,7 @@
               :before-remove="remove"
               :file-list="fileList"
               :limit="1"
-              accept=".jpg, .png, .pdf"
+              accept=".jpg, .png, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt"
               :auto-upload="false"
             >
               <el-button type="info">
@@ -315,7 +315,7 @@
               :on-change="onChange"
               :before-remove="remove"
               :limit="1"
-              accept=".jpg, .png, .pdf"
+              accept=".jpg, .png, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt"
               :auto-upload="false"
             >
               <el-button type="info">

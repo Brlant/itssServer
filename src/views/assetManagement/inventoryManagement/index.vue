@@ -108,7 +108,7 @@
                   :before-remove="remove"
                   :file-list="fileList"
                   :limit="1"
-                  accept=".jpg, .png, .pdf"
+                  accept=".jpg, .png, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt"
                   :auto-upload="false"
                 >
                   <el-button type="info"> 上传附件 </el-button>

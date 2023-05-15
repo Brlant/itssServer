@@ -50,7 +50,7 @@
               :on-change="onChange"
               :before-remove="remove"
               :limit="1"
-              accept=".jpg, .png, .pdf"
+              accept=".jpg, .png, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt"
               :auto-upload="false"
             >
               <el-button type="info">

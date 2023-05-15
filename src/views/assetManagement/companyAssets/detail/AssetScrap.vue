@@ -41,7 +41,7 @@
           :on-change="onChange"
           :on-remove="onRemove"
           :file-list="fileList"
-          accept=".jpg, .png, .pdf"
+          accept=".jpg, .png, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt"
           :auto-upload="false"
         >
           <el-button type="info" :style="style">

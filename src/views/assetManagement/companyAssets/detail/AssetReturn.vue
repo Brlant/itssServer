@@ -16,8 +16,8 @@
       <!-- 表单开始 -->
       <el-form-item label="请输入资产数量" prop="amount">
         <div style="width:100%; display:flex; justify-content:flex-end">
-          <el-input-number 
-            v-model="formData.amount" 
+          <el-input-number
+            v-model="formData.amount"
             :min="1"
             :step="1"
             step-strictly
@@ -31,7 +31,7 @@
           :on-change="onChange"
           :on-remove="onRemove"
           :file-list="fileList"
-          accept=".jpg, .png, .pdf"
+          accept=".jpg, .png, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt"
           :auto-upload="false"
         >
           <el-button type="info" :style="style">
@@ -57,8 +57,8 @@
     </el-form>
     <!-- 表单结束 -->
     <!-- 流程开始 -->
-    <div 
-      style="cursor:pointer" 
+    <div
+      style="cursor:pointer"
       v-show="!isShow"
     >
       <span @click="isShow = true">
@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { 
+import {
   fileUpload,
   repair,
   getFlow,
@@ -154,7 +154,7 @@ export default {
         returnAsset(data).then(res => {
           this.dialogVisible = false
           this.$message.success(res.msg)
-           const obj = { 
+           const obj = {
             name: "myAssets",
             params:{
               tab: 2
