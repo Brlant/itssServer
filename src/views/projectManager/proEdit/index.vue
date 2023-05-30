@@ -386,7 +386,7 @@
                   v-model="addUserList.skillIdList"
                   multiple
                   placeholder="请选择技能需求"
-                  @change="changeTextColor($event, 'mySkillIdList')"
+                  @change="changeTextColor($event, 'mySkillIdList', addUserListindex)"
                   ref="mySkillIdList"
                   :disabled="addUserList.nextActive"
                   :style="{ width: '100%' }"
@@ -1017,14 +1017,14 @@ export default {
         });
 
         // this.formData.map(item=>{ // 之前逻辑
-        this.formData.projectUserList.map(item=>{
+        this.formData.projectUserList.map((item, index)=>{
             this.$nextTick(()=>{
-              this.changeTextColor(item.skillIdList, "mySkillIdList");
+              this.changeTextColor(item.skillIdList, "mySkillIdList", index);
            })
         })
     },
     // 选择技能之后 的变色逻辑
-    changeTextColor(listData, refName) {
+    changeTextColor(listData, refName, index) {
       if(listData.length<=0) return false
       if (!listData) return false
       // 是数组再处理
@@ -1052,6 +1052,7 @@ export default {
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
+          this.getRecommendUserHandel(index, this.formData.projectUserList[index]);
         }, 800);
       });
     },
@@ -1136,6 +1137,9 @@ export default {
           }
           console.log(`你好，我是第（${index})条资源配置，我的成本是 +${this.formData.projectUserList[index].costNum}`);
           this.constAll(this.formData.projectUserList[index].startEndTime, index,'add');
+          setTimeout(() => {
+            this.getRecommendUserHandel(index,this.formData.projectUserList[index]);
+          }, 500);
 
 
           break;
