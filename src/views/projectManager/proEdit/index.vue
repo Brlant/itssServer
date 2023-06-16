@@ -934,6 +934,27 @@ export default {
         }
       });
     },
+    //点击添加人员到 资源配置中 去 次方法要修改
+    addUserToProject(row, index) {
+      // 此处需要同样的判断 是否有id 辨别是否有id
+      // 是否有id 代表是否为 新增和 已有的资源配置
+      // 我是新增 我没有资源配置化的2级的id
+      // this.formData.projectUserList[this.nowIndex].updateType = 1
+      console.log(row);
+      // this.formData.projectUserList[this.nowIndex].userList.push(row.userId);
+      this.formData.projectUserList[index].userId = row.userId;
+      this.formData.projectUserList[index].userName = row.nickName;
+      // this.formData.projectUserList[index].nickName = row.nickName;
+      //  以上是展示
+      this.$forceUpdate();
+      // 点击添加成功后 显示取消按钮
+      this.formData.projectUserList[index].recommendUserTableData.map((item) => {
+        item.showOrCancel = 1; // 全部 显示添加
+        if (this.formData.projectUserList[index].userId === item.userId) {
+          item.showOrCancel = 2;
+        }
+      });
+    },
     init() {
       let projectId = this.$route.query.projectId;
       proDetailBFEdit(projectId).then((res) => {

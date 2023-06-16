@@ -44,9 +44,9 @@
                             <el-col :span="4" v-if="mangerJurisdiction">
                                 <el-form-item label="" align="center" justify="center">
                                  <!-- -->
-                                 <el-button 
-                                    @click="exportExcelHandel" 
-                                    type="success" 
+                                 <el-button
+                                    @click="exportExcelHandel"
+                                    type="success"
                                     :loading="btnLoading"
                                  >
                                     导出Excel
@@ -59,12 +59,27 @@
 
                 </div>
                 <div  v-if='selfJurisdiction' style="font-size:16px;color:#666666;width:30%">
-                         <el-form  inline>
-                          <el-form-item label="人员" prop="userId" width='20%'>
+                         <el-form ref="form" :model="form" label-width="20%">
+                           <el-row>
+                             <el-col :span="16">
+                               <el-form-item label="人员" prop="userId" width='30%'>
                                     <el-select v-model="form.userId"  size="medium"  placeholder="请选择人员" filterable clearable  @change='searchUser'>
                                         <el-option v-for='(item) in users' :key='item.userId' :value='item.userId' :label='item.nickName'></el-option>
                                     </el-select>
                                 </el-form-item>
+                             </el-col>
+                             <el-col :span="4">
+                               <el-form-item label="" align="center" justify="center">
+                                 <el-button
+                                     @click="exportExcelSelfHandel"
+                                     type="success"
+                                     :loading="btnLoading"
+                                 >
+                                   导出Excel
+                                 </el-button>
+                               </el-form-item>
+                             </el-col>
+                           </el-row>
                     </el-form>
                 </div>
             </div>
@@ -133,7 +148,7 @@
 
                     </el-table-column>
                     <el-table-column :label="item" align="center" v-for="(item,indexs) in months" :key='indexs'>
-                        <el-table-column label="计划负荷" align="center"   min-width='150'>
+                    <!--<el-table-column label="计划负荷" align="center"   min-width='150'>
                             <template  slot-scope="scope" v-if='scope.row.monthEfficiencyList[indexs]'>
                                 <span>{{scope.row.monthEfficiencyList[indexs].scheduleLoad+'%'}}</span><span>{{'('+scope.row.monthEfficiencyList[indexs].scheduleDay+'人日)'}}</span>
 
@@ -144,14 +159,38 @@
                                 <span :class="[workLoadStyle(row.monthEfficiencyList[indexs])]">
                                     <span>{{row.monthEfficiencyList[indexs].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[indexs].workDay+'人日)'}}</span>
                                 </span>
-                                <!-- <span  v-if='workLoadStyle(row.monthEfficiencyList[index])' class='piancha1'>
+                                &lt;!&ndash; <span  v-if='workLoadStyle(row.monthEfficiencyList[index])' class='piancha1'>
                                     <span>{{row.monthEfficiencyList[index].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].workDay+'人日)'}}</span>
                                 </span>
                                  <span  v-else>
                                     <span>{{row.monthEfficiencyList[index].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[index].workDay+'人日)'}}</span>
-                                </span>                                 -->
+                                </span>                                 &ndash;&gt;
                             </template>
-                        </el-table-column>
+                        </el-table-column>-->
+                      <el-table-column label="计划负荷(百分比)" align="center"   min-width='130'>
+                        <template  slot-scope="scope" v-if='scope.row.monthEfficiencyList[indexs]'>
+                          <span>{{scope.row.monthEfficiencyList[indexs].scheduleLoad+'%'}}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="计划负荷(人日)" align="center"   min-width='110'>
+                        <template  slot-scope="scope" v-if='scope.row.monthEfficiencyList[indexs]'>
+                          <span>{{scope.row.monthEfficiencyList[indexs].scheduleDay+'人日'}}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="实际负荷(百分比)" align="center"   min-width='130'>
+                        <template slot-scope="{row}">
+                                <span :class="[workLoadStyle(row.monthEfficiencyList[indexs])]">
+                                    <span>{{row.monthEfficiencyList[indexs].workLoad+'%'}}</span>
+                                </span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="实际负荷(人日)" align="center"   min-width='110'>
+                        <template slot-scope="{row}">
+                                <span :class="[workLoadStyle(row.monthEfficiencyList[indexs])]">
+                                  <span>{{row.monthEfficiencyList[indexs].workDay+'人日'}}</span>
+                                </span>
+                        </template>
+                      </el-table-column>
                         <!-- 新增bug重开数量/bug重开率 -->
                         <el-table-column label="bug重开数量" align="center">
                             <template slot-scope="scope">
@@ -203,7 +242,7 @@
                     </el-table-column>
                          <el-table-column :label="item" align="center" v-for="(item,indexs) in months" :key='indexs'>
 
-                         <el-table-column label="计划负荷" align="center"   min-width='150'>
+                      <!--<el-table-column label="计划负荷" align="center"   min-width='150'>
                             <template  slot-scope="{row}">
                                 <span>{{row.monthEfficiencyList[indexs].scheduleLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[indexs].scheduleDay+'人日)'}}</span>
 
@@ -215,7 +254,31 @@
                                     <span>{{row.monthEfficiencyList[indexs].workLoad+'%'}}</span><span>{{'('+row.monthEfficiencyList[indexs].workDay+'人日)'}}</span>
                                 </span>
                             </template>
-                        </el-table-column>
+                        </el-table-column>-->
+                           <el-table-column label="计划负荷(百分比)" align="center"   min-width='130'>
+                             <template  slot-scope="{row}">
+                               <span>{{row.monthEfficiencyList[indexs].scheduleLoad+'%'}}</span>
+                             </template>
+                           </el-table-column>
+                           <el-table-column label="计划负荷(人日)" align="center"   min-width='110'>
+                             <template  slot-scope="{row}">
+                               <span>{{row.monthEfficiencyList[indexs].scheduleDay+'人日'}}</span>
+                             </template>
+                           </el-table-column>
+                           <el-table-column label="实际负荷(百分比)" align="center"   min-width='130'>
+                             <template slot-scope="{row}">
+                                <span :class="[workLoadStyle(row.monthEfficiencyList[indexs])]">
+                                    <span>{{row.monthEfficiencyList[indexs].workLoad+'%'}}</span>
+                                </span>
+                             </template>
+                           </el-table-column>
+                           <el-table-column label="实际负荷(人日)" align="center"   min-width='110'>
+                             <template slot-scope="{row}">
+                                <span :class="[workLoadStyle(row.monthEfficiencyList[indexs])]">
+                                  <span>{{row.monthEfficiencyList[indexs].workDay+'人日'}}</span>
+                                </span>
+                             </template>
+                           </el-table-column>
                          <!-- 新增bug重开数量/bug重开率 -->
                         <el-table-column label="bug重开数量" align="center">
                             <template slot-scope="scope">
@@ -260,7 +323,8 @@ import {
     statJob,
     getTbConf,
     updateTbConf,
-    exportExcel
+    exportExcel,
+    exportUserExcel
 } from '@/api/proManager/efficiencyStatistics.js'
 import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
@@ -395,6 +459,44 @@ export default {
             this.btnLoading = false
         })
     },
+
+      // 导出(个人)
+      exportExcelSelfHandel() {
+        if (!this.userData.length) {
+          return this.$message.warning('暂无可导出内容')
+        }
+        this.btnLoading = true
+        let data = {
+          startDate: this.beginDate,
+          endDate: this.endDate,
+          userId: this.userId,
+          hasYieldNum: false
+        }
+        exportUserExcel(data)
+            .then(res => {
+              let blob = new Blob([res], {
+                // type:"application/vnd.ms-excel",
+                type: "application/octet-stream;charset=UTF-8",
+              });
+              console.log(blob);
+              let timeString = moment()
+                  .format("YYYYMMDDhhmmss");
+              const fileName = `效率统计${timeString}.xlsx` // 下载文件名称
+              const elink = document.createElement('a')
+              elink.download = fileName
+              elink.style.display = 'none'
+              elink.href = URL.createObjectURL(blob)
+              document.body.appendChild(elink)
+              elink.click()
+              URL.revokeObjectURL(elink.href) // 释放URL 对象
+              document.body.removeChild(elink)
+              this.btnLoading = false
+            })
+            .catch(() => {
+              this.btnLoading = false
+            })
+      },
+
         // 实时统计
         onClick() {
             if (!this.times) {

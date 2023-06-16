@@ -52,10 +52,20 @@ export function updateTbConf(query) {
   })
 }
 
-// 导出excel 
+// 导出excel
 export function exportExcel(query) {
   return request({
     url: '/efficiencyManage/efficiencyManage/exportOfficeEfficiency',
+    method: 'get',
+    responseType: 'blob',
+    params: query
+  })
+}
+
+// 导出excel (个人)
+export function exportUserExcel(query) {
+  return request({
+    url: '/efficiencyManage/efficiencyManage/exportUserEfficiency',
     method: 'get',
     responseType: 'blob',
     params: query

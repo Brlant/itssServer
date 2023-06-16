@@ -72,7 +72,7 @@
                 isShowPosts: false,
                 isDeptType: false,
                 checkStrictly: true,
-                isShowOrgStatus: false,
+                isShowOrgStatus: true,
                 isRequiredParentId: false,
                 isShowContact: false
             }
