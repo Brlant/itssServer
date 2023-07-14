@@ -5,7 +5,7 @@
          <div style='display:flex;justify-content:space-between;' v-if='mangerJurisdiction || selfJurisdiction'>
                  <div class='header'   style='width:40%' >
                     <div>
-                        <i class='el-icon-arrow-left point color2' style="margin-right:10px" v-if='selfJurisdiction && drillDowm'  @click='goBack'></i> 
+                        <i class='el-icon-arrow-left point color2' style="margin-right:10px" v-if='selfJurisdiction && drillDowm'  @click='goBack'></i>
                         <div style="font-size:16px;color:#666666;display:inline-block"><i  @click="showMorTime" class='el-icon-date point'></i><span v-if='dateRange' style="margin-left:15px;">{{dateRange}}</span></div>
                         <el-date-picker
                             class='timePickCss'
@@ -14,7 +14,7 @@
                             range-separator="至"
                             start-placeholder="开始日期"
                             end-placeholder="结束日期"
-                            ref='timePick'                  
+                            ref='timePick'
                             :clearable="false"
                             @change="pickerChange">
                         </el-date-picker>
@@ -38,9 +38,9 @@
                                 </el-form-item>
                             </el-col>
                              <el-col :span="4" align="center" justify="center">
-                                
+
                                  <el-button @click="exportExcelHandel" type="success" :loading="loading">导出Excel</el-button>
-                                  
+
                             </el-col>
                         </el-row>
                     </el-form>
@@ -69,7 +69,7 @@
                         </template>
 
                     </el-table-column>
-                     <el-table-column label="计划负荷" align="center"  min-width='150' fixed>
+                    <!--<el-table-column label="计划负荷" align="center"  min-width='150' fixed>
                         <template  slot-scope="scope">
                             {{ scope.row.planLoad }}%
                             <span class="color1">（{{ scope.row.planLoadWorkDay }}人日）</span>
@@ -97,7 +97,7 @@
                         <el-table-column label="计划负荷" align="center"   min-width='150'>
                             <template  slot-scope="scope" v-if='scope.row.workLoadUserWeekVoList[index]'>
                                 <span>{{scope.row.workLoadUserWeekVoList[index].planLoadCh+'%'}}</span><span>{{'('+scope.row.workLoadUserWeekVoList[index].planLoadWorkDayCh+'人日)'}}</span>
-                            
+
                             </template>
                         </el-table-column>
                         <el-table-column label="实际负荷" align="center"   min-width='150'>
@@ -110,15 +110,91 @@
                         <el-table-column label="空闲负荷" align="center"  min-width='150'>
                            <template  slot-scope="{row}">
                                 <span>{{row.workLoadUserWeekVoList[index].freeLoadCh+'%'}}</span><span>{{'('+row.workLoadUserWeekVoList[index].freeLoadWorkDayCh+'人日)'}}</span>
-                            
+
                             </template>
                         </el-table-column>
                     </el-table-column>
+                    </template>-->
+
+                  <el-table-column label="计划负荷(百分比)" align="center" min-width='130' fixed>
+                    <template slot-scope="scope">
+                      {{ scope.row.planLoad }}%
                     </template>
-                   
+                  </el-table-column>
+                  <el-table-column label="计划负荷(人日)" align="center" min-width='110' fixed>
+                    <template slot-scope="scope">
+                      <span class="color1">{{ scope.row.planLoadWorkDay }}人日</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="实际负荷(百分比)" align="center" min-width='130' fixed>
+                    <template slot-scope="scope">
+                      <span :class="['loadType' + scope.row.loadType]">
+                        {{ scope.row.realLoad + "%" }}
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="实际负荷(人日)" align="center" min-width='110' fixed>
+                    <template slot-scope="scope">
+                      <span :class="['loadType' + scope.row.loadType]">
+                        {{ scope.row.realLoadWorkDay + "人日" }}
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="空闲负荷(百分比)" align="center" min-width='130' fixed>
+                    <template slot-scope="scope">
+                      <span :class="['loadType' + scope.row.loadType]">
+                        {{ scope.row.freeLoad + "%" }}
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="空闲负荷(人日)" align="center" min-width='110' fixed>
+                    <template slot-scope="scope">
+                      <span :class="['loadType' + scope.row.loadType]">
+                        {{ scope.row.freeLoadWorkDay + "人日" }}
+                      </span>
+                    </template>
+                  </el-table-column>
+                  <template v-if='i.workLoadUserVoList&&i.workLoadUserVoList.length>0'>
+                    <el-table-column :label="item" align="center" v-for="(item,index) in months" :key='index'>
+                      <el-table-column label="计划负荷(百分比)" align="center" min-width='130'>
+                        <template slot-scope="scope" v-if='scope.row.workLoadUserWeekVoList[index]'>
+                          <span>{{ scope.row.workLoadUserWeekVoList[index].planLoadCh + '%' }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="计划负荷(人日)" align="center" min-width='110'>
+                        <template slot-scope="scope" v-if='scope.row.workLoadUserWeekVoList[index]'>
+                          <span>{{ scope.row.workLoadUserWeekVoList[index].planLoadWorkDayCh + '人日' }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="实际负荷(百分比)" align="center" min-width='130'>
+                        <template slot-scope="{row}">
+                          <span :class="[workLoadStyle(row.workLoadUserWeekVoList[index])]">
+                            <span>{{ row.workLoadUserWeekVoList[index].realLoadCh + '%' }}</span>
+                          </span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="实际负荷(人日)" align="center" min-width='110'>
+                        <template slot-scope="{row}">
+                          <span :class="[workLoadStyle(row.workLoadUserWeekVoList[index])]">
+                            <span>{{ row.workLoadUserWeekVoList[index].realLoadWorkDayCh + '人日' }}</span>
+                          </span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="空闲负荷(百分比)" align="center" min-width='130'>
+                        <template slot-scope="{row}">
+                          <span>{{ row.workLoadUserWeekVoList[index].freeLoadCh + '%' }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="空闲负荷(人日)" align="center" min-width='110'>
+                        <template slot-scope="{row}">
+                          <span>{{ row.workLoadUserWeekVoList[index].freeLoadWorkDayCh + '人日' }}</span>
+                        </template>
+                      </el-table-column>
+                    </el-table-column>
+                  </template>
                 </el-table>
             </div>
-           
+
         </div>
         <!-- 个人效率 -->
         <div v-if='selfJurisdiction'>
@@ -137,17 +213,17 @@
                     </el-table-column>
                      <el-table-column label="项目状态" align="center"   min-width='150' prop='projectStatus' fixed>
                          <template slot-scope="scope">
-                            <span :class="[scope.row.projectStatus== 4 ? 'color4' : '']">{{ scope.row.projectStatus | filterProjectStatus }}</span>        
+                            <span :class="[scope.row.projectStatus== 4 ? 'color4' : '']">{{ scope.row.projectStatus | filterProjectStatus }}</span>
                         </template>
 
                     </el-table-column>
-                    <template v-if='userData.workUserProjectVoList'>
+                    <!--<template v-if='userData.workUserProjectVoList'>
                            <el-table-column :label="item" align="center" v-for="(item,index) in months" :key='index'>
 
                          <el-table-column label="计划" align="center"   min-width='150'>
                             <template  slot-scope="{row}">
                                 <span>{{row.workUserProjectWeekVoList[index].planLoadCh+'%'}}</span><span>{{'('+row.workUserProjectWeekVoList[index].planLoadWorkDayCh+'人日)'}}</span>
-                            
+
                             </template>
                         </el-table-column>
                         <el-table-column label="实际" align="center"   min-width='150'>
@@ -158,8 +234,37 @@
                             </template>
                         </el-table-column>
                     </el-table-column>
-                    </template>
-                 
+                    </template>-->
+
+                  <template v-if='userData.workUserProjectVoList'>
+                    <el-table-column :label="item" align="center" v-for="(item,index) in months" :key='index'>
+                      <el-table-column label="计划(百分比)" align="center" min-width='130'>
+                        <template slot-scope="{row}">
+                          <span>{{ row.workUserProjectWeekVoList[index].planLoadCh + '%' }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="计划(人日)" align="center" min-width='110'>
+                        <template slot-scope="{row}">
+                          <span>{{ row.workUserProjectWeekVoList[index].planLoadWorkDayCh + '人日' }}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="实际(百分比)" align="center" min-width='130'>
+                        <template slot-scope="{row}">
+                          <span :class="[workLoadStyle(row.workUserProjectWeekVoList[index])]">
+                            <span>{{ row.workUserProjectWeekVoList[index].realLoadCh + '%' }}</span>
+                          </span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="实际(人日)" align="center" min-width='110'>
+                        <template slot-scope="{row}">
+                          <span :class="[workLoadStyle(row.workUserProjectWeekVoList[index])]">
+                            <span>{{ row.workUserProjectWeekVoList[index].realLoadWorkDayCh + '人日' }}</span>
+                          </span>
+                        </template>
+                      </el-table-column>
+                    </el-table-column>
+                  </template>
+
                 </el-table>
             </div>
         </div>
@@ -169,7 +274,7 @@
 <script>
 import moment from "moment";
 import "moment/locale/zh-cn";
-import { 
+import {
     departmentQuery,
     userQuery,
     queryUserlist,
@@ -215,18 +320,18 @@ export default {
             loading2: false
         }
     },
-    created(){       
-        console.log(this.$store.state.user.user.userId)    
-        // this.queryUser() 
-        // this.getDeptTree()   
-        // this.drillDowm=this.isJurisdiction('common') ? false : true      
+    created(){
+        console.log(this.$store.state.user.user.userId)
+        // this.queryUser()
+        // this.getDeptTree()
+        // this.drillDowm=this.isJurisdiction('common') ? false : true
         // this.selfJurisdiction=this.isJurisdiction('common')
         // this.mangerJurisdiction=this.isJurisdiction('deptdirector') || this.isJurisdiction('operatemanage') || this.isJurisdiction('admin')
         if(this.isJurisdiction('workloadStatistics:stat:dept') || this.isJurisdiction('workloadStatistics:stat:all')){
             this.mangerJurisdiction=true
             this.drillDowm=true
             // 普通角色不调用以下2个接口，否则会报无权限
-            this.queryUser() 
+            this.queryUser()
             this.getDeptTree()
         }else if(this.isJurisdiction('workloadStatistics:stat:self')){
             this.drillDowm=false
@@ -235,7 +340,7 @@ export default {
         //   this.mangerJurisdiction=this.isJurisdiction('admin') || this.isJurisdiction('operatemanage')
         this.defaultDate()
     },
-    methods:{  
+    methods:{
         // 导出-部门
     exportExcelHandel(){
     //   if(this.searchForm.projectStartEndTime){
@@ -267,7 +372,7 @@ export default {
     //         URL.revokeObjectURL(elink.href) // 释放URL 对象
     //         document.body.removeChild(elink)
     //       this.$message.success("导出成功！");
-         
+
     //     });
         // /projectManage/project/export
         if (!this.tableData.length) {
@@ -327,7 +432,7 @@ export default {
       // console.log(row.column)
       // if(row.column.property=='total')
       return "proUserList";
-    }, 
+    },
         workLoadStyle(data){
             if(data.planLoadCh<data.realLoadCh){
                 return 'piancha2'
@@ -356,11 +461,11 @@ export default {
             this.dateRange=`${preOne}-${today}`
             this.beginDate=moment(preOne).format('YYYY-MM-DD')
             this.endDate=moment(today,'YYYY/MM/DD').format('YYYY-MM-DD')
-            this.userInfo=this.$store.state.user.user          
+            this.userInfo=this.$store.state.user.user
            if(this.mangerJurisdiction){
             this.queryTable()
            }else if(this.selfJurisdiction && this.drillDowm){
-           
+
             this.userId=this.form.userId
             this.queryTableBySelf()
            }else{
@@ -374,7 +479,7 @@ export default {
             this.$refs.timePick.$refs.reference.childNodes[3].focus()
         },
         //选择时间调用
-        pickerChange(val){   
+        pickerChange(val){
             let value=[]
                 val.forEach(v=>{
                     value.push(moment(v).format('YYYY/MM/DD'))
@@ -386,7 +491,7 @@ export default {
             // }
             this.beginDate=moment(val[0]).format('YYYY-MM-DD')
             this.endDate=moment(val[1]).format('YYYY-MM-DD')
-            if(this.mangerJurisdiction){            
+            if(this.mangerJurisdiction){
             this.queryTable()
 
             }else if(this.selfJurisdiction && this.drillDowm){
@@ -394,7 +499,7 @@ export default {
            }else {
                this.userId=this.userInfo.userId
                 this.queryTableBySelf()
-           }           
+           }
         },
         //通过人员搜索
         searchUser(){
@@ -403,7 +508,7 @@ export default {
             }else{
                this.userId=this.form.userId
                 this.queryTableBySelf()
-            }           
+            }
         },
         //通过部门搜索
         searchDept(){
@@ -425,7 +530,7 @@ export default {
                     console.log('查询参数', this.data)
 
                     if(res.data){
-                       
+
                         this.deptData=res.data
                         this.tableData = res.data
 
@@ -434,17 +539,17 @@ export default {
                             if(value1){
                                 let value2 = value1.workLoadUserVoList.find(item => item.workLoadUserWeekVoList.length)
                                 if (value2.workLoadUserWeekVoList) {
-                                    value2.workLoadUserWeekVoList.forEach((v,i)=>{  
+                                    value2.workLoadUserWeekVoList.forEach((v,i)=>{
                                     let startTime=moment(v.startTime,'YYYY-MM-DD').format('YYYY/MM/DD')
                                     let endTime=moment(v.endTime,'YYYY-MM-DD').format('YYYY/MM/DD')
                                     let time=`${v.weekMonth}月-${v.week}周（${startTime}-${endTime}）`
-                                    this.months.push(time)   
+                                    this.months.push(time)
                                      })
                                 }
                             }
-                        }                      
+                        }
                     }
-                }              
+                }
             })
         },
         //查询个人效率表格方法
@@ -468,26 +573,26 @@ export default {
                         if(res.data){
                             if(res.data.workUserProjectVoList.length>0){
                                  let monthDate=res.data.workUserProjectVoList[0].workUserProjectWeekVoList
-                                monthDate.forEach((v,i)=>{  
+                                monthDate.forEach((v,i)=>{
                                       let startTime=moment(v.startTime,'YYYY-MM-DD').format('YYYY/MM/DD')
                                     let endTime=moment(v.endTime,'YYYY-MM-DD').format('YYYY/MM/DD')
-                                    let time=`${v.weekMonth}月-${v.week}周（${startTime}-${endTime}）` 
-                                    this.months.push(time)   
+                                    let time=`${v.weekMonth}月-${v.week}周（${startTime}-${endTime}）`
+                                    this.months.push(time)
                             })
                             }
-                           
+
                         }
-                       
+
                     }
                 }
-              
+
             })
         },
         //下钻
         nameClick(val){
             console.log(val)
             this.form.userId=''
-            if(val.userName == '总计'){ 
+            if(val.userName == '总计'){
                 return;
             }
             this.selfJurisdiction=true
@@ -521,7 +626,7 @@ export default {
             }
         }
 
-   
+
     }
 }
 </script>
@@ -619,7 +724,7 @@ box-sizing: content-box !important;
  .tableData .el-table__fixed .el-table__fixed-body-wrapper{
   padding: 5px 0;
  }
- 
+
  .proUserList {
   height: 20px !important;
    padding: 2px 0 !important;
