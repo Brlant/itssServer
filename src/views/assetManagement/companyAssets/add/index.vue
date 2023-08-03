@@ -116,7 +116,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="span">
-              <el-form-item label="税后价格:" prop="afterTaxPrice">
+              <el-form-item label="资产原值:" prop="afterTaxPrice">
                 <el-input v-model.trim="formData.afterTaxPrice" :style="style" />
               </el-form-item>
             </el-col>
@@ -270,7 +270,7 @@ export default {
           { required: true, trigger: 'blur', message: '请输入资产名称' }
         ],
         afterTaxPrice: [
-          { validator: checkNumber, trigger: 'blur' }
+          { required: true, validator: checkNumber, trigger: 'blur' }
         ],
         amount: [
           { required: true, trigger: 'blur', message: '请输入数量' },

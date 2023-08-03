@@ -101,11 +101,22 @@
           </el-col>
         </el-row> -->
           <div class="select">
-            <span
+            <!--<span
               v-for="(data, index) in form.flowInfoVoList"
               :key="index"
               :class="[{ current: n == data.flowTypeId }]"
               @click="checkSelect(data, data.flowTypeId)"
+            >
+              {{ data.flowTypeName }}
+              <span v-if="index < form.flowInfoVoList.length - 1">|</span>
+            </span>-->
+            <!-- 现无需展示盘点流程，盘点流程flowTypeId为8 -->
+            <span
+                v-for="(data, index) in form.flowInfoVoList"
+                :key="index"
+                v-if="data.flowTypeId != '8'"
+                :class="[{ current: n == data.flowTypeId }]"
+                @click="checkSelect(data, data.flowTypeId)"
             >
               {{ data.flowTypeName }}
               <span v-if="index < form.flowInfoVoList.length - 1">|</span>

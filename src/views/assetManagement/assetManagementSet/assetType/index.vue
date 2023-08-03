@@ -233,6 +233,22 @@
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="24">
+            <el-form-item label="上级分类" prop="parentId">
+              <el-cascader
+                  v-model="diaForm.parentId"
+                  :options="typeOptions"
+                  @change="change"
+                  ref="assetCas"
+                  :props="{ label: 'typeName', value: 'id', checkStrictly: true, emitPath: false }"
+                  :show-all-levels="false"
+                  clearable
+                  :style="style"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item label="序列编号" prop="typeNo">
               <el-input
@@ -416,7 +432,8 @@ export default {
         flowGroupId:'',
         hasMaintainExpire:'',
         hasUserfulExpire:'',
-        hasCertificate:''
+        hasCertificate:'',
+        parentId: null,
       },
       n: -1,
       total: 0,
@@ -504,7 +521,10 @@ export default {
           },
         ],
       },
-      isLoading:false
+      isLoading:false,
+      asset: [],
+      style: {width: '100%'},
+      parentIdList: [],
     };
   },
   watch: {
@@ -534,7 +554,7 @@ export default {
       // console.log(this.$refs.tree,'this.$refs.tree')
       this.$refs.trees.setCurrentKey(this.curren)
 
-      this.$nextTick(function () {
+      this.$nextTick(()=> {
         console.log(this.curren,'gggggggggg')
         this.$refs.trees.setCurrentKey(this.curren); //data[0].id为默认选中的节点
       });
@@ -625,8 +645,9 @@ export default {
         flowGroupId:'',
         hasMaintainExpire:'',
         hasUserfulExpire:'',
-        hasCertificate:''
-      },
+        hasCertificate:'',
+        parentId: this.parentId || null
+      }
       this.addEdit = true;
       this.isEdit = false;
       this.title='新增分类'
@@ -669,7 +690,9 @@ export default {
     handleClickOutside(){
       console.log("hhhhhhh")
       this.parentId = null
-      this.$refs.trees.setCurrentKey()
+      this.$nextTick(() => {
+        this.$refs.trees.setCurrentKey()
+      })
       this.curren = '';
       this.n = -1;
       this.isshow = false;
@@ -679,7 +702,7 @@ export default {
     newAdd() {
       let data = {
         ...this.diaForm,
-        parentId: this.parentId,
+        // parentId: this.parentId,
         hasDepreciation: (this.diaForm.manageType == 1 || !this.diaForm.hasDepreciation) ? 0 : this.diaForm.hasDepreciation
       };
       // console.log(data, "dddddddddddddd");
@@ -775,6 +798,31 @@ export default {
     cancelFn() {
       this.addEdit = false;
     },
+
+    // 改变上级分类
+    change(val) {
+      this.parentIdList = []
+      if (val) {
+        this.recursive(val,this.typeOptions)
+        let parentId = this.parentIdList.find(item=>item.id == val)?.parentId;
+        this.hasHidden = (parentId == 0) ? true : false;
+      } else {
+        this.hasHidden = true;
+      }
+    },
+
+    recursive(id, list) {
+      list.map(item => {
+        if (item.id == id) {
+          this.parentIdList.push(item)
+          return
+        } else if (item.children) {
+          this.recursive(id, item.children)
+        }
+        return
+      })
+      return
+    }
   },
 };
 </script>

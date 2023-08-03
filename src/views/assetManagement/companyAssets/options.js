@@ -13,7 +13,9 @@ export const tabOptions = [
     type: 'specialStatus'
   },
   {
-    label: '闲置中',
+    // label: '闲置中',
+    // 2023/06/30 v1.1版本
+    label: '在库',
     name: 2,
     value: 1,
     type: 'status'
@@ -71,7 +73,9 @@ export const tabOptions = [
 
 export const detailInformation = [
   {
-    label: "税前价格",
+    // label: "税前价格",
+    // 2023/06/30 v1.1版本
+    label: "购入价格(含税)",
     name: "preTaxPrice",
     value: "",
     status: "preTaxPriceFlag",

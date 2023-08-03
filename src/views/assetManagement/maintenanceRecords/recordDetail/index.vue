@@ -192,7 +192,9 @@ export default {
       }
       if (row.status !== null) {
         if (row.status == 1) {
-          res = '闲置中'
+          // res = '闲置中'
+          // 2023/06/30 v1.1版本
+          res = '在库'
           return res
         } else if (row.status === 7) {
           if (row.isApplying === 0) {

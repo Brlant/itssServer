@@ -63,10 +63,16 @@
         label="数量"
         prop="amount"
       />
-      <el-table-column
+      <!--<el-table-column
         align="center"
         label="原值"
         prop="afterTaxPrice"
+      />-->
+      <!--2023/06/30 v1.1版本-->
+      <el-table-column
+          align="center"
+          label="资产原值"
+          prop="afterTaxPrice"
       />
       <el-table-column
         align="center"
@@ -193,7 +199,8 @@ export default {
           assetTypeId:row.assetTypeId,
           departmentId:row.departmentId,
           tabFlag: this.flag,
-          from: 'companyAssets'
+          from: 'companyAssets',
+          statusCode: row.status
         }
       })
     },

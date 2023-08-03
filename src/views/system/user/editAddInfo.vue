@@ -258,6 +258,7 @@
                     v-model="formData.roleIds"
                     multiple
                     placeholder="请选择角色"
+                    @change="changeRoleId"
                   >
                     <el-option
                       v-for="item in roleOptions"
@@ -271,6 +272,15 @@
                 </el-form-item>
               </el-col>
             </el-row>
+            <el-row>
+            <el-col :span="12">
+              <el-form-item label="资产可查看范围" prop="confValueAssetScope">
+                <el-radio-group v-model="formData.confValueAssetScope">
+                  <el-radio v-for="item in confValueAssetScopeList" :label="item.dictValue">{{ item.dictLabel }}</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
         </div>
          </el-form>
@@ -311,6 +321,7 @@ import {
   levelList,
   updateUser,
   userDetail,
+  queryDict
 } from "@/api/system/user";
 import SkillSelect from "@/components/SkillSelect/index";
 import { treeselect, queryChildDepts } from "@/api/system/dept";
@@ -351,6 +362,8 @@ export default {
         skillIds: [],
         orgId: null,
         gitAccount:'',
+        // 资产可查看范围：默认为本人
+        confValueAssetScope: '1',
       },
       areas: [],
       typeList: [],
@@ -384,6 +397,7 @@ export default {
       currentNode: {},
 
       submitLoading: false,
+      confValueAssetScopeList: []
     };
   },
   created() {
@@ -409,6 +423,7 @@ export default {
     }
 
     this.currentNode = this.$route.query.currentNode
+    this.getDictList();
   },
   mounted() {
     // 表单数据回显
@@ -832,6 +847,33 @@ export default {
       }
 
     },
+
+    // 改变系统角色时
+    changeRoleId(val) {
+      let roleNameList = []
+      val.map(item => {
+        const roleName = this.roleOptions.find(role => role.roleId == item)?.roleName;
+        if (roleName) {
+          roleNameList.push(roleName)
+        }
+      })
+      // 资产可查看范围：单选，默认为本人。资产管理部门主管在配置权限时选择：本部门及下级部门；资产管理主管配置全部。
+      if (roleNameList.includes('资产管理主管')) {
+        this.formData.confValueAssetScope = '0';
+      } else if (roleNameList.includes('资产管理部门主管')) {
+        this.formData.confValueAssetScope = '2';
+      } else {
+        this.formData.confValueAssetScope = '1';
+      }
+    },
+
+    /*查询字典的接口*/
+    getDictList() {
+      queryDict("confTypeAssetScope").then((res) => {
+        this.confValueAssetScopeList = res.data;
+      });
+    },
+
   },
 };
 </script>

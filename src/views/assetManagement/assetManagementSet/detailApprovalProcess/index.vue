@@ -37,7 +37,7 @@
             </el-col>
           </el-row>
         </div>
-        
+
 
         <!-- <el-form-item label="审批异常处理" prop="nickName">
           <el-row>
@@ -69,14 +69,23 @@
           </el-col>
         </el-row> -->
           <div class="select">
-          <span  v-for="(data,index) in form.flowInfoVoList" 
-          :key='index' 
-          :class="[{ current: n == index }]" 
+          <!--<span  v-for="(data,index) in form.flowInfoVoList"
+          :key='index'
+          :class="[{ current: n == index }]"
           @click="checkSelect(data,index)">
             {{data.flowTypeName}}
             <span v-if='index<form.flowInfoVoList.length-1'>|</span>
+          </span>-->
+            <!-- 现无需展示盘点流程，盘点流程flowTypeId为8 -->
+            <span  v-for="(data,index) in form.flowInfoVoList"
+                   :key='index'
+                   :class="[{ current: n == index }]"
+                   v-if="data.flowTypeId != '8'"
+                   @click="checkSelect(data,index)">
+              {{data.flowTypeName}}
+            <span v-if='index<form.flowInfoVoList.length-1'>|</span>
           </span>
-          
+
         </div>
         <div style='background:#ffffff;'>
           <div v-for='(item,index) in FlowConfigList' :key="index" style='width:30%;display:inline-block'>
@@ -95,8 +104,8 @@
             </el-row> -->
           </div>
         </div>
-    
-       
+
+
       </el-form>
     </div>
   </div>
@@ -201,7 +210,7 @@ export default {
                console.log( item.list,'this.FlowConfigthis.FlowConfigthis.FlowConfig')
         })
          console.log(this.FlowConfigList,'this.FlowConfigList')
-       
+
       })
     },
     //停用启用

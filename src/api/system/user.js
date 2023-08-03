@@ -283,3 +283,12 @@ export function queryGrantUserlist(data) {
     data: data
   })
 }
+
+// 字典查询 传入字典名称
+export function queryDict(dictType) {
+  return request({
+    url: '/system/dict/data/type/'+ dictType,
+    method: 'get',
+    // params: query
+  })
+}

@@ -113,7 +113,7 @@
                 <el-input v-model.trim="formData.model" :style="style" />
               </el-form-item>
             </el-col>
-            <el-col :span="span">
+            <!--<el-col :span="span">
               <el-form-item label="归属部门:" prop="departmentId">
                 <treeselect
                   v-model="formData.departmentId"
@@ -123,6 +123,30 @@
                   :show-count="true"
                   placeholder="请选择"
                 />
+              </el-form-item>
+            </el-col>-->
+            <el-col :span="span">
+              <el-form-item label="归属部门:" prop="departmentIds">
+                <treeselect
+                    class="custom-treeselect"
+                    v-model="formData.departmentIds"
+                    :multiple="true"
+                    :options="dept"
+                    :normalizer="normalizer"
+                    ref="deptTree"
+                    :show-count="true"
+                    placeholder="请选择"
+                    @input="handleInput"
+                    @select="handleSelect"
+                    @deselect="handleDeSelect"
+                >
+                  <div slot="option-label" slot-scope="{ node }" style="white-space: nowrap; font-size: 14px">
+                    {{ node.raw.label ? node.raw.label : '' }}
+                  </div>
+                  <div slot="value-label" slot-scope="{ node, index }">
+                    {{node.raw.label ? node.raw.label + ';' : '' }}
+                  </div>
+                </treeselect>
               </el-form-item>
             </el-col>
             <el-col :span="span">
@@ -191,7 +215,7 @@
       </div>
       <div class="specific">
         <div class="item">
-          <span class="label">税后价格</span>
+          <span class="label">资产原值</span>
           <span class="value">
             {{ calcData.afterTaxPriceTotal }}
           </span>
@@ -410,7 +434,10 @@ export default {
       percentage: 0,
       progressLoading: false,
 
-      exportLoading: false
+      exportLoading: false,
+
+      // 选中的归属部门的子集
+      selectDepartment: []
     }
   },
   created() {
@@ -481,9 +508,20 @@ export default {
     // 表格数据
     getTableData() {
       this.$refs.table.startLoading()
+      let department = this.formData.departmentIds;
+      let departmentIds = []
+      if (department) {
+        departmentIds = [
+          ...new Set([
+            ...department,
+            ...this.selectDepartment
+          ])
+        ];
+      }
       // 传参数据的一些处理
       let data = {
-        ...this.formData
+        ...this.formData,
+        departmentIds: departmentIds
       }
       if (data.purchasingDate) {
         data.purchasingDateStart = data.purchasingDate[0]
@@ -724,6 +762,41 @@ export default {
       }).catch(()=>{
         this.exportLoading = false
       })
+    },
+
+    // 归属部门值修改
+    handleInput(node) {
+      if (node.length == 0) {
+        this.selectDepartment = []
+      }
+    },
+
+    // 选择归属部门
+    handleSelect(selectedNode) {
+      let selectDepartment = this.selectDepartment
+      if (selectedNode.children) {
+        const childIds = selectedNode.children.map((childNode) => childNode.id);
+        selectDepartment.push(...childIds)
+      } else {
+        selectDepartment.push(selectedNode.id)
+      }
+      this.selectDepartment = [...new Set(selectDepartment)];
+    },
+
+    // 移除归属部门
+    handleDeSelect(deSelectedNode) {
+      let selectDepartment = this.selectDepartment
+      if (deSelectedNode.children) {
+        const childIds = deSelectedNode.children.map((childNode) => childNode.id);
+        selectDepartment = selectDepartment.filter(items => {
+          if (!childIds.includes(items)) {
+            return items;
+          }
+        })
+      } else {
+        selectDepartment = selectDepartment.filter(item => item !== deSelectedNode.id);
+      }
+      this.selectDepartment = [...new Set(selectDepartment)];
     }
 
   }
@@ -832,5 +905,44 @@ export default {
   .h450 {
     height: 450px;
   }
+}
+
+::v-deep .custom-treeselect {
+  .vue-treeselect__value-container {
+    width: calc(100% - 50px);
+  }
+
+  .vue-treeselect__multi-value {
+    padding: 0 5px;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    -webkit-line-clamp: 1;
+  }
+
+  .vue-treeselect__multi-value-item-container {
+    padding-right: 0;
+
+    .vue-treeselect__multi-value-item {
+      cursor: auto;
+      display: inline-table;
+      background: transparent;
+      padding: 2px 0;
+      border: none;
+      color: #606266;
+      font-size: 12px;
+      vertical-align: top;
+
+      .vue-treeselect__multi-value-label {
+        padding: 0;
+      }
+
+      .vue-treeselect__value-remove {
+        display: none;
+      }
+    }
+  }
+
 }
 </style>
