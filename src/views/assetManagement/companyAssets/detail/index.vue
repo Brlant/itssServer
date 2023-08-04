@@ -21,6 +21,10 @@
         <div class="item" v-if="showEntry">
           <span @click="goEdit">编辑</span>
         </div>
+        <!--    2023/06/30 v1.1版本 已入库的资产增加编辑功能    -->
+        <div class="item" v-if="!showEntry && statusCode != 7">
+          <span v-hasPermi="['companyAssets:warehoused:edit']"  @click="goWarehousedEdit">编辑</span>
+        </div>
         <div class="item">
           <span @click="printCode">打印条码</span>
         </div>
@@ -358,6 +362,7 @@ export default {
       isApplying: this.$route.query.isApplying,
       manageType: this.$route.query.manageType,
       from: this.$route.query.from,
+      statusCode: this.$route.query.statusCode,
       info: {},
       list: [],
       scaleVal: 100, // 流程图缩放比例 100%
@@ -658,6 +663,17 @@ export default {
         },
       });
     },
+
+    // 进入已入库编辑
+    goWarehousedEdit() {
+      this.$router.push({
+        path: "/assetManagement/companyAssets/companyAssets-auth/warehousedEdit",
+        query: {
+          id: this.id,
+        },
+      });
+    },
+
     // 打印条码
     printCode() {
       Print(this.$refs.qrcodeLarge)

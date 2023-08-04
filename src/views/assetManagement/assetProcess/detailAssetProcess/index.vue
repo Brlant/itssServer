@@ -1,3 +1,4 @@
+<!--公司资产流程详情-->
 <template>
   <div class="wrap">
     <header style='min-height:56px;'>
@@ -184,7 +185,7 @@
     <!-- 同意 -->
      <el-dialog
      destroy-on-close
-      title="审批同意"
+      :title="purchaseSure ? '采购确认' : '审批同意'"
       class="dialogForm"
       width="50%"
       :visible.sync="agreeShow"
@@ -213,6 +214,20 @@
           </div>
         </div>
       </div>
+        <!--   采购确认     -->
+        <div v-if='purchaseSure'>
+          <div class='sure-title'><span style='color:red'>*</span>确认信息</div>
+          <div class='list-style'>
+            <div
+                v-for="(item, index) in purchaseSureList"
+                :key="index"
+                :class="['div-style', { current: purchaseSelectAll.includes(index) },{noSelect:!purchaseSelectAllCopy.includes(index)}]"
+                @click='purchaseSelect(index)'
+            >
+              {{ item.label }}
+            </div>
+          </div>
+        </div>
         <el-row>
           <el-col :span="24">
             <el-form-item label="附件上传" prop="url">
@@ -517,6 +532,16 @@ export default {
       submitLoading: false,
       restart: false,
       fileList: [],
+      // 采购确认
+      purchaseSure: false,
+      purchaseSureList: [
+        {
+          label: "采购确认",
+          value: 0,
+        },
+      ],
+      purchaseSelectAll:[],
+      purchaseSelectAllCopy:[0],
     }
   },
   watch: {
@@ -745,7 +770,20 @@ export default {
                   //未全选中，将this.selectAll赋值给this.selectAllCopy，判断四个按钮是的出现红色阴影提示
                   this.selectAllCopy=JSON.parse(JSON.stringify(this.selectAll))
                  }
-          }else{
+          } else if (this.purchaseSure) { // 采购确认
+              let count = []
+              this.purchaseSelectAll.forEach((i, index) => {
+                count.push(i)
+              })
+              //判断确认信息的按钮有没有全都选中
+              if (!this.purchaseSelectAll.includes('') && this.purchaseSelectAll.length == 1 && count.length == 1) {
+                //全都选中则直接调用接口
+                this.uploadAttachment(this.uploadData)
+              } else {
+                // 未全选中，未选中的出现红色阴影提示
+                this.purchaseSelectAllCopy = JSON.parse(JSON.stringify(this.purchaseSelectAll))
+              }
+            }  else {
              // this.attribute！='userconfirmation'时，'确认信息'的四个按钮不显示
             this.uploadAttachment(this.uploadData)
           }
@@ -867,7 +905,9 @@ export default {
       }
       if (row.status !== null) {
         if (row.status == 1) {
-          res = '闲置中'
+          // res = '闲置中'
+          // 2023/06/30 v1.1版本
+          res = '在库'
           return res
         } else if (row.status === 7) {
           if (row.isApplying === 0) {
@@ -989,6 +1029,22 @@ export default {
       }).catch(() => {
         this.submitLoading = false
       })
+    },
+
+    // 采购确认选中
+    purchaseSelect(index) {
+      console.log(this.purchaseSelectAll, 'selectAll')
+      let n = index
+      this.$nextTick(() => {
+        if (this.purchaseSelectAll.includes(n)) {
+          this.purchaseSelectAll[n] = ''
+        } else {
+          this.purchaseSelectAll[n] = n
+        }
+      })
+      this.purchaseSelectAllCopy = [0]
+      this.$forceUpdate()
+      console.log(this.purchaseSelectAllCopy, 'this.selectAll')
     },
   }
 }

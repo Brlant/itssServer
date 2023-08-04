@@ -458,6 +458,12 @@ export const dynamicRoutes = [
         meta: { title: '编辑资产', noCache:false  }
       },
       {
+        path: 'warehousedEdit',
+        component: () => import('@/views/assetManagement/companyAssets/edit/warehousedEdit'),
+        name: 'companyAssetsWarehousedEdit',
+        meta: { title: '编辑资产', noCache:false  }
+      },
+      {
         path: 'detail',
         component: () => import('@/views/assetManagement/companyAssets/detail/index'),
         name: 'companyAssetsDetail',

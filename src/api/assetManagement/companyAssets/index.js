@@ -203,3 +203,20 @@ export function exportAsset(data) {
     data
   })
 }
+
+export function initiateUpdate(data) {
+  return request({
+    url: `/asset/approvalProcess/initiateUpdate`,
+    method: 'post',
+    data
+  })
+}
+
+// 发起采购流程
+export function purchaseInitiate(data) {
+  return request({
+    url: `/asset/approvalProcess/purchaseInitiate`,
+    method: 'post',
+    data
+  })
+}

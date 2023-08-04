@@ -150,6 +150,9 @@
           <span class="bar"></span>
           <b>可分配资产</b>
         </div>
+        <div class="right">
+          <el-button v-if="isPurchase" type="primary" @click="purchaseRequisition">申请采购</el-button>
+        </div>
       </div>
       <!-- 表格部分 -->
       <el-table
@@ -229,6 +232,93 @@
       :customVar="CUSTOM_VAR"
       ref="dialog"
     />
+    <!--  采购申请弹窗  -->
+    <el-dialog
+        v-if="purchaseDialog"
+        title="采购申请"
+        :visible.sync="purchaseDialog"
+        center
+        width="30%"
+        destroy-on-close
+        :close-on-press-escape="false"
+        :close-on-click-modal="false"
+    >
+      <!-- 表单开始 -->
+      <el-form ref="purchaseForm" :model="purchaseForm" :rules="purchaseRules" label-width="85px" v-show="isShow">
+        <el-form-item label="资产类型:" prop="assetTypeId">
+          <el-cascader
+              v-model="purchaseForm.assetTypeId"
+              :options="asset"
+              @change="change"
+              ref="assetCas"
+              :props="{ label: 'typeName', value: 'id' }"
+              clearable
+              :style="style"
+          />
+        </el-form-item>
+        <el-form-item label="名称:" prop="assetName">
+          <el-input v-model="purchaseForm.assetName" show-word-limit maxlength="50"></el-input>
+        </el-form-item>
+        <el-form-item label="数量:" prop="amount">
+          <el-input-number
+              v-model.number="purchaseForm.amount"
+              :min="1"
+              :step="1"
+              :disabled="manageType === 2"
+              step-strictly/>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input type="textarea" v-model="purchaseForm.remark" show-word-limit maxlength="150">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="附件:" prop="url">
+          <el-upload
+              action
+              :on-change="onChange"
+              :before-remove="onRemove"
+              :file-list="fileList"
+              accept=".jpg, .png, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt"
+              :auto-upload="false"
+          >
+            <el-button type="primary" size="mini">
+              上传附件
+            </el-button>
+          </el-upload>
+        </el-form-item>
+        <el-button type="text" @click="viewFlow">
+          <span style="text-decoration: underline">
+            审批流程查看
+          </span>
+        </el-button>
+      </el-form>
+      <!-- 表单结束 -->
+      <!-- 流程开始 -->
+      <div
+          style="cursor:pointer"
+          v-show="!isShow"
+      >
+      <span @click="isShow = true">
+        <i class="el-icon-arrow-left"></i>
+        返回
+      </span>
+        <div class="flow-wrap">
+          <factory-draw-flow
+              :FlowConfig="flowList"
+              modelType="see"
+              ref="flow"
+          />
+        </div>
+      </div>
+      <!-- 流程结束 -->
+      <div class="txtAlignC dialogBtnInfo">
+        <el-button
+            :disabled="submitLoading"
+            type="primary"
+            @click="submitForm">确定
+        </el-button>
+        <el-button @click="cancelFn">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -238,11 +328,18 @@ import { tabOptions } from '../../companyAssets/options'
 import Treeselect from "@riophae/vue-treeselect"
 import "@riophae/vue-treeselect/dist/vue-treeselect.css"
 import MyDialog from './MyDialog'
+import FactoryDrawFlow from "@/components/DrawFlow/src/DrawFlow"
+import { fileUpload } from '@/api/assetManagement/companyAssets'
+import { queryAsset } from '@/api/assetManagement/quickAssetDetail'
+import {purchaseInitiate} from "@/api/assetManagement/companyAssets";
+import findItemById from '@/utils/findItemById'
+import { getFlow } from '@/api/assetManagement/companyAssets'
 
 export default {
   components: {
     Treeselect,
-    MyDialog
+    MyDialog,
+    FactoryDrawFlow
   },
   data() {
     return {
@@ -260,7 +357,37 @@ export default {
       name: '',
       type:'',
       attachmentId:'',//取消时的附件id
-      CUSTOM_VAR: []
+      CUSTOM_VAR: [],
+      /** 采购申请 */
+      // 是否需要申请采购
+      isPurchase: false,
+      // 申请采购弹窗
+      purchaseDialog: false,
+      asset: [],
+      // 采购申请表单
+      purchaseForm: {
+        assetTypeId: null,
+        assetName: null,
+        amount: null,
+        remark: null,
+        url: null
+      },
+      // 采购申请表单校验规则
+      purchaseRules: {
+        assetTypeId: [
+          {
+            required: true,
+            message: "资产类型不能为空",
+            trigger: "change",
+          },
+        ],
+      },
+      style: {width: '100%'},
+      fileList: [],
+      submitLoading: false,
+      flowList: [],
+      isShow: true,
+      manageType: '',
     }
   },
   computed: {
@@ -280,10 +407,20 @@ export default {
       }
     }
   },
+  watch: {
+    purchaseDialog(value) {
+      if (value === false) {
+        // 关闭时清空表单
+        this.$refs.purchaseForm.resetFields()
+        this.isShow = true
+      }
+    }
+  },
   created() {
     this.amount = this.$route.query.amount
     this.getList()
     this.getDept()
+    this.getAsset()
   },
   methods: {
     // 表格数据
@@ -295,6 +432,13 @@ export default {
       }
       assigned(params).then(res => {
         this.list = res.data
+        if (this.list.length == 0) {
+          this.isPurchase = true
+        } else {
+          this.isPurchase = false
+        }
+      }).catch(()=>{
+        this.isPurchase = false
       })
     },
     // 部门查询
@@ -363,7 +507,9 @@ export default {
       }
       if (row.status !== null) {
         if (row.status == 1) {
-          res = '闲置中'
+          // res = '闲置中'
+          // 2023/06/30 v1.1版本
+          res = '在库'
           return res
         } else if (row.status === 7) {
           if (row.isApplying === 0) {
@@ -414,7 +560,142 @@ export default {
       };
       // getToday()
       this.$tab.closeOpenPage(obj);
-    }
+    },
+
+    /** 申请采购 */
+    purchaseRequisition() {
+      this.purchaseDialog = true;
+      this.reset()
+    },
+
+    // 资产类型查询
+    getAsset() {
+      queryAsset().then(res => {
+        let arr = res.data
+        arr.forEach((m) => {
+          if ((m.children ?? '') !== '') {
+            m.children.forEach((item) => {
+              if ((item.children ?? '') == '') {
+                item.disabled = true
+              }
+            });
+          } else if ((m.children ?? '') == '') {
+            m.disabled = true
+          }
+        });
+        this.asset = arr
+      })
+    },
+
+    // 重置采购申请表单
+    reset() {
+      this.purchaseForm = {
+        assetTypeId: null,
+        assetName: null,
+        amount: null,
+        remark: null,
+        url: null
+      }
+    },
+
+    // 上传文件
+    onChange(file, fileList) {
+      let formData = new FormData()
+      formData.append('file', file.raw)
+      fileUpload(formData).then(res => {
+        // 文件列表格式处理
+        let fileArr = this.deepClone(fileList)
+        const index = fileArr.findIndex(item => {
+          return item.uid == file.uid
+        })
+        fileArr[index].status = 'success'
+        fileArr[index].name = res.data.name
+        fileArr[index].url = res.data.url
+        this.fileList = fileArr
+      })
+    },
+
+    // 移除文件
+    onRemove(file, fileList) {
+      this.fileList = fileList
+    },
+
+    // 选择资产，控制数量
+    change(value) {
+      this.manageType = findItemById(value[value.length - 1], this.asset).manageType
+      if (this.manageType === 2) {
+        this.purchaseForm.amount = 1
+      }
+    },
+
+    // 采购申请提交
+    submitForm() {
+      this.$refs.purchaseForm.validate(valid=>{
+        if (valid) {
+          console.log("this.purchaseForm.assetTypeId",this.purchaseForm.assetTypeId)
+          const { assetTypeId } = this.purchaseForm
+          const data = {
+            // ...this.purchaseForm,
+            deptId: this.$store.state.user.user.deptId,
+            asset: {
+              assetName: this.purchaseForm.assetName,
+              assetTypeId: assetTypeId[assetTypeId.length - 1],
+              amount: this.purchaseForm.amount,
+              deptId: JSON.parse(window.localStorage.getItem("user")).deptId,
+            },
+            assetTypeId: assetTypeId[assetTypeId.length - 1],
+            attachmentList: this.fileList.map(item => {
+              return {
+                name: item.name,
+                url: item.url
+              }
+            }),
+          }
+          this.submitLoading = true
+          purchaseInitiate(data).then(res => {
+            this.submitLoading = false
+            this.purchaseDialog = false
+            this.$message.success(res.msg)
+            const obj = {
+              path: "/assetManagement/assetProcess",
+              query:{
+                tab:this.$route.query.tab
+              }
+            };
+            this.$tab.closeOpenPage(obj);
+          }).catch(() => {
+            this.submitLoading = false
+            this.purchaseDialog = false
+          })
+        }
+      })
+    },
+
+    // 采购申请取消
+    cancelFn() {
+      this.reset()
+      this.fileList = [];
+      this.purchaseDialog = false;
+    },
+
+    // 查看流程
+    viewFlow() {
+      this.$refs.purchaseForm.validateField('assetTypeId', error => {
+        if (error) {
+          return
+        }
+        this.isShow = false
+        const { assetTypeId } = this.purchaseForm
+        const params = {
+          assetTypeIds: assetTypeId[assetTypeId.length - 1],
+          categoryId: 10,
+          deptId: this.$store.state.user.user.deptId
+        }
+        getFlow(params).then(res => {
+          this.flowList = JSON.parse(res.data.json).list
+        })
+      })
+    },
   }
 }
 </script>
