@@ -390,6 +390,13 @@ export default {
             trigger: "change",
           },
         ],
+        assetName: [
+          {
+            required: true,
+            message: "名称不能为空",
+            trigger: "blur",
+          },
+        ]
       },
       style: {width: '100%'},
       fileList: [],
@@ -641,7 +648,6 @@ export default {
     submitForm() {
       this.$refs.purchaseForm.validate(valid=>{
         if (valid) {
-          console.log("this.purchaseForm.assetTypeId",this.purchaseForm.assetTypeId)
           const { assetTypeId } = this.purchaseForm
           const data = {
             // ...this.purchaseForm,
