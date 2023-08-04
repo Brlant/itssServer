@@ -588,6 +588,7 @@ export default {
           tabFlag: this.n,
           commentSize: row.commentSize,
           taskDefKey: row.taskDefKey,
+          categoryId: row.procVars.CATEGORY_ID,
         }
       };
       // getToday()

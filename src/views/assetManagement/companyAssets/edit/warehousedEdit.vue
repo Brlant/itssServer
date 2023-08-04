@@ -483,31 +483,32 @@ export default {
         if (!valid) {
           return
         }
-        const { storageAddress, departmentId, holderId, holderName, remark } = this.formData
-        // 传参格式的一些处理
-        let data = matchData(this.formData, [...information, ...this.formItems])
-        const assetTypeId = data.assetTypeId
-        data.assetTypeId = assetTypeId[assetTypeId.length - 1]
-        if (data.departmentId) {
-          data.departmentName = this.$refs.deptTree.getNode(data.departmentId).label
-        } else {
-          data.departmentName = null
-        }
-        data.id = this.id
-        let asset = {
-          id: Number(this.id),
-          storageAddress: storageAddress,
-          departmentId: departmentId,
-          holderId: holderId,
-          holderName: holderName,
-          remark: remark,
-          assetTypeId:  data.assetTypeId,
-          deptId: departmentId,
-        }
-        console.log("daat",data)
+        const {
+          assetTypeId,
+          storageAddress,
+          departmentId,
+          departmentName,
+          holderId,
+          holderName,
+          remark
+        } = this.formData
 
+        const data = {
+          asset: {
+            id: Number(this.id),
+            storageAddress: storageAddress,
+            departmentId: departmentId,
+            holderId: holderId,
+            holderName: holderName,
+            remark: remark,
+            assetTypeId: assetTypeId[assetTypeId.length - 1],
+            deptId: departmentId,
+            departmentName: departmentName
+          },
+          deptId: departmentId ? departmentId : JSON.parse(window.localStorage.getItem("user")).deptId
+        }
         this.saveLoading = true
-        initiateUpdate({asset: asset,deptId: departmentId?departmentId: JSON.parse(window.localStorage.getItem("user")).deptId})
+        initiateUpdate(data)
             .then(res => {
               this.saveLoading = false
               this.$message.success(res.msg)
@@ -523,6 +524,7 @@ export default {
             })
       })
     },
+
     // 填充表单
     change(value) {
       const {
@@ -563,11 +565,8 @@ export default {
 
     // 改变归属部门时
     selectDepartment(data) {
-      console.log("data", data)
       queryUserList({deptId: data.id})
           .then(res => {
-            console.log("res", res)
-            console.log(res.data)
             const userList = res.data;
             this.userList = userList;
             if (this.formData.holderId) {
@@ -598,8 +597,10 @@ export default {
     // 修改持有人
     changeHolder(val) {
       const deptId = this.userList.find(item => item.userId == val)?.deptId;
+      const deptName = this.userList.find(item => item.userId == val)?.deptName;
       const holderName = this.userList.find(item => item.userId == val)?.nickName;
       this.formData.departmentId = deptId;
+      this.formData.departmentName = deptName;
       this.formData.holderName = holderName;
     }
   }

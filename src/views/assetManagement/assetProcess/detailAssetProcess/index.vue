@@ -151,12 +151,39 @@
           align="center"
           label="存放地点"
           prop="storageAddress"
-        />
+        >
+          <template slot-scope="scope">
+            {{ categoryId == '9' ? costomVar.storageAddress : scope.row.storageAddress }}
+          </template>
+        </el-table-column>
         <el-table-column
           align="center"
           label="归属部门"
           prop="departmentName"
-        />
+        >
+          <template slot-scope="scope">
+            {{ categoryId == '9' ? costomVar.departmentName : scope.row.departmentName }}
+          </template>
+        </el-table-column>
+        <el-table-column
+            v-if="categoryId == '9'"
+            align="center"
+            label="持有人"
+        >
+          <template slot-scope="scope">
+            {{ costomVar.holderName }}
+          </template>
+        </el-table-column>
+        <el-table-column
+            v-if="categoryId == '9'"
+            align="center"
+            label="备注"
+            prop="remark"
+        >
+          <template slot-scope="scope">
+            {{ costomVar.remark }}
+          </template>
+        </el-table-column>
         <el-table-column
           align="center"
           label="操作"
@@ -457,6 +484,7 @@ import {
   fileUpload,
 } from '@/api/assetManagement/companyAssets'
 import MyMaintenance from './MyMaintenance'
+import { getListData } from "@/api/assetManagement/assetManagementSet";
 
 export default {
   components: {
@@ -481,6 +509,7 @@ export default {
       show:true,
       title:this.$route.query.applyName,
       flowId: this.$route.query.flowId,
+      categoryId: this.$route.query.categoryId,
       tableData: [],
       // attribute:'',
       uploadData:{},
@@ -542,6 +571,8 @@ export default {
       ],
       purchaseSelectAll:[],
       purchaseSelectAllCopy:[0],
+      // 已入库编辑操作修改的数据
+      costomVar: {},
     }
   },
   watch: {
@@ -568,6 +599,9 @@ export default {
   },
   created() {
     this.getTableData()
+    if (this.categoryId == '9') {
+      this.getWarehousedEditData()
+    }
     this.typeStatus=this.$route.query.type ? this.$route.query.type : ''
     this.restart = (this.$route.query.commentSize>1&&this.$route.query.taskDefKey == 'a78x4anxe') ? true : false
   },
@@ -882,6 +916,26 @@ export default {
       })
     },
 
+    // 获取已入库编辑数据
+    getWarehousedEditData() {
+      const params = {
+        id: this.$route.query.taskId,
+        processInstanceId: this.$route.query.processInstanceId,
+        deployId: this.$route.query.deployId
+      }
+      getListData(params)
+          .then(res => {
+            if (res && res.data && res.code == 200) {
+              const costomVar = res.data.variables.CUSTOM_VAR;
+              this.costomVar = costomVar ? JSON.parse(costomVar) : {};
+            }
+          })
+          .then(err => {
+            console.log(err)
+          })
+    },
+
+
     // 查看详情
      view(row) {
       this.$router.push({
@@ -1033,7 +1087,6 @@ export default {
 
     // 采购确认选中
     purchaseSelect(index) {
-      console.log(this.purchaseSelectAll, 'selectAll')
       let n = index
       this.$nextTick(() => {
         if (this.purchaseSelectAll.includes(n)) {
@@ -1044,7 +1097,6 @@ export default {
       })
       this.purchaseSelectAllCopy = [0]
       this.$forceUpdate()
-      console.log(this.purchaseSelectAllCopy, 'this.selectAll')
     },
   }
 }

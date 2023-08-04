@@ -246,10 +246,19 @@
       <!-- 表单开始 -->
       <el-form ref="purchaseForm" :model="purchaseForm" :rules="purchaseRules" label-width="85px" v-show="isShow">
         <el-form-item label="资产类型:" prop="assetTypeId">
-          <el-cascader
+          <!-- 根据资产类型控制数量
+             <el-cascader
               v-model="purchaseForm.assetTypeId"
               :options="asset"
               @change="change"
+              ref="assetCas"
+              :props="{ label: 'typeName', value: 'id' }"
+              clearable
+              :style="style"
+          />-->
+          <el-cascader
+              v-model="purchaseForm.assetTypeId"
+              :options="asset"
               ref="assetCas"
               :props="{ label: 'typeName', value: 'id' }"
               clearable
