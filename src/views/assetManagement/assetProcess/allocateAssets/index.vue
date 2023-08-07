@@ -665,6 +665,7 @@ export default {
                 url: item.url
               }
             }),
+            remark: this.purchaseForm.remark,
           }
           this.submitLoading = true
           purchaseInitiate(data).then(res => {

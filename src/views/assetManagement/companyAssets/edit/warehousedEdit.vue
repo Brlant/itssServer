@@ -151,6 +151,7 @@
                     :show-count="true"
                     placeholder="请选择"
                     @select="selectDepartment"
+                    :disabled="formData.manageType == 1"
                 />
               </el-form-item>
             </el-col>
@@ -166,6 +167,7 @@
                     @change="changeHolder"
                     :style="style"
                     clearable
+                    :disabled="formData.manageType == 1"
                 >
                   <el-option
                       v-for="(item, index) in userList"

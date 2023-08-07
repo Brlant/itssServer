@@ -276,7 +276,8 @@ export default {
           { required: true, trigger: 'blur', message: '请输入资产名称' }
         ],
         afterTaxPrice: [
-          { required: true, validator: checkNumber, trigger: 'blur' }
+          { required: true, trigger: 'blur', message: '请输入资产原值' },
+          { validator: checkNumber, trigger: 'blur' }
         ],
         amount: [
           { required: true, trigger: 'blur', message: '请输入数量' },

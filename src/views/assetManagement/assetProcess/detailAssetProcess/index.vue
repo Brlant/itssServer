@@ -126,7 +126,11 @@
           align="center"
           label="资产名称"
           prop="assetName"
-        />
+        >
+          <template slot-scope="scope">
+            {{ categoryId == '10' ? variables.ASSET_NAME : scope.row.assetName }}
+          </template>
+        </el-table-column>
         <el-table-column
           align="center"
           label="品牌"
@@ -571,6 +575,7 @@ export default {
       ],
       purchaseSelectAll:[],
       purchaseSelectAllCopy:[0],
+      variables: {},
       // 已入库编辑操作修改的数据
       costomVar: {},
     }
@@ -599,8 +604,8 @@ export default {
   },
   created() {
     this.getTableData()
-    if (this.categoryId == '9') {
-      this.getWarehousedEditData()
+    if (this.categoryId == '9' || this.categoryId == '10') {
+      this.getAssetProcessData()
     }
     this.typeStatus=this.$route.query.type ? this.$route.query.type : ''
     this.restart = (this.$route.query.commentSize>1&&this.$route.query.taskDefKey == 'a78x4anxe') ? true : false
@@ -916,8 +921,8 @@ export default {
       })
     },
 
-    // 获取已入库编辑数据
-    getWarehousedEditData() {
+    // 获取流程中数据
+    getAssetProcessData() {
       const params = {
         id: this.$route.query.taskId,
         processInstanceId: this.$route.query.processInstanceId,
@@ -927,6 +932,7 @@ export default {
           .then(res => {
             if (res && res.data && res.code == 200) {
               const costomVar = res.data.variables.CUSTOM_VAR;
+              this.variables = res.data.variables;
               this.costomVar = costomVar ? JSON.parse(costomVar) : {};
             }
           })
