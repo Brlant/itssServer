@@ -106,7 +106,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="span">
-              <el-form-item label="购入时间:" prop="purchasingDate">
+              <el-form-item label="购入时间:" prop="purchasingDate" :rules="(formData.assetTypeId && formData.assetTypeId[0] == 1) ? rules.purchasingDateRequired : rules.purchasingDate">
                 <el-date-picker
                   v-model="formData.purchasingDate"
                   value-format="yyyy-MM-dd"
@@ -170,7 +170,7 @@
             </div>
             <el-row>
               <el-col :span="span">
-                <el-form-item label="折旧年限:" prop="depreciableLife">
+                <el-form-item label="折旧年限:" prop="depreciableLife" :rules="(formData.assetTypeId && formData.assetTypeId[0] == 1) ? rules.depreciableLifeRequired : rules.depreciableLife">
                   <el-input v-model="formData.depreciableLife" @input="formData.depreciableLife=formData.depreciableLife.replace(/^(0+)|[^\d]+/g,'')" :style="style">
                     <span slot="suffix">年</span>
                   </el-input>
@@ -263,7 +263,9 @@ export default {
       detail: {},
       formData: {
         assetTypeId: [],
-        assetId: null
+        assetId: null,
+        purchasingDate: null,
+        depreciableLife: null
       },
       rules: {
         assetTypeId: [
@@ -284,11 +286,28 @@ export default {
           { validator: checkAmount, trigger: 'blur' }
         ],
         depreciableLife: [
-          { validator: checkNumber, trigger: 'blur' }
+          {
+            validator: checkNumber,
+            trigger: 'blur'
+          }
+        ],
+        depreciableLifeRequired: [
+          { required: true, trigger: 'blur', message: '请输入折旧年限' },
+          {
+            required: true,
+            validator: checkNumber,
+            trigger: 'blur'
+          }
         ],
         preTaxPrice: [
           { validator: checkNumber, trigger: 'blur' }
-        ]
+        ],
+        purchasingDate: [
+          { trigger: 'change', message: '请选择购入时间' }
+        ],
+        purchasingDateRequired: [
+          { required: true, trigger: 'change', message: '请选择购入时间' }
+        ],
       },
       formItems: [],
       formDataCopy: {},
