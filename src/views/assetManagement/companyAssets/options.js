@@ -240,7 +240,9 @@ export const information = [
     name: 'purchasingDate'
   },
   {
-    label: '税后价格',
+    // label: '税后价格',
+    // 2023/06/30 v1.1版本
+    label: "资产原值",
     name: 'afterTaxPrice'
   },
   {

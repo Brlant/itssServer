@@ -403,13 +403,17 @@ export default {
       finishedList(params).then(res => {
         let tableData = res.data.data
         for (let i = 0; i < tableData.length; i ++) {
-          if (tableData[i].procVars.ASSET_NO) {
-            const noArr = tableData[i].procVars.ASSET_NO.split(',')
-            const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
+          if (tableData[i].procVars.ASSET_NO || tableData[i].procVars.ASSET_NAME) {
             let arr = []
-            noArr.forEach((value, index) => {
-              arr.push(value + nameArr[index])
-            })
+            if(tableData[i].procVars.ASSET_NO && tableData[i].procVars.ASSET_NAME) {
+              const noArr = tableData[i].procVars.ASSET_NO.split(',')
+              const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
+              noArr.forEach((value, index) => {
+                arr.push(value + nameArr[index])
+              })
+            } else {
+              arr.push((tableData[i].procVars.ASSET_NO ?? '') + (tableData[i].procVars.ASSET_NAME ?? ''))
+            }
             tableData[i]['noNameArr'] = arr
           } else {
             tableData[i]['noNameArr'] = []
@@ -489,13 +493,17 @@ export default {
       getPendingList(params).then(res => {
          let tableData = res.data.data
         for (let i = 0; i < tableData.length; i ++) {
-          if (tableData[i].procVars.ASSET_NO) {
-            const noArr = tableData[i].procVars.ASSET_NO.split(',')
-            const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
+          if (tableData[i].procVars.ASSET_NO || tableData[i].procVars.ASSET_NAME) {
             let arr = []
-            noArr.forEach((value, index) => {
-              arr.push(value + nameArr[index])
-            })
+            if(tableData[i].procVars.ASSET_NO && tableData[i].procVars.ASSET_NAME) {
+              const noArr = tableData[i].procVars.ASSET_NO.split(',')
+              const nameArr = tableData[i].procVars.ASSET_NAME.split(',')
+              noArr.forEach((value, index) => {
+                arr.push(value + nameArr[index])
+              })
+            } else {
+              arr.push((tableData[i].procVars.ASSET_NO ?? '') + (tableData[i].procVars.ASSET_NAME ?? ''))
+            }
             tableData[i]['noNameArr'] = arr
           } else {
             tableData[i]['noNameArr'] = []

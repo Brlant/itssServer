@@ -253,7 +253,9 @@ export default {
       let status
       switch (row.status) {
         case 1:
-          status = '闲置'
+          // status = '闲置'
+          // 2023/06/30 v1.1版本
+          status = '在库'
           break
         case 2:
           status = '使用中'

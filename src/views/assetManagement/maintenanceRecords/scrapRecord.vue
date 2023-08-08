@@ -103,7 +103,7 @@
           </template>
         </el-table-column>
         <el-table-column label="报废数量" align="center" prop="scarpAmount" />
-        <el-table-column label="税后价格" align="center" prop="afterTaxPrice" />
+        <el-table-column label="资产原值" align="center" prop="afterTaxPrice" />
         <el-table-column label="累计折旧" align="center" prop="depreciation" />
         <el-table-column label="资产净值" align="center" prop="surplusValue" />
         <el-table-column label="折旧年限" align="center" prop="depreciableLife" />

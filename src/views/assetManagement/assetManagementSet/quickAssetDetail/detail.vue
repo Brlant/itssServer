@@ -59,7 +59,7 @@
           </el-col>
           <el-col :span="span">
             <div class="item">
-              <span class="label">税后价格：</span>
+              <span class="label">资产原值：</span>
               <span class="value">{{ info.afterTaxPrice }}</span>
             </div>
           </el-col>

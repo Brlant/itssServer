@@ -182,7 +182,9 @@ export default {
         },
          {
           id: 11,
-          name: "税后价格",
+           // name: "税后价格",
+           // 2023/06/30 v1.1版本
+           name: "资产原值",
         },
 
         {
@@ -269,7 +271,9 @@ export default {
         // },
         {
           // label: "购入价格(含税)",
-          label: "税前价格",
+          // label: "税前价格",
+          // 2023/06/30 v1.1版本
+          label: "购入价格(含税)",
           name: "preTaxPrice",
           value: "",
           status: "preTaxPriceFlag",
