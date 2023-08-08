@@ -166,6 +166,7 @@
                     v-model="formData.holderId"
                     @change="changeHolder"
                     :style="style"
+                    filterable
                     clearable
                     :disabled="formData.manageType == 1"
                 >
@@ -393,17 +394,17 @@ export default {
     },
     // 部门查询
     getDept() {
-      /*treeselect().then(res => {
+      treeselect().then(res => {
         this.dept = res.data
-      })*/
-      let params = {
+      })
+      /*let params = {
         deptId: this.$store.state.user.user.deptId
       }
       queryChildDepts(params)
           .then(res => {
             this.dept = res.data
-          })
-      queryUserList(params)
+          })*/
+      queryUserList()
           .then(res => {
             this.userList = res.data;
           })
@@ -568,6 +569,10 @@ export default {
 
     // 改变归属部门时
     selectDepartment(data) {
+      if (data) {
+        const deptName = data.label;
+        this.formData.departmentName = deptName;
+      }
       queryUserList({deptId: data.id})
           .then(res => {
             const userList = res.data;
