@@ -251,7 +251,7 @@ import {
 } from '../options'
 import matchData from '@/utils/matchData'
 import findItemById from '@/utils/findItemById'
-import {queryUserList} from "../../../../api/system/user";
+import {queryUserlist} from "../../../../api/system/user";
 import {initiateUpdate} from "../../../../api/assetManagement/companyAssets";
 
 export default {
@@ -404,7 +404,7 @@ export default {
           .then(res => {
             this.dept = res.data
           })*/
-      queryUserList()
+      queryUserlist({type: 1})
           .then(res => {
             this.userList = res.data;
           })
@@ -573,7 +573,7 @@ export default {
         const deptName = data.label;
         this.formData.departmentName = deptName;
       }
-      queryUserList({deptId: data.id})
+      queryUserlist({deptId: data.id, type: 1})
           .then(res => {
             const userList = res.data;
             this.userList = userList;
