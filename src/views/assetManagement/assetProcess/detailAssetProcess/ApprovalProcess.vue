@@ -42,6 +42,7 @@
               @click="downFlowLoad(item.url)"
             >
               {{ item.name }}
+              <br/>
             </span>
           </p>
         </div>
@@ -82,6 +83,7 @@
               @click="downFlowLoad(item.url)"
             >
               {{ item.name }}
+              <br/>
             </span>
           </p>
         </el-timeline-item>
