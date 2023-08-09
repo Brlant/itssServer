@@ -5,7 +5,7 @@
         <span>个人中心</span>
       </div>
       <div style="cursor: pointer" class="ope" >
-        <span @click='changePassWord'>修改密码 | </span>
+        <!-- <span @click='changePassWord'>修改密码 </span> -->
         <span @click='onGrant' v-hasPermi="['system:user:grant']">授权管理 |</span>
         <span @click='edit'> 编辑 </span>
       </div>
