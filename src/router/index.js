@@ -52,6 +52,12 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path:'/forgot',
+    component: ()=>import('@/views/forgot/index'),
+    hidden: true
+  },
+
+  {
     path: '/register',
     component: () => import('@/views/register'),
     hidden: true
@@ -66,18 +72,32 @@ export const constantRoutes = [
     component: () => import('@/views/error/401'),
     hidden: true
   },
+  // {
+  //   path: '',
+  //   component: Layout,
+  //   redirect: 'index',
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/index'),
+  //       name: 'Index',
+  //       meta: { title: '首页', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
+  /*修改重定向*/
   {
     path: '',
     component: Layout,
-    redirect: 'index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/index'),
-        name: 'Index',
-        meta: { title: '首页', icon: 'dashboard', affix: true }
-      }
-    ]
+    redirect: '/examine/initiate',
+    // children: [
+    //   {
+    //     path: 'index',
+    //     component: () => import('@/views/index'),
+    //     name: 'Index',
+    //     meta: { title: '首页', icon: 'dashboard', affix: true }
+    //   }
+    // ]
   },
   {
     path: '/user',

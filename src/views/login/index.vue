@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-       <div class="title ml190">新ITSS平台</div>
+       <div class="title ml190">采购系统</div>
        <div class="limited ml190">
             <el-form class="login-form" label-position="top" ref="loginForm" label-width="80px" :model="user" :rules="rules"
                         onsubmit="return false">
@@ -28,7 +28,11 @@
 <!--                        <img :src="codeUrl" @click="getCode" class="login-code-img"/>-->
 <!--                    </div>-->
 <!--                </el-form-item>-->
+              <div style="display: flex;justify-content: space-between">
                 <el-checkbox v-model="user.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
+                <div @click="forgot" style="margin:0px 0px 25px 0px; font-size:14px;color:#3D8FFF;cursor: pointer;">忘记密码</div>
+              </div>
+
                 <el-form-item style="width:100%;">
                     <el-button
                     :loading="loading"
@@ -102,6 +106,9 @@ import { encrypt, decrypt } from '@/utils/jsencrypt'
             this.getCookie();
         },
         methods:{
+          forgot(){
+            this.$router.push('/forgot')
+          },
             getCode() {
                 getCodeImg().then(res => {
                     this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled;
