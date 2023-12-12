@@ -2,6 +2,7 @@
   <div class="content">
     <div class="title ml190">采购系统</div>
     <div class="limited ml190">
+
       <el-form class="login-form" label-position="top" ref="loginForm" label-width="80px" :model="form" :rules="rules"
                onsubmit="return false"
       >
