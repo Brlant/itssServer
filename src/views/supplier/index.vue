@@ -4,45 +4,47 @@
       <!--      搜索内容-->
       <el-col :span="12">
         <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch"
-                 label-width="68px">
+                 label-width="68px"
+        >
           <!--      供应商编号/名称-->
-          <el-form-item prop="num">
+          <el-form-item prop="codeNameKey">
             <el-input
               prefix-icon="el-icon-search"
-              v-model="queryParams.num"
+              v-model="queryParams.codeNameKey"
               placeholder="供应商编号/名称"
               clearable
-              @keyup.enter.native="handleQuery"
+              @keyup.enter.native="getSupplierList"
             />
           </el-form-item>
           <!--      联系人/手机号搜索-->
-          <el-form-item prop="num">
+          <el-form-item prop="contacts">
             <el-input
               prefix-icon="el-icon-search"
-              v-model="queryParams.num"
+              v-model="queryParams.contacts"
               placeholder="联系人/手机号搜索"
               clearable
-              @keyup.enter.native="handleQuery"
+              @keyup.enter.native="getSupplierList"
             />
           </el-form-item>
           <!--      企业类型-->
-          <el-form-item prop="house_id">
-            <el-select v-model="queryParams.house_id" placeholder="企业类型" clearable>
+          <el-form-item prop="supplierType">
+            <el-select v-model="queryParams.supplierType" placeholder="企业类型" clearable>
               <el-option
-                v-for="u in enterpriseType"
-                :key="u.value"
-                :label="u.label"
-                :value="u.value"
+                v-for="(item,index) in supplierTypeArray"
+                :key="index"
+                :label="item.label"
+                :value="item.value"
               />
             </el-select>
           </el-form-item>
           <!--搜索重置-->
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="getSupplierList">搜索</el-button>
             <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
       </el-col>
+
       <el-col :span="6">
         <div class="CentralSearch">
           <el-form>
@@ -53,7 +55,7 @@
               v-for="(item,index) in switchMenu"
               :key="index"
               :class="{ 'is-active-menu': activeFilterMenuIndex === index }"
-              @click="setActiveFilterMenu(index)"
+              @click="setActiveFilterMenu(item,index)"
             >
               {{ item.text }}
             </el-button>
@@ -91,21 +93,47 @@
         v-for="(item, index) in switchType"
         :key="index"
         :class="{ 'is-active': activeFilterIndex === index }"
-        @click="setActiveFilter(index)"
+        @click="setActiveFilter(item,index)"
       >
         {{ item.text }}
       </el-button>
     </el-row>
     <!--    查询表格-->
-    <el-table v-loading="loading" :data="filteredData" style="width: 100%">
+    <el-table v-loading="loading" :data="tableData" style="width: 100%">
       <el-table-column type="index" label="序号"></el-table-column>
-      <el-table-column prop="name" label="供应商名称"></el-table-column>
-      <el-table-column prop="supplierNo" label="供应商编号"></el-table-column>
-      <el-table-column prop="enterpriseType" label="企业类型"></el-table-column>
-      <el-table-column prop="contacts" label="联系人"></el-table-column>
-      <el-table-column prop="" label="手机号"></el-table-column>
-      <el-table-column prop="" label="创建时间"></el-table-column>
-      <el-table-column prop="status" label="状态"></el-table-column>
+      <el-table-column prop="supplierName" label="供应商名称"></el-table-column>
+      <el-table-column prop="supplierCode" label="供应商编号"></el-table-column>
+      <el-table-column prop="supplierType" label="企业类型">
+        <template slot-scope="scope">
+          <span v-if="scope.row.supplierType === 1">内部企业</span>
+          <span v-if="scope.row.supplierType === 2">外部企业</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="contactsName" label="联系人"></el-table-column>
+      <el-table-column prop="contactsPhone" label="手机号"></el-table-column>
+      <el-table-column prop="createTime" label="创建时间">
+        <template  slot-scope="scope">
+          {{new Date(scope.row.createTime).toLocaleString()}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="validityDate" label="供应商到期时间">
+        <template  slot-scope="scope">
+          {{scope.row.validityDate}}
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="supplierStatus" label="状态">
+        <template slot-scope="scope">
+          <span v-if="scope.row.supplierStatus === ''">全部</span>
+          <span v-if="scope.row.supplierStatus === 0">待审核</span>
+          <span v-if="scope.row.supplierStatus === 1">审核中</span>
+          <span v-if="scope.row.supplierStatus === 2">审核未通过</span>
+          <span v-if="scope.row.supplierStatus === 3">启用</span>
+          <span v-if="scope.row.supplierStatus === 4">已撤回</span>
+          <span v-if="scope.row.supplierStatus === 5">停用</span>
+          <span v-if="scope.row.supplierStatus === 6">已淘汰</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="" label="操作">
         <template slot-scope="scope">
           <el-button
@@ -135,17 +163,18 @@
 
     <!--    翻页-->
     <pagination
-      v-show="pageParams.total>0"
-      :total="pageParams.total"
-      :page.sync="pageParams.page"
-      :limit.sync="pageParams.limit"
+      v-show="queryParams.total>0"
+      :total="queryParams.total"
+      :page.sync="queryParams.pageNum"
+      :limit.sync="queryParams.pageSize"
       @pagination="getSupplierList"
     />
 
 
     <!--    新增弹框信息-->
     <supplier-form :dialogAddSupplier="dialogAddSupplierDialog"
-                   @handleSupplierClose="handleSupplierClose"></supplier-form>
+                   @handleSupplierClose="handleSupplierClose"
+    ></supplier-form>
     <!--详情-->
     <el-dialog :visible="dialogDetailsSupplierDialog" :title="detailsTitle" width="75%" @close="closeDialog">
       <template v-slot:title>
@@ -158,7 +187,8 @@
             v-for="tab in tabs"
             :key="tab.name"
             :label="tab.label"
-            :name="tab.name">
+            :name="tab.name"
+          >
             <!-- 使用组件作为标签页内容 -->
             <component :is="tab.component" :tabName="tabName"></component>
           </el-tab-pane>
@@ -173,157 +203,86 @@
 </template>
 
 <script>
-import supplierForm from "@/common/supplier/supplierForm";
-import supplierAuditInfo from "@/common/supplierDetails/supplierAuditInfo";
-import supplierInfo from "@/common/supplierDetails/supplierInfo";
-import supplierOperationLog from "@/common/supplierDetails/supplierOperationLog";
+import { getSupplierList } from '@/api/supplier/supplier'
+import supplierForm from '@/common/supplier/supplierForm'
+import supplierAuditInfo from '@/common/supplierDetails/supplierAuditInfo'
+import supplierInfo from '@/common/supplierDetails/supplierInfo'
+import supplierOperationLog from '@/common/supplierDetails/supplierOperationLog'
 
 export default {
-  name: "index",
+  name: 'index',
   components: {
-    supplierForm,
+    supplierForm
   },
   data() {
     return {
       activeTab: 'fileInfo',
       tabs: [
-        {label: '档案信息', name: 'fileInfo',component:supplierInfo},
-        {label: '审核信息', name: 'auditInfo',component:supplierAuditInfo},
-        {label: '操作日志', name: 'operationLog',component:supplierOperationLog}
+        { label: '档案信息', name: 'fileInfo', component: supplierInfo },
+        { label: '审核信息', name: 'auditInfo', component: supplierAuditInfo },
+        { label: '操作日志', name: 'operationLog', component: supplierOperationLog }
       ],
-      tabName:null,
+      tabName: null,
       dialogDetailsSupplierDialog: false,//详情弹框
       //详情信息
-      detailsTitle: "详情信息",
+      detailsTitle: '详情信息',
       dialogAddSupplierDialog: false,//新建弹出框
       // 遮罩层
       loading: true,
       // 显示搜索条件
       showSearch: true,
       // 查询参数
-      queryParams: {},
+      queryParams: {
+        codeNameKey: '',
+        contacts: '',
+        supplierType: '',
+        days:'',
+        supplierStatus:'',
+        total: 10,
+        pageNum: 1,
+        pageSize: 10
+      },
       //企业类型
       enterpriseType: [],
-      //翻页参数
-      pageParams: {
-        total: 10,
-        page: 1,
-        limit: 10,
-        order: "id desc",
-      },
+
+      supplierTypeArray: [
+        { label: '内部企业', value: 1 },
+        { label: '外部企业', value: 2 }
+      ],
       //切换按钮
       filtersMenu: [
-        {text: "全部", time: null},
-        {text: "近30天", time: "30"},
-        {text: "近7天", time: "7"},
+        { text: '全部', value: null },
+        { text: '近30天', value: '30' },
+        { text: '近7天', value: '7' }
       ],
       //切换按钮
       filters: [
-        {text: "全部", status: null},
-        {text: "待审核", status: "pending"},
-        {text: "审核中", status: "processing"},
-        {text: "审核未通过", status: "rejected"},
-        {text: "已撤回", status: "revoked"},
-        {text: "启用", status: "enabled"},
-        {text: "停用", status: "disabled"},
-        {text: "已淘汰", status: "obsolete"},
+        { text: '全部', value: '' },
+        { text: '待审核', value: 0 },
+        { text: '审核中', value: 1 },
+        { text: '审核未通过', value: 2 },
+        { text: '启用', value: 3 },
+        { text: '已撤回', value: 4 },
+        { text: '停用', value: 5 },
+        { text: '已淘汰', value: 6 }
       ],
       activeFilterIndex: 0,
-      activeFilterMenuIndex:0,
-      flag:true,
-
-      tableData: [
-        {
-          name: "项目A",
-          supplierNo: 1,
-          enterpriseType: "国营",
-          contacts: "小王",
-          cellphoneNumber: '18855162653',
-          status: "pending",
-          time:'30',
-        },
-        {
-          name: "项目B",
-          supplierNo: 2,
-          enterpriseType: "国营",
-          contacts: "小王",
-          cellphoneNumber: '18855162653',
-          status: "processing",
-          time:'30',
-        },
-        {
-          name: "项目C",
-          supplierNo: 3,
-          enterpriseType: "国营",
-          contacts: "小王",
-          cellphoneNumber: '18855162653',
-          status: "rejected",
-          time:'30',
-        },
-        {
-          name: "项目D",
-          supplierNo: 4,
-          enterpriseType: "国营",
-          contacts: "小王",
-          cellphoneNumber: '18855162653',
-          status: "revoked",
-          time:'30',
-        },
-        {
-          name: "项目E",
-          supplierNo: 5,
-          enterpriseType: "国营",
-          contacts: "小王",
-          cellphoneNumber: '18855162653',
-          status: "enabled",
-          time:'7',
-        },
-        {
-          time:'7',
-          name: "项目F",
-          supplierNo: 6,
-          enterpriseType: "国营",
-          contacts: "小王",
-          cellphoneNumber: '18855162653',
-          status: "disabled"
-        },
-        {
-          time:'7',
-          name: "项目G",
-          supplierNo: 7,
-          enterpriseType: "国营",
-          contacts: "小王",
-          cellphoneNumber: '18855162653',
-          status: "obsolete"
-        },
-      ],
+      activeFilterMenuIndex: 0,
+      tableData: []
     }
   },
   created() {
-    this.getSupplierList();
+
+  },
+  mounted() {
+    this.getSupplierList()
   },
   computed: {
-    filteredData() {
-      if(this.flag){
-        const activeFilter = this.filters[this.activeFilterIndex];
-        if (!activeFilter.status) {
-          return this.tableData;
-        }
-        return this.tableData.filter((item) => item.status === activeFilter.status);
-      }else{
-        const activeFilterMenu = this.filtersMenu[this.activeFilterMenuIndex];
-        if (!activeFilterMenu.time) {
-          return this.tableData;
-        }
-        return this.tableData.filter((item) => item.time === activeFilterMenu.time);
-      }
-
-    },
-
     switchMenu() {
       return this.filtersMenu.map((menu) => {
         return {
           text: menu.text,
+          value: menu.value
         }
       })
     },
@@ -332,48 +291,60 @@ export default {
       return this.filters.map((filter) => {
         return {
           text: filter.text,
-        };
-      });
-    },
+          value: filter.value
+        }
+      })
+    }
   },
   methods: {
-    closeDialog(){
-      this.tabName = null;
-      this.activeTab = "fileInfo";
-      this.dialogDetailsSupplierDialog = false;
+    closeDialog() {
+      this.tabName = null
+      this.activeTab = 'fileInfo'
+      this.dialogDetailsSupplierDialog = false
     },
     handleAddForm() {
-      this.dialogAddSupplierDialog = true;
+      this.dialogAddSupplierDialog = true
     },
     handleSupplierClose() {
-      this.dialogAddSupplierDialog = false;
+      this.dialogAddSupplierDialog = false
     },
     /*供应商列表查询*/
     getSupplierList() {
-      let params = {};
-      this.loading = false;
-    },
-    /*搜索按钮操作*/
-    handleQuery() {
-
+      let params = {
+        codeNameKey: this.queryParams.codeNameKey,
+        contacts: this.queryParams.contacts,
+        supplierType: this.queryParams.supplierType,
+        days: this.queryParams.days,
+        supplierStatus: this.queryParams.supplierStatus,
+        pageNum: this.queryParams.pageNum,
+        pageSize: this.queryParams.pageSize
+      }
+      getSupplierList(params).then((res) => {
+        this.loading = false
+        this.queryParams.total = res.data.total
+        this.tableData = res.data.rows
+      })
     },
     /*重置搜索内容*/
     resetQuery() {
-
+      this.$refs.queryForm.resetFields();
+      this.getSupplierList();
     },
     /*按钮切换*/
-    setActiveFilter(index) {
-      this.flag = true;
+    setActiveFilter(row,index) {
+      this.queryParams.supplierStatus = row.value
       this.activeFilterIndex = index;
+      this.getSupplierList();
     },
-    setActiveFilterMenu(index){
-      this.flag = false;
+    setActiveFilterMenu(row, index) {
+      this.queryParams.days = row.value
       this.activeFilterMenuIndex = index
+      this.getSupplierList();
     },
     /*详情*/
     handleDetails(row) {
-      this.tabName="1",
-        this.dialogDetailsSupplierDialog = true;
+      this.tabName = '1',
+      this.dialogDetailsSupplierDialog = true
     },
     /*编辑*/
     handleEdit(row) {
@@ -386,21 +357,20 @@ export default {
     /*处理标签页信息*/
     handleTabClick(tab, event) {
 
-    },
-  },
-  mounted() {
-
+    }
   }
+
 }
 </script>
 
 <style scoped>
 .is-active {
-  background-color: #409eff;
+  background-color: #3D7DFF;
   color: #fff;
 }
-.is-active-menu{
-  background-color: #409eff;
+
+.is-active-menu {
+  background-color: #3D7DFF;
   color: #fff;
 }
 
@@ -426,6 +396,7 @@ export default {
   text-align: center;
   color: #F79B22;
 }
+
 .CentralSearch {
   display: flex
 }
