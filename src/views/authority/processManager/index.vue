@@ -30,13 +30,13 @@
 
 
 <!--    详情弹框内容-->
-    <process-detail :dialogDetailsProcessDialog="dialogDetailsProcessDialog" :activeModelId="activeModelId" @handleCloseProcess="handleCloseProcess"></process-detail>
+    <process-detail :dialogDetailsProcessDialog="dialogDetailsProcessDialog" :modelId="modelId" @handleCloseProcess="handleCloseProcess"></process-detail>
 
 <!--    编辑弹框-->
-    <process-edit :dialogEditProcessDialog="dialogEditProcessDialog" :activeModelId="activeModelId" @handleClose="handleClose" @handleApproverClick="handleApproverClick"></process-edit>
+    <process-edit :dialogEditProcessDialog="dialogEditProcessDialog" :activeModelId="activeModelId" @handleClose="handleClose" @handleApproverClick="handleApproverClick" :processObj="processObj"></process-edit>
 
 <!--    审批人弹框-->
-    <process-input :dialogInputProcessDialog="dialogInputProcessDialog"></process-input>
+    <process-input :dialogInputProcessDialog="dialogInputProcessDialog" @closeInputProcess="closeInputProcess" @selectMember="selectMember"></process-input>
   </div>
 </template>
 
@@ -63,10 +63,14 @@ export default {
       dialogDetailsProcessDialog:false,
       //审批人弹框
       dialogInputProcessDialog:false,
-
+      modelId:'',
       activeModelId:'',
       //查询列表
       processManagerList:[],
+      processObj:{
+        nickName:'',
+        userId:''
+      },
     }
   },
   created() {
@@ -90,24 +94,36 @@ export default {
     showEditProcessDialog(row){
       this.activeModelId = row
       this.dialogEditProcessDialog = true;
+
     },
     /* 关闭编辑弹框 */
     handleClose(){
+      this.getProcessManagerList();
       this.dialogEditProcessDialog = false;
+      this.modelId = "";
+      this.activeModelId = "";
     },
     /* 审批人弹框 */
     handleApproverClick(){
-      // this.dialogInputProcessDialog = true;
+      this.dialogInputProcessDialog = true;
     },
 
     /*详情弹框*/
-    editDetails(activeModelId){
+    editDetails(modelId){
+      this.modelId = modelId;
       this.dialogDetailsProcessDialog = true;
-      this.activeModelId = activeModelId;
     },
     /* 关闭详情 */
     handleCloseProcess(){
       this.dialogDetailsProcessDialog = false;
+    },
+    closeInputProcess(){
+      this.dialogInputProcessDialog = false;
+    },
+    selectMember(nickName,userId){
+      this.processObj.nickName = nickName
+      this.processObj.userId = userId
+      this.dialogInputProcessDialog = false;
     }
   },
 }

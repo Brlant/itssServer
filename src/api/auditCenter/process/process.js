@@ -34,3 +34,19 @@ export function getEditActiveModelList(query){
     data: query
   })
 }
+
+//部门搜索
+export function getDeptList(){
+  return request({
+    url: `/system/dept_manage/list`,
+    method: 'get',
+  })
+}
+
+export function getQueryUserInfoList(data){
+  return request({
+    url: `system/user/queryUserInfo`,
+    method: 'get',
+    params:data
+  })
+}

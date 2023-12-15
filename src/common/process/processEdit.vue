@@ -40,6 +40,7 @@
         </el-table-column>
         <!-- 审批人列，使用 el-input，并添加点击事件 -->
         <el-table-column label="审批人">
+
           <template slot-scope="scope" >
 <!--            上级领导-->
             <div v-if="scope.row.reviewedType === '上级领导'">
@@ -64,12 +65,13 @@
               <el-input
                 v-if="!scope.row.isStart && !scope.row.isEnd"
                 readonly
-                v-model="scope.row.reviewedId"
+                v-model="scope.row.reviewedName"
                 placeholder="点击选择审批人"
-                @click.native="handleApproverClick(scope.$index)"
+                @click.native="handleApproverClick(scope.row,scope.$index)"
               ></el-input>
-              <span v-else>/</span>
             </div>
+
+            <div v-if="scope.row.reviewedName === '超级管理员'">/</div>
           </template>
         </el-table-column>
 
@@ -109,13 +111,24 @@ import { getDetailList,getParentByIdList,getEditActiveModelList} from '@/api/aud
 
 export default {
   name: 'processEdit',
-  props: ['dialogEditProcessDialog','activeModelId'],
+  props: ['dialogEditProcessDialog','activeModelId','processObj'],
   watch: {
     activeModelId: {
       handler(newVal, oldVal) {
         if(newVal){
           this.getEditList(newVal)
         }
+      },
+      immediate: true,
+      deep: true,
+    },
+    processObj:{
+      handler(newVal, oldVal) {
+        // debugger
+        // console.log(newVal,'---------')
+        // this.processRow.reviewedName = newVal.nickName
+        this.tableData[this.activeIndex].reviewedName = newVal.nickName
+        this.tableData[this.activeIndex].reviewedId = newVal.reviewedId
       },
       immediate: true,
       deep: true,
@@ -133,7 +146,11 @@ export default {
       ],
       nickNameArray:[],
       userInfo:'',
-      userId:''
+      userId:'',
+      activeIndex:0,
+      selectedName: '', // 保存选择的行的姓名
+      processRow:{},
+      // selectedUserId: '' // 保存选择的行的ID
     }
   },
   created() {
@@ -159,7 +176,7 @@ export default {
         serialNumber:index+2,
         modelNode: '',
         reviewedType: '',
-        // reviewedName: '',
+        reviewedName: '',
         reviewedId:'',
         isStart: false,
         isEnd: false
@@ -181,16 +198,23 @@ export default {
         nodeDetails:this.tableData
       }
       getEditActiveModelList(params).then(res=>{
-        console.log(res)
+        this.$notify.success({
+          duration: 2000,
+          name: '成功',
+          message: res.msg
+        })
       })
-      console.log(this.tableData)
-
+      this.handleClose();
     },
     handleClose(){
       this.$emit('handleClose')
     },
-    handleApproverClick(index) {
-      console.log(index)
+    handleApproverClick(row,index) {
+      this.processRow = row
+      this.activeIndex = index;
+      console.log('索引',index)
+      this.selectedName = row.nickName; // 将表格中已选的姓名赋值给 selectedName
+      // this.selectedUserId = row.id; // 将表格中已选的ID赋值给 selectedId
       this.$emit('handleApproverClick')
     },
     remoteSearch(){

@@ -16,16 +16,15 @@
 import { getDetailList } from '@/api/auditCenter/process/process';
 export default {
   name: 'processDetail',
-  props:["dialogDetailsProcessDialog","activeModelId"],
+  props:["dialogDetailsProcessDialog","modelId"],
   watch:{
-    activeModelId: {
+    modelId: {
       handler(newVal, oldVal) {
         if(newVal){
           this.getDetailList(newVal)
         }
       },
       immediate: true,
-      deep: true,
     }
   },
   data(){
@@ -35,8 +34,13 @@ export default {
       detailsDataList:[],//详情列表
     }
   },
-  mounted() {
+  created() {
 
+  },
+  mounted() {
+    if(this.modelId){
+      this.getDetailList(this.modelId);
+    }
   },
   methods:{
     /* 关闭详情弹框 */
