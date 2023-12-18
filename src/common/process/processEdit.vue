@@ -119,6 +119,8 @@ export default {
       }
     },
     processObj(newVal) {
+      debugger
+      // 考虑到空对象的情况，所以还需要判断userId是否存在，如果存在，再赋值
       if (newVal && newVal.userId) {
         this.tableData[this.activeIndex].reviewedName = newVal.nickName
         this.tableData[this.activeIndex].reviewedId = newVal.userId
