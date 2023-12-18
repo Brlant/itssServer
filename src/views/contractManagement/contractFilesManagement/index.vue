@@ -6,41 +6,64 @@
         <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch"
                  label-width="68px">
           <!--      合同编号-->
-          <el-form-item prop="num">
+          <el-form-item prop="key">
             <el-input
               prefix-icon="el-icon-search"
-              v-model="queryParams.num"
+              v-model="queryParams.key"
               placeholder="合同编号"
               clearable
-              @keyup.enter.native="handleQuery"
+              @keyup.enter.native="getContractFiles"
             />
           </el-form-item>
           <!--     时间搜索 -->
-          <el-form-item prop="recv_time">
+          <el-form-item prop="applyTime">
             <el-date-picker
-              v-model="queryParams.recv_time"
+              v-model="queryParams.applyTime"
               style="width: 300px"
               value-format="yyyy-MM-dd"
+              format="yyyy-MM-dd"
               type="daterange"
               range-separator="-"
               start-placeholder="请选择开始时间"
               end-placeholder="请选择结束时间"
             ></el-date-picker>
           </el-form-item>
-          <!--      供应商-->
-          <el-form-item prop="house_id">
-            <el-select v-model="queryParams.house_id" placeholder="供应商" clearable>
+
+          <el-form-item prop="contractType">
+            <el-select v-model="queryParams.contractType" placeholder="合同类型" clearable>
               <el-option
-                v-for="u in supplierArray"
-                :key="u.value"
-                :label="u.label"
-                :value="u.value"
+                v-for="(item,index) in contractTypeList"
+                :key="index"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item prop="supplierId">
+            <el-select v-model="queryParams.supplierId" filterable :filter-method="getSupplierList" placeholder="供应商" clearable>
+              <el-option
+              v-for="(item,index) in supplierList"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item prop="createId">
+            <el-select v-model="queryParams.createId" filterable :filter-method="getUserList" placeholder="创建人" clearable>
+              <el-option
+                v-for="(item,index) in createList"
+                :key="index"
+                :label="item.label"
+                :value="item.value"
               />
             </el-select>
           </el-form-item>
           <!--搜索重置-->
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="getContractFiles">搜索</el-button>
             <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
@@ -71,21 +94,35 @@
         v-for="(item,index) in switchType"
         :key="index"
         :class="{ 'is-active': activeFilterIndex === index }"
-        @click="setActiveFilter(index)"
+        @click="setActiveFilter(item,index)"
       >
-        {{ item.text }}
+        {{ item.label }}
       </el-button>
     </el-row>
     <!--    查询表格-->
     <el-table v-loading="loading" :data="filteredData" style="width: 100%">
       <el-table-column type="index" label="序号"></el-table-column>
-      <el-table-column prop="name" label="合同编号"></el-table-column>
-      <el-table-column prop="contractType" label="合同类型"></el-table-column>
+      <el-table-column prop="contractRecordCode" label="合同档案编号"></el-table-column>
+      <el-table-column prop="contractCode" label="合同编号"></el-table-column>
+      <el-table-column prop="contractType" label="合同类型">
+        <template slot-scope="scope">
+          <span>{{ scope.row.contractType === 1? '销售合同' : '采购合同' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="contractName" label="合同名称"></el-table-column>
-      <el-table-column prop="supplier" label="供应商"></el-table-column>
-      <el-table-column prop="contractMoney" label="合同金额"></el-table-column>
-      <el-table-column prop="contractTime" label="签订日期"></el-table-column>
-      <el-table-column prop="status" label="状态"></el-table-column>
+      <el-table-column prop="supplierName" label="供应商"></el-table-column>
+      <el-table-column prop="contractAmount" label="合同金额"></el-table-column>
+      <el-table-column prop="signingDate" label="签订日期"></el-table-column>
+      <el-table-column prop="contractStatus" label="状态">
+        <template slot-scope="scope">
+          <span v-if="scope.row.contractStatus === ''">全部</span>
+          <span v-if="scope.row.contractStatus === 0">待审核</span>
+          <span v-if="scope.row.contractStatus === 1">审核中</span>
+          <span v-if="scope.row.contractStatus === 2">审核不通过</span>
+          <span v-if="scope.row.contractStatus === 3">启用</span>
+          <span v-if="scope.row.contractStatus === 5">停用</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
@@ -101,10 +138,10 @@
 
     <!--    翻页-->
     <pagination
-      v-show="pageParams.total>0"
-      :total="pageParams.total"
-      :page.sync="pageParams.page"
-      :limit.sync="pageParams.limit"
+      v-show="queryParams.total>0"
+      :total="queryParams.total"
+      :page.sync="queryParams.page"
+      :limit.sync="queryParams.limit"
       @pagination="getContractFiles"
     />
 
@@ -147,6 +184,8 @@ import managerAuditInfo from "@/common/contractManager/managerAuditInfo";
 import managerInfo from "@/common/contractManager/managerInfo";
 import managerOperationLog from "@/common/contractManager/managerOperationLog";
 
+import { getContractFileList,getUserList } from '@/api/contractFilesManagement/contractFilesManagement'
+import { getSupplierList } from '@/api/supplier/supplier'
 export default {
   name: "index",
   components: {
@@ -172,95 +211,44 @@ export default {
       // 显示搜索条件
       showSearch: true,
       // 查询参数
-      queryParams: {},
-      //供应商
-      supplierArray: [],
-      //翻页参数
-      pageParams: {
+      queryParams: {
+        key:"",
+        applyTime:"",
+        contractType:"",
+        supplierId:'',
+        createId:'',
+        contractStatus:"",
+        //分页
         total: 10,
         page: 1,
         limit: 10,
-        order: "id desc",
       },
+      //供应商
+      supplierArray: [],
+      //创建人
+      createList:[],
       //切换按钮
       filters: [
-        {text: "全部", status: null},
-        {text: "待审核", status: "pending"},
-        {text: "审核中", status: "processing"},
-        {text: "审核不通过", status: "rejected"},
-        {text: "启用", status: "enabled"},
-        {text: "停用", status: "disabled"},
+        {label: "全部", value: null},
+        {label: "待审核", value: 0},
+        {label: "审核中", value: 1},
+        {label: "审核不通过", value: 2},
+        {label: "启用", value: 3},
+        {label: "停用", value: 5},
       ],
       activeFilterIndex: 0,
-      tableData: [
-        {
-          name: "项目A",
-          contractType: "平常",
-          contractName: "三方",
-          supplier: "国药",
-          contractMoney: "100",
-          contractTime: "2023/12/07",
-          status: "pending"
-        },
-        {
-          name: "项目B",
-          contractType: "平常",
-          contractName: "三方",
-          supplier: "国药",
-          contractMoney: "100",
-          contractTime: "2023/12/07",
-          status: "processing"
-        },
-        {
-          name: "项目C",
-          contractType: "平常",
-          contractName: "三方",
-          supplier: "国药",
-          contractMoney: "100",
-          contractTime: "2023/12/07",
-          status: "rejected"
-        },
-        {
-          name: "项目D",
-          contractType: "平常",
-          contractName: "三方",
-          supplier: "国药",
-          contractMoney: "100",
-          contractTime: "2023/12/07",
-          status: "revoked"
-        },
-        {
-          name: "项目E",
-          contractType: "平常",
-          contractName: "三方",
-          supplier: "国药",
-          contractMoney: "100",
-          contractTime: "2023/12/07",
-          status: "enabled"
-        },
-        {
-          name: "项目F",
-          contractType: "平常",
-          contractName: "三方",
-          supplier: "国药",
-          contractMoney: "100",
-          contractTime: "2023/12/07",
-          status: "disabled"
-        },
-        {
-          name: "项目G",
-          contractType: "平常",
-          contractName: "三方",
-          supplier: "国药",
-          contractMoney: "100",
-          contractTime: "2023/12/07",
-          status: "obsolete"
-        },
+      supplierList:[],
+      //合同类型
+      contractTypeList:[
+        {label:'采购合同',value:1},
+        {label:'框架合同',value:2},
       ],
+      tableData: [],
     }
   },
   created() {
     this.getContractFiles();
+    this.getUserList();
   },
   mounted() {
 
@@ -276,12 +264,44 @@ export default {
     switchType() {
       return this.filters.map((filter) => {
         return {
-          text: filter.text,
+          label: filter.label,
+          value:filter.value
         }
       })
     },
   },
   methods: {
+    getSupplierList(query){
+      let params = {
+        codeNameKey: query,
+        pageNum: 1,
+        pageSize: 10,
+      }
+      getSupplierList(params).then((res) => {
+        this.supplierList = res.data.rows.map(item => {
+          return {
+            value: item.supplierId,
+            label: item.supplierName
+          }
+        })
+      })
+    },
+    getUserList(query){
+      let params = {
+        pageNum: 1,
+        pageSize: 10,
+        nickName:query,
+      }
+      getUserList(params).then((res) => {
+        this.createList = res.rows.map(item => {
+          return {
+            value: item.userId,
+            label: item.nickName
+          }
+        })
+      })
+    },
+
     /*处理标签页信息*/
     handleTabClick(tab, event) {
 
@@ -297,8 +317,24 @@ export default {
     },
     /*查询列表内容*/
     getContractFiles() {
-      let params = {};
-      this.loading = false;
+      let params = {
+        key:this.queryParams.key,
+        startDate:this.queryParams.applyTime[0],
+        endDate:this.queryParams.applyTime[1],
+        contractType:this.queryParams.contractType,
+        supplierId:this.queryParams.supplierId,
+        createId:this.queryParams.createId,
+        pageNum: this.queryParams.page,
+        pageSize: this.queryParams.limit,
+        contractStatus:this.queryParams.contractStatus,
+      };
+
+      getContractFileList(params).then(res=>{
+        this.loading = false;
+        this.tableData = res.rows;
+        this.queryParams.total = res.total;
+        console.log('合同档案管理',res.rows)
+      })
     },
     /*搜索查询*/
     handleQuery() {
@@ -306,10 +342,13 @@ export default {
     },
     /*重置*/
     resetQuery() {
-
+      this.$refs.queryForm.resetFields();
+      this.getContractFiles();
     },
     /*切换按钮查询列表*/
-    setActiveFilter(index) {
+    setActiveFilter(row,index) {
+      this.queryParams.contractStatus = row.value;
+      this.getContractFiles();
       this.activeFilterIndex = index;
     },
     /*新增表单*/

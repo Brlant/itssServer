@@ -268,7 +268,8 @@ export default {
       ],
       activeFilterIndex: 0,
       activeFilterMenuIndex: 0,
-      tableData: []
+      tableData: [],
+
     }
   },
   created() {
