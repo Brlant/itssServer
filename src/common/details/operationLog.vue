@@ -3,10 +3,10 @@
     <el-timeline>
       <el-timeline-item v-for="(item, index) in timelineData" :key="index">
         <div class="timeline-item-content">
-          <div class="timestamp">{{ item.timestamp }}</div>
+          <div class="timestamp">{{new Date(item.updateTime).toLocaleString()}}</div>
           <div class="status-and-content">
-            <div class="status">{{ item.status }}</div>
-            <div class="content">{{ item.content }}</div>
+            <div class="status">{{ item.updateBy }}</div>
+            <div class="content">{{ item.logContent }}</div>
           </div>
         </div>
       </el-timeline-item>
@@ -15,18 +15,22 @@
 </template>
 
 <script>
+import { getExamineLog } from "@/api/auditCenter/initiated/initiated"
 export default {
   name: "operationLog",
-  props: {
-    tabName: {
-      type: String,
-      default: '',
-    }
-  },
+  props: ['detailsRow'],
   watch: {
-    tabName: {
+    detailsRow: {
       handler(newVal, oldVal) {
-        console.log('操作日志', newVal);
+        if (newVal.relationId && newVal.modelType){
+          let params = {
+            id: newVal.relationId,
+            type: newVal.modelType
+          }
+          getExamineLog(params).then(res=>{
+            this.timelineData = res.data
+          })
+        }
       },
       immediate: true,
       deep: true,

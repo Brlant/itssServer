@@ -1,26 +1,25 @@
 <template>
   <div>
     <el-timeline>
-      <el-timeline-item v-for="(item, index) in timelineData" :key="index"   :color="item.color">
+      <el-timeline-item v-for="(item, index) in timelineData" :key="index"   :color="item.nodeStatus === 0?'gray':'green'" >
         <div class="timeline-item-content">
           <div class="timeline-item-header">
-            <div class="status">{{ item.status }}</div>
-            <div class="timestamp">{{ item.timestamp }}</div>
+            <div class="status">{{ item.modelNode }}</div>
+            <div class="timestamp">{{ item.updateTime }}</div>
           </div>
           <div style="display: flex">
             <div class="content">
               <div>
-                {{ item.content }}
+                {{ item.reviewedName }}
               </div>
               <div>
-                审核通过
+                {{ item.nodeContent }}
               </div>
             </div>
             <div class="content-right">
-              不通过原因：档案内容不完善
+              {{item.remark}}
             </div>
           </div>
-
         </div>
       </el-timeline-item>
     </el-timeline>
@@ -28,18 +27,23 @@
 </template>
 
 <script>
+import { getExamineInfo} from '@/api/auditCenter/initiated/initiated'
+
 export default {
   name: "auditInfo",
-  props: {
-    tabName: {
-      type: String,
-      default: '',
-    }
-  },
+  props: ['detailsRow'],
   watch: {
-    tabName: {
+    detailsRow: {
       handler(newVal, oldVal) {
-        console.log('审核信息', newVal);
+        if (newVal.relationId && newVal.modelType){
+          let params = {
+            id: newVal.relationId,
+            type: newVal.modelType
+          }
+          getExamineInfo(params).then(res => {
+            this.timelineData = res.data
+          })
+        }
       },
       immediate: true,
       deep: true,
@@ -47,26 +51,7 @@ export default {
   },
   data(){
     return{
-      timelineData: [
-        {
-          timestamp: '2023-01-01',
-          status: '审核通过',
-          content: '内容1',
-          color:"green",
-        },
-        {
-          timestamp: '2023-02-01',
-          status: '审核中',
-          content: '内容2',
-          color:"green",
-        },
-        {
-          timestamp: '2023-03-01',
-          status: '审核不通过',
-          content: '内容3',
-          color:"#E4E7ED",
-        }
-      ]
+      timelineData: []
     }
   },
   created() {

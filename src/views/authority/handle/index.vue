@@ -113,11 +113,11 @@
             :name="tab.name"
           >
             <!-- 使用组件作为标签页内容 -->
-            <component :is="tab.component" :tabName="tabName"></component>
+            <component :is="tab.component" :detailsRow="detailsRow"></component>
           </el-tab-pane>
         </el-tabs>
         <div class="tabStatus">
-          状态
+          {{tabStatus}}
         </div>
       </template>
       <div slot="footer" class="dialog-footer">
@@ -178,6 +178,20 @@ export default {
         { label: '合同档案审批流程' }
       ],
       handleList: [],
+
+      detailsRow:{
+        modelType:"",
+        relationId:"",
+      },
+      examineStatusArray:[
+        {label:"待审核",value:0},
+        {label:"审核中",value:1},
+        {label:"已完成",value:3},
+        {label:"已撤回",value:4},
+        {label:"审核不通过",value:2},
+      ],
+      //状态
+      tabStatus:'',
     }
   },
   watch:{
@@ -206,9 +220,18 @@ export default {
       this.tabName = null
       this.activeTab = 'fileInfo'
       this.dialogDetailsProcessDialog = false
+      this.detailsRow.modelType = ''
+      this.detailsRow.relationId = ''
     },
     /* 详情弹框 */
     handleDetails(row){
+      this.detailsRow.modelType = row.modelType
+      this.detailsRow.relationId = row.relationId
+      this.examineStatusArray.forEach((item)=>{
+        if(item.value === row.examineStatus){
+          this.tabStatus = item.label
+        }
+      })
       this.dialogDetailsProcessDialog = true;
     },
     /*处理标签页信息*/

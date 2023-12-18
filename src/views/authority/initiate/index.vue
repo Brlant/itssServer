@@ -132,11 +132,11 @@
             :name="tab.name"
           >
             <!-- 使用组件作为标签页内容 -->
-            <component :is="tab.component" :tabName="tabName"></component>
+            <component :is="tab.component" :detailsRow="detailsRow"></component>
           </el-tab-pane>
         </el-tabs>
         <div class="tabStatus">
-          状态
+          {{tabStatus}}
         </div>
       </template>
       <div slot="footer" class="dialog-footer">
@@ -211,11 +211,14 @@ export default {
       ],
       //流程名称
       flowPathName: [],
-      objectRow: {
-        id: ''
+      detailsRow:{
+        modelType:"",
+        relationId:"",
       },
       // 我发起的表格数据
-      initiateList: []
+      initiateList: [],
+      //状态
+      tabStatus:'',
     }
   },
   created() {
@@ -246,6 +249,8 @@ export default {
       this.tabName = null
       this.activeTab = 'fileInfo'
       this.dialogDetailsProcessDialog = false
+      this.detailsRow.modelType = ''
+      this.detailsRow.relationId = ''
     },
     /*处理标签页信息*/
     handleTabClick(tab, event) {
@@ -287,8 +292,13 @@ export default {
     },
     /*详情*/
     handleDetails(row) {
-      this.objectRow = row.id
-      this.tabName = row.id
+      this.detailsRow.modelType = row.modelType
+      this.detailsRow.relationId = row.relationId
+      this.examineStatusArray.forEach((item)=>{
+        if(item.value === row.examineStatus){
+          this.tabStatus = item.label
+        }
+      })
       this.dialogDetailsProcessDialog = true
     }
   }
