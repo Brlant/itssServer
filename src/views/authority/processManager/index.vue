@@ -67,10 +67,7 @@ export default {
       activeModelId:'',
       //查询列表
       processManagerList:[],
-      processObj:{
-        nickName:'',
-        userId:''
-      },
+      processObj:null,
     }
   },
   created() {
@@ -121,9 +118,11 @@ export default {
       this.dialogInputProcessDialog = false;
     },
     selectMember(nickName,userId){
-      this.processObj.nickName = nickName
-      this.processObj.userId = userId
-      this.dialogInputProcessDialog = false;
+      if (this.processObj){
+        this.processObj.nickName = nickName
+        this.processObj.userId = userId
+        this.dialogInputProcessDialog = false;
+      }
     }
   },
 }

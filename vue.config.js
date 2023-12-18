@@ -16,7 +16,7 @@ const targets = {
   yj:'http://192.168.5.111:8080',
   lxr:'http://192.168.5.10:8080',
   xwc:'http://192.168.5.213:8080',
-  cjg:'http://192.168.5.26:8081',
+  cjg:'http://192.168.5.26:8082',
 }
 
 // vue.config.js 配置说明
@@ -53,8 +53,7 @@ module.exports = {
         changeOrigin: true,
         logLevel:"debug",
         pathRewrite: {
-          '^/': ''
-          // ['^' + process.env.VUE_APP_BASE_API]: ''
+          ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       }
     },
