@@ -166,7 +166,7 @@ export default {
   data() {
     return {
       //提醒消息
-      promptInfoForm:true,
+      promptInfoForm:false,
       activeTab: 'fileInfo',
       tabs: [
         { label: '档案信息', name: 'fileInfo', component: fileInfo },

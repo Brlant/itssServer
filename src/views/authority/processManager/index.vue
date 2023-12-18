@@ -104,6 +104,7 @@ export default {
       this.dialogEditProcessDialog = false;
       this.modelId = "";
       this.activeModelId = "";
+      this.processObj = "";
     },
     /* 审批人弹框 */
     handleApproverClick() {
@@ -118,6 +119,7 @@ export default {
     /* 关闭详情 */
     handleCloseProcess() {
       this.dialogDetailsProcessDialog = false;
+      this.processObj = "";
     },
     closeInputProcess() {
       this.dialogInputProcessDialog = false;

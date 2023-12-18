@@ -53,7 +53,8 @@ module.exports = {
         changeOrigin: true,
         logLevel:"debug",
         pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
+          '^/itss': ''
+          // ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       }
     },

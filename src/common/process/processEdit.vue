@@ -41,23 +41,23 @@
       <!-- 审批人列，使用 el-input，并添加点击事件 -->
       <el-table-column label="审批人">
 
-        <template slot-scope="scope">
-          <!--            上级领导-->
-          <div v-if="scope.row.reviewedType === '上级领导'">
-            <el-select
-              filterable
-              v-if="!scope.row.isStart && !scope.row.isEnd"
-              v-model="scope.row.reviewedId"
-              placeholder="请选择审批人类型"
-            >
-              <el-option
-                v-for="(item,index) in nickNameArray"
-                :key="index"
-                :label="item.nickName"
-                :value="item.userId"
-              ></el-option>
-            </el-select>
-          </div>
+          <template slot-scope="scope" >
+<!--            上级领导-->
+            <div v-if="scope.row.reviewedType === '上级领导'">
+              <el-select
+                filterable
+                v-if="!scope.row.isStart && !scope.row.isEnd"
+                v-model="scope.row.reviewedId"
+                placeholder="请选择审批人类型"
+              >
+                <el-option
+                  v-for="(item,index) in nickNameArray"
+                  :key="index"
+                  :label="item.nickName"
+                  :value="item.userId"
+                ></el-option>
+              </el-select>
+            </div>
 
 
           <!--            指定人员-->
@@ -119,7 +119,7 @@ export default {
       }
     },
     processObj(newVal) {
-      debugger
+      // debugger
       // 考虑到空对象的情况，所以还需要判断userId是否存在，如果存在，再赋值
       if (newVal && newVal.userId) {
         this.tableData[this.activeIndex].reviewedName = newVal.nickName
