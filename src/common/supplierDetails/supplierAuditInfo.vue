@@ -43,7 +43,7 @@ export default {
       handler(newVal, oldVal) {
         if (newVal) {
           supplierApi.queryExamineById(newVal).then(res => {
-            console.log('审核信息', res);
+            // console.log('审核信息', res);
             this.timelineData = res.data.map(item => {
               return {
                 updateTime: item.updateTime,

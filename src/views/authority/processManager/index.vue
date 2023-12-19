@@ -16,14 +16,14 @@
             size="mini"
             type="text"
             icon="el-icon-s-order"
-            @click="editDetails(scope.row.activeModelId)"
+            @click="editDetails(scope.row,scope.row.activeModelId)"
           >详情
           </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="showEditProcessDialog(scope.row.activeModelId)"
+            @click="showEditProcessDialog(scope.row,scope.row.activeModelId)"
           >编辑
           </el-button>
         </template>
@@ -32,11 +32,11 @@
 
 
     <!--    详情弹框内容-->
-    <process-detail :dialogDetailsProcessDialog="dialogDetailsProcessDialog" :modelId="modelId"
+    <process-detail :dialogDetailsProcessDialog="dialogDetailsProcessDialog" :detailsTitle="modelNameProcess" :modelId="modelId"
                     @handleCloseProcess="handleCloseProcess"></process-detail>
 
     <!--    编辑弹框-->
-    <process-edit :dialogEditProcessDialog="dialogEditProcessDialog" :activeModelId="activeModelId"
+    <process-edit :dialogEditProcessDialog="dialogEditProcessDialog" :detailsTitle="modelNameProcess" :activeModelId="activeModelId"
                   @handleClose="handleClose" @handleApproverClick="handleApproverClick"
                   :processObj="processObj"></process-edit>
 
@@ -75,6 +75,8 @@ export default {
       //查询列表
       processManagerList: [],
       processObj: null,
+      //详情流程名称
+      modelNameProcess:'',
     }
   },
   created() {
@@ -93,8 +95,9 @@ export default {
       })
     },
     /*编辑审核中心*/
-    showEditProcessDialog(row) {
-      this.activeModelId = row
+    showEditProcessDialog(row,index) {
+      this.activeModelId = index
+      this.modelNameProcess = row.modelName;
       this.dialogEditProcessDialog = true;
 
     },
@@ -105,6 +108,7 @@ export default {
       this.modelId = "";
       this.activeModelId = "";
       this.processObj = "";
+      this.modelNameProcess = "";
     },
     /* 审批人弹框 */
     handleApproverClick() {
@@ -112,7 +116,8 @@ export default {
     },
 
     /*详情弹框*/
-    editDetails(modelId) {
+    editDetails(row,modelId) {
+      this.modelNameProcess  = row.modelName;
       this.modelId = modelId;
       this.dialogDetailsProcessDialog = true;
     },
@@ -120,6 +125,7 @@ export default {
     handleCloseProcess() {
       this.dialogDetailsProcessDialog = false;
       this.processObj = "";
+      this.modelNameProcess = "";
     },
     closeInputProcess() {
       this.dialogInputProcessDialog = false;

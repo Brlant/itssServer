@@ -112,7 +112,7 @@
 <script>
 //合同到期提醒
 import contractForm from "@/common/contractForm/contractForm";
-import { getSupplierList } from '@/api/supplier/supplier'
+import supplierApi from '@/api/supplier/supplier'
 import { getContractFileList } from '@/api/contractFilesManagement/contractFilesManagement'
 export default {
   name: "index",
@@ -169,7 +169,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
       }
-      getSupplierList(params).then((res) => {
+      supplierApi.getSupplierList(params).then((res) => {
         this.supplierList = res.data.rows.map(item => {
           return {
             value: item.supplierId,
@@ -192,7 +192,6 @@ export default {
         this.loading = false;
         this.tableData = res.rows;
         this.queryParams.total = res.total;
-        console.log('合同档案管理',res.rows)
       })
 
     },

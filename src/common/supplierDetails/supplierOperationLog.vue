@@ -29,7 +29,6 @@ export default {
       handler(newVal, oldVal) {
         if (newVal) {
           supplierApi.queryOperatorById(newVal).then(res => {
-            console.log('操作日志', res);
             this.timelineData = res.data;
           })
         }

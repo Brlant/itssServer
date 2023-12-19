@@ -185,7 +185,7 @@ import managerInfo from "@/common/contractManager/managerInfo";
 import managerOperationLog from "@/common/contractManager/managerOperationLog";
 
 import { getContractFileList,getUserList } from '@/api/contractFilesManagement/contractFilesManagement'
-import { getSupplierList } from '@/api/supplier/supplier'
+import supplierApi from '@/api/supplier/supplier'
 export default {
   name: "index",
   components: {
@@ -272,12 +272,13 @@ export default {
   },
   methods: {
     getSupplierList(query){
+      console.log(query)
       let params = {
         codeNameKey: query,
         pageNum: 1,
         pageSize: 10,
       }
-      getSupplierList(params).then((res) => {
+      supplierApi.getSupplierList(params).then((res) => {
         this.supplierList = res.data.rows.map(item => {
           return {
             value: item.supplierId,
@@ -333,7 +334,6 @@ export default {
         this.loading = false;
         this.tableData = res.rows;
         this.queryParams.total = res.total;
-        console.log('合同档案管理',res.rows)
       })
     },
     /*搜索查询*/

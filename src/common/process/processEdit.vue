@@ -1,7 +1,7 @@
 <template>
-  <el-dialog :visible="dialogEditProcessDialog" :title="editTitle" width="60%" @close="handleClose">
+  <el-dialog :visible="dialogEditProcessDialog" :title="detailsTitle" width="60%" @close="handleClose">
     <template v-slot:title>
-      <div style="font-weight: bold;font-size: 15px">{{ editTitle }}</div>
+      <div style="font-weight: bold;font-size: 15px">{{ detailsTitle }}</div>
     </template>
     <el-table :data="tableData" style="width: 100%">
       <!-- 序号列 -->
@@ -101,7 +101,7 @@
     </el-table>
     <div style="margin-top: 20px">
       <el-button type="primary" @click="saveProcessEdit">保存</el-button>
-      <el-button>返回</el-button>
+      <el-button @click="returnProcess">返回</el-button>
     </div>
   </el-dialog>
 </template>
@@ -111,7 +111,7 @@ import {getDetailList, getParentByIdList, getEditActiveModelList} from '@/api/au
 
 export default {
   name: 'processEdit',
-  props: ['dialogEditProcessDialog', 'activeModelId', 'processObj'],
+  props: ['dialogEditProcessDialog', 'activeModelId', 'processObj','detailsTitle'],
   watch: {
     activeModelId(newVal) {
       if (newVal) {
@@ -131,7 +131,7 @@ export default {
     return {
       //编辑审核中心的详情
       dialogInputProcessDialog: false,
-      editTitle: '供应商档案审核流程',
+      // detailsTitle: '供应商档案审核流程',
       tableData: [],
       approverTypes: [
         {label: '上级领导'},
@@ -197,6 +197,10 @@ export default {
           message: res.msg
         })
       })
+      this.handleClose();
+    },
+    /* 返回 */
+    returnProcess(){
       this.handleClose();
     },
     handleClose() {
