@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import { getQueryDetail } from '@/api/auditCenter/initiated/initiated'
+import {getQueryDetail} from '@/api/auditCenter/initiated/initiated'
 
 export default {
   name: 'fileInfo',
@@ -166,32 +166,33 @@ export default {
         accountNumber: '',
         businessScope: '',
         //联系人
-        contacts: [
-        ]
+        contactsInfoList: []
       },
       //表单校验
       formRules: {
-        supplierNo: [{ required: true, message: '请输入供应商编号', trigger: 'blur' }],
-        supplierName: [{ required: true, message: '请输入供应商名称', trigger: 'blur' }],
-        supplierTypeName: [{ required: true, message: '请输入企业类型', trigger: 'blur' }],
-        validityDate: [{ required: true, message: '请选择供应商日期', trigger: 'change' }],
-        supplierAddress: [{ required: true, message: '请输入办公室地址', trigger: 'blur' }],
-        warehouseAddress: [{ required: true, message: '请输入仓库地址', trigger: 'blur' }],
-        //工商信息
-        legalPerson: [{ required: true, message: '请输入法人', trigger: 'blur' }],
-        idCardNumber: [{ required: true, message: '请输入法人身份证号', trigger: 'blur' }],
-        establishDate: [{ required: true, message: '请选择公司成立时间', trigger: 'change' }],
-        bankName: [{ required: true, message: '请输入开户行', trigger: 'blur' }],
-        accountNumber: [{ required: true, message: '请输入收款账号', trigger: 'blur' }],
-        businessScope: [{ required: true, message: '请输入经营范围', trigger: 'blur' }],
+        // 基本信息
+        supplierName: [{required: true, message: '请输入供应商名称', trigger: 'blur'}],
+        supplierType: [{required: true, message: '请输入企业类型', trigger: 'blur'}],
+        validityDate: [{required: true, message: '请选择供应商有效期', trigger: 'change'}],
+        supplierAddress: [{required: true, message: '请输入办公地址', trigger: 'blur'}],
+        warehouseAddress: [{required: true, message: '请输入仓库地址', trigger: 'blur'}],
+        // 动态表单校验以下写法不生效，需要直接在el-form-item上面动态绑定prop和rules
+        // 工商信息
+        // legalPerson: [{ required: true, message: '请输入法人', trigger: 'blur' }],
+        // legalPersonID: [{ required: true, message: '请输入法人身份证号', trigger: 'blur' }],
+        // establishDate: [{ required: true, message: '请选择公司成立时间', trigger: 'change' }],
+        // bankName: [{ required: true, message: '请输入开户行', trigger: 'blur' }],
+        // accountNumber: [{ required: true, message: '请输入收款账号', trigger: 'blur' }],
+        // businessScope: [{ required: true, message: '请输入经营范围', trigger: 'blur' }],
+        // businessLicenseUrl: [{ required: true, message: '请选择营业执照', trigger: 'change' }],
 
         //联系人
-        contactsName: [
-          { required: true, message: '请输入联系人', trigger: 'blur' }
-        ],
-        contactsPhone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
-        ]
+        // contactsName: [
+        //   { required: true, message: '请输入联系人', trigger: 'blur' }
+        // ],
+        // contactsPhone: [
+        //   { required: true, message: '请输入手机号', trigger: 'blur' }
+        // ]
       }
     }
   }

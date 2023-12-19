@@ -1,21 +1,22 @@
 import axios from 'axios'
-import { Notification, MessageBox, Message, Loading } from 'element-ui'
+import {Notification, MessageBox, Message, Loading} from 'element-ui'
 import store from '@/store'
 import router from '@/router'
-import { getToken } from '@/utils/auth'
+import {getToken} from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
-import { tansParams, blobValidate } from "@/utils/ruoyi";
+import {tansParams, blobValidate} from "@/utils/ruoyi";
 import cache from '@/plugins/cache'
-import { saveAs } from 'file-saver'
+import {saveAs} from 'file-saver'
+
 let msgTxt
 let count = 0
 let downloadLoadingInstance;
 // 是否显示重新登录
-export let isRelogin = { show: false };
-
+export let isRelogin = {show: false};
+export let uploadUrl = process.env.VUE_APP_BASE_API + '/file/upload'
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // 创建axios实例
-const service = axios.create({
+const request = axios.create({
   // axios中请求配置有baseURL选项，表示请求URL公共部分
   baseURL: process.env.VUE_APP_BASE_API,
   // 超时
@@ -24,7 +25,7 @@ const service = axios.create({
 })
 
 // request拦截器
-service.interceptors.request.use(config => {
+request.interceptors.request.use(config => {
   // 是否需要设置 token
   const isToken = (config.headers || {}).isToken === false
   // 是否需要防止数据重复提交
@@ -58,51 +59,52 @@ service.interceptors.request.use(config => {
       //   console.warn(`[${s_url}]: ` + message)
       //   return Promise.reject(new Error(message))
       // } else {
-        cache.session.setJSON('sessionObj', requestObj)
+      cache.session.setJSON('sessionObj', requestObj)
       // }
     }
   }
   return config
 }, error => {
-    console.log(error)
-    Promise.reject(error)
+  console.log(error)
+  Promise.reject(error)
 })
 
 // 响应拦截器
-service.interceptors.response.use(res => {
+request.interceptors.response.use(res => {
     // 未设置状态码则默认成功状态
     const code = res.data.code || 200;
     // 获取错误信息
-    const msg = res.data.msg || errorCode[code]  || errorCode['default']
+    const msg = res.data.msg || errorCode[code] || errorCode['default']
     // 二进制数据则直接返回
-    if(res.request.responseType ===  'blob' || res.request.responseType ===  'arraybuffer'){
+    if (res.request.responseType === 'blob' || res.request.responseType === 'arraybuffer') {
       return res.data
     }
+
     if (code === 401) {
-    //   if (!isRelogin.show) {
-    //     isRelogin.show = true;
-    //     MessageBox.confirm(msg, '系统提示', {
-    //       confirmButtonText: '重新登录',
-    //       cancelButtonText: '取消',
-    //       type: 'warning'
-    //     }
-    //   ).then(() => {
-    //     isRelogin.show = false;
-    //     store.dispatch('LogOut').then(() => {
-    //       this.$router.push('/login');
-    //     })
-    //   }).catch(() => {
-    //     isRelogin.show = false;
-    //   });
-    // }
+      //   if (!isRelogin.show) {
+      //     isRelogin.show = true;
+      //     MessageBox.confirm(msg, '系统提示', {
+      //       confirmButtonText: '重新登录',
+      //       cancelButtonText: '取消',
+      //       type: 'warning'
+      //     }
+      //   ).then(() => {
+      //     isRelogin.show = false;
+      //     store.dispatch('LogOut').then(() => {
+      //       this.$router.push('/login');
+      //     })
+      //   }).catch(() => {
+      //     isRelogin.show = false;
+      //   });
+      // }
       // TODO
       count++
-      if(count==1){
-          Message.closeAll()
-          Message.error(msg)
+      if (count == 1) {
+        Message.closeAll()
+        Message.error(msg)
       }
       store.dispatch('LogOut').then(() => {
-        count=0
+        count = 0
         router.push('/login');
       })
       return Promise.reject(msg)
@@ -126,14 +128,12 @@ service.interceptors.response.use(res => {
   },
   error => {
     console.log('err' + error)
-    let { message } = error;
+    let {message} = error;
     if (message == "Network Error") {
       message = "后端接口连接异常";
-    }
-    else if (message.includes("timeout")) {
+    } else if (message.includes("timeout")) {
       message = "系统接口请求超时";
-    }
-    else if (message.includes("Request failed with status code")) {
+    } else if (message.includes("Request failed with status code")) {
       message = "系统接口" + message.substr(message.length - 3) + "异常";
     }
     Message({
@@ -147,10 +147,16 @@ service.interceptors.response.use(res => {
 
 // 通用下载方法
 export function download(url, params, filename) {
-  downloadLoadingInstance = Loading.service({ text: "正在下载数据，请稍候", spinner: "el-icon-loading", background: "rgba(0, 0, 0, 0.7)", })
-  return service.post(url, params, {
-    transformRequest: [(params) => { return tansParams(params) }],
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  downloadLoadingInstance = Loading.service({
+    text: "正在下载数据，请稍候",
+    spinner: "el-icon-loading",
+    background: "rgba(0, 0, 0, 0.7)",
+  })
+  return request.post(url, params, {
+    transformRequest: [(params) => {
+      return tansParams(params)
+    }],
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
     responseType: 'blob'
   }).then(async (data) => {
     const isLogin = await blobValidate(data);
@@ -171,4 +177,4 @@ export function download(url, params, filename) {
   })
 }
 
-export default service
+export default request

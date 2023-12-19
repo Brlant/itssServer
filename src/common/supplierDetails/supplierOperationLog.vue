@@ -3,10 +3,9 @@
     <el-timeline>
       <el-timeline-item v-for="(item, index) in timelineData" :key="index">
         <div class="timeline-item-content">
-          <div class="timestamp">{{ item.timestamp }}</div>
+          <div class="createTime">{{ item.createTime }}</div>
           <div class="status-and-content">
-            <div class="status">{{ item.status }}</div>
-            <div class="content">{{ item.content }}</div>
+            <div class="content">{{ item.logContent }}</div>
           </div>
         </div>
       </el-timeline-item>
@@ -15,40 +14,43 @@
 </template>
 
 <script>
+import supplierApi from '@/api/supplier/supplier'
+
 export default {
   name: "supplierOperationLog",
   props: {
-    tabName: {
+    supplierId: {
       type: String,
       default: '',
     }
   },
   watch: {
-    tabName: {
+    supplierId: {
       handler(newVal, oldVal) {
-        console.log('操作日志', newVal);
+        if (newVal) {
+          supplierApi.queryOperatorById(newVal).then(res => {
+            console.log('操作日志', res);
+            this.timelineData = res.data;
+          })
+        }
       },
-      immediate: true,
-      deep: true,
+      immediate: true
     }
   },
   data() {
     return {
       timelineData: [
         {
-          timestamp: '2023-01-01',
-          status: '审核通过',
-          content: '内容1'
+          createTime: '2023-01-01',
+          logContent: '内容1'
         },
         {
-          timestamp: '2023-02-01',
-          status: '审核中',
-          content: '内容2'
+          createTime: '2023-02-01',
+          logContent: '内容2'
         },
         {
-          timestamp: '2023-03-01',
-          status: '审核不通过',
-          content: '内容3'
+          createTime: '2023-03-01',
+          logContent: '内容3'
         }
       ]
     };
@@ -67,7 +69,7 @@ export default {
   align-items: center;
 }
 
-.timestamp {
+.createTime {
   padding: 4px 8px;
   background-color: #f5f7fa;
   border-radius: 4px;

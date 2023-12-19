@@ -1,23 +1,23 @@
 <template>
   <div>
     <el-timeline>
-      <el-timeline-item v-for="(item, index) in timelineData" :key="index"   :color="item.color">
+      <el-timeline-item v-for="(item, index) in timelineData" :key="index" :color="item.color">
         <div class="timeline-item-content">
           <div class="timeline-item-header">
-            <div class="status">{{ item.status }}</div>
-            <div class="timestamp">{{ item.timestamp }}</div>
+            <div class="status">{{ item.modelNode }}</div>
+            <div class="timestamp" v-show="item.updateTime">{{ item.updateTime }}</div>
           </div>
           <div style="display: flex">
             <div class="content">
               <div>
-                {{ item.content }}
+                {{ item.reviewedName }}
               </div>
               <div>
-                审核通过
+                {{ item.nodeContent }}
               </div>
             </div>
-            <div class="content-right">
-              不通过原因：档案内容不完善
+            <div class="content-right" v-show="item.nodeStatus == 2">
+              不通过原因：{{ item.remark }}
             </div>
           </div>
 
@@ -28,43 +28,59 @@
 </template>
 
 <script>
+import supplierApi from '@/api/supplier/supplier'
+
 export default {
   name: "supplierAuditInfo",
   props: {
-    tabName: {
+    supplierId: {
       type: String,
       default: '',
     }
   },
   watch: {
-    tabName: {
+    supplierId: {
       handler(newVal, oldVal) {
-        console.log('审核信息', newVal);
+        if (newVal) {
+          supplierApi.queryExamineById(newVal).then(res => {
+            console.log('审核信息', res);
+            this.timelineData = res.data.map(item => {
+              return {
+                updateTime: item.updateTime,
+                modelNode: item.modelNode,
+                nodeStatus: item.nodeStatus,
+                nodeContent: item.nodeContent,
+                color: !item.updateTime || new Date(item.updateTime).getTime() > new Date().getTime() ? "#E4E7ED" : "green",
+                reviewedName: item.reviewedName,
+                remark: item.remark,
+              }
+            })
+          })
+        }
       },
       immediate: true,
-      deep: true,
     }
   },
-  data(){
-    return{
+  data() {
+    return {
       timelineData: [
         {
-          timestamp: '2023-01-01',
-          status: '审核通过',
-          content: '内容1',
-          color:"green",
+          updateTime: '2023-01-01',
+          nodeStatus: '审核通过',
+          nodeContent: '内容1',
+          color: "green",
         },
         {
-          timestamp: '2023-02-01',
-          status: '审核中',
-          content: '内容2',
-          color:"green",
+          updateTime: '2023-02-01',
+          nodeStatus: '审核中',
+          nodeContent: '内容2',
+          color: "green",
         },
         {
-          timestamp: '2023-03-01',
-          status: '审核不通过',
-          content: '内容3',
-          color:"#E4E7ED",
+          updateTime: '2023-03-01',
+          nodeStatus: '审核不通过',
+          nodeContent: '内容3',
+          color: "#E4E7ED",
         }
       ]
     }
@@ -83,6 +99,7 @@ export default {
   background-color: #f5f7fa;
   border-radius: 4px;
 }
+
 .timeline-dot.green {
   color: green !important;
 }

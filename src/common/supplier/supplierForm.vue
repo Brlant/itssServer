@@ -1,39 +1,42 @@
 <template>
-  <el-dialog :visible="dialogAddSupplier" :title="formTitle" width="80%" @close="handleSupplierClose">
+  <el-dialog :visible="showFlag" :title="formTitle" width="80%" @close="closeHandler">
     <template v-slot:title>
-      <div style="font-weight: bold;font-size: 15px">{{ formTitle }}</div>
+      <h3 style="font-weight: bold">{{ formTitle }}</h3>
     </template>
-    <el-form ref="form" :model="formData" :rules="formRules" label-width="120px">
+    <el-form ref="form" :model="formData" :rules="formRules" label-width="135px">
       <!--    基本信息-->
       <div class="JiBenXinXi">
         基本信息
       </div>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="供应商名称" prop="supplierName" >
-            <el-input v-model="formData.supplierName" ></el-input>
+          <el-form-item label="供应商名称" prop="supplierName">
+            <el-input v-model="formData.supplierName"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="企业类型" prop="companyType">
-            <el-input v-model="formData.companyType"></el-input>
+          <el-form-item label="企业类型" prop="supplierType">
+            <el-select v-model="formData.supplierType">
+              <el-option v-for="item in supplierTypes" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="供应商日期" prop="supplierDate">
-            <el-date-picker v-model="formData.supplierDate" type="date"></el-date-picker>
+          <el-form-item label="供应商有效期" prop="validityDate" :rules="[{required: true, message: '请选择有效期', trigger: 'blur'}]">
+            <el-date-picker v-model="formData.validityDate" type="date"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="24">
-          <el-form-item label="办公室地址" prop="officeAddress">
-            <el-input v-model="formData.officeAddress"></el-input>
+        <el-col :span="16">
+          <el-form-item label="办公地址" prop="supplierAddress">
+            <el-input v-model="formData.supplierAddress"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="24">
+        <el-col :span="16">
           <el-form-item label="仓库地址" prop="warehouseAddress">
             <el-input v-model="formData.warehouseAddress"></el-input>
           </el-form-item>
@@ -46,117 +49,175 @@
       </div>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="法人" prop="legalPerson">
-            <el-input v-model="formData.legalPerson"></el-input>
+          <el-form-item label="法人" prop="businessInfo.legalPerson"
+                        :rules="[{required: true, message: '请输入法人', trigger: 'blur'}]">
+            <el-input v-model="formData.businessInfo.legalPerson"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="法人身份证号" prop="idCardNumber">
-            <el-input v-model="formData.idCardNumber"></el-input>
+          <el-form-item label="法人身份证号" prop="businessInfo.legalPersonID">
+            <el-input v-model="formData.businessInfo.legalPersonID"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="公司成立时间" prop="establishDate">
-            <el-date-picker v-model="formData.establishDate" type="date"></el-date-picker>
+          <el-form-item label="公司成立时间" prop="businessInfo.foundingDate"
+                        :rules="[{ required: true, message: '请选择公司成立时间', trigger: 'blur' }]">
+            <el-date-picker v-model="formData.businessInfo.foundingDate" type="date"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="统一社会信用代码" prop="creditCode">
-            <el-input v-model="formData.creditCode"></el-input>
+          <el-form-item label="统一社会信用代码" prop="businessInfo.creditCode" :rules="[{ required: true, message: '请输入统一社会信用代码', trigger: 'blur' }]">
+            <el-input v-model="formData.businessInfo.creditCode"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="开户行" prop="bankName">
-            <el-input v-model="formData.bankName"></el-input>
+          <el-form-item label="开户行" prop="businessInfo.openingBank"
+                        :rules="[{ required: true, message: '请输入开户行', trigger: 'blur' }]">
+            <el-input v-model="formData.businessInfo.openingBank"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="收款账号" prop="accountNumber">
-            <el-input v-model="formData.accountNumber"></el-input>
+          <el-form-item label="收款账号" prop="businessInfo.accountNumber"
+                        :rules="[{ required: true, message: '请输入收款账号', trigger: 'blur' }]">
+            <el-input v-model="formData.businessInfo.accountNumber"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="24">
-          <el-form-item label="经营范围" prop="businessScope">
-            <el-input v-model="formData.businessScope"></el-input>
+        <el-col :span="8">
+          <el-form-item label="经营范围" prop="businessInfo.businessScope"
+                        :rules="[{ required: true, message: '请输入经营范围', trigger: 'blur' }]">
+            <el-input v-model="formData.businessInfo.businessScope"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
-<!--      图片上传-->
+      <!-- 图片上传 -->
       <el-row>
-        <el-col :span="24">
-          <el-form-item label="营业执照" prop="businessLicense">
-            <el-upload
-              action="/api/upload"
-              :show-file-list="false"
-              :on-success="handleBusinessLicenseSuccess"
-              :before-upload="beforeBusinessLicenseUpload"
-            >
-              <el-button slot="trigger" size="small" type="primary">点击上传</el-button>
+        <el-col :span="8">
+          <el-form-item label="营业执照" prop="businessInfo.businessLicenseUrl"
+                        :rules="[{ required: true, message: '请上传营业执照', trigger: 'change' }]">
+            <div class="picInfo flexDis flexContentC flexAlignC">
+              <el-upload class="avatar-uploader flexDis flexContentC flexAlignC applyFlex"
+                         :action="uploadUrl"
+                         :show-file-list="false"
+                         :on-success="handleBusinessLicenseSuccess"
+                         :before-upload="businessLicenseChangeHandler">
+                <div slot="trigger">
+                  <img v-if="businessLicenseUrl" :src="businessLicenseUrl">
+                  <div v-else class="lib-comp-group preview" style="opacity: 1; width: 28px; height: 28px;">
+                    <div id="5yebs-lpaqujrt-du8" class="component component-rect selected-by-others preview"
+                         style="transform: translate(0px, 13px) rotate(0deg); width: 28px; height: 2px; box-shadow: rgba(255, 255, 255, 0) 0px 0px 1px; transition: unset; z-index: 0;">
+                      <div class="lib-comp-rect"
+                           style="width: 28px; height: 2px; background: rgb(196, 199, 207); border-radius: 1px; transition: unset;"></div>
+                    </div>
+                    <div id="5yebs-lpaqujrt-du9" class="component component-rect selected-by-others preview"
+                         style="transform: translate(0px, 13px) rotate(90deg); width: 28px; height: 2px; box-shadow: rgba(255, 255, 255, 0) 0px 0px 1px; transition: unset; z-index: 0;">
+                      <div class="lib-comp-rect"
+                           style="width: 28px; height: 2px; background: rgb(196, 199, 207); border-radius: 1px; transition: unset;"></div>
+                    </div>
+                  </div>
+                </div>
+
+              </el-upload>
+            </div>
+          </el-form-item>
+        </el-col>
+        <el-col :span="16">
+          <el-form-item label="其他附件" prop="businessInfo.attachmentInfos">
+            <el-upload :action="uploadUrl"
+                       :show-file-list="false"
+                       :on-success="handleAttachmentSuccess"
+                       :before-upload="attachmentUploadBeforeHandler"
+                       multiple>
+              <el-button type="primary">选择文件<i class="el-icon-upload el-icon--right"/></el-button>
             </el-upload>
+            <el-form-item v-if="formData.businessInfo.attachmentInfos.length > 0" style="margin-top: 20px">
+              <el-row v-for="(attachment, index) in formData.businessInfo.attachmentInfos" :key="index">
+                <el-col :span="9">
+                  <div style="border: 1px lightgrey solid; padding: 0 10px;height: 36px">
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 325px;
+                  display: inline-block;" :title="attachment.name">
+                      {{ attachment.name }}
+                    </div>
+                    <div style="float: right;">
+                      <!--下载附件-->
+                      <a :href="attachment.attachmentPath"
+                         :download="attachment.attachmentFileName"
+                         class="el-icon-download el-icon--right"
+                         title="下载附件"
+                         style="margin-right: 10px"></a>
+                      <!--                      <a @click="downloadAttachment(attachment.attachmentPath,attachment.attachmentFileName)"-->
+                      <!--                         class="el-icon-download el-icon&#45;&#45;right"-->
+                      <!--                         style="margin-right: 10px"></a>-->
+                      <!--删除附件-->
+                      <a href="#" class="el-icon-delete el-icon--right"
+                         title="删除附件"
+                         @click.prevent="deleteAttachment(index)"></a>
+                    </div>
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="附件名称" label-width="120px"
+                                :prop="'businessInfo.attachmentInfos.'+index +'.attachmentFileName'"
+                                :rules="[{ required: true, message: '请输入附件名称', trigger: 'blur' }]"
+                                style="margin-bottom: 22px">
+                    <el-input v-model="attachment.attachmentFileName"
+                              placeholder="请输入附件名称"
+                    ></el-input>
+                  </el-form-item>
+
+                </el-col>
+                <el-col :span="7">
+                  <el-form-item label="附件有效期" label-width="120px">
+                    <el-date-picker
+                      v-model="attachment.attachmentValidityDate"
+                      type="date"
+                      placeholder="请选择有效期"
+                    ></el-date-picker>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form-item>
           </el-form-item>
         </el-col>
       </el-row>
-<!--      附件上传-->
-      <el-form-item label="附件上传">
-        <el-upload
-          action="/api/upload"
-          :on-success="handleAttachmentSuccess"
-          :before-upload="beforeAttachmentUpload"
-          multiple
-        >
-          <el-button size="small" type="primary">点击上传</el-button>
-        </el-upload>
-        <div v-if="formData.attachments.length > 0">
-          <div v-for="(attachment, index) in formData.attachments" :key="index">
-            <el-input
-              v-model="attachment.name"
-              placeholder="请输入附件名称"
-              style="margin-top: 10px"
-              :rules="[{ required: true, message: '请输入附件名称', trigger: 'blur' }]"
-            ></el-input>
-            <el-date-picker
-              v-model="attachment.validity"
-              type="date"
-              placeholder="请选择有效期"
-              style="margin-top: 10px"
-            ></el-date-picker>
-          </div>
-        </div>
-      </el-form-item>
-      <!--    联系人-->
+
+      <!-- 联系人 -->
       <div class="lainXiRen">
         联系人
       </div>
-      <div v-for="(contact, index) in formData.contacts" :key="contact.id">
-        <el-row :gutter="20" align="middle" type="flex">
+      <div v-for="(contact, index) in formData.contactsInfoList" :key="contact.id">
+        <el-row :gutter="20">
           <el-col :span="5">
-            <el-form-item :label="'联系人' + (index + 1)" prop="contactName" >
-              <el-input v-model="contact.contactName" placeholder="请输入联系人姓名"></el-input>
+            <el-form-item :label="'联系人' + (index + 1)" :prop="'contactsInfoList.' + index +'.contactsName'"
+                          :rules="[{ required: true, message: '请输入手机号', trigger: 'blur' }]">
+              <el-input v-model="contact.contactsName" placeholder="请输入联系人姓名"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">
-            <el-form-item label="职位" prop="position">
-              <el-input v-model="contact.position" placeholder="请输入职位"></el-input>
+            <el-form-item label="职位" prop="positions">
+              <el-input v-model="contact.positions" placeholder="请输入职位"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">
-            <el-form-item label="手机号" prop="cellPhoneNumber">
-              <el-input v-model="contact.cellPhoneNumber" placeholder="请输入手机号"></el-input>
+            <el-form-item label="手机号" :prop="'contactsInfoList.' + index +'.contactsPhone'"
+                          :rules="[{ required: true, message: '请输入手机号', trigger: 'blur' }]">
+              <el-input v-model="contact.contactsPhone" placeholder="请输入手机号"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="contact.email" placeholder="请输入邮箱"></el-input>
+            <el-form-item label="邮箱" prop="contactsMailbox">
+              <el-input v-model="contact.contactsMailbox" placeholder="请输入邮箱"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-button type="text" @click="addContact" v-if="index === 0">+</el-button>
-              <el-button type="text" @click="removeContact(index)" v-else>-</el-button>
+              <el-button circle size="small" icon="el-icon-plus" type="primary" @click="addContact"
+                         v-if="index === 0"></el-button>
+              <el-button circle size="small" icon="el-icon-minus" type="danger" @click="removeContact(index)"
+                         v-if="formData.contactsInfoList.length > 1"></el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -170,44 +231,74 @@
 </template>
 
 <script>
+import supplierApi from '@/api/supplier/supplier'
+
 export default {
-  name: "supplierForm",
+  name: "SupplierForm",
   props: {
-    dialogAddSupplier: {
+    // 控制对话框是否显示的flag
+    showFlag: {
       type: Boolean,
+      default: false,
+    },
+    // 表单的标题
+    formTitle: {
+      type: String,
       default: "",
-    }
+    },
+    // 供应商id
+    supplierId: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
-      formTitle: "新建档案",
       formData: {
         //基本信息
         supplierName: '',
-        companyType: '',
+        supplierType: '',
         supplierDate: '',
-        officeAddress: '',
+        supplierAddress: '',
         warehouseAddress: '',
         //工商信息
-        legalPerson: '',
-        idCardNumber: '',
-        establishDate: '',
-        creditCode: '',
-        bankName: '',
-        accountNumber: '',
-        businessScope: '',
-        //工商信息的文件上传
-        businessLicense: '',
-        attachments: [],
-
+        businessInfo: {
+          legalPerson: '',
+          legalPersonID: '',
+          foundingDate: '',
+          creditCode: '',
+          openingBank: '',
+          accountNumber: '',
+          businessScope: '',
+          //工商信息的文件上传
+          businessLicenseUrl: '',
+          // {
+          //   "attachmentId": "",
+          //   "attachmentObjectType": "",
+          //   "attachmentObjectId": "",
+          //   "attachmentFileName": "",
+          //   "attachmentSize": 0,
+          //   "attachmentPath": "",
+          //   "attachmentUploadUserId": 0,
+          //   "attachmentDownloadPower": false,
+          //   "attachmentValidityDate": "2023-12-18 20:41:35",
+          //   "deleteFlag": 0,
+          //   "createBy": "",
+          //   "createTime": "2023-12-18 20:41:35",
+          //   "updateBy": "",
+          //   "updateTime": "2023-12-18 20:41:35"
+          // }
+          attachmentInfos: [],
+        },
         //联系人
-        contacts: [
+        contactsInfoList: [
           {
             id: Date.now(),
-            contactName: '',
-            position: '',
-            cellPhoneNumber: '',
-            email: ''
+            supplierId: '',
+            contactsName: '',
+            positions: '',
+            contactsPhone: '',
+            contactsMailbox: ''
           }
         ],
 
@@ -215,95 +306,211 @@ export default {
       //表单校验
       formRules: {
         supplierName: [{required: true, message: '请输入供应商名称', trigger: 'blur'}],
-        companyType: [{required: true, message: '请输入企业类型', trigger: 'blur'}],
         supplierDate: [{required: true, message: '请选择供应商日期', trigger: 'change'}],
-        officeAddress: [{required: true, message: '请输入办公室地址', trigger: 'blur'}],
+        supplierAddress: [{required: true, message: '请输入办公室地址', trigger: 'blur'}],
         warehouseAddress: [{required: true, message: '请输入仓库地址', trigger: 'blur'}],
         //工商信息
-        legalPerson: [{ required: true, message: '请输入法人', trigger: 'blur' }],
-        idCardNumber: [{ required: true, message: '请输入法人身份证号', trigger: 'blur' }],
-        establishDate: [{ required: true, message: '请选择公司成立时间', trigger: 'change' }],
-        creditCode: [{ required: true, message: '请输入统一社会信用代码', trigger: 'blur' }],
-        bankName: [{ required: true, message: '请输入开户行', trigger: 'blur' }],
-        accountNumber: [{ required: true, message: '请输入收款账号', trigger: 'blur' }],
-        businessScope: [{ required: true, message: '请输入经营范围', trigger: 'blur' }],
-        //工商信息的文件上传校验
-        businessLicense: [{ required: true, message: '请上传营业执照', trigger: 'change' }],
+        // legalPerson: [{required: true, message: '请输入法人', trigger: 'blur'}],
+        // idCardNumber: [{required: true, message: '请输入法人身份证号', trigger: 'blur'}],
+        // establishDate: [{required: true, message: '请选择公司成立时间', trigger: 'change'}],
+        // openingBank: [{required: true, message: '请输入开户行', trigger: 'blur'}],
+        // accountNumber: [{required: true, message: '请输入收款账号', trigger: 'blur'}],
+        // businessScope: [{required: true, message: '请输入经营范围', trigger: 'blur'}],
 
-        contactName: [
-          { required: true, message: '请输入联系人', trigger: 'blur' }
-        ],
-        cellPhoneNumber: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
-        ]
+        //联系人
+        // contactName: [
+        //   {required: true, message: '请输入联系人', trigger: 'blur'}
+        // ],
+        // cellPhoneNumber: [
+        //   {required: true, message: '请输入手机号', trigger: 'blur'}
+        // ]
       },
-      params: {
-        id: 1
-      }
+      companyTypes: [],
+      supplierTypes: [
+        {
+          label: '内部企业',
+          value: '1'
+        },
+        {
+          label: '外部企业',
+          value: '2'
+        }
+      ],
+
     }
   },
-  created() {
-
+  computed: {
+    businessLicenseUrl() {
+      return this.formData.businessInfo.businessLicenseUrl
+    },
+    uploadUrl() {
+      return supplierApi.uploadUrl
+    }
   },
   methods: {
     addContact() {
-      this.formData.contacts.push({
+      this.formData.contactsInfoList.push({
         id: Date.now(),
-        name: '',
-        position: '',
-        phone: '',
-        email: ''
+        supplierId: "",
+        contactsName: "",
+        positions: "",
+        contactsPhone: "",
+        contactsMailbox: "",
       });
     },
     removeContact(index) {
-      if (this.formData.contacts.length > 1) {
-        this.formData.contacts.splice(index, 1);
-      } else {
-        this.$message.error('至少需要保留一个联系人');
-      }
+      this.formData.contactsInfoList.splice(index, 1);
     },
-    //关闭弹框
-    handleSupplierClose() {
-      this.$emit('handleSupplierClose',)
+    // 关闭弹框
+    closeHandler() {
+      this.$emit('close')
     },
     /*表单校验提交*/
     submitForm() {
       this.$refs.form.validate(valid => {
         if (valid) {
           // 表单验证通过，可以在这里进行提交操作
-          console.log('表单提交成功');
+          this.saveSupplier()
         } else {
-          console.log('表单验证失败');
           return false;
         }
       });
     },
-    beforeBusinessLicenseUpload(file) {
-      // 营业执照上传前的处理
-      return true;
+    // 保存供应商信息，新增或者编辑的保存操作
+    saveSupplier() {
+      if (this.supplierId) {
+        this.updateSupplier()
+      } else {
+        this.addSupplier()
+      }
     },
-    handleBusinessLicenseSuccess(response, file) {
-      // 营业执照上传成功后的处理
-      this.formData.businessLicense = file.response.url;
+    // 新增供应商
+    addSupplier() {
+      supplierApi.addSupplier(this.formData).then(res => {
+        if (res.data.code === 200) {
+          this.$message.success('新增成功')
+          this.closeHandler()
+        } else {
+          this.$message.error(res.data.message)
+        }
+      })
     },
-    beforeAttachmentUpload(file) {
+    // 编辑供应商
+    updateSupplier() {
+      supplierApi.updateSupplier(this.formData).then(res => {
+        if (res.data.code === 200) {
+          this.$message.success('编辑成功')
+          this.closeHandler()
+        } else {
+          this.$message.error(res.data.message)
+        }
+      })
+    },
+    attachmentUploadBeforeHandler(file) {
+      let fileRaw = file
       // 附件上传前的处理
-      const attachmentNameRule = { required: true, message: '请输入附件名称', trigger: 'blur' };
-      this.formRules.attachments = [{ name: attachmentNameRule }];
-      return true;
+      const attachmentNameRule = {required: true, message: '请输入附件名称', trigger: 'blur'};
+      this.formRules.attachmentInfos = [{name: attachmentNameRule}];
+
+      const isLt10M = fileRaw.size / 1024 / 1024 < 10
+      if (!isLt10M) {
+        this.$message.error('上传营业执照大小不能超过 10MB!')
+        return false
+      }
+
+      return true
     },
     handleAttachmentSuccess(response, file) {
       // 附件上传成功后的处理
-      this.formData.attachments.push({ name: '', validity: '' });
+      this.formData.businessInfo.attachmentInfos.push({
+        attachmentId: '',
+        name: response.data.name,
+        attachmentPath: response.data.url,
+        attachmentFileName: '',
+        attachmentValidityDate: '',
+      });
     },
+    // 营业执照上传
+    businessLicenseChangeHandler(file, fileList) {
+      let fileRaw = file
+      const isTYPE = /^image\/(jpe?g|png)$/.test(fileRaw.type);
+      const isLt10M = fileRaw.size / 1024 / 1024 < 10
+      if (file.name.slice(0, file.name.indexOf('.')).length < 3) {
+        this.$message({
+          message: '文件名称最少3位',
+          type: 'error'
+        })
+        return false
+      }
+      if (!isTYPE) {
+        this.$message.error('上传营业执照只能是JPG/JPEG/PNG格式!')
+        return false
+      }
+      if (!isLt10M) {
+        this.$message.error('上传营业执照大小不能超过 10MB!')
+        return false
+      }
+
+      return true
+    },
+    handleBusinessLicenseSuccess(response, file) {
+      // 营业执照上传成功后的处理
+      this.formData.businessInfo.businessLicenseUrl = response.data.url
+      // 手动触发校验
+      this.$refs.form.validateField('businessInfo.businessLicenseUrl');
+    },
+    getCompanyTypes() {
+      let params = {
+        type: 'companyType',
+        status: '0'
+      }
+
+      dictDataAll(params).then(res => {
+        this.companyTypes = res.rows.map(item => {
+          return {
+            value: item.dictValue,
+            label: item.dictLabel
+          }
+        })
+      }).catch(err => {
+        console.log(err)
+        this.companyTypes = []
+      })
+    },
+    downloadAttachment(src, fileName) {
+      this.download(src, fileName)
+    },
+    deleteAttachment(index) {
+      this.$confirm('此操作将永久删除该附件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let attachmentId = this.formData.businessInfo.attachmentInfos[index].attachmentId
+        if (attachmentId) {
+          supplierApi.deleteAttachment(attachmentId).then(res => {
+            if (res.code === 200) {
+              this.$message.success('删除成功')
+              this.formData.businessInfo.attachmentInfos.splice(index, 1)
+            } else {
+              this.$message.error(res.message)
+            }
+          })
+        } else {
+          // 没有附件id的直接本地删除
+          this.$message.success('删除成功')
+          this.formData.businessInfo.attachmentInfos.splice(index, 1)
+        }
+      })
+    }
   },
   mounted() {
-
+    // this.getCompanyTypes();
   },
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .JiBenXinXi {
   font-weight: bolder;
   font-size: 14px;
@@ -334,5 +541,55 @@ export default {
   box-sizing: content-box;
 }
 
+.picInfo {
 
+  width: 148px;
+  height: 148px;
+  background: rgb(255, 255, 255);
+  border-width: 1px;
+  border-color: rgb(216, 220, 230);
+  border-style: dashed;
+  border-radius: 4.5px;
+  transition: unset;
+
+  img {
+    max-width: 148px;
+    max-height: 148px;
+  }
+}
+
+.picInfo:hover {
+  border-color: rgba(0, 157, 255);
+}
+
+.flexDis {
+  display: flex;
+}
+
+.flexContentC {
+  justify-content: center;
+}
+
+.flexAlignC {
+  align-items: center;
+}
+
+.applyFlex {
+  flex-grow: 1;
+}
+
+.avatar-uploader {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.avatar-uploader-icon {
+  left: 0;
+  top: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: rgba(198, 211, 226, 1);
+}
 </style>

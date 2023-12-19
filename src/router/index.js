@@ -300,7 +300,7 @@ export const dynamicRoutes = [
       {
         path: 'addTeam',
         component: () => import('@/views/projectManager/addTeam'),
-        name: 'GenEdit',
+        name: 'AddTeam',
         meta: { title: '项目组新建', activeMenu: '/projectManager/addTeam' }
       }
     ]
