@@ -39,7 +39,7 @@ export default {
   watch: {
     tabName: {
       handler(newVal, oldVal) {
-        console.log('审核信息', newVal);
+        // console.log('审核信息', newVal);
       },
       immediate: true,
       deep: true,

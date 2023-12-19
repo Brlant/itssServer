@@ -16,7 +16,7 @@
 import { getDetailList } from '@/api/auditCenter/process/process';
 export default {
   name: 'processDetail',
-  props:["dialogDetailsProcessDialog","modelId"],
+  props:["dialogDetailsProcessDialog","modelId","detailsTitle"],
   watch:{
     modelId: {
       handler(newVal, oldVal) {
@@ -29,7 +29,7 @@ export default {
   },
   data(){
     return{
-      detailsTitle:'供应商档案审核流程', //弹框详情
+      // detailsTitle:'供应商档案审核流程', //弹框详情
       detailsLoading:false,//详情加载
       detailsDataList:[],//详情列表
     }

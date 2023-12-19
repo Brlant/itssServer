@@ -9,7 +9,14 @@
           <!-- 第一行 -->
           <el-col :span="8">
             <el-form-item label="物品类型" prop="itemType">
-              <el-input v-model="formData.itemType"></el-input>
+              <el-select v-model="formData.itemType" placeholder="物品类型" clearable>
+                <el-option
+                  v-for="(item,index) in listOfItemTypes"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -18,13 +25,24 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="供应商" prop="supplier">
-              <el-select v-model="formData.supplier">
-                <el-option label="供应商A" value="supplierA"></el-option>
-                <el-option label="供应商B" value="supplierB"></el-option>
-                <el-option label="供应商C" value="supplierC"></el-option>
+            <el-form-item prop="supplier" label="供应商">
+              <el-select v-model="formData.supplier" filterable :filter-method="getSupplierList" placeholder="供应商" clearable>
+                <el-option
+                  v-for="(item,index) in supplierList"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                />
               </el-select>
             </el-form-item>
+
+<!--            <el-form-item label="供应商" prop="supplier">-->
+<!--              <el-select v-model="formData.supplier">-->
+<!--                <el-option label="供应商A" value="supplierA"></el-option>-->
+<!--                <el-option label="供应商B" value="supplierB"></el-option>-->
+<!--                <el-option label="供应商C" value="supplierC"></el-option>-->
+<!--              </el-select>-->
+<!--            </el-form-item>-->
           </el-col>
         </el-row>
 
@@ -42,10 +60,13 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="单位" prop="unit">
-              <el-select v-model="formData.unit">
-                <el-option label="个" value="个"></el-option>
-                <el-option label="箱" value="箱"></el-option>
-                <el-option label="件" value="件"></el-option>
+              <el-select v-model="formData.unit" placeholder="物品类型" clearable>
+                <el-option
+                  v-for="(item,index) in unitList"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -62,16 +83,19 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="税率" prop="taxRate">
-              <el-select v-model="formData.taxRate">
-                <el-option label="0%" value="0"></el-option>
-                <el-option label="3%" value="3"></el-option>
-                <el-option label="6%" value="6"></el-option>
+              <el-select v-model="formData.taxRate" placeholder="物品类型" clearable>
+                <el-option
+                  v-for="(item,index) in taxRateList"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="不含税进价" prop="untaxedPrice">
-              <el-input v-model="formData.untaxedPrice">
+              <el-input v-model="untaxedPrice" :disabled="true"  readonly >
                 <span slot="append">元</span>
               </el-input>
             </el-form-item>
@@ -92,7 +116,7 @@
           <el-col :span="8">
             <el-form-item label="箱规" prop="cartonSpec">
               <el-input v-model="formData.cartonSpec"></el-input>
-              <span slot="append">元</span>
+              <span slot="append">/箱</span>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -113,29 +137,14 @@
 
 
         <el-row :gutter="20">
-          <!-- 第六行 -->
-          <el-col :span="24">
-            <el-form-item label="文件上传" prop="file">
-              <el-upload
-                action="/upload"
-                :on-success="handleUploadSuccess"
-                :on-error="handleUploadError"
-                :file-list="formData.fileList"
-                list-type="text"
-              >
-                <el-button size="small" type="primary">选择文件</el-button>
-              </el-upload>
-            </el-form-item>
-          </el-col>
+
         </el-row>
-
-
-
 
         <el-row :gutter="20">
           <!-- 提交按钮 -->
-          <el-col :span="24" style="text-align: right">
+          <el-col >
             <el-button type="primary" @click="submitForm">提交</el-button>
+            <el-button>返回</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -144,6 +153,8 @@
 </template>
 
 <script>
+import filesApi from '@/api/Files/files'
+import supplierApi from '@/api/supplier/supplier'
 export default {
   name: "filesForm",
   props: {
@@ -169,24 +180,67 @@ export default {
         cartonSpec: '',
         brand: '',
         remark: '',
-        fileList: []
+        fileList: [],
       },
       rules: {
         itemType: [{required: true, message: '请输入物品类型', trigger: 'blur'}],
         itemName: [{required: true, message: '请输入物品名称', trigger: 'blur'}],
         supplier: [{required: true, message: '请选择供应商', trigger: 'change'}],
-        model: [{required: true, message: '请输入型号', trigger: 'blur'}],
-        specification: [{required: true, message: '请输入规格', trigger: 'blur'}],
+        // model: [{required: true, message: '请输入型号', trigger: 'blur'}],
+        // specification: [{required: true, message: '请输入规格', trigger: 'blur'}],
         unit: [{required: true, message: '请选择单位', trigger: 'change'}],
         purchasePrice: [{required: true, message: '请输入采购价', trigger: 'blur'}],
         taxRate: [{required: true, message: '请选择税率', trigger: 'change'}],
         untaxedPrice: [{required: true, message: '请输入不含税进价', trigger: 'blur'}],
         category: [{required: true, message: '请输入采购价', trigger: 'blur'}],
         cartonSpec: [{required: true, message: '请选择税率', trigger: 'change'}],
-      }
+      },
+      //物品类型
+      listOfItemTypes: [
+        {label:'固定资产',value:1},
+        {label:'消耗品',value:2},
+        {label:'服务',value:3},
+        {label:'销售品',value:4},
+      ],
+      //单位
+      unitList:[
+        {label:'支',value:1},
+        {label:'套',value:2},
+        {label:'个',value:3},
+        {label:'盒',value:4},
+      ],
+      //税率
+      taxRateList:[
+        {label:'1%',value:1},
+        {label:'3%',value:2},
+        {label:'6%',value:3},
+        {label:'12%',value:4},
+      ],
+      //供应商
+      supplierList:[],
+    }
+  },
+  computed:{
+    untaxedPrice(){
+      return this.formData.purchasePrice / (1 + this.formData.taxRate);
     }
   },
   methods: {
+    getSupplierList(query){
+      let params = {
+        codeNameKey: query,
+        pageNum: 1,
+        pageSize: 10,
+      }
+      supplierApi.getSupplierList(params).then((res) => {
+        this.supplierList = res.data.rows.map(item => {
+          return {
+            value: item.supplierId,
+            label: item.supplierName
+          }
+        })
+      })
+    },
     /*关闭新建弹框*/
     closeAddFiles() {
       this.$emit('closeAddFiles');

@@ -233,6 +233,7 @@
         </el-col>
       </el-row>
     </div>
+
     <el-form-item>
       <el-button
         v-show="formData.supplierStatus === 5"

@@ -13,10 +13,10 @@ const port = process.env.port || process.env.npm_config_port || 9090 // 端口
 
 const targets = {
   dev:'http://192.168.1.113/tdp',
-  yj:'http://192.168.5.111:8080',
+  yj:'http://192.168.5.13:8081',
   lxr:'http://192.168.5.10:8080',
   xwc:'http://192.168.5.213:8080',
-  cjg:'http://192.168.5.26:8082',
+  cjg:'http://192.168.5.26:8081',
 }
 
 // vue.config.js 配置说明

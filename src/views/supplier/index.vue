@@ -405,6 +405,7 @@ export default {
     /*详情*/
     handleDetails(row) {
       this.detailsSupplierData = null
+
       supplierApi.getSupplierDetails(row.supplierId).then((res) => {
         this.detailsSupplierData = res.data
         this.tabName = '1'

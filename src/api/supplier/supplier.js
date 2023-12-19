@@ -4,6 +4,7 @@ import request,{download,uploadUrl} from '@/utils/request'
 const supplierApi = {
   uploadUrl,
   importSupplierUrl: process.env.VUE_APP_BASE_API + '/pms/supplier/importSupplier',
+
   // 列表查询
   getSupplierList(data) {
     return request({
@@ -57,11 +58,25 @@ const supplierApi = {
       data: data,
     })
   },
+  //导入
+  importSupplierInfo(data) {
+    return request({
+      url: `/pms/goods/importGoodsInfo`,
+      method: 'post',
+      data: data,
+    })
+  },
   exportSupplier(data) {
     return download(`/pms/supplier/export`,data,`供应商信息_${new Date().getTime()}.xlsx`)
   },
+  exportFiles(data){
+    return download(`/pms/goods/export`,data,`物品信息_${new Date().getTime()}.xlsx`)
+  },
   downloadTemplate() {
     return download(`/pms/examine/downloadTemplate?type=0`,{},`供应商信息模板_${new Date().getTime()}.xlsx`)
+  },
+  downloadSupperlierTemplate() {
+    return download(`/pms/examine/downloadTemplate?type=1`,{},`物品导入模板_${new Date().getTime()}.xlsx`)
   },
   // 启用，停用，淘汰
   enableSupplier({supplierId, supplierStatus}) {
