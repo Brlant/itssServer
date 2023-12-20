@@ -7,7 +7,8 @@
           <el-form-item  prop="categoryName">
             <el-input v-model="formData.categoryName" placeholder="请输入类目名称" prefix-icon="el-icon-search" @enter.native=""></el-input>
           </el-form-item>
-          <el-button type="primary" @click="">搜索</el-button>
+          <el-button type="primary" @click="categoryList" icon="el-icon-search">搜索</el-button>
+          <el-button type="primary"   icon="el-icon-refresh" @click="resetForm">重置</el-button>
         </el-form>
       </el-col>
       <el-col :span="4">
@@ -130,6 +131,10 @@ export default {
         this.tableData = res.rows;
         this.formData.total = res.total;
       })
+    },
+    resetForm(){
+      this.$refs.formData.resetFields();
+      this.categoryList();
     },
     addCategoryForm(){
       this.dialogCategoryFrom = true;
