@@ -11,12 +11,12 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="合同编号" prop="contractCode" :rules="rules.contractCode">
-            <el-input v-model="formData.contractCode" placeholder="请输入合同编号"/>
+            <el-input v-model="formData.contractCode" maxlength="50" placeholder="请输入合同编号"/>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="合同名称" prop="contractName" :rules="rules.contractName">
-            <el-input v-model="formData.contractName" placeholder="请输入合同名称"/>
+            <el-input v-model="formData.contractName" maxlength="50" placeholder="请输入合同名称"/>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -51,7 +51,7 @@
         <el-col :span="8">
           <el-form-item label="合同金额"
             prop="contractAmount">
-            <el-input v-model="formData.contractAmount"
+            <el-input v-model.number="formData.contractAmount"
               placeholder="请输入合同金额"/>
           </el-form-item>
         </el-col>
@@ -75,7 +75,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="合同签署人" prop="contractSignatory">
-            <el-input v-model="formData.contractSignatory" placeholder="请输入合同签署人"/>
+            <el-input v-model="formData.contractSignatory" maxlength="20" placeholder="请输入合同签署人"/>
           </el-form-item>
         </el-col>
         <el-col :span="8"></el-col>
@@ -85,7 +85,7 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="备注" prop="remark">
-            <el-input v-model="formData.remark" type="textarea" placeholder="请输入备注"/>
+            <el-input v-model="formData.remark" maxlength="1000" type="textarea" placeholder="请输入备注"/>
           </el-form-item>
         </el-col>
       </el-row>
@@ -152,6 +152,15 @@ export default {
       rules: {
         contractCode: [{required: true, message: '请输入合同编号', trigger: 'blur'}],
         contractName:[{required: true, message: '请输入合同名称', trigger: 'blur'}],
+        supplierId:[{required: true, message: '请选择供应商', trigger: 'change'}],
+        contractAmount:[
+          {required: true, message: '请输入合同金额', trigger: 'blur'},
+          {type: 'number', message: '合同金额必须是数字', trigger: 'blur'}
+        ],
+        signingDate:[{required: true, message: '请选择合同签订日期', trigger: 'change'}],
+        dueDate:[{required: true, message: '请选择合同到期日期', trigger: 'change'}],
+        contractType:[{required: true, message: '请选择合同类型', trigger: 'change'}],
+        contractSignatory:[{required: true, message: '请填写合同签署人', trigger: 'blur'}]
       },
       loadSupplier: false
     }
