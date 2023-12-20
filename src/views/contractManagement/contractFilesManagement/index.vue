@@ -339,7 +339,7 @@ export default {
     handleTabClick(tab, event) {
 
     },
-    closeDialog() {
+    closeDialog(flg) {
       // this.tabName = null;
       this.activeTab = "fileInfo";
       this.contractId = null;

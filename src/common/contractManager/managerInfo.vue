@@ -102,9 +102,9 @@
         <el-button v-if="formData.returnButton === 1" type="primary"
           @click="auditContract(3)">撤回</el-button>
         <el-button v-if="formData.contractStatus === 5" type="primary"
-          @click="submitForm">启用</el-button>
+          @click="editContractStatus(3)">启用</el-button>
         <el-button v-if="formData.contractStatus === 3" type="primary"
-          @click="submitForm">停用</el-button>
+          @click="editContractStatus(5)">停用</el-button>
         <el-button @click="() => $emit('closeDetail')">返回</el-button>
       </el-col>
     </el-row>
@@ -221,6 +221,15 @@ export default {
     examineContract(examineType, remark) {
       examineContractInfo(Object.assign({ ...this.formData }, { examineType, remark })).then(res => {
         if (res.code === 200) {
+          this.$message.success(res.msg)
+          this.$emit('closeDetail', true);
+        }
+      })
+    },
+    editContractStatus(contractStatus) {
+      editStatus(Object.assign({ ...this.formData }, { contractStatus })).then(res => {
+        if (res.code === 200) {
+          this.$message.success(res.msg)
           this.$emit('closeDetail', true);
         }
       })
