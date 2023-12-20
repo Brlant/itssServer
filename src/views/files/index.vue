@@ -136,32 +136,33 @@
       @pagination="getFilesList"
     />
     <!--    详情弹框-->
-    <el-dialog :visible="dialogDetailsProcessDialog" :title="detailsTitle" width="75%" @close="closeDialog">
+    <el-dialog :visible="dialogDetailsProcessGoodsDialog" :title="detailsGoodsTitle" width="75%" @close="closeGoodsDialog">
       <div style="position: relative">
         <div class="tabStatus">
-          <span v-if="activeStatus === 0" style="color: #F79B22">待审核</span>
-          <span v-if="activeStatus === 1" style="color: #F79B22">审核中</span>
-          <span v-if="activeStatus === 2" style="color: black">审核未通过</span>
-          <span v-if="activeStatus === 3" style="color: green">启用</span>
-          <span v-if="activeStatus === 4" style="color: black">已撤回</span>
-          <span v-if="activeStatus === 5" style="color: red">停用</span>
-          <span v-if="activeStatus === 6" style="color: black">已淘汰</span>
+          <span v-if="activeGoodsStatus === 0" style="color: #F79B22">待审核</span>
+          <span v-if="activeGoodsStatus === 1" style="color: #F79B22">审核中</span>
+          <span v-if="activeGoodsStatus === 2" style="color: black">审核未通过</span>
+          <span v-if="activeGoodsStatus === 3" style="color: green">启用</span>
+          <span v-if="activeGoodsStatus === 4" style="color: black">已撤回</span>
+          <span v-if="activeGoodsStatus === 5" style="color: red">停用</span>
+          <span v-if="activeGoodsStatus === 6" style="color: black">已淘汰</span>
         </div>
       </div>
       <!--      标签页-->
-      <el-tabs v-model="activeTab" @tab-click="handleTabClick">
-        <el-tab-pane label="档案信息" name="fileInfo">
-          <file-manager-info :detailsSupplierData="detailsSupplierData" @closeHandler="closeHandler"></file-manager-info>
+      <el-tabs v-model="activeGoodsTab" @tab-click="handleTabClick">
+        <el-tab-pane label="档案信息" name="fileManagerInfo">
+          <file-manager-info :detailsGoodsData="detailsGoodsData" @closeHandler="closeHandler"></file-manager-info>
         </el-tab-pane>
-        <el-tab-pane label="审核信息" name="auditInfo">
+        <el-tab-pane label="审核信息" name="fileAuditInfo">
           <file-audit-info :goodsId = 'goodsId'></file-audit-info>
         </el-tab-pane>
-        <el-tab-pane label="操作日志" name="operationLog">
+        <el-tab-pane label="操作日志" name="fileOperationLog">
           <file-operation-log :goodsId = 'goodsId'></file-operation-log>
         </el-tab-pane>
       </el-tabs>
-
     </el-dialog>
+
+
     <!--    新建弹框内容-->
     <files-form :dialogAddFiles="dialogAddFiles" @closeAddFiles="closeAddFiles"></files-form>
 
@@ -215,7 +216,7 @@ export default {
   data() {
     return {
       // goodsId:'',
-      activeTab: 'fileInfo',
+      activeGoodsTab: 'fileManagerInfo',
       // tabs: [
       //   {label: '档案信息', name: 'fileInfo', component: fileManagerInfo},
       //   {label: '审核信息', name: 'auditInfo', component: fileAuditInfo},
@@ -223,9 +224,9 @@ export default {
       // ],
       tabName: null,
       //详情信息
-      detailsTitle: "详情信息",
+      detailsGoodsTitle: "详情信息",
       //详情信息弹框
-      dialogDetailsProcessDialog: false,
+      dialogDetailsProcessGoodsDialog: false,
       // 遮罩层
       loading: true,
       // 查询参数
@@ -268,7 +269,7 @@ export default {
       supplierImportDialog: {
         showFlag: false
       },
-      detailsSupplierData: {},
+      detailsGoodsData: {},
     }
   },
   created() {
@@ -283,16 +284,16 @@ export default {
         }
       })
     },
-    activeStatus(){
-      if (!this.detailsSupplierData) {
+    activeGoodsStatus(){
+      if (!this.detailsGoodsData) {
         return ''
       }
-      let status = this.detailsSupplierData && this.detailsSupplierData.goodsStatus;
+      let status = this.detailsGoodsData && this.detailsGoodsData.goodsStatus;
       return status;
     },
     goodsId(){
-      if (this.detailsSupplierData){
-        return this.detailsSupplierData.goodsId
+      if (this.detailsGoodsData){
+        return this.detailsGoodsData.goodsId
       }
       return ''
     }
@@ -350,16 +351,16 @@ export default {
         })
       })
     },
-    closeDialog() {
+    closeGoodsDialog() {
       this.tabName = null;
-      this.activeTab = "fileInfo";
-      this.dialogDetailsProcessDialog = false;
+      this.activeGoodsTab = "fileManagerInfo";
+      this.dialogDetailsProcessGoodsDialog = false;
       this.getFilesList();
     },
     closeHandler(){
       this.tabName = null;
-      this.activeTab = "fileInfo";
-      this.dialogDetailsProcessDialog = false;
+      this.activeGoodsTab = "fileManagerInfo";
+      this.dialogDetailsProcessGoodsDialog = false;
       this.getFilesList();
     },
     /*获取查询列表*/
@@ -406,12 +407,12 @@ export default {
     },
     /*详情弹框*/
     handleDetails(row) {
-      this.detailsSupplierData = null
+      this.detailsGoodsData = null
       filesApi.getDetailFiles({goodsId:row.goodsId}).then(res=>{
-        this.detailsSupplierData = res.data;
+        this.detailsGoodsData = res.data;
         // this.goodsId = row.goodsId;
         this.tabName = '1'
-        this.dialogDetailsProcessDialog = true
+        this.dialogDetailsProcessGoodsDialog = true
       })
     },
     /*处理标签页信息*/

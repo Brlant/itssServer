@@ -104,7 +104,7 @@
               v-model="formData.goodsClassify"
               :filter-method="getCategoryList"
               :options="categoryList"
-              :props="{ value: 'categoryId', label: 'categoryName', children: 'childList',checkStrictly: true  }"
+              :props="{ value: 'categoryId', label: 'categoryName', children: 'childList',checkStrictly: true,emitPath:false,  }"
               placeholder="请选择上级类目"
               :filterable="true"
               @change="handleChange"
@@ -253,16 +253,15 @@ import filesApi from '@/api/Files/files'
 export default {
   name: 'fileManagerInfo',
   props: {
-    detailsSupplierData: {
+    detailsGoodsData: {
       type: Object
     }
   },
   watch: {
-    detailsSupplierData: {
+    detailsGoodsData: {
       handler(newVal, oldVal) {
         if (newVal && newVal.goodsId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
-          console.log('档案信息', this.formData)
         }
       },
       immediate: true,
@@ -291,7 +290,7 @@ export default {
         taxRate,
         boxGauge,
         goodsClassify,
-      } = this.detailsSupplierData
+      } = this.detailsGoodsData
       let attachmentFileNames = this.attachmentInfos.map(item => {
         return item.attachmentFileName
       }).join(',')
@@ -371,11 +370,12 @@ export default {
         { label: '盒', value: 4 }
       ],
       //税率
-      taxRateList: [
-        { label: '1%', value: '1' },
-        { label: '3%', value: '2' },
-        { label: '6%', value: '3' },
-        { label: '12%', value: '4' }
+      taxRateList:[
+        {label:'1%',value:"0.01"},
+        {label:'3%',value:"0.03"},
+        {label:'6%',value:"0.06"},
+        {label:'12%',value:"0.12"},
+        {label:'15%',value:"0.15"},
       ],
       categoryList: []
     }
@@ -546,7 +546,7 @@ export default {
       return true
     },
     handleChange(query) {
-      this.formData.goodsClassify = query[query.length - 1]
+      this.formData.goodsClassify = query
     },
     /* 获取上级类目列表 */
     getCategoryList() {

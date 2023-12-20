@@ -102,7 +102,7 @@
                 v-model="formData.goodsClassify"
                 :filter-method="getCategoryList"
                 :options="categoryList"
-                :props="{ value: 'categoryId', label: 'categoryName', children: 'childList',checkStrictly: true  }"
+                :props="{ value: 'categoryId', label: 'categoryName', children: 'childList',checkStrictly: true,emitPath:false,   }"
                 placeholder="请选择上级类目"
                 :filterable="true"
                 @change="handleChange"
@@ -274,6 +274,7 @@ export default {
   },
   created() {
     this.getCategoryList()
+    this.getSupplierList();
   },
   methods: {
     /* 获取上级类目列表 */
@@ -283,14 +284,14 @@ export default {
       })
     },
     handleChange(query){
-      this.formData.goodsClassify = query[query.length - 1]
+      this.formData.goodsClassify = query;
     },
 
     getSupplierList(query){
       let params = {
         codeNameKey: query,
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 1000,
       }
       supplierApi.getSupplierList(params).then((res) => {
         this.supplierList = res.data.rows.map(item => {
