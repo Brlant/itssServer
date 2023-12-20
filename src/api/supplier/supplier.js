@@ -79,13 +79,11 @@ const supplierApi = {
     return download(`/pms/examine/downloadTemplate?type=1`,{},`物品导入模板_${new Date().getTime()}.xlsx`)
   },
   // 启用，停用，淘汰
-  enableSupplier({supplierId, supplierStatus}) {
+  enableSupplier(params) {
     return request({
       url: `/pms/supplier/enableSupplier`,
       method: 'put',
-      data: {
-        supplierId, supplierStatus
-      }
+      data: params
     })
   },
   // 审核通过、不通过、撤回

@@ -115,13 +115,41 @@
       <!--      标签页-->
       <el-tabs v-model="activeTab" @tab-click="handleTabClick">
         <el-tab-pane label="档案信息" name="fileInfo">
-          <supplier-info :supplier-data="detailsSupplierData"></supplier-info>
+          <supplier-info :supplier-data="detailsSupplierData" @closeHandlerInfo="closeHandlerInfo"></supplier-info>
         </el-tab-pane>
         <el-tab-pane label="审核信息" name="auditInfo">
           <supplier-audit-info :supplierId="supplierId"></supplier-audit-info>
         </el-tab-pane>
         <el-tab-pane label="操作日志" name="operationLog">
           <supplier-operation-log :supplierId="supplierId"></supplier-operation-log>
+        </el-tab-pane>
+      </el-tabs>
+    </el-dialog>
+
+
+    <!--    goods弹框内容-->
+    <el-dialog :visible="dialogDetailsProcessGoodsDialog" :title="detailsGoodsTitle" width="75%" @close="closeGoodsDialog">
+      <div style="position: relative">
+        <div class="tabStatus">
+          <span v-if="activeGoodsStatus === 0" style="color: #F79B22">待审核</span>
+          <span v-if="activeGoodsStatus === 1" style="color: #F79B22">审核中</span>
+          <span v-if="activeGoodsStatus === 2" style="color: black">审核未通过</span>
+          <span v-if="activeGoodsStatus === 3" style="color: green">启用</span>
+          <span v-if="activeGoodsStatus === 4" style="color: black">已撤回</span>
+          <span v-if="activeGoodsStatus === 5" style="color: red">停用</span>
+          <span v-if="activeGoodsStatus === 6" style="color: black">已淘汰</span>
+        </div>
+      </div>
+      <!--      标签页-->
+      <el-tabs v-model="activeGoodsTab" @tab-click="handleTabClick">
+        <el-tab-pane label="档案信息" name="fileManagerInfo">
+          <file-manager-info :detailsGoodsData="detailsGoodsData" @closeHandler="closeHandler"></file-manager-info>
+        </el-tab-pane>
+        <el-tab-pane label="审核信息" name="fileAuditInfo">
+          <file-audit-info :goodsId = 'goodsId'></file-audit-info>
+        </el-tab-pane>
+        <el-tab-pane label="操作日志" name="fileOperationLog">
+          <file-operation-log :goodsId = 'goodsId'></file-operation-log>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -140,12 +168,23 @@ import supplierAuditInfo from '@/common/supplierDetails/supplierAuditInfo'
 import supplierInfo from '@/common/supplierDetails/supplierInfo'
 import supplierOperationLog from '@/common/supplierDetails/supplierOperationLog'
 
+//物品
+import fileAuditInfo from "@/common/fileManager/fileAuditInfo";
+import fileManagerInfo from "@/common/fileManager/fileManagerInfo";
+import fileOperationLog from "@/common/fileManager/fileOperationLog";
+
+import filesApi from '@/api/Files/files'
+
 export default {
   name: "index",
   components:{
     supplierAuditInfo,
     supplierInfo,
-    supplierOperationLog
+    supplierOperationLog,
+
+    fileAuditInfo,
+    fileManagerInfo,
+    fileOperationLog,
   },
   data(){
     return{
@@ -199,6 +238,12 @@ export default {
       ],
       //状态
       tabStatus:'',
+
+      //goods弹框
+      dialogDetailsProcessGoodsDialog: false,
+      detailsGoodsTitle: "详情信息",
+      detailsGoodsData: {},
+      activeGoodsTab: 'fileManagerInfo',
     }
   },
   watch:{
@@ -218,6 +263,20 @@ export default {
         return this.detailsSupplierData.supplierId
       }
 
+      return ''
+    },
+
+    activeGoodsStatus(){
+      if (!this.detailsGoodsData) {
+        return ''
+      }
+      let status = this.detailsGoodsData && this.detailsGoodsData.goodsStatus;
+      return status;
+    },
+    goodsId(){
+      if (this.detailsGoodsData){
+        return this.detailsGoodsData.goodsId
+      }
       return ''
     }
   },
@@ -247,16 +306,53 @@ export default {
       this.detailsRow.modelType = ''
       this.detailsRow.relationId = ''
     },
+    closeHandlerInfo(){
+      this.dialogDetailsProcessDialog = false;
+    },
+
     /* 详情弹框 */
     handleDetails(row){
+      console.log(row.modelType)
       this.detailsSupplierData = null
-      if(row.modelType === "supplier" || row.modelType === "goods" || row.modelType === "contract"|| row.modelType === "inOrder" || row.modelType === "outOrder"){
+      if(row.modelType === "supplier"){
         supplierApi.getSupplierDetails(row.relationId).then((res) => {
           this.detailsSupplierData = res.data
           this.tabName = '1'
           this.dialogDetailsProcessDialog = true
         })
       }
+
+      this.detailsGoodsData = null
+      if(row.modelType === "goods"){
+        filesApi.getDetailFiles({goodsId:row.relationId}).then((res) => {
+          this.detailsGoodsData = res.data;
+          // this.goodsId = row.goodsId;
+          this.tabName = '1'
+          this.dialogDetailsProcessGoodsDialog = true
+        })
+      }
+      if(row.modelType === "contract"){
+
+      }
+
+      if(row.modelType === "inOrder"){
+
+      }
+      if(row.modelType === "outOrder"){
+
+      }
+
+
+
+
+      // this.detailsSupplierData = null
+      // if(row.modelType === "supplier" || row.modelType === "goods" || row.modelType === "contract"|| row.modelType === "inOrder" || row.modelType === "outOrder"){
+      //   supplierApi.getSupplierDetails(row.relationId).then((res) => {
+      //     this.detailsSupplierData = res.data
+      //     this.tabName = '1'
+      //     this.dialogDetailsProcessDialog = true
+      //   })
+      // }
 
       // this.detailsRow.modelType = row.modelType
       // this.detailsRow.relationId = row.relationId
@@ -293,6 +389,18 @@ export default {
     resetQuery() {
       this.$refs.queryForm.resetFields();
       this.queryParams.applyTime = "";
+      this.getHandleList();
+    },
+
+    closeGoodsDialog() {
+      this.activeGoodsTab = "fileManagerInfo";
+      this.dialogDetailsProcessGoodsDialog = false;
+      this.getHandleList();
+    },
+    closeHandler(){
+      this.tabName = null;
+      this.activeGoodsTab = "fileManagerInfo";
+      this.dialogDetailsProcessGoodsDialog = false;
       this.getHandleList();
     },
   },

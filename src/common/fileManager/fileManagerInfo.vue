@@ -200,13 +200,14 @@
         <el-button
           v-show="formData.goodsStatus === 3"
           icon="el-icon-delete"
-          @click="enableFiles(this.formData.goodsId, 3)"
+          @click="enableFiles(formData.goodsId, 3)"
         >启用
         </el-button>
+
         <el-button
           v-show="formData.goodsStatus === 5"
           icon="el-icon-delete"
-          @click="stopFiles(this.formData.goodsId, 5)"
+          @click="stopFiles(formData.goodsId, 5)"
         >停用
         </el-button>
         <el-button
@@ -218,7 +219,7 @@
         <el-button
           v-show="formData.returnButton && (formData.goodsStatus === 2 || formData.goodsStatus === 4)"
           icon="el-icon-delete"
-          @click="deleteFiles(this.formData.goodsId)"
+          @click="deleteFiles(formData.goodsId)"
         >删除
         </el-button>
         <el-button
@@ -240,7 +241,6 @@
         >重新提交
         </el-button>
       </el-form-item>
-
     </el-form>
   </div>
 </template>
@@ -262,10 +262,63 @@ export default {
       handler(newVal, oldVal) {
         if (newVal && newVal.goodsId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
+          console.log(this.formData,'表单')
         }
       },
       immediate: true,
       deep: true
+    }
+  },
+  data() {
+    return {
+      formData: {
+        goodsCode: '',
+        goodsType: '',
+        goodsName: '',
+        supplierId: '',
+        goodsUnit: '',
+        taxBid: '',
+        taxRate: '',
+        boxGauge:'',
+        goodsClassify:'',
+        attachmentInfos: []
+      },
+      rules: {
+        goodsType: [{ required: true, message: '请输入物品类型', trigger: 'blur' }],
+        goodsName: [{ required: true, message: '请输入物品名称', trigger: 'blur' }],
+        supplierId: [{ required: true, message: '请选择供应商', trigger: 'change' }],
+
+        goodsUnit: [{ required: true, message: '请选择单位', trigger: 'change' }],
+        taxBid: [{ required: true, message: '请输入含税进价', trigger: 'blur' }],
+        taxRate: [{ required: true, message: '请选择税率', trigger: 'change' }],
+
+        boxGauge: [{ required: true, message: '请输入箱规', trigger: 'blur' }],
+        goodsClassify: [{ required: true, message: '请选择物品分类', trigger: 'blur' }]
+      },
+      listOfItemTypes: [
+        { label: '固定资产', value: 1 },
+        { label: '消耗品', value: 2 },
+        { label: '服务', value: 3 },
+        { label: '销售品', value: 4 }
+      ],
+      //供应商
+      supplierList: [],
+      //单位
+      unitList: [
+        { label: '支', value: 1 },
+        { label: '套', value: 2 },
+        { label: '个', value: 3 },
+        { label: '盒', value: 4 }
+      ],
+      //税率
+      taxRateList:[
+        {label:'1%',value:"0.01"},
+        {label:'3%',value:"0.03"},
+        {label:'6%',value:"0.06"},
+        {label:'12%',value:"0.12"},
+        {label:'15%',value:"0.15"},
+      ],
+      categoryList: []
     }
   },
   computed: {
@@ -328,58 +381,6 @@ export default {
       return this.oldStr !== this.newStr
     },
   },
-  data() {
-    return {
-      formData: {
-        goodsCode: '',
-        goodsType: '',
-        goodsName: '',
-        supplierId: '',
-        goodsUnit: '',
-        taxBid: '',
-        taxRate: '',
-        boxGauge:'',
-        goodsClassify:'',
-        attachmentInfos: []
-      },
-      rules: {
-        goodsType: [{ required: true, message: '请输入物品类型', trigger: 'blur' }],
-        goodsName: [{ required: true, message: '请输入物品名称', trigger: 'blur' }],
-        supplierId: [{ required: true, message: '请选择供应商', trigger: 'change' }],
-
-        goodsUnit: [{ required: true, message: '请选择单位', trigger: 'change' }],
-        taxBid: [{ required: true, message: '请输入含税进价', trigger: 'blur' }],
-        taxRate: [{ required: true, message: '请选择税率', trigger: 'change' }],
-
-        boxGauge: [{ required: true, message: '请输入箱规', trigger: 'blur' }],
-        goodsClassify: [{ required: true, message: '请选择物品分类', trigger: 'blur' }]
-      },
-      listOfItemTypes: [
-        { label: '固定资产', value: 1 },
-        { label: '消耗品', value: 2 },
-        { label: '服务', value: 3 },
-        { label: '销售品', value: 4 }
-      ],
-      //供应商
-      supplierList: [],
-      //单位
-      unitList: [
-        { label: '支', value: 1 },
-        { label: '套', value: 2 },
-        { label: '个', value: 3 },
-        { label: '盒', value: 4 }
-      ],
-      //税率
-      taxRateList:[
-        {label:'1%',value:"0.01"},
-        {label:'3%',value:"0.03"},
-        {label:'6%',value:"0.06"},
-        {label:'12%',value:"0.12"},
-        {label:'15%',value:"0.15"},
-      ],
-      categoryList: []
-    }
-  },
   created() {
     this.getSupplierList()
     this.getCategoryList()
@@ -399,6 +400,7 @@ export default {
             type:'success',
             message: '操作成功'
           })
+          this.closeHandler();
         })
       })
     },
@@ -418,6 +420,7 @@ export default {
             type:'success',
             message: '操作成功'
           })
+          this.closeHandler();
         })
       })
     },
@@ -437,6 +440,7 @@ export default {
             type:'success',
             message: '操作成功'
           })
+          this.closeHandler();
         })
       })
     },
@@ -456,6 +460,7 @@ export default {
             type:'success',
             message: '操作成功'
           })
+          this.closeHandler();
         })
       })
     },
@@ -474,6 +479,7 @@ export default {
             type: 'success',
             message: '操作成功'
           })
+          this.closeHandler();
         })
       })
     },
@@ -492,6 +498,7 @@ export default {
             type: 'success',
             message: '操作成功'
           })
+          this.closeHandler();
         })
       })
     },

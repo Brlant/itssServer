@@ -133,7 +133,7 @@
       <!--      标签页-->
       <el-tabs v-model="activeTab" @tab-click="handleTabClick">
         <el-tab-pane label="档案信息" name="fileInfo">
-          <supplier-info :supplier-data="detailsSupplierData"></supplier-info>
+          <supplier-info :supplier-data="detailsSupplierData" @closeHandlerInfo="closeHandlerInfo"></supplier-info>
         </el-tab-pane>
         <el-tab-pane label="审核信息" name="auditInfo">
           <supplier-audit-info :supplierId="supplierId"></supplier-audit-info>
@@ -338,6 +338,10 @@ export default {
       this.detailsRow.relationId = ''
 
       this.detailsSupplierData = null
+    },
+
+    closeHandlerInfo(){
+      this.dialogDetailsProcessDialog = false;
     },
 
 

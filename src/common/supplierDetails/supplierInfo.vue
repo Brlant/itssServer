@@ -238,19 +238,19 @@
       <el-button
         v-show="formData.supplierStatus === 5"
         icon="el-icon-delete"
-        @click="enableSupplier(this.formData.supplierId, 3)"
+        @click="enableSupplier(formData.supplierId, 3)"
       >启用
       </el-button>
       <el-button
         v-show="formData.supplierStatus === 3"
         icon="el-icon-delete"
-        @click="enableSupplier(this.formData.supplierId, 5)"
+        @click="enableSupplier(formData.supplierId, 5)"
       >停用
       </el-button>
       <el-button
         v-show="formData.supplierStatus === 5 || formData.supplierStatus === 3"
         icon="el-icon-delete"
-        @click="enableSupplier(this.formData.supplierId, 6)"
+        @click="enableSupplier(formData.supplierId, 6)"
       >淘汰
       </el-button>
       <el-button
@@ -494,8 +494,8 @@ export default {
       this.formData.contactsInfoList.splice(index, 1);
     },
     // 关闭弹框
-    closeHandler() {
-      this.$emit('close')
+    closeHandlerInfo() {
+      this.$emit('closeHandlerInfo')
     },
     /*表单校验提交*/
     submitForm() {
@@ -518,7 +518,7 @@ export default {
       supplierApi.updateSupplier(this.formData).then(res => {
         if (res.data.code === 200) {
           this.$message.success('编辑成功')
-          this.closeHandler()
+          this.closeHandlerInfo()
         } else {
           this.$message.error(res.data.message)
         }
@@ -532,13 +532,14 @@ export default {
       }).then(() => {
         let params = {
           supplierId: supplierId,
-          status: status,
+          supplierStatus: status,
         }
         supplierApi.enableSupplier(params).then((res) => {
           this.$message({
             type: 'success',
             message: '操作成功'
           })
+          this.closeHandlerInfo();
         })
       })
     },
@@ -554,12 +555,14 @@ export default {
             type: 'success',
             message: '删除成功'
           })
+          this.closeHandlerInfo();
         })
       })
     },
     editSupplier() {
 
     },
+
     /*审核通过*/
     auditPass() {
       this.$confirm('是否确定审核通过?', '二次确认', {
@@ -576,6 +579,7 @@ export default {
             type: 'success',
             message: '操作成功'
           })
+          this.closeHandlerInfo();
         })
       })
     },
@@ -598,6 +602,7 @@ export default {
             type: 'success',
             message: '操作成功'
           })
+          this.closeHandlerInfo();
         })
       }).catch(() => {
       });
@@ -619,7 +624,7 @@ export default {
             type: 'success',
             message: '操作成功'
           })
-          this.getSupplierList()
+          this.closeHandlerInfo()
         })
       })
     },
