@@ -155,36 +155,18 @@ export default {
         renewalFlag: null
       },
       formRules: {
-        contractArchiveNo: [
-          {required: true, message: '请输入合同档案编号', trigger: 'blur'}
+        contractRecordCode: [{required: true, message: '请输入合同档案编号', trigger: 'blur'}],
+        contractCode: [{required: true, message: '请输入合同编号', trigger: 'blur'}],
+        contractName:[{required: true, message: '请输入合同名称', trigger: 'blur'}],
+        supplierId:[{required: true, message: '请选择供应商', trigger: 'change'}],
+        contractAmount:[
+          {required: true, message: '请输入合同金额', trigger: 'blur'},
+          {type: 'number', message: '合同金额必须是数字', trigger: 'blur'}
         ],
-        contractNo: [
-          {required: true, message: '请输入合同编号', trigger: 'blur'}
-        ],
-        contractName: [
-          {required: true, message: '请输入合同名称', trigger: 'blur'}
-        ],
-        contractType: [
-          {required: true, message: '请选择合同类型', trigger: 'change'}
-        ],
-        supplierName: [
-          {required: true, message: '请输入供应商名称', trigger: 'blur'}
-        ],
-        contractAmount: [
-          {required: true, message: '请输入合同金额', trigger: 'blur'}
-        ],
-        signDate: [
-          {required: true, message: '请选择签订日期', trigger: 'change'}
-        ],
-        expireDate: [
-          {required: true, message: '请选择到期日期', trigger: 'change'}
-        ],
-        signer: [
-          {required: true, message: '请输入合同签署人', trigger: 'blur'}
-        ],
-        isRenew: [
-          {required: true, message: '请选择合同续签', trigger: 'change'}
-        ]
+        signingDate:[{required: true, message: '请选择合同签订日期', trigger: 'change'}],
+        dueDate:[{required: true, message: '请选择合同到期日期', trigger: 'change'}],
+        contractType:[{required: true, message: '请选择合同类型', trigger: 'change'}],
+        contractSignatory:[{required: true, message: '请填写合同签署人', trigger: 'blur'}]
       }
     }
   },
