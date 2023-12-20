@@ -49,7 +49,7 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
      '/itss': {
-        target: targets.cjg,
+        target: targets.yj,
         changeOrigin: true,
         logLevel:"debug",
         pathRewrite: {

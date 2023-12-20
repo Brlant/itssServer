@@ -201,7 +201,7 @@
 
     </el-dialog>
 
-    <el-dialog :visible.sync="supplierImportDialog.showFlag" :title="supplierImportDialog.title" width="400px"
+    <el-dialog :visible.sync="supplierImportDialog.showFlag" :title="supplierImportDialog.title" width="410px"
                center
                @close="closeSupplierImportDialog">
       <div style="margin-bottom: 22px;">
@@ -215,7 +215,7 @@
       </div>
 
       <div>
-        <el-upload drag :action="importSupplierAction"
+        <el-upload drag action=""
                    :on-change="importSuccessHandler"
                    :auto-upload="false"
                    :show-file-list="false"
@@ -334,9 +334,6 @@ export default {
         }
       })
     },
-    importSupplierAction() {
-      return supplierApi.importSupplierUrl
-    },
     activeStatus() {
       if (!this.detailsSupplierData) {
         return ''
@@ -451,7 +448,6 @@ export default {
       this.dialogDetailsSupplierDialog = false;
     },
     importSuccessHandler(file) {
-
       let formData = new FormData()
       formData.append('file', file.raw)
       supplierApi.importSupplier(formData).then((res) => {
@@ -461,15 +457,6 @@ export default {
         })
         this.getSupplierList()
       })
-      //
-      // if (res.code === 200) {
-      //   this.$message({
-      //     type:'success',
-      //     message: '导入成功'
-      //   })
-      //   // 导入成功以后，需要重新获取列表
-      //   this.getSupplierList()
-      // }
     },
     importErrorHandler(err, file) {
       console.log(err)

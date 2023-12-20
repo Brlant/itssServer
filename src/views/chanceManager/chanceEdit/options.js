@@ -32,13 +32,11 @@ export const formData = {
       expectedCost: "", //预计成本
       chanceConfigScheduleList: [], //
       week: "", //周数
-      startTime: "", //开始时间
       startEndTime: [],
       gradeIdActive: true,
       postIdActive: true,
       postTypeActive: true,
       nextActive: true,
-      chanceConfigScheduleList: []
     }
   ]
 }
@@ -77,13 +75,12 @@ export const rules = {
   customer: [],
   customerLink: [],
   tel: [{
-    pattern: /^1(3|4|5|7|8|9)\d{9}$/,
+    pattern: /^1([345789])\d{9}$/,
     message: '请输入正确的手机号！',
     trigger: 'blur'
   }],
   budget: [],
-  successRate: [], 
-  expectOffer: [],
+  successRate: [],
   expectOffer: [],
   chanceService: [{
     required: true,
@@ -171,11 +168,9 @@ export const chanceConfigList = {
   expectedCost: "", //预计成本
   chanceConfigScheduleList: [], //
   week: "", //周数
-  startTime: "", //开始时间
   startEndTime:[],
   postLevelIdActive:true,
   postNameIdActive:true,
   postTypeActive:true,
   nextActive:true,
-  chanceConfigScheduleList:[]
 }

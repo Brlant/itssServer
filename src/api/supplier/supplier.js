@@ -3,8 +3,6 @@ import request,{download,uploadUrl} from '@/utils/request'
 // 供应商接口
 const supplierApi = {
   uploadUrl,
-  importSupplierUrl: process.env.VUE_APP_BASE_API + '/pms/supplier/importSupplier',
-
   // 列表查询
   getSupplierList(data) {
     return request({
