@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="dialogAddFiles" :title="formTitle" width="80%" @close="closeAddFiles">
+  <el-dialog :visible="dialogAddFiles" :title="formTitle" width="60%" @close="closeAddFiles">
     <template v-slot:title>
       <div style="font-weight: bold;font-size: 15px">{{ formTitle }}</div>
     </template>
