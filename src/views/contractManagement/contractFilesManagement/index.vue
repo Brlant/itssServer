@@ -3,8 +3,12 @@
     <el-row>
       <!--      输入框-->
       <el-col :span="18">
-        <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch"
-                 label-width="68px">
+        <el-form :model="queryParams"
+          ref="queryForm"
+          size="small"
+          :inline="true"
+          v-show="showSearch"
+          label-width="68px">
           <!--      合同编号-->
           <el-form-item prop="key">
             <el-input
@@ -30,7 +34,9 @@
           </el-form-item>
 
           <el-form-item prop="contractType">
-            <el-select v-model="queryParams.contractType" placeholder="合同类型" clearable>
+            <el-select v-model="queryParams.contractType"
+              placeholder="合同类型"
+              clearable>
               <el-option
                 v-for="(item,index) in contractTypeList"
                 :key="index"
@@ -41,30 +47,41 @@
           </el-form-item>
 
           <el-form-item prop="supplierId">
-            <el-select v-model="queryParams.supplierId" filterable :filter-method="getSupplierList" placeholder="供应商" clearable>
-              <el-option
-              v-for="(item,index) in supplierList"
-              :key="index"
-              :label="item.label"
-              :value="item.value"
-            />
+            <el-select v-model="queryParams.supplierId"
+              remote
+              clearable
+              filterable
+              :remote-method="getSupplierList"
+              placeholder="供应商">
+              <el-option v-for="supplier in supplierList"
+                :key="supplier.value"
+                :value="supplier.value"
+                :label="supplier.label"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item prop="createId">
-            <el-select v-model="queryParams.createId" filterable :filter-method="getUserList" placeholder="创建人" clearable>
+            <el-select v-model="queryParams.createId"
+              remote
+              clearable
+              filterable
+              :remote-method="getUserList"
+              placeholder="创建人">
               <el-option
-                v-for="(item,index) in createList"
-                :key="index"
-                :label="item.label"
+                v-for="item in createList"
+                :key="item.value"
                 :value="item.value"
+                :label="item.label"
               />
             </el-select>
           </el-form-item>
           <!--搜索重置-->
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="getContractFiles">搜索</el-button>
-            <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
+            <el-button type="primary"
+              icon="el-icon-search"
+              @click="handleQuery">搜索</el-button>
+            <el-button icon="el-icon-refresh"
+              @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -82,6 +99,7 @@
           <el-button
             type="primary"
             icon="el-icon-download"
+            @click="exportContract"
           >导出
           </el-button>
         </el-form>
@@ -93,27 +111,38 @@
         class="btnSwitch"
         v-for="(item,index) in switchType"
         :key="index"
-        :class="{ 'is-active': activeFilterIndex === index }"
+        :class="{ 'type-active': activeFilterIndex === index }"
         @click="setActiveFilter(item,index)"
       >
         {{ item.label }}
       </el-button>
     </el-row>
     <!--    查询表格-->
-    <el-table v-loading="loading" :data="filteredData" style="width: 100%">
-      <el-table-column type="index" label="序号"></el-table-column>
-      <el-table-column prop="contractRecordCode" label="合同档案编号"></el-table-column>
-      <el-table-column prop="contractCode" label="合同编号"></el-table-column>
-      <el-table-column prop="contractType" label="合同类型">
+    <el-table v-loading="loading"
+      :data="filteredData"
+      style="width: 100%">
+      <el-table-column type="index"
+        label="序号"></el-table-column>
+      <el-table-column prop="contractRecordCode"
+        label="合同档案编号"></el-table-column>
+      <el-table-column prop="contractCode"
+        label="合同编号"></el-table-column>
+      <el-table-column prop="contractType"
+        label="合同类型">
         <template slot-scope="scope">
-          <span>{{ scope.row.contractType === 1? '销售合同' : '采购合同' }}</span>
+          <span>{{ scope.row.contractType === 1? '采购合同' : '框架合同' }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="contractName" label="合同名称"></el-table-column>
-      <el-table-column prop="supplierName" label="供应商"></el-table-column>
-      <el-table-column prop="contractAmount" label="合同金额"></el-table-column>
-      <el-table-column prop="signingDate" label="签订日期"></el-table-column>
-      <el-table-column prop="contractStatus" label="状态">
+      <el-table-column prop="contractName"
+        label="合同名称"></el-table-column>
+      <el-table-column prop="supplierName"
+        label="供应商"></el-table-column>
+      <el-table-column prop="contractAmount"
+        label="合同金额"></el-table-column>
+      <el-table-column prop="signingDate"
+        label="签订日期"></el-table-column>
+      <el-table-column prop="contractStatus"
+        label="状态">
         <template slot-scope="scope">
           <span v-if="scope.row.contractStatus === ''">全部</span>
           <span v-if="scope.row.contractStatus === 0">待审核</span>
@@ -146,34 +175,36 @@
     />
 
     <!--    详情弹框-->
-    <el-dialog :visible="dialogDetailsProcessDialog" :title="detailsTitle" width="75%" @close="closeDialog">
+    <el-dialog :visible="dialogDetailsProcessDialog"
+      :title="detailsTitle"
+      width="75%"
+      @close="closeDialog">
       <template v-slot:title>
         <div style="font-weight: bold;font-size: 15px">{{ detailsTitle }}</div>
       </template>
       <template class="templateDialogStyle">
-        <el-tabs v-model="activeTab" @tab-click="handleTabClick">
+        <el-tabs v-model="activeTab"
+          @tab-click="handleTabClick">
           <el-tab-pane
             v-for="tab in tabs"
             :key="tab.name"
             :label="tab.label"
             :name="tab.name">
             <!-- 使用组件作为标签页内容 -->
-            <component :is="tab.component" :tabName="tabName"></component>
+            <component :is="tab.component"
+              :contractId="contractId"
+              @closeDetail="closeDialog"></component>
           </el-tab-pane>
         </el-tabs>
         <div class="tabStatus">
           状态
-        </div>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="closeDialog">取消</el-button>
-          <el-button type="primary">确定</el-button>
         </div>
       </template>
     </el-dialog>
 
     <!--    新建弹框-->
     <contract-files :dialogContractFilesFiles="dialogContractFilesFiles"
-                    @closeAddFiles="closeAddFiles"></contract-files>
+      @closeAddFiles="closeAddFiles"></contract-files>
   </div>
 </template>
 
@@ -186,6 +217,8 @@ import managerOperationLog from "@/common/contractManager/managerOperationLog";
 
 import { getContractFileList,getUserList } from '@/api/contractFilesManagement/contractFilesManagement'
 import supplierApi from '@/api/supplier/supplier'
+import { download } from '@/utils/request'
+
 export default {
   name: "index",
   components: {
@@ -199,7 +232,7 @@ export default {
         {label: '审核信息', name: 'auditInfo',component:managerAuditInfo },
         {label: '操作日志', name: 'operationLog',component:managerOperationLog }
       ],
-      tabName: null,
+      // tabName: null,
       //详情信息
       detailsTitle: "详情信息",
       //详情信息弹框
@@ -244,14 +277,13 @@ export default {
         {label:'框架合同',value:2},
       ],
       tableData: [],
+      contractId: null
     }
   },
   created() {
     this.getContractFiles();
+    this.getSupplierList();
     this.getUserList();
-  },
-  mounted() {
-
   },
   computed: {
     filteredData() {
@@ -308,20 +340,25 @@ export default {
 
     },
     closeDialog() {
-      this.tabName = null;
+      // this.tabName = null;
       this.activeTab = "fileInfo";
+      this.contractId = null;
       this.dialogDetailsProcessDialog = false;
+      if (flg) {
+        this.handleQuery();
+      }
     },
     /*详情*/
     handleDetails(row) {
+      this.contractId = row.contractId;
       this.dialogDetailsProcessDialog = true;
     },
     /*查询列表内容*/
     getContractFiles() {
       let params = {
         key:this.queryParams.key,
-        startDate:this.queryParams.applyTime[0],
-        endDate:this.queryParams.applyTime[1],
+        startDate:this.queryParams.applyTime?.[0],
+        endDate:this.queryParams.applyTime?.[1],
         contractType:this.queryParams.contractType,
         supplierId:this.queryParams.supplierId,
         createId:this.queryParams.createId,
@@ -338,7 +375,8 @@ export default {
     },
     /*搜索查询*/
     handleQuery() {
-
+      this.queryParams.page = 1;
+      this.getContractFiles();
     },
     /*重置*/
     resetQuery() {
@@ -355,15 +393,21 @@ export default {
     addFiles() {
       this.dialogContractFilesFiles = true;
     },
-    closeAddFiles() {
+    closeAddFiles(flg) {
       this.dialogContractFilesFiles = false;
+      if (flg) {
+        this.handleQuery();
+      }
+    },
+    exportContract() {
+      download(`/pms/contract/export`,this.queryParams,`合同档案信息-${new Date().getTime()}.xlsx`)
     }
   }
 }
 </script>
 
 <style scoped>
-.is-active {
+.type-active {
   background-color: #409eff;
   color: #fff;
 }
