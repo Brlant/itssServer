@@ -16,18 +16,21 @@
           </el-form-item>
           <!--          供应商-->
           <el-form-item prop="supplierId">
-            <el-select v-model="queryParams.supplierId" filterable :filter-method="getSupplierList" placeholder="供应商" clearable>
-              <el-option
-                v-for="(item,index) in supplierList"
-                :key="index"
-                :label="item.label"
-                :value="item.value"
-              />
+            <el-select v-model="queryParams.supplierId"
+              remote
+              clearable
+              filterable
+              :remote-method="getSupplierList"
+              placeholder="供应商">
+              <el-option v-for="supplier in supplierList"
+                :key="supplier.value"
+                :value="supplier.value"
+                :label="supplier.label"></el-option>
             </el-select>
           </el-form-item>
           <!--搜索重置-->
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" @click="getContractExpiration">搜索</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
             <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-form>
@@ -41,7 +44,7 @@
             <el-button
               v-for="(item,index) in switchType"
               :key="index"
-              :class="{ 'is-active': activeFilterIndex === index }"
+              :type="activeFilterIndex === index ? 'primary' : ''"
               @click="setActiveFilter(item,index)"
             >
               {{ item.label }}
@@ -54,6 +57,7 @@
         <el-button
           type="primary"
           icon="el-icon-download"
+          @click="exportContract"
         >导出
         </el-button>
       </el-col>
@@ -73,14 +77,9 @@
       <el-table-column prop="supplierName" label="供应商"></el-table-column>
       <el-table-column prop="contractAmount" label="合同金额"></el-table-column>
       <el-table-column prop="signingDate" label="签订日期"></el-table-column>
-      <el-table-column prop="contractStatus" label="状态">
+      <el-table-column label="到期时间">
         <template slot-scope="scope">
-          <span v-if="scope.row.contractStatus === ''">全部</span>
-          <span v-if="scope.row.contractStatus === 0">待审核</span>
-          <span v-if="scope.row.contractStatus === 1">审核中</span>
-          <span v-if="scope.row.contractStatus === 2">审核不通过</span>
-          <span v-if="scope.row.contractStatus === 3">启用</span>
-          <span v-if="scope.row.contractStatus === 5">停用</span>
+          <span :style="expireColor(scope.row.expireDays)">{{ expireText(scope.row.expireDays) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -105,7 +104,7 @@
     />
 
     <!--  详情表单-->
-    <contract-form :dialogContractForm="dialogContractForm" @closeAddForm="closeAddForm"></contract-form>
+    <contract-form :contractId="contractId" :dialogContractForm="dialogContractForm" @closeAddForm="closeAddForm"></contract-form>
   </div>
 </template>
 
@@ -113,7 +112,9 @@
 //合同到期提醒
 import contractForm from "@/common/contractForm/contractForm";
 import supplierApi from '@/api/supplier/supplier'
-import { getContractFileList } from '@/api/contractFilesManagement/contractFilesManagement'
+import { queryExpireList } from '@/api/contractFilesManagement/contractFilesManagement'
+import { download } from '@/utils/request'
+
 export default {
   name: "index",
   components:{
@@ -147,6 +148,7 @@ export default {
       ],
       activeFilterIndex: 0,
       tableData: [],
+      contractId: null
     }
   },
   computed: {
@@ -161,6 +163,7 @@ export default {
   },
   created() {
     this.getContractExpiration();
+    this.getSupplierList();
   },
   methods: {
     getSupplierList(query){
@@ -188,14 +191,17 @@ export default {
         pageNum: this.queryParams.page,
         pageSize: this.queryParams.limit,
       };
-      getContractFileList(params).then(res=>{
+      queryExpireList(params).then(res=>{
         this.loading = false;
         this.tableData = res.rows;
         this.queryParams.total = res.total;
       })
 
     },
-
+    handleQuery() {
+      this.queryParams.pageNum = 1;
+      this.getContractExpiration();
+    },
     /*重置*/
     resetQuery() {
       this.$refs.queryForm.resetFields();
@@ -209,13 +215,38 @@ export default {
     },
     /*详情*/
     handleDetails(row) {
+      this.contractId = row.contractId;
       this.dialogContractForm = true;
     },
     /*关闭详情弹框*/
-    closeAddForm(){
+    closeAddForm(flg) {
       this.dialogContractForm = false;
+      if (flg) {
+        this.handleQuery();
+      }
     },
-  },
+    expireColor(days) {
+      let style = {};
+      if (days > 30) {
+        style.color = '#000000';
+      } else if (days > 7) {
+        style.color = '#f59b22'
+      } else {
+        style.color = '#d8001b'
+      }
+      return style;
+    },
+    expireText(days) {
+      if (days >=0) {
+        return `${days}天后`;
+      } else {
+        return `已过期${-days}天`;
+      }
+    },
+    exportContract() {
+      download(`/pms/contract/exportExpire`,this.queryParams,`到期合同信息-${new Date().getTime()}.xlsx`)
+    }
+  }
 
 }
 </script>
@@ -225,10 +256,10 @@ export default {
   display: flex
 }
 
-.is-active {
-  background-color: #409eff;
-  color: #fff;
-}
+/*.is-active {*/
+/*  background-color: #409eff;*/
+/*  color: #fff;*/
+/*}*/
 
 .SwitchTypes {
   margin: 10px 0px;

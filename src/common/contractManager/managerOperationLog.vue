@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div style="min-height: 350px">
     <el-timeline>
-      <el-timeline-item v-for="(item, index) in timelineData" :key="index">
+      <el-timeline-item v-for="(item, index) in timelineData"
+        :key="index">
         <div class="timeline-item-content">
-          <div class="timestamp">{{ item.timestamp }}</div>
+          <div class="timestamp">{{ item.createTime }}</div>
           <div class="status-and-content">
-            <div class="status">{{ item.status }}</div>
-            <div class="content">{{ item.content }}</div>
+            <div class="content">{{ item.logContent }}</div>
           </div>
         </div>
       </el-timeline-item>
@@ -15,46 +15,45 @@
 </template>
 
 <script>
+import { queryOperatorById } from '@/api/contractFilesManagement/contractFilesManagement'
+
 export default {
   name: "managerOperationLog",
   props: {
-    tabName: {
-      type: String,
-      default: '',
+    // tabName: {
+    //   type:String,
+    //   default:'',
+    // },
+    contractId: {
+      type: String
     }
   },
   watch: {
-    tabName: {
-      handler(newVal, oldVal) {
-        console.log('操作日志', newVal);
-      },
-      immediate: true,
-      deep: true,
+    // tabName: {
+    //   handler(newVal, oldVal) {
+    //     console.log('档案信息',newVal);
+    //   },
+    //   immediate:true,
+    //   deep: true,
+    // },
+    contractId(val) {
+      val && this.queryOperationLog(val);
     }
   },
   data() {
     return {
-      timelineData: [
-        {
-          timestamp: '2023-01-01',
-          status: '审核通过',
-          content: '内容1'
-        },
-        {
-          timestamp: '2023-02-01',
-          status: '审核中',
-          content: '内容2'
-        },
-        {
-          timestamp: '2023-03-01',
-          status: '审核不通过',
-          content: '内容3'
-        }
-      ]
+      timelineData: []
     };
   },
-  created() {
-
+  mounted() {
+    this.queryOperationLog(this.contractId);
+  },
+  methods: {
+    queryOperationLog() {
+      queryOperatorById({ contractId: this.contractId }).then(res => {
+        this.timelineData = res.data;
+      })
+    }
   }
 }
 </script>

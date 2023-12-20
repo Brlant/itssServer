@@ -1,23 +1,25 @@
 <template>
-  <div>
+  <div style="min-height: 350px">
     <el-timeline>
-      <el-timeline-item v-for="(item, index) in timelineData" :key="index"   :color="item.color">
+      <el-timeline-item v-for="(item, index) in timelineData"
+        :key="index"
+        :color="item.color">
         <div class="timeline-item-content">
           <div class="timeline-item-header">
-            <div class="status">{{ item.status }}</div>
-            <div class="timestamp">{{ item.timestamp }}</div>
+            <div class="status">{{ item.modelNode }}</div>
+            <div class="timestamp">{{ item.createTime }}</div>
           </div>
-          <div style="display: flex">
+          <div style="display: flex; min-height: 60px;">
             <div class="content">
               <div>
-                {{ item.content }}
+                {{ item.reviewedName }}
               </div>
               <div>
-                审核通过
+                {{ item.nodeContent }}
               </div>
             </div>
-            <div class="content-right">
-              不通过原因：档案内容不完善
+            <div v-if="item.remark" class="content-right">
+              {{ `不通过原因: ${item.remark}`}}
             </div>
           </div>
 
@@ -28,49 +30,50 @@
 </template>
 
 <script>
+import { queryExamineById } from '@/api/contractFilesManagement/contractFilesManagement'
+
 export default {
   name: "managerAuditInfo",
   props: {
-    tabName: {
-      type: String,
-      default: '',
+    // tabName: {
+    //   type:String,
+    //   default:'',
+    // },
+    contractId: {
+      type: String
     }
   },
   watch: {
-    tabName: {
-      handler(newVal, oldVal) {
-        // console.log('审核信息', newVal);
-      },
-      immediate: true,
-      deep: true,
+    // tabName: {
+    //   handler(newVal, oldVal) {
+    //     console.log('档案信息',newVal);
+    //   },
+    //   immediate:true,
+    //   deep: true,
+    // },
+    contractId(val) {
+      val && this.queryAuditInfo(val);
     }
   },
   data(){
     return{
-      timelineData: [
-        {
-          timestamp: '2023-01-01',
-          status: '审核通过',
-          content: '内容1',
-          color:"green",
-        },
-        {
-          timestamp: '2023-02-01',
-          status: '审核中',
-          content: '内容2',
-          color:"green",
-        },
-        {
-          timestamp: '2023-03-01',
-          status: '审核不通过',
-          content: '内容3',
-          color:"#E4E7ED",
-        }
-      ]
+      timelineData: []
     }
   },
-  created() {
-
+  mounted() {
+    this.queryAuditInfo(this.contractId);
+  },
+  methods: {
+    queryAuditInfo() {
+      queryExamineById({ contractId: this.contractId }).then(res => {
+        this.timelineData = res.data.map(row => {
+          if(row.nodeStatus === 1) {
+            row.color = 'green';
+          }
+          return row;
+        });
+      })
+    }
   }
 }
 </script>
