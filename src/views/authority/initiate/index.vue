@@ -325,7 +325,7 @@ export default {
     /*详情*/
     handleDetails(row) {
       this.detailsSupplierData = null
-      if(row.modelType === "supplier"){
+      if(row.modelType === "supplier" || row.modelType === "goods" || row.modelType === "contract"|| row.modelType === "inOrder" || row.modelType === "outOrder"){
         supplierApi.getSupplierDetails(row.relationId).then((res) => {
           this.detailsSupplierData = res.data
           this.tabName = '1'

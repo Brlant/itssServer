@@ -251,10 +251,11 @@ export default {
       ],
       //税率
       taxRateList:[
-        {label:'1%',value:"1"},
-        {label:'3%',value:"2"},
-        {label:'6%',value:"3"},
-        {label:'12%',value:"4"},
+        {label:'1%',value:"0.01"},
+        {label:'3%',value:"0.03"},
+        {label:'6%',value:"0.06"},
+        {label:'12%',value:"0.12"},
+        {label:'15%',value:"0.15"},
       ],
       //供应商
       supplierList:[],
