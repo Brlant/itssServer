@@ -144,7 +144,7 @@
           <span v-if="row.orderBizType === '1-4'">领用入库</span>
         </template>
       </el-table-column>
-      <el-table-column prop="orderGoodsNames" label="订单物品"></el-table-column>
+      <el-table-column prop="totalGoodsName" label="订单物品"></el-table-column>
       <el-table-column prop="orderTotalAmount" label="订单总金额"></el-table-column>
       <el-table-column prop="applyName" label="发起人"></el-table-column>
       <el-table-column prop="applicationDepartment" label="发起部门"></el-table-column>
@@ -190,7 +190,7 @@
     />
 
     <!--    详情弹框-->
-    <el-dialog :visible="dialogDetailsProcessDialog" :title="detailsTitle" width="75%" @close="closeDialog">
+    <el-dialog :visible="dialogDetailsProcessDialog" :title="detailsTitle" width="80%" @close="closeDialog">
       <template v-slot:title>
         <div style="font-weight: bold;font-size: 15px">{{ detailsTitle }}</div>
       </template>
