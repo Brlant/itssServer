@@ -25,60 +25,92 @@ const ORDER_STOCK_OVERVIEW = PREFIX + '/queryStockOverview'
 const ORDER_EXPORT_STOCK = PREFIX + '/exportPmsStock'
 // 订单收货
 const ORDER_CONFIRM_RECEIPT = PREFIX + '/confirmReceipt'
+// 查询订单的审核信息
+const ORDER_AUDIT_RECORDS = PREFIX + '/queryExamineById'
+// 查询订单的操作日志
+const ORDER_LOG_DETAILS = PREFIX + '/queryOperatorById'
 
-
-// 订单列表
-function getOrderList(params) {
+/**
+ * 订单列表
+ * @param {{rangeDate: [], orderType: string, orderBizType: string, endDate: string, applyDepart: string, pmsOrderNo: string, pageSize: number, pmsOrderStatus: string, pageNum: number, startDate: string, applyUserId: string}|D} params
+ */
+export function getOrderList(params) {
   return request.post(ORDER_LIST, params)
 }
 
 // 订单详情
-function getOrderDetail(params) {
-  return request.get(ORDER_DETAIL, {params})
+export function getOrderDetail(id) {
+  return request.get(ORDER_DETAIL, {
+    params: {
+      id
+    }
+  })
 }
 
 // 新增订单数据
-function addPmsOrder(data) {
+export function addPmsOrder(data) {
   return request.post(ORDER_ADD, data)
 }
 
 // 订单编辑
-function editOrderInfo(data) {
+export function editOrderInfo(data) {
   return request.post(ORDER_EDIT, data)
 }
 
 // 订单审核
-function examineOrderInfo(data) {
+export function examineOrderInfo(data) {
   return request.post(ORDER_AUDIT, data)
 }
 
 // 订单导入
-function importInOrderInfo(data) {
+export function importInOrderInfo(data) {
   return request.post(ORDER_IMPORT, data)
 }
 
+// 下载订单导入模板
+export function downloadOrderTemplate() {
+  return download(`/pms/examine/downloadTemplate?type=2`, {}, `订单导入模板_${new Date().getTime()}.xlsx`)
+}
 // 订单导出
-function exportOrder(data) {
-  return download(ORDER_EXPORT,data,`入库单信息_${new Date().getTime()}.xlsx`)
+export function exportOrder(data) {
+  return download(ORDER_EXPORT, data, `入库单信息_${new Date().getTime()}.xlsx`)
 }
 
 // 订单库存查询
-function queryStockOverview(params) {
+export function queryStockOverview(params) {
   return request.get(ORDER_STOCK_OVERVIEW, {params})
 }
 
 // 导出库存
-function exportPmsStock(params) {
+export function exportPmsStock(params) {
   return request.get(ORDER_EXPORT_STOCK, {params})
 }
 
 // 订单确认收货
-function confirmReceipt(data) {
+export function confirmReceipt(data) {
   return request.post(ORDER_CONFIRM_RECEIPT, data)
 }
 
-// 输出订单相关的接口
-export const orderApi = {
+// 查询订单详情的审核信息
+export function queryOrderAuditLog(orderId, orderType) {
+  return request.get(ORDER_AUDIT_RECORDS, {
+    params: {
+      orderId, orderType
+    }
+  })
+}
+
+// 查询订单日志
+export function queryOrderLog(orderId) {
+  return request.get(ORDER_LOG_DETAILS, {
+    params: {
+      orderId
+    }
+  })
+}
+
+// 可以单个调用，也可以全部引用
+export default {
   getOrderList,
   getOrderDetail,
   addPmsOrder,
@@ -88,8 +120,7 @@ export const orderApi = {
   exportOrder,
   queryStockOverview,
   exportPmsStock,
-  confirmReceipt
+  confirmReceipt,
+  queryOrderAuditLog,
+  queryOrderLog
 }
-
-// 默认输出全部接口
-export default orderApi

@@ -97,7 +97,7 @@ const supplierApi = {
   // 删除供应商(伪删除）
   deleteSupplier(supplierId) {
     return request({
-      url: `/pms/supplier/deleteSupplier?supplierId=${supplierId}`,
+      url: `/pms/supplier/deleteSupplierById?supplierId=${supplierId}`,
       method: 'put'
     })
   },

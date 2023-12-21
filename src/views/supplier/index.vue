@@ -218,7 +218,6 @@
         <el-upload drag action=""
                    :on-change="importSuccessHandler"
                    :auto-upload="false"
-                   :show-file-list="false"
                    :on-error="importErrorHandler"
         >
           <i class="el-icon-upload"></i>

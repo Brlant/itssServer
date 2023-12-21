@@ -158,7 +158,14 @@
       <el-table-column prop="invoiceNum" label="发票号"></el-table-column>
       <el-table-column prop="pmsOrderStatus" label="状态">
         <template v-slot="{ row }">
-          <span>{{ filters[row.pmsOrderStatus + 1].text }}</span>
+          <span v-if="row.pmsOrderStatus === 0" style="color: #F79B22">待审核</span>
+          <span v-if="row.pmsOrderStatus === 1" style="color: #F79B22">审核中</span>
+          <span v-if="row.pmsOrderStatus === 2" style="color: black">审核未通过</span>
+          <span v-if="row.pmsOrderStatus === 3" style="color: #F79B22">待收货</span>
+          <span v-if="row.pmsOrderStatus === 4" style="color: black">已撤回</span>
+          <span v-if="row.pmsOrderStatus === 5" style="color: black">已取消</span>
+          <span v-if="row.pmsOrderStatus === 6" style="color: black">已淘汰</span>
+          <span v-if="row.pmsOrderStatus === 7" style="color: green">已完成</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -188,6 +195,18 @@
         <div style="font-weight: bold;font-size: 15px">{{ detailsTitle }}</div>
       </template>
       <template class="templateDialogStyle">
+        <div style="position: relative">
+          <div class="tabStatus">
+            <span v-if="activeStatus === 0" style="color: #F79B22">待审核</span>
+            <span v-if="activeStatus === 1" style="color: #F79B22">审核中</span>
+            <span v-if="activeStatus === 2" style="color: black">审核未通过</span>
+            <span v-if="activeStatus === 3" style="color: #F79B22">待收货</span>
+            <span v-if="activeStatus === 4" style="color: black">已撤回</span>
+            <span v-if="activeStatus === 5" style="color: black">已取消</span>
+            <span v-if="activeStatus === 6" style="color: black">已淘汰</span>
+            <span v-if="activeStatus === 7" style="color: green">已完成</span>
+          </div>
+        </div>
         <el-tabs v-model="activeTab" @tab-click="handleTabClick">
           <el-tab-pane
             v-for="tab in tabs"
@@ -195,21 +214,15 @@
             :label="tab.label"
             :name="tab.name">
             <!-- 使用组件作为标签页内容 -->
-            <component :is="tab.component" :tabName="tabName"></component>
+            <component :is="tab.component" :tabName="tabName" :orderId="currOrderId"></component>
           </el-tab-pane>
         </el-tabs>
-        <div class="tabStatus">
-          状态
-        </div>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="closeDialog">取消</el-button>
-          <el-button type="primary">确定</el-button>
-        </div>
       </template>
     </el-dialog>
     <!--    新增弹框信息-->
     <ware-house-entry :dialogAddEntry="dialogAddEntry" @handleEntryClose="handleEntryClose"></ware-house-entry>
 
+    <!-- 导入对话框-->
     <el-dialog :visible.sync="importOrderDialogShowFlag" title="导入" width="410px" center>
       <div style="margin-bottom: 22px;">
         <el-button
@@ -224,7 +237,6 @@
       <div>
         <el-upload drag action="#"
                    :auto-upload="false"
-                   :show-file-list="false"
                    :on-change="fileChangeHandler"
                    :on-error="importErrorHandler"
         >
@@ -244,11 +256,9 @@ import entryAuditInfo from "@/common/entryForm/entryAuditInfo";
 import entryInfo from "@/common/entryForm/entryInfo";
 import entryOperationLog from "@/common/entryForm/entryOperationLog";
 
-import orderApi from "@/api/pms/order";
+import {getOrderList, importInOrderInfo, exportOrder, downloadOrderTemplate} from "@/api/pms/order";
 import {queryUserlist} from "@/api/system/user";
 import {treeselect} from "@/api/system/dept";
-import {download} from '@/utils/request'
-import supplierApi from '@/api/supplier/supplier'
 
 export default {
   name: "in-order",
@@ -257,9 +267,11 @@ export default {
   },
   data() {
     return {
-      activeTab: 'fileInfo',
+      // 当前订单的订单id，切换不同订单详情会变化
+      currOrderId: '',
+      activeTab: 'orderInfo',
       tabs: [
-        {label: '档案信息', name: 'fileInfo', component: entryInfo},
+        {label: '订单信息', name: 'orderInfo', component: entryInfo},
         {label: '审核信息', name: 'auditInfo', component: entryAuditInfo},
         {label: '操作日志', name: 'operationLog', component: entryOperationLog}
       ],
@@ -299,14 +311,14 @@ export default {
         limit: 10
       },
       //切换按钮
-    //   AUDIT(0, "待审核"),
-    // IN_REVIEW(1, "审核中"),
-    //   REVIEW_FAILED(2, "审核未通过"),
-    //   WAIT_RECEIVE(3, "待收货"),
-    //   WITHDRAWN(4, "已撤回"),
-    //   CANCELED(5, "已取消"),
-    //   ELIMINATED(6, "已淘汰"),
-    //   COMPLETED(7, "已完成");
+      //   AUDIT(0, "待审核"),
+      // IN_REVIEW(1, "审核中"),
+      //   REVIEW_FAILED(2, "审核未通过"),
+      //   WAIT_RECEIVE(3, "待收货"),
+      //   WITHDRAWN(4, "已撤回"),
+      //   CANCELED(5, "已取消"),
+      //   ELIMINATED(6, "已淘汰"),
+      //   COMPLETED(7, "已完成");
       filters: [
         {text: "全部", status: ''},
         {text: "待审核", status: 0},
@@ -344,6 +356,13 @@ export default {
 
   },
   computed: {
+    activeStatus() {
+      if (!this.detailsSupplierData) {
+        return ''
+      }
+
+      return this.detailsSupplierData.supplierStatus
+    },
   },
   methods: {
     /*处理标签页信息*/
@@ -352,7 +371,8 @@ export default {
     },
     closeDialog() {
       this.tabName = null;
-      this.activeTab = "fileInfo";
+      this.currOrderId = ''
+      this.activeTab = "orderInfo";
       this.dialogDetailsProcessDialog = false;
     },
     /*查询列表内容*/
@@ -362,7 +382,7 @@ export default {
       params.endDate = params.rangeDate[1]
 
       this.loading = true;
-      orderApi.getOrderList(params).then(res => {
+      getOrderList(params).then(res => {
         this.tableData = res.data.rows;
         this.pageParams.total = res.data.total;
       }).catch(err => {
@@ -401,7 +421,7 @@ export default {
       this.getList()
     },
     /*切换按钮查询列表*/
-    setActiveFilter(item,index) {
+    setActiveFilter(item, index) {
       this.queryParams.pmsOrderStatus = item.status;
       this.activeFilterIndex = index;
       this.getList();
@@ -414,7 +434,7 @@ export default {
       this.importOrderDialogShowFlag = true;
     },
     exportOrder() {
-      orderApi.exportOrder(this.queryParams)
+      exportOrder(this.queryParams)
     },
     /*关闭表单*/
     handleEntryClose() {
@@ -422,6 +442,7 @@ export default {
     },
     /*详情*/
     handleDetails(row) {
+      this.currOrderId = row.pmsOrderId;
       this.dialogDetailsProcessDialog = true;
     },
     getDeptList(query) {
@@ -440,12 +461,12 @@ export default {
       })
     },
     downloadOrderTemplate() {
-      return download(`/pms/examine/downloadTemplate?type=2`, {}, `订单导入模板_${new Date().getTime()}.xlsx`)
+      return downloadOrderTemplate()
     },
     fileChangeHandler(file) {
       let formData = new FormData()
       formData.append('file', file.raw)
-      orderApi.importInOrderInfo(formData).then((res) => {
+      importInOrderInfo(formData).then((res) => {
         this.$message({
           type: 'success',
           message: '导入成功'
