@@ -117,15 +117,15 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
+      <el-row class="SwitchTypes">
         <el-col :span="24">
           <el-form-item>
             <el-button
               class="btnSwitch"
-              v-for="(item,index) in switchType"
+              v-for="(item,index) in filters"
               :key="index"
               :class="{ 'is-active': activeFilterIndex === index }"
-              @click="setActiveFilter(index)"
+              @click="setActiveFilter(item,index)"
             >
               {{ item.text }}
             </el-button>
@@ -149,7 +149,12 @@
       <el-table-column prop="applyName" label="发起人"></el-table-column>
       <el-table-column prop="applicationDepartment" label="发起部门"></el-table-column>
       <el-table-column prop="applyDate" label="发起日期"></el-table-column>
-      <el-table-column prop="paymentFlag" label="是否已付款"></el-table-column>
+      <el-table-column prop="paymentFlag" label="是否已付款">
+        <template v-slot="{ row }">
+          <span v-if="row.paymentFlag">已付款</span>
+          <span v-else>未付款</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="invoiceNum" label="发票号"></el-table-column>
       <el-table-column prop="pmsOrderStatus" label="状态">
         <template v-slot="{ row }">
@@ -303,7 +308,7 @@ export default {
     //   ELIMINATED(6, "已淘汰"),
     //   COMPLETED(7, "已完成");
       filters: [
-        {text: "全部", status: null},
+        {text: "全部", status: ''},
         {text: "待审核", status: 0},
         {text: "审核中", status: 1},
         {text: "审核未通过", status: 2},
@@ -339,13 +344,6 @@ export default {
 
   },
   computed: {
-    switchType() {
-      return this.filters.map((filter) => {
-        return {
-          text: filter.text,
-        }
-      })
-    }
   },
   methods: {
     /*处理标签页信息*/
@@ -403,8 +401,9 @@ export default {
       this.getList()
     },
     /*切换按钮查询列表*/
-    setActiveFilter(index) {
-      this.queryParams.pmsOrderStatus = index;
+    setActiveFilter(item,index) {
+      this.queryParams.pmsOrderStatus = item.status;
+      this.activeFilterIndex = index;
       this.getList();
     },
     /*新建表单*/
