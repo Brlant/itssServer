@@ -1,29 +1,48 @@
 <template>
-  <el-dialog :visible="dialogContractFilesFiles" :title="formTitle" width="60%" @open="open" @close="closeAddFiles">
+  <el-dialog :visible="dialogContractFilesFiles"
+    :title="formTitle"
+    width="60%"
+    @open="open"
+    @close="closeAddFiles">
     <template v-slot:title>
       <div style="font-weight: bold;font-size: 15px">{{ formTitle }}</div>
     </template>
     <div class="jiBenXinXi">
       基本信息
     </div>
-    <el-form ref="contractForm" :model="formData" label-width="120px" :rules="rules">
+    <el-form ref="contractForm"
+      :model="formData"
+      label-width="120px"
+      :rules="rules">
       <!-- 第一行 -->
       <el-row>
         <el-col :span="8">
-          <el-form-item label="合同编号" prop="contractCode" :rules="rules.contractCode">
-            <el-input v-model="formData.contractCode" maxlength="50" placeholder="请输入合同编号"/>
+          <el-form-item label="合同编号"
+            prop="contractCode"
+            :rules="rules.contractCode">
+            <el-input v-model="formData.contractCode"
+              maxlength="50"
+              placeholder="请输入合同编号"/>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="合同名称" prop="contractName" :rules="rules.contractName">
-            <el-input v-model="formData.contractName" maxlength="50" placeholder="请输入合同名称"/>
+          <el-form-item label="合同名称"
+            prop="contractName"
+            :rules="rules.contractName">
+            <el-input v-model="formData.contractName"
+              maxlength="50"
+              placeholder="请输入合同名称"/>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="合同类型" prop="contractType">
-            <el-select v-model="formData.contractType" placeholder="请选择合同类型">
-              <el-option label="采购合同" :value="1"></el-option>
-              <el-option label="框架合同" :value="2"></el-option>
+          <el-form-item label="合同类型"
+            prop="contractType">
+            <el-select v-model="formData.contractType"
+              placeholder="请选择合同类型">
+              <el-option label="采购合同"
+                :value="1"></el-option>
+              <el-option label="框架合同"
+                :value="2"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -69,13 +88,20 @@
       <!-- 第三行 -->
       <el-row>
         <el-col :span="8">
-          <el-form-item label="到期日期" prop="dueDate">
-            <el-date-picker v-model="formData.dueDate" type="date" placeholder="选择日期" style="width: 100%"></el-date-picker>
+          <el-form-item label="到期日期"
+            prop="dueDate">
+            <el-date-picker v-model="formData.dueDate"
+              type="date"
+              placeholder="选择日期"
+              style="width: 100%"></el-date-picker>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="合同签署人" prop="contractSignatory">
-            <el-input v-model="formData.contractSignatory" maxlength="20" placeholder="请输入合同签署人"/>
+          <el-form-item label="合同签署人"
+            prop="contractSignatory">
+            <el-input v-model="formData.contractSignatory"
+              maxlength="20"
+              placeholder="请输入合同签署人"/>
           </el-form-item>
         </el-col>
         <el-col :span="8"></el-col>
@@ -84,8 +110,12 @@
       <!-- 第四行 -->
       <el-row>
         <el-col :span="24">
-          <el-form-item label="备注" prop="remark">
-            <el-input v-model="formData.remark" maxlength="1000" type="textarea" placeholder="请输入备注"/>
+          <el-form-item label="备注"
+            prop="remark">
+            <el-input v-model="formData.remark"
+              maxlength="1000"
+              type="textarea"
+              placeholder="请输入备注"/>
           </el-form-item>
         </el-col>
       </el-row>
@@ -99,19 +129,38 @@
               :action="uploadUrl"
               :show-file-list="false"
               :on-success="handleSuccess"
-              list-type="picture-card"
             >
-              <i v-if="!formData.scanningCopyUrl" class="el-icon-plus"></i>
-              <img v-else :src="formData.scanningCopyUrl" alt="合同扫描件"/>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+              <el-button size="small"
+                type="primary"
+                icon="el-icon-upload">选择文件</el-button>
+              <!--              <i v-if="!formData.scanningCopyUrl" class="el-icon-plus"></i>-->
+              <!--              <img v-else :src="formData.scanningCopyUrl" alt="合同扫描件"/>-->
             </el-upload>
+            <el-input v-if="fileName"
+              v-model="fileName"
+              readonly
+              style="margin-top: 20px;">
+              <template v-if="fileName"
+                slot="append">
+                <el-button>
+                  <el-link :href="formData.scanningCopyUrl"
+                    :underline="false"
+                    icon="el-icon-download"></el-link>
+                </el-button>
+                <el-button @click="fileDelete">
+                  <el-link :underline="false"
+                    icon="el-icon-delete"></el-link>
+                </el-button>
+              </template>
+            </el-input>
           </el-form-item>
         </el-col>
       </el-row>
 
       <!-- 表单按钮 -->
       <el-form-item>
-        <el-button type="primary" @click="submitForm">提交</el-button>
+        <el-button type="primary"
+          @click="submitForm">提交</el-button>
         <el-button @click="resetForm">重置</el-button>
       </el-form-item>
     </el-form>
@@ -177,6 +226,13 @@ export default {
         this.formData.supplierId = supplier.val;
         this.formData.supplierName = supplier.txt;
       }
+    },
+    fileName() {
+      let start = this.formData.scanningCopyUrl?.lastIndexOf('/');
+      if (start > -1) {
+        return this.formData.scanningCopyUrl.substr(start + 1);
+      }
+      return null;
     }
   },
   methods:{
@@ -204,6 +260,9 @@ export default {
       }).finally(() => {
         this.loadSupplier = false;
       })
+    },
+    fileDelete() {
+      this.formData.scanningCopyUrl = null;
     },
     submitForm() {
       this.$refs.contractForm.validate(valid => {
@@ -238,24 +297,28 @@ export default {
     handleSuccess(res) {
       this.formData.scanningCopyUrl = res.data.url;
     }
-  },
-  created() {
-
-  },
-  mounted() {
-
   }
+  // created() {
+  //
+  // },
+  // mounted() {
+  //
+  // }
 }
 </script>
 
 <style scoped>
-.jiBenXinXi {
-  font-weight: bolder;
-  font-size: 14px;
-  width: 100%;
-  border-bottom: 1px solid #F2F2F2;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  box-sizing: content-box;
-}
+  .jiBenXinXi {
+    font-weight: bolder;
+    font-size: 14px;
+    width: 100%;
+    border-bottom: 1px solid #F2F2F2;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    box-sizing: content-box;
+  }
+
+  /deep/ .el-input-group__append {
+    background-color: #ffffff;
+  }
 </style>

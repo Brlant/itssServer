@@ -46,6 +46,24 @@ export function addContractFile(data) {
   })
 }
 
+//合同档案管理-合同档案编辑
+export function edit(data) {
+  return request({
+    url: `/pms/contract/edit`,
+    method: 'put',
+    data,
+  })
+}
+
+//合同档案管理-删除合同
+export function deleteContractById(data) {
+  return request({
+    url: `/pms/contract/deleteContractById`,
+    method: 'put',
+    params:data,
+  })
+}
+
 //合同档案管理-查询合同审核详情
 export function queryExamineById(data) {
   return request({

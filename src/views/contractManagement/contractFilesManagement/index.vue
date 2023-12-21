@@ -144,12 +144,11 @@
       <el-table-column prop="contractStatus"
         label="状态">
         <template slot-scope="scope">
-          <span v-if="scope.row.contractStatus === ''">全部</span>
-          <span v-if="scope.row.contractStatus === 0">待审核</span>
-          <span v-if="scope.row.contractStatus === 1">审核中</span>
-          <span v-if="scope.row.contractStatus === 2">审核不通过</span>
-          <span v-if="scope.row.contractStatus === 3">启用</span>
-          <span v-if="scope.row.contractStatus === 5">停用</span>
+          <span v-if="scope.row.contractStatus === 0" style="color: #f59b22; font-weight: bold;">待审核</span>
+          <span v-if="scope.row.contractStatus === 1" style="color: #f59b22; font-weight: bold;">审核中</span>
+          <span v-if="scope.row.contractStatus === 2" style="color: #000000; font-weight: bold;">审核不通过</span>
+          <span v-if="scope.row.contractStatus === 3" style="color: #70b503; font-weight: bold;">启用</span>
+          <span v-if="scope.row.contractStatus === 5" style="color: #d8001b; font-weight: bold;">停用</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -197,7 +196,11 @@
           </el-tab-pane>
         </el-tabs>
         <div class="tabStatus">
-          状态
+          <span v-if="contractStatus === 0" style="color: #f59b22; font-weight: bold;">待审核</span>
+          <span v-if="contractStatus === 1" style="color: #f59b22; font-weight: bold;">审核中</span>
+          <span v-if="contractStatus === 2" style="color: #000000; font-weight: bold;">审核不通过</span>
+          <span v-if="contractStatus === 3" style="color: #70b503; font-weight: bold;">启用</span>
+          <span v-if="contractStatus === 5" style="color: #d8001b; font-weight: bold;">停用</span>
         </div>
       </template>
     </el-dialog>
@@ -277,7 +280,8 @@ export default {
         {label:'框架合同',value:2},
       ],
       tableData: [],
-      contractId: null
+      contractId: null,
+      contractStatus: null
     }
   },
   created() {
@@ -343,6 +347,7 @@ export default {
       // this.tabName = null;
       this.activeTab = "fileInfo";
       this.contractId = null;
+      this.contractStatus = null;
       this.dialogDetailsProcessDialog = false;
       if (flg) {
         this.handleQuery();
@@ -351,6 +356,7 @@ export default {
     /*详情*/
     handleDetails(row) {
       this.contractId = row.contractId;
+      this.contractStatus = row.contractStatus;
       this.dialogDetailsProcessDialog = true;
     },
     /*查询列表内容*/

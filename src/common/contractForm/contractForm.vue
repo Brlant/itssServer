@@ -1,5 +1,9 @@
 <template>
-  <el-dialog :visible="dialogContractForm" :title="formTitle" width="60%" @open="open" @close="closeAddForm">
+  <el-dialog :visible="dialogContractForm"
+    :title="formTitle"
+    width="60%"
+    @open="open"
+    @close="closeAddForm">
     <template v-slot:title>
       <div style="font-weight: bold;font-size: 15px">{{ formTitle }}</div>
     </template>
@@ -7,20 +11,26 @@
       基本信息
     </div>
     <!--绘制基本信息表单-->
-    <el-form ref="formData" :model="formData" :rules="formRules" label-width="120px">
+    <el-form ref="formData"
+      :model="formData"
+      :rules="formRules"
+      label-width="120px">
       <el-row>
         <el-col :span="8">
-          <el-form-item label="合同档案编号" prop="contractRecordCode">
+          <el-form-item label="合同档案编号"
+            prop="contractRecordCode">
             {{ formData.contractRecordCode }}
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="合同编号" prop="contractCode">
+          <el-form-item label="合同编号"
+            prop="contractCode">
             {{ formData.contractCode }}
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="合同名称" prop="contractName">
+          <el-form-item label="合同名称"
+            prop="contractName">
             {{ formData.contractName }}
           </el-form-item>
         </el-col>
@@ -28,34 +38,40 @@
       <!--      第二行-->
       <el-row>
         <el-col :span="8">
-          <el-form-item label="合同类型" prop="contractType">
+          <el-form-item label="合同类型"
+            prop="contractType">
             {{ formData.contractType === 1 ? '采购合同' : '框架合同' }}
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="供应商名称" prop="supplierName">
+          <el-form-item label="供应商名称"
+            prop="supplierName">
             {{ formData.supplierName }}
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="合同金额" prop="contractAmount">
+          <el-form-item label="合同金额"
+            prop="contractAmount">
             {{ formData.contractAmount }}
           </el-form-item>
         </el-col>
         <!--        第三行-->
         <el-row>
           <el-col :span="8">
-            <el-form-item label="签订日期" prop="signingDate">
+            <el-form-item label="签订日期"
+              prop="signingDate">
               {{ formData.signingDate }}
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="到期日期" prop="dueDate">
+            <el-form-item label="到期日期"
+              prop="dueDate">
               {{ formData.dueDate }}
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="合同签署人" prop="contractSignatory">
+            <el-form-item label="合同签署人"
+              prop="contractSignatory">
               {{ formData.contractSignatory }}
             </el-form-item>
           </el-col>
@@ -63,7 +79,8 @@
         <!--        第四行-->
         <el-row>
           <el-col :span="24">
-            <el-form-item label="备注" prop="remark">
+            <el-form-item label="备注"
+              prop="remark">
               {{ formData.remark }}
             </el-form-item>
           </el-col>
@@ -72,14 +89,25 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="文件下载">
-              <el-link :href="formData.scanningCopyUrl" target="_blank">{{ formData.scanningCopyUrl }}</el-link>
+              <el-input v-model="fileName"
+                readonly>
+                <template v-if="fileName"
+                  slot="append">
+                  <el-button>
+                    <el-link :href="formData.scanningCopyUrl"
+                      :underline="false"
+                      icon="el-icon-download"></el-link>
+                  </el-button>
+                </template>
+              </el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <!--        第六行-->
         <el-row>
           <el-col :span="24">
-            <el-form-item label="合同续签" prop="renewalFlag">
+            <el-form-item label="合同续签"
+              prop="renewalFlag">
               <el-radio-group v-model="formData.renewalFlag">
                 <el-radio :label="0">不续签</el-radio>
                 <el-radio :label="1">续签</el-radio>
@@ -89,8 +117,10 @@
         </el-row>
         <!--        提交-->
         <el-row>
-          <el-col :span="24" style="text-align: center; margin-top: 20px;">
-            <el-button type="primary" @click="submitForm">提交</el-button>
+          <el-col :span="24"
+            style="text-align: center; margin-top: 20px;">
+            <el-button type="primary"
+              @click="submitForm">提交</el-button>
             <el-button @click="closeAddForm">返回</el-button>
           </el-col>
         </el-row>
@@ -165,6 +195,15 @@ export default {
       }
     }
   },
+  computed: {
+    fileName() {
+      let start = this.formData.scanningCopyUrl?.lastIndexOf('/');
+      if (start > -1) {
+        return this.formData.scanningCopyUrl.substr(start + 1);
+      }
+      return null;
+    }
+  },
   methods: {
     open() {
       queryByContractId({ contractId: this.contractId}).then(res => {
@@ -197,13 +236,17 @@ export default {
 </script>
 
 <style scoped>
-.jiBenXinXi {
-  font-weight: bolder;
-  font-size: 14px;
-  width: 100%;
-  border-bottom: 1px solid #F2F2F2;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  box-sizing: content-box;
-}
+  .jiBenXinXi {
+    font-weight: bolder;
+    font-size: 14px;
+    width: 100%;
+    border-bottom: 1px solid #F2F2F2;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    box-sizing: content-box;
+  }
+
+  /deep/ .el-input-group__append {
+    background-color: #ffffff;
+  }
 </style>
