@@ -59,6 +59,7 @@
 import { getCodeImg } from "@/api/login";
 import Cookies from "js-cookie";
 import { encrypt, decrypt } from '@/utils/jsencrypt'
+import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 
     export default {
         name:'login',
@@ -144,6 +145,15 @@ import { encrypt, decrypt } from '@/utils/jsencrypt'
                     }
                     this.$store.dispatch("Login", this.user).then(() => {
                         this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
+                        const params = {
+                          pageNum: 1,
+                          pageSize: 10,
+                          queryType: 2
+                        }
+                        getDealtWithList(params).then((res) => {
+                          window.sessionStorage.setItem('total', res.data.total)
+                          // this.$store.commit("SET_TOTAL", res.data.total);
+                        })
                     }).catch(() => {
                         this.loading = false;
                         if (this.captchaEnabled) {

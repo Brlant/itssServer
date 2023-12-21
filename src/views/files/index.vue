@@ -274,6 +274,7 @@ export default {
   },
   created() {
     this.getFilesList();
+    this.getSupplierList();
   },
   computed: {
     switchType() {
@@ -340,7 +341,7 @@ export default {
       let params = {
         codeNameKey: query,
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 1000,
       }
       supplierApi.getSupplierList(params).then((res) => {
         this.supplierList = res.data.rows.map(item => {

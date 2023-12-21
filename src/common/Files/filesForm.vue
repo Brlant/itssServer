@@ -135,7 +135,7 @@
 
 <!--        附件上传-->
         <el-row :gutter="20">
-          <el-form-item label="其他附件">
+          <el-form-item label="其他附件" prop="attachmentInfos">
             <el-upload :action="uploadUrl"
                        :show-file-list="false"
                        :on-success="handleAttachmentSuccess"
@@ -232,8 +232,9 @@ export default {
         taxBid: [{required: true, message: '请输入含税进价', trigger: 'blur'}],
         taxRate: [{required: true, message: '请选择税率', trigger: 'change'}],
 
-        boxGauge: [{required: true, message: '请输入箱规', trigger: 'blur'}],
+        // boxGauge: [{required: true, message: '请输入箱规', trigger: 'blur'}],
         goodsClassify: [{required: true, message: '请选择物品分类', trigger: 'blur'}],
+        attachmentInfos:[{required: true, message: '请选择附件', trigger: 'blur'}]
       },
       //物品类型
       listOfItemTypes: [

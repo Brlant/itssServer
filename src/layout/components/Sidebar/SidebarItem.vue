@@ -1,16 +1,34 @@
 <template>
   <div v-if="!item.hidden" class="themeColor">
-    <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
+    <template
+      v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow"
+    >
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
-        <el-menu-item class="sceneColor" :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}" >
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
+        <el-menu-item class="sceneColor" :index="resolvePath(onlyOneChild.path)"
+                      :class="{'submenu-title-noDropdown':!isNest}"
+        >
+          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title"/>
+          <span style="
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            background-color: red;
+            border-radius: 50%;
+            color: white;
+            font-size: 12px;
+            position: fixed;
+            text-align: center;
+            margin-top: 16px;
+            left: 160px; "
+            v-if="onlyOneChild.meta.title === '我的待办'"
+          >{{ totalNum }}</span>
         </el-menu-item>
       </app-link>
     </template>
 
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
+        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title"/>
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -30,6 +48,7 @@ import { isExternal } from '@/utils/validate'
 import Item from './Item'
 import AppLink from './Link'
 import FixiOSBug from './FixiOSBug'
+import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 
 export default {
   name: 'SidebarItem',
@@ -54,10 +73,20 @@ export default {
     this.onlyOneChild = null
     return {}
   },
+  created() {
+
+  },
+  computed:{
+    totalNum(){
+      return JSON.parse(window.sessionStorage.getItem('total'));
+    }
+  },
   methods: {
+
+
     hasOneShowingChild(children = [], parent) {
       if (!children) {
-        children = [];
+        children = []
       }
       const showingChildren = children.filter(item => {
         if (item.hidden) {
@@ -76,7 +105,7 @@ export default {
 
       // Show parent if there are no child router to display
       if (showingChildren.length === 0) {
-        this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
+        this.onlyOneChild = { ...parent, path: '', noShowingChildren: true }
         return true
       }
 
@@ -90,7 +119,7 @@ export default {
         return this.basePath
       }
       if (routeQuery) {
-        let query = JSON.parse(routeQuery);
+        let query = JSON.parse(routeQuery)
         return { path: path.resolve(this.basePath, routePath), query: query }
       }
       return path.resolve(this.basePath, routePath)
@@ -99,7 +128,7 @@ export default {
 }
 </script>
 <style scoped>
->>>.themeColor .el-menu-item:hover {
+>>> .themeColor .el-menu-item:hover {
   background: #3D7DFF !important;
   color: #fff !important;
 }

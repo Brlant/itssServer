@@ -27,6 +27,7 @@ const permission = {
     SET_SIDEBAR_ROUTERS: (state, routes) => {
       state.sidebarRouters = routes
     },
+
   },
   actions: {
     // 生成路由

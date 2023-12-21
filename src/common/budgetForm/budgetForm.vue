@@ -32,6 +32,7 @@
       >编辑
       </el-button>
       <el-button
+        @click="closeAddEditForm"
       >取消
       </el-button>
     </div>

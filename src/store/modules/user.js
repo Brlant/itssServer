@@ -1,7 +1,7 @@
 import { login, logout, getInfo, refreshToken } from '@/api/login'
 import { getToken, setToken, setExpiresIn, removeToken, getUserKey,setUserKey,removeUserKey,} from '@/utils/auth'
 // this丢失，消息弹窗直接使用
-import { Message,MessageBox,Alert} from 'element-ui' 
+import { Message,MessageBox,Alert} from 'element-ui'
 import router from './../../router'
 
 const user = {
@@ -14,10 +14,14 @@ const user = {
     permissions: [],
     updatePassFlag:false,
     deptId:'',
-    deptTitle:''
+    deptTitle:'',
+    total:'',
   },
 
   mutations: {
+    SET_TOTAL:(state, total)=>{
+      state.total = total
+    },
     SET_DEPTID: (state, deptId) => {
       state.deptId = deptId
     },
@@ -88,7 +92,7 @@ const user = {
             if(res.updatePassFlag && (router.history._startLocation.search('/user/profile') === -1)){
               MessageBox.alert('您当前登录密码使用已超过' + res.passwordRule + '天，为保证您的账号安全，请立即修改。', '安全提示', {
                 confirmButtonText: '去修改', center: true, showClose: false
-              }).then(() => {              
+              }).then(() => {
                 router.push({ path: "/user/profile",query:{type:'resetPwd'}});
               }).catch(err => {
                 console.log("加载alert异常", err)
@@ -126,7 +130,7 @@ const user = {
         })
       })
     },
-    
+
     // 退出系统
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {

@@ -24,7 +24,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="供应商有效期" prop="validityDate" :rules="[{required: true, message: '请选择有效期', trigger: 'blur'}]">
-            <el-date-picker v-model="formData.validityDate" type="date"></el-date-picker>
+            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="formData.validityDate" type="date"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -62,7 +62,10 @@
         <el-col :span="8">
           <el-form-item label="公司成立时间" prop="businessInfo.foundingDate"
                         :rules="[{ required: true, message: '请选择公司成立时间', trigger: 'blur' }]">
-            <el-date-picker v-model="formData.businessInfo.foundingDate" type="date"></el-date-picker>
+            <el-date-picker
+              value-format="yyyy-MM-dd HH:mm:ss"
+              v-model="formData.businessInfo.foundingDate"
+              type="date"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -172,6 +175,7 @@
                 <el-col :span="7">
                   <el-form-item label="附件有效期" label-width="120px">
                     <el-date-picker
+                      value-format="yyyy-MM-dd HH:mm:ss"
                       v-model="attachment.attachmentValidityDate"
                       type="date"
                       placeholder="请选择有效期"

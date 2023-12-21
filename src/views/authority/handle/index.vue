@@ -19,7 +19,6 @@
           value-format="yyyy-MM-dd"
           format="yyyy-MM-dd"
           type="daterange"
-          @change="changeHandleTime"
           range-separator="-"
           start-placeholder="请选择开始时间"
           end-placeholder="请选择结束时间"
@@ -344,9 +343,9 @@ export default {
   },
   methods:{
     changeHandleTime(row){
-      if(this.queryParams.applyTime === ""){
-        this.queryParams.pageSize = 1;  //将页码设置为第一页
-      }
+      // if(this.queryParams.applyTime === ""){
+      //   this.queryParams.pageSize = 1;  //将页码设置为第一页
+      // }
       this.queryParams.applyTime = row;
       this.getHandleList();
     },
@@ -441,7 +440,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.$refs.queryForm.resetFields();
-      this.queryParams.applyTime = "";
+      // this.queryParams.applyTime = "";
       this.getHandleList();
     },
 
