@@ -148,6 +148,7 @@
           <span v-if="scope.row.contractStatus === 1" style="color: #f59b22; font-weight: bold;">审核中</span>
           <span v-if="scope.row.contractStatus === 2" style="color: #000000; font-weight: bold;">审核不通过</span>
           <span v-if="scope.row.contractStatus === 3" style="color: #70b503; font-weight: bold;">启用</span>
+          <span v-if="scope.row.contractStatus === 4" >已撤回</span>
           <span v-if="scope.row.contractStatus === 5" style="color: #d8001b; font-weight: bold;">停用</span>
         </template>
       </el-table-column>
@@ -269,6 +270,7 @@ export default {
         {label: "待审核", value: 0},
         {label: "审核中", value: 1},
         {label: "审核不通过", value: 2},
+        {label: "已撤回", value: 4},
         {label: "启用", value: 3},
         {label: "停用", value: 5},
       ],
