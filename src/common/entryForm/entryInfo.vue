@@ -1,233 +1,577 @@
 <template>
-  <el-form ref="form" :model="formData" :rules="rules" label-width="120px">
+  <el-form ref="form" :model="formData" :rules="rules" label-width="100px">
     <!--    联系人-->
     <div class="jiBenXinXi">
       基本信息
     </div>
-    <template>
-      <!-- 第一行 -->
-      <el-form-item label="订单类型" label-width="80px" prop="orderType" :rules="rules.orderType">
-        <el-input v-model="formData.orderType"></el-input>
+    <!-- 第一行 -->
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <el-form-item label="订单类型" prop="orderBizType" :rules="rules.orderBizType">
+
+          <el-select v-model="formData.orderBizType" placeholder="请选择入库单类型">
+            <el-option
+              v-for="item in orderBizTypes"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <!-- 第二行 -->
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <el-form-item label="发起人" prop="applyName" :rules="rules.applyName">
+          <el-input v-model="formData.applyName" disabled></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="6">
+        <el-form-item label="发起部门" prop="applyDepartName" :rules="rules.applyDepartName">
+          <el-input v-model="formData.applyDepartName" disabled></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="6">
+        <el-form-item label="发起日期" prop="applyDate" :rules="rules.applyDate">
+          <el-input v-model="formData.applyDate" placeholder="选择日期" disabled></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <el-form-item label="收货人" prop="consigneeName">
+          <el-input v-model="formData.consigneeName"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="6">
+        <el-form-item label="收货人电话" prop="consigneePhone">
+          <el-input v-model="formData.consigneePhone"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :span="6">
+        <el-form-item label="收货人地址" prop="consigneeAddress">
+          <el-input v-model="formData.consigneeAddress"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <!-- 第三行 -->
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <el-form-item label="预算类型" prop="budgetType" :rules="rules.budgetType">
+          <el-cascader
+            v-model="formData.budgetType"
+            placeholder="请选择预算类型"
+            :options="budgeTypes"
+            :props="{ label: 'budgetName', value: 'budgetId',children: 'childList'}"
+            filterable></el-cascader>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="申请原由">
+          <el-input v-model="formData.reason"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <!--订单明细-->
+    <!--        <el-form-item label="订单明细" required>-->
+    <!--          -->
+    <!--        </el-form-item>-->
+    <div class="jiBenXinXi">
+      订单明细
+    </div>
+    <div style="margin-bottom: 22px">
+      <el-table :data="formData.orderDetailList" border>
+        <el-table-column type="index" width="60"></el-table-column>
+        <el-table-column prop="supplier" label="供应商名称">
+          <template v-slot="scope">
+            <el-form-item :prop="`orderDetailList.${scope.$index}.supplierId`" label-width="0"
+                          :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
+              <el-select v-model="scope.row.supplier" placeholder="请选择供应商名称"
+                         filterable
+                         @change="getGoodsList(scope.row.supplier,scope.$index)">
+                <el-option v-for="(option,index) in supplierOptions" :key="option.value" :label="option.label"
+                           :value="option.value+'__'+option.label"></el-option>
+              </el-select>
+            </el-form-item>
+          </template>
+        </el-table-column>
+        <el-table-column prop="type" label="物品类型">
+          <template v-slot="scope">
+            <el-form-item :prop="`orderDetailList.${scope.$index}.type`" label-width="0"
+                          :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
+              <el-select v-model="scope.row.type" placeholder="请选择物品类型" style="width: 100%"
+                         :rules="rules.type">
+                <el-option v-for="option in typeOptions" :key="option.value" :label="option.label"
+                           :value="option.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </template>
+        </el-table-column>
+        <el-table-column prop="code" label="物品编号">
+          <template v-slot="scope">
+            <el-form-item :prop="`orderDetailList.${scope.$index}.goodsCode`" label-width="0"
+                          :rules="[{required: true, message: '请选择物品编号'}]">
+              <el-select v-model="scope.row.goodsInfo" placeholder="请选择物品编号" style="width: 100%"
+                         :rules="rules.code" filterable
+                         @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
+                <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
+                           :key="option.value"
+                           :label="option.goodsCode"
+                           :value="option.goodsId+'__'+option.goodsCode+'__'+option.goodsName+'__'+option.taxBid+'__'+option.nonTaxBid+'__'+option.taxRate"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" label="物品名称">
+          <template v-slot="scope">
+            <el-form-item :prop="`orderDetailList.${scope.$index}.goodsName`" label-width="0"
+                          :rules="[{required: true, message: '请选择物品名称'}]">
+              <el-select v-model="scope.row.goodsInfo" placeholder="请选择物品名称" style="width: 100%"
+                         :rules="rules.name" @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
+                <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
+                           :key="option.value"
+                           :label="option.goodsName"
+                           :value="option.goodsId+'__'+option.goodsCode+'__'+option.goodsName+'__'+option.taxBid+'__'+option.nonTaxBid+'__'+option.taxRate"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </template>
+        </el-table-column>
+        <el-table-column prop="price" label="含税进价">
+          <template v-slot="scope">
+            <span>{{ scope.row.taxBid }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="taxRate" label="税率">
+          <template v-slot="scope">
+            <span>{{ scope.row.taxRateName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="priceWithoutTax" label="不含税进价">
+          <template v-slot="scope">
+            <span>{{ scope.row.nonTaxBid }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="amount" label="数量">
+          <template v-slot="scope">
+            <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
+                          :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,  message: '数量必须大于0（正整数）', trigger: 'blur'}]">
+              <el-input @change="calculateTotal(scope.row)"
+                        v-model.number="scope.row.amount" placeholder="请输入数量"></el-input>
+            </el-form-item>
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalPrice" label="含税总进价">
+          <template v-slot="scope">
+            <span>{{ scope.row.totalTaxBid }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalPriceWithoutTax" label="不含税总进价">
+          <template v-slot="scope">
+            <span>{{ scope.row.nonTotalTaxBid }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column width="100px">
+          <template v-slot="scope">
+            <el-button circle size="small" icon="el-icon-plus" type="primary" @click="addRow"
+                       v-if="scope.$index === 0"></el-button>
+            <el-button circle size="small" icon="el-icon-minus" type="danger" @click="deleteRow(scope.index)"
+                       v-if="formData.orderDetailList.length > 1"></el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <!-- 提交按钮 -->
+    <el-form-item>
+      <el-form-item>
+        <el-button
+          v-show="formData.supplierStatus === 5"
+          icon="el-icon-delete"
+          @click="enableSupplier(formData.supplierId, 3)"
+        >启用
+        </el-button>
+        <el-button
+          v-show="formData.supplierStatus === 3"
+          icon="el-icon-delete"
+          @click="enableSupplier(formData.supplierId, 5)"
+        >停用
+        </el-button>
+        <el-button
+          v-show="formData.supplierStatus === 5 || formData.supplierStatus === 3"
+          icon="el-icon-delete"
+          @click="enableSupplier(formData.supplierId, 6)"
+        >淘汰
+        </el-button>
+        <el-button
+          v-show="formData.returnButton && (formData.supplierStatus === 2 || formData.supplierStatus === 4)"
+          icon="el-icon-delete"
+          @click="handleDelete"
+        >删除
+        </el-button>
+        <el-button v-has-permi="['pms:supplier:edit']"
+                   icon="el-icon-edit"
+                   v-show="formData.supplierStatus === 2 || formData.supplierStatus === 3 || formData.supplierStatus === 4"
+                   @click="submitForm"
+        >重新提交
+        </el-button>
+        <el-button v-has-permi="['pms:supplier:edit']"
+                   type="success"
+                   v-show="formData.examineButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
+                   @click="auditPass"
+        >审核通过
+        </el-button>
+        <el-button v-has-permi="['pms:supplier:edit']"
+                   type="danger"
+                   v-show="formData.examineButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
+                   @click="auditNoPass"
+        >审核不通过
+        </el-button>
+        <el-button v-has-permi="['pms:supplier:edit']"
+                   v-show="formData.supplierStatus === 0 || formData.supplierStatus === 1"
+                   type="danger"
+                   @click="revocation"
+        >撤回
+        </el-button>
       </el-form-item>
-
-      <!-- 第二行 -->
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-form-item label="申请人" label-width="80px" prop="applicant" :rules="rules.applicant">
-            <el-input v-model="formData.applicant"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="申请部门" label-width="80px" prop="department" :rules="rules.department">
-            <el-input v-model="formData.department"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="申请日期" label-width="80px" prop="applicationDate" :rules="rules.applicationDate">
-            <el-date-picker v-model="formData.applicationDate" type="date" placeholder="选择日期"></el-date-picker>
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <!-- 第三行 -->
-      <el-row :gutter="20">
-        <el-col :span="24">
-          <el-form-item label="申请原由" label-width="80px">
-            <el-input v-model="formData.reason"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <!--订单编号-->
-      <el-row :gutter="20">
-        <el-col >
-          <el-form-item label="订单明细" required label-width="80px"></el-form-item>
-        </el-col>
-        <el-col >
-          <el-table :data="formData.details" border>
-            <el-table-column type="index" width="60"></el-table-column>
-            <el-table-column prop="supplier" label="供应商名称">
-              <template slot-scope="scope">
-                <el-form-item :prop="`details.${scope.$index}.supplier`" :rules="rules.supplier">
-                  <el-select v-model="scope.row.supplier" placeholder="请选择供应商名称" style="width: 100%">
-                    <el-option v-for="option in supplierOptions" :key="option.value" :label="option.label"
-                               :value="option.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </template>
-            </el-table-column>
-            <el-table-column prop="type" label="物品类型">
-              <template slot-scope="scope">
-                <el-form-item :prop="`details.${scope.$index}.type`" :rules="rules.type">
-                  <el-select v-model="scope.row.type" placeholder="请选择物品类型" style="width: 100%"
-                             :rules="rules.type">
-                    <el-option v-for="option in typeOptions" :key="option.value" :label="option.label"
-                               :value="option.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </template>
-            </el-table-column>
-            <el-table-column prop="code" label="物品编号">
-              <template slot-scope="scope">
-                <el-form-item :prop="`details.${scope.$index}.code`" :rules="rules.code">
-                  <el-select v-model="scope.row.code" placeholder="请选择物品编号" style="width: 100%"
-                             :rules="rules.code">
-                    <el-option v-for="option in codeOptions" :key="option.value" :label="option.label"
-                               :value="option.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </template>
-            </el-table-column>
-            <el-table-column prop="name" label="物品名称">
-              <template slot-scope="scope">
-                <el-form-item :prop="`details.${scope.$index}.name`" :rules="rules.name">
-                  <el-select v-model="scope.row.name" placeholder="请选择物品名称" style="width: 100%"
-                             :rules="rules.name">
-                    <el-option v-for="option in nameOptions" :key="option.value" :label="option.label"
-                               :value="option.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </template>
-            </el-table-column>
-            <el-table-column prop="price" label="含税进价">
-              <template slot-scope="scope">
-                <el-input :readonly="true" :disabled="true"  v-model.number="scope.row.price"
-                          placeholder="请输入含税进价" style="width: 100%"></el-input>
-              </template>
-            </el-table-column>
-            <el-table-column prop="taxRate" label="税率">
-              <template slot-scope="scope">
-                <el-input :readonly="true" :disabled="true"  v-model.number="scope.row.taxRate"
-                          placeholder="请输入税率" style="width: 100%"></el-input>
-              </template>
-            </el-table-column>
-            <el-table-column prop="priceWithoutTax" label="不含税进价">
-              <template slot-scope="scope">
-                <el-input :readonly="true" :disabled="true"  v-model.number="scope.row.priceWithoutTax"
-                          placeholder="请输入不含税进价"
-                          style="width: 100%"></el-input>
-              </template>
-            </el-table-column>
-            <el-table-column prop="quantity" label="数量">
-              <template slot-scope="scope">
-                <el-form-item :prop="`details.${scope.$index}.quantity`" :rules="rules.quantity">
-                  <el-input :rules="rules.quantity"
-                            v-model.number="scope.row.quantity" placeholder="请输入数量"
-                            style="width: 100%"></el-input>
-                </el-form-item>
-              </template>
-            </el-table-column>
-            <el-table-column prop="totalPrice" label="含税总进价">
-              <template slot-scope="scope">
-                <span>{{ scope.row.price * scope.row.quantity }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="totalPriceWithoutTax" label="不含税总进价">
-              <template slot-scope="scope">
-                <span>{{ scope.row.totalPrice / (1 + scope.row.taxRate) }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-col>
-      </el-row>
-
-      <!-- 提交按钮 -->
-      <el-row :gutter="20">
-        <el-col :span="24" style="text-align: center;">
-          <el-button type="primary" @click="submitForm">提交</el-button>
-        </el-col>
-      </el-row>
-    </template>
+    </el-form-item>
   </el-form>
 </template>
 
 <script>
+import {getOrderDetail} from '@/api/pms/order'
+import request from '@/utils/request'
+
 export default {
   name: "entryInfo",
-  props:{
+  props: {
     tabName: {
-      type:String,
-      default:'',
+      type: String,
+      default: '',
+    },
+    orderId: {
+      type: String,
+      default: '',
     }
   },
-  watch:{
-    tabName: {
-      handler(newVal, oldVal) {
-        console.log('档案信息',newVal);
-      },
-      immediate:true,
-      deep: true,
+  computed: {
+    // 当前登录用户
+    currUser() {
+      return this.$store.state.user.user
     }
   },
-  data(){
-    return{
-      formData:{
-        orderType: '',
-        applicant: '',
-        department: '',
-        applicationDate: '',
-        reason: '',
-        details: [
-          {
-            supplier: '',
-            type: '',
-            code: '',
-            name: '',
-            price: 10,
-            taxRate: 10,
-            priceWithoutTax: 10,
-            quantity: null,
-            totalPrice: 0,
-            totalPriceWithoutTax: 0
-          }
-        ]
-      },
-      rules:{
-        orderType: [{required: true, message: '请选择订单类型', trigger: 'blur'}],
-        applicant: [{required: true, message: '请输入申请人', trigger: 'blur'}],
-        department: [{required: true, message: '请输入申请部门', trigger: 'blur'}],
-        applicationDate: [{required: true, message: '请选择申请日期', trigger: 'change'}],
-
-        supplier: [{required: true, message: '请选择供应商名称', trigger: 'blur'}],
-        type: [{required: true, message: '请选择物品类型', trigger: 'blur'}],
-        code: [{required: true, message: '请选择物品编号', trigger: 'blur'}],
-        name: [{required: true, message: '请选择物品名称', trigger: 'blur'}],
-        quantity: [{required: true, message: '请输入数量', trigger: 'blur'}]
-      },
-
-      supplierOptions: [
-        {value: 'supplier1', label: '供应商1'},
-        {value: 'supplier2', label: '供应商2'},
-        {value: 'supplier3', label: '供应商3'}
-      ],
-      typeOptions: [
-        {value: 'type1', label: '物品类型1'},
-        {value: 'type2', label: '物品类型2'},
-        {value: 'type3', label: '物品类型3'}
-      ],
-      codeOptions: [
-        {value: 'code1', label: '物品编号1'},
-        {value: 'code2', label: '物品编号2'},
-        {value: 'code3', label: '物品编号3'}
-      ],
-      nameOptions: [
-        {value: 'name1', label: '物品名称1'},
-        {value: 'name2', label: '物品名称2'},
-        {value: 'name3', label: '物品名称3'}
-      ]
-    }
-  },
-  methods:{
-    submitForm() {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          // 在这里处理表单提交逻辑
-          console.log(this.formData);
-        } else {
-          console.log('表单校验不通过');
-          return false;
+  watch: {
+    orderId: {
+      handler(newVal) {
+        if (newVal) {
+          console.log('订单详情', newVal);
+          getOrderDetail(newVal).then(res => {
+            if (res.code === 200) {
+              this.formData = res.data;
+            }
+          })
+          this.getBudgeTypeList()
+          this.getSupplierList()
         }
-      });
+      },
+      immediate: true,
     }
+  },
+  data() {
+    return {
+      formTitle: "基本信息",
+      formData: {
+        applyDepart: 1,
+        applyDepartName: '',
+        applyName: '',
+        applyUserId: 1,
+        orderType: '',
+        pmsOrderStatus: 1,
+        applyDate: '',
+        // 预算类型
+        budgeType: 1,
+        applyReason: '',
+        paymentFlag: 1,
+        orderBizType: '',
+        recipientId: 1,
+        recipientName: '',
+        // 领用部门id
+        recipientDepartId: '',
+        recipientDepartName: '',
+        receiptUrl: '',
+        invoiceNum: '',
+        paymentUrl: '',
+        invoiceUrl: '',
+        consigneeName: '',
+        consigneePhone: '',
+        consigneeAddress: '',
+        orderDetailList: [],
+      },
+      rules: {
+        applyName: [{required: true, message: '请选择发起人', trigger: 'blur'}],
+        applyDepartName: [{required: true, message: '请选择发起人部门', trigger: 'blur'}],
+        applyDate: [{required: true, message: '请选择发起日期', trigger: 'blur'}],
+        orderBizType: [{required: true, message: '请选择订单类型', trigger: 'blur'}],
+        budgetType: [{required: true, message: '请输入预算类型', trigger: 'blur'}],
+      },
+      supplierOptions: [],
+      // 物品类型:固定资产、消耗品、服务、销售品
+      typeOptions: [
+        {value: '1', label: '固定资产'},
+        {value: '2', label: '消耗品'},
+        {value: '3', label: '服务'},
+        {value: '4', label: '销售品'},
+      ],
+      goodsListOption: {
+        'supplierId': []
+      },
+      orderBizTypes: [
+        {label: '采购入库', value: '1-0'},
+        {label: '盘盈入库', value: '1-2'},
+        {label: '领用入库', value: '1-4'},
+      ],
+      budgeTypes: []
+    }
+  },
+  methods: {
+    /*表单校验提交*/
+    submitForm() {
+      this.$confirm('是否重新提交?', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$refs.form.validate(valid => {
+          if (valid) {
+            // 表单验证通过，可以在这里进行提交操作
+            this.editOrder()
+          }
+        });
+      })
+    },
+    // 编辑供应商
+    editOrder() {
+      this.formData.changeFlag = this.needAudit
+      editOrder(this.formData).then(res => {
+        if (res.data.code === 200) {
+          this.$message.success('编辑成功')
+          this.closeHandlerInfo()
+        } else {
+          this.$message.error(res.data.message)
+        }
+      })
+    },
+    enableSupplier(supplierId, status) {
+      this.$confirm('是否确定启用?', '二次确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {
+          supplierId: supplierId,
+          supplierStatus: status,
+        }
+        enableSupplier(params).then((res) => {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+          this.closeHandlerInfo();
+        })
+      })
+    },
+    /*删除*/
+    handleDelete() {
+      this.$confirm('此操作将永久删除该供应商档案, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteSupplier(this.formData.supplierId).then((res) => {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+          this.closeHandlerInfo();
+        })
+      })
+    },
+    /*审核通过*/
+    auditPass() {
+      this.$confirm('是否确定审核通过?', '二次确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {
+          supplierId: this.formData.supplierId,
+          examineType: 1,
+        }
+        auditSupplier(params).then((res) => {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+          this.closeHandlerInfo();
+        })
+      })
+    },
+    /*审核不通过*/
+    auditNoPass() {
+      this.$prompt('请填写审核不通过的原因', "", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        closeOnClickModal: false,
+        inputErrorMessage: "原因不能为空"
+      }).then(({value}) => {
+        let params = {
+          supplierId: this.formData.supplierId,
+          examineType: 2,
+          remark: value,
+        }
+
+        auditSupplier(params).then((res) => {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+          this.closeHandlerInfo();
+        })
+      }).catch(() => {
+      });
+    },
+    /*撤回*/
+    revocation() {
+      this.$confirm('是否确定撤回?', '二次确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let params = {
+          supplierId: this.formData.supplierId,
+          examineType: 3
+        }
+
+        auditSupplier(params).then((res) => {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+          this.closeHandlerInfo()
+        })
+      })
+    },
+    /*订单明细表格函数*/
+    addRow() {
+      this.formData.orderDetailList.push({
+        "orderDetailId": "",
+        "pmsOrderId": "",
+        "goodsId": "",
+        "goodsType": '',
+        "goodsCode": "",
+        "goodsName": "",
+        "supplierId": "",
+        "supplierName": "",
+        "unitPrice": '',
+        "taxRate": "",
+        "amount": '',
+        "totalPrice": '',
+        "taxBid": '',
+        "nonTaxBid": '',
+        "totalTaxBid": '',
+        "nonTotalTaxBid": '',
+        "deleteFlag": '',
+        "actualReceiptAmount": '',
+        "actualReceiptPrice": '',
+        "receiptRemark": "",
+        "validityFlag": "",
+        "validityDate": "",
+        "grossMargin": ""
+      });
+    },
+    deleteRow(index) {
+      this.formData.orderDetailList.splice(index, 1);
+    },
+    calculateTotal(row) {
+      row.totalTaxBid = row.taxBid * row.taxRate * row.amount;
+      row.nonTotalTaxBid = row.nonTaxBid * row.taxRate * row.amount;
+    },
+    getSupplierList(keyword = '') {
+      request.post('/pms/supplier/queryOverview', {
+        codeNameKey: keyword,
+        pageNum: 1,
+        pageSize: 1000
+      }).then((res) => {
+        this.supplierOptions = res.data.rows.map(item => {
+          return {
+            value: item.supplierId,
+            label: item.supplierName
+          }
+        });
+      })
+    },
+    getBudgeTypeList(keyword = '') {
+      request.get('/system/budget/getList', {
+        params: {
+          budgetName: keyword
+        }
+      }).then(({data}) => {
+        this.budgeTypes = data;
+      })
+    },
+    getGoodsList(supplier, index) {
+      this.formData.orderDetailList[index].goodsId = ''
+      this.formData.orderDetailList[index].goodsList = []
+      this.$set(this.goodsListOption, `${index.goodsList}`, [])
+      let supplierId = supplier.split('__')[0]
+      let supplierName = supplier.split('__')[1]
+      this.formData.orderDetailList[index].supplierId = supplierId
+      this.formData.orderDetailList[index].supplierName = supplierName
+
+      let goodsList = this.goodsListOption[supplierId]
+      if (!goodsList) {
+        request.get('/pms/goods/queryAllList', {
+          params: {
+            supplierId: supplierId
+          }
+        }).then(res => {
+          this.goodsListOption[supplierId] = res.data
+          this.formData.orderDetailList[index].goodsList = res.data
+          this.$set(this.formData.orderDetailList, `${index.goodsList}`, res.data)
+        })
+      } else {
+        this.goodsListOption[supplierId] = goodsList
+        this.formData.orderDetailList[index].goodsList = goodsList
+      }
+
+
+    },
+    goodsChangeHandler(goodsInfo, index) {
+      let goodsSplit = goodsInfo.split('__')
+      let goodsId = goodsSplit[0]
+      let goodsCode = goodsSplit[1]
+      let goodsName = goodsSplit[2]
+      let taxBid = goodsSplit[3]
+      let nonTaxBid = goodsSplit[4]
+      let taxRate = Number(goodsSplit[5])
+
+      if (goodsInfo) {
+        this.formData.orderDetailList[index].goodsId = goodsId
+        this.formData.orderDetailList[index].goodsCode = goodsCode
+        this.formData.orderDetailList[index].goodsName = goodsName
+        this.formData.orderDetailList[index].taxBid = taxBid
+        this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
+        this.formData.orderDetailList[index].taxRate = taxRate
+        if (taxRate) {
+          this.formData.orderDetailList[index].taxRateName = (taxRate * 100) + '%'
+        }
+
+        this.formData.orderDetailList[index].totalTaxBid = taxBid * taxRate
+        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * taxRate
+      }
+    },
   }
 }
 </script>

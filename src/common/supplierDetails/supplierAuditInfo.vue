@@ -5,7 +5,7 @@
         <div class="timeline-item-content">
           <div class="timeline-item-header">
             <div class="status">{{ item.modelNode }}</div>
-            <div class="timestamp" v-show="item.updateTime">{{ item.updateTime }}</div>
+            <div class="timestamp" v-show="item.time">{{ item.time }}</div>
           </div>
           <div style="display: flex">
             <div class="content">
@@ -49,7 +49,7 @@ export default {
             // console.log('审核信息', res);
             this.timelineData = res.data.map(item => {
               return {
-                updateTime: item.updateTime,
+                time: item.updateTime || item.createTime,
                 modelNode: item.modelNode,
                 nodeStatus: item.nodeStatus,
                 nodeContent: item.nodeContent,

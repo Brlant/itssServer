@@ -182,7 +182,6 @@
         <el-upload drag :action="importSupplierAction"
                    :on-change="importSuccessHandler"
                    :auto-upload="false"
-                   :show-file-list="false"
                    :on-error="importErrorHandler"
         >
           <i class="el-icon-upload"></i>
@@ -453,4 +452,3 @@ export default {
   color: #F79B22;
 }
 </style>
-
