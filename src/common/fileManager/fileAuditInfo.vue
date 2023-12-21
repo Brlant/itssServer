@@ -44,7 +44,6 @@ export default {
       handler(newVal, oldVal) {
         if(newVal){
           filesApi.checkFiles({goodsId: newVal}).then(res=>{
-            console.log(res.data)
             this.timelineData = res.data.map(item => {
               return {
                 updateTime: item.updateTime,

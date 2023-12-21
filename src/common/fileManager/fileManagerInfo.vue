@@ -262,7 +262,6 @@ export default {
       handler(newVal, oldVal) {
         if (newVal && newVal.goodsId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
-          console.log(this.formData,'表单')
         }
       },
       immediate: true,

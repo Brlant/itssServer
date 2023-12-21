@@ -505,7 +505,7 @@ export default {
         }).then(() => {
           let changes = Object.keys(this.formData).filter(key => this.formData[key] !== this.backData[key]);
           let requireChange = changes.filter(key => this.formRules[key]?.some(item => item.required));
-          console.log(requireChange)
+          // console.log(requireChange)
           edit(Object.assign(this.formData, { changeFlag: requireChange.length > 0 })).then(res => {
             if (res.code === 200) {
               this.$message.success(res.msg);
