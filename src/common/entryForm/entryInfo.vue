@@ -64,18 +64,18 @@
     <!-- 第三行 -->
     <el-row :gutter="20">
       <el-col :span="6">
-        <el-form-item label="预算类型" prop="budgetType" :rules="rules.budgetType">
+        <el-form-item label="预算类型" prop="budgetTypes" :rules="rules.budgetTypes">
           <el-cascader
             v-model="formData.budgetTypes"
             placeholder="请选择预算类型"
             :options="budgetTypes"
             :props="{ label: 'budgetName', value: 'budgetId',children: 'childList'}"
-            filterable :readonly="readonly"></el-cascader>
+            filterable :disabled="readonly"></el-cascader>
         </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="申请原由">
-          <el-input v-model="formData.reason" :readonly="readonly"></el-input>
+          <el-input v-model="formData.applyReason" :readonly="readonly"></el-input>
         </el-form-item>
       </el-col>
     </el-row>
@@ -104,11 +104,10 @@
       </el-table-column>
       <el-table-column prop="type" label="物品类型">
         <template v-slot="scope">
-          <el-form-item :prop="`orderDetailList.${scope.$index}.type`" label-width="0"
+          <el-form-item :prop="`orderDetailList.${scope.$index}.goodsType`" label-width="0"
                         style="margin-top: 22px"
                         :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
-            <el-select v-model="scope.row.type" placeholder="请选择物品类型" style="width: 100%"
-                       :rules="rules.type" :disabled="readonly">
+            <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly">
               <el-option v-for="option in typeOptions" :key="option.value" :label="option.label"
                          :value="option.value"></el-option>
             </el-select>
@@ -121,7 +120,7 @@
                         style="margin-top: 22px"
                         :rules="[{required: true, message: '请选择物品编号'}]">
             <el-select v-model="scope.row.goodsInfo" placeholder="请选择物品编号" style="width: 100%"
-                       :rules="rules.code" filterable :disabled="readonly"
+                       filterable :disabled="readonly"
                        @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
               <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
                          :key="option.value"
@@ -138,7 +137,7 @@
                         style="margin-top: 22px"
                         :rules="[{required: true, message: '请选择物品名称'}]">
             <el-select v-model="scope.row.goodsInfo" placeholder="请选择物品名称" style="width: 100%"
-                       :rules="rules.name" filterable :disabled="readonly"
+                       filterable :disabled="readonly"
                        @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
               <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
                          :key="option.value"
@@ -219,26 +218,22 @@
         @click="handleDelete"
       >删除
       </el-button>
-      <el-button v-has-permi="['pms:supplier:edit']"
-                 icon="el-icon-edit"
+      <el-button icon="el-icon-edit"
                  v-show="formData.supplierStatus === 2 || formData.supplierStatus === 3 || formData.supplierStatus === 4"
                  @click="submitForm"
       >重新提交
       </el-button>
-      <el-button v-has-permi="['pms:supplier:edit']"
-                 type="success"
+      <el-button type="success"
                  v-show="formData.examineButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
                  @click="auditPass"
       >审核通过
       </el-button>
-      <el-button v-has-permi="['pms:supplier:edit']"
-                 type="danger"
+      <el-button type="danger"
                  v-show="formData.examineButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
                  @click="auditNoPass"
       >审核不通过
       </el-button>
-      <el-button v-has-permi="['pms:supplier:edit']"
-                 v-show="formData.supplierStatus === 0 || formData.supplierStatus === 1"
+      <el-button v-show="formData.supplierStatus === 0 || formData.supplierStatus === 1"
                  type="danger"
                  @click="revocation"
       >撤回
@@ -279,7 +274,9 @@ export default {
         if (newVal) {
           console.log('订单详情', newVal);
           // 每次重新进入订单详情后需要重新清空表单校验
-          this.$refs.form && this.$refs.form.resetFields()
+          if (this.$refs.form){
+            this.$refs.form.clearValidate()
+          }
 
           this.getSupplierList()
           this.getBudgetTypeList()
@@ -332,10 +329,10 @@ export default {
       supplierOptions: [],
       // 物品类型:固定资产、消耗品、服务、销售品
       typeOptions: [
-        {value: '1', label: '固定资产'},
-        {value: '2', label: '消耗品'},
-        {value: '3', label: '服务'},
-        {value: '4', label: '销售品'},
+        {value: 1, label: '固定资产'},
+        {value: 2, label: '消耗品'},
+        {value: 3, label: '服务'},
+        {value: 4, label: '销售品'},
       ],
       goodsListOption: {
         'supplierId': []
@@ -351,7 +348,29 @@ export default {
   methods: {
     getOrderDetail(orderId) {
       getOrderDetail(orderId).then(res => {
-        this.formData = res.data;
+        res.data.orderDetailList = res.data.orderDetailList.map((item, index) => {
+          return {
+            ...item,
+            taxRateName: Number(item.taxRate) + '%',
+            goodsInfo: item.goodsId + '__' + item.goodsCode + '__' + item.goodsName + '__' + item.taxBid + '__' + item.nonTaxBid + '__' + item.taxRate
+          }
+        })
+
+        if (res.data.budgetType){
+          let budgetType = res.data.budgetType.split("-")
+          if(budgetType.length === 3){
+            let budgetTypes = []
+            budgetTypes.push(parseInt(budgetType[0]))
+            budgetTypes.push(parseInt(budgetType[1]))
+            budgetTypes.push(parseInt(budgetType[2]))
+            res.data.budgetTypes = budgetTypes
+          }
+        }
+
+        this.formData = res.data
+        this.formData.orderDetailList.forEach((item, index) => {
+          this.getGoodsList(item.supplierId, index)
+        })
       })
     },
     /*表单校验提交*/
@@ -541,11 +560,11 @@ export default {
       })
     },
     getGoodsList(supplierId, index) {
-      this.formData.orderDetailList[index].goodsId = ''
-      this.formData.orderDetailList[index].goodsList = []
-      this.$set(this.goodsListOption, `${index.goodsList}`, [])
+      // this.formData.orderDetailList[index].goodsId = ''
+      // this.formData.orderDetailList[index].goodsList = []
+      // this.$set(this.goodsListOption, `${index.goodsList}`, [])
       this.formData.orderDetailList[index].supplierId = supplierId
-      this.formData.orderDetailList[index].supplierName = this.supplierMap.get(supplierId)
+      this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId]
 
       let goodsList = this.goodsListOption[supplierId]
       if (!goodsList) {
@@ -564,6 +583,7 @@ export default {
       }
     },
     goodsChangeHandler(goodsInfo, index) {
+      console.log(goodsInfo)
       let goodsSplit = goodsInfo.split('__')
       let goodsId = goodsSplit[0]
       let goodsCode = goodsSplit[1]

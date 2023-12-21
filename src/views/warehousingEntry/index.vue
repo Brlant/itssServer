@@ -437,8 +437,12 @@ export default {
       exportOrder(this.queryParams)
     },
     /*关闭表单*/
-    handleEntryClose() {
+    handleEntryClose({refresh=false}) {
       this.dialogAddEntry = false;
+      if (refresh){
+        // 如果需要刷新，那么刷新列表
+        this.getList()
+      }
     },
     /*详情*/
     handleDetails(row) {

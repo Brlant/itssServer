@@ -64,30 +64,26 @@
       <!-- 第三行 -->
       <el-row :gutter="20">
         <el-col :span="6">
-          <el-form-item label="预算类型" prop="budgetType" :rules="rules.budgetType">
+          <el-form-item label="预算类型" prop="budgetTypes" :rules="rules.budgetTypes">
             <el-cascader
               v-model="formData.budgetTypes"
               placeholder="请选择预算类型"
               :options="budgetTypes"
               :props="{ label: 'budgetName', value: 'budgetId',children: 'childList'}"
-              filterable ></el-cascader>
+              filterable></el-cascader>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="申请原由">
-            <el-input v-model="formData.reason"></el-input>
+            <el-input v-model="formData.applyReason"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
-      <!--订单明细-->
-      <!--        <el-form-item label="订单明细" required>-->
-      <!--          -->
-      <!--        </el-form-item>-->
       <div class="jiBenXinXi">
         订单明细
       </div>
       <el-table :data="formData.orderDetailList" border>
-      <el-table-column type="index" width="60"></el-table-column>
+        <el-table-column type="index" width="60"></el-table-column>
         <el-table-column prop="supplier" label="供应商名称">
           <template v-slot="scope">
             <el-form-item :prop="`orderDetailList.${scope.$index}.supplierId`" label-width="0"
@@ -108,7 +104,8 @@
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
               <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%;"
-                         :rules="rules.goodsType">
+                         filterable
+                         @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
                 <el-option v-for="option in typeOptions" :key="option.value" :label="option.label"
                            :value="option.value"></el-option>
               </el-select>
@@ -121,7 +118,7 @@
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品编号'}]">
               <el-select v-model="scope.row.goodsInfo" placeholder="请选择物品编号" style="width: 100%"
-                         :rules="rules.code" filterable
+                         filterable
                          @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
                 <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
                            :key="option.value"
@@ -138,7 +135,8 @@
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品名称'}]">
               <el-select v-model="scope.row.goodsInfo" placeholder="请选择物品名称" style="width: 100%"
-                         :rules="rules.name" @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
+                         filterable
+                         @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
                 <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
                            :key="option.value"
                            :label="option.goodsName"
@@ -204,6 +202,7 @@
 
 <script>
 import request from '@/utils/request'
+import {addPmsOrder} from '@/api/pms/order'
 
 export default {
   name: "wareHouseEntry",
@@ -274,7 +273,7 @@ export default {
     /*关闭弹框*/
     handleEntryClose() {
       this.$refs.form.resetFields()
-      this.$emit('handleEntryClose')
+      this.$emit('handleEntryClose',{refresh:true})
     },
     /*订单明细表格函数*/
     addRow() {
@@ -344,7 +343,7 @@ export default {
       })
 
       params.budgetTypeName = budgetTypeNames.join("-")
-      orderApi.addPmsOrder(this.formData).then((res) => {
+      addPmsOrder(this.formData).then((res) => {
         this.$message({
           type: 'success',
           message: '提交成功'
@@ -408,6 +407,7 @@ export default {
 
     },
     goodsChangeHandler(goodsInfo, index) {
+      // console.log(goodsInfo)
       let goodsSplit = goodsInfo.split('__')
       let goodsId = goodsSplit[0]
       let goodsCode = goodsSplit[1]
@@ -472,6 +472,11 @@ export default {
           consigneeAddress: '',
           orderDetailList: [],
         }
+
+        if(this.$refs.form){
+          this.$refs.form.clearValidate()
+        }
+
         // 默认有一条数据
         this.addRow()
         this.getBudgetTypeList()
