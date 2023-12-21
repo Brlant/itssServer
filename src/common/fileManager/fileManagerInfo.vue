@@ -198,14 +198,14 @@
       <!--      第七行-->
       <el-form-item>
         <el-button
-          v-show="formData.goodsStatus === 3"
+          v-show="formData.goodsStatus === 5"
           icon="el-icon-delete"
           @click="enableFiles(formData.goodsId, 3)"
         >启用
         </el-button>
 
         <el-button
-          v-show="formData.goodsStatus === 5"
+          v-show="formData.goodsStatus === 3"
           icon="el-icon-delete"
           @click="stopFiles(formData.goodsId, 5)"
         >停用

@@ -6,41 +6,43 @@
       <el-form class="login-form" label-position="top" ref="loginForm" label-width="80px" :model="form" :rules="rules"
                onsubmit="return false"
       >
-        <el-form-item label="企业邮箱" prop="email">
-          <el-input v-model="form.email" placeholder="请输入企业邮箱"></el-input>
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item label="验证码" prop="verificationCode">
+        <el-form-item label="企业邮箱" prop="identify">
+          <el-input v-model="form.identify" placeholder="请输入企业邮箱"></el-input>
+        </el-form-item>
+
+        <el-form-item label="验证码" prop="captchaCode">
           <div style="display: flex;">
             <div>
-              <el-input v-model="form.verificationCode" placeholder="请输入验证码"></el-input>
+              <el-input v-model="form.captchaCode" placeholder="请输入验证码"></el-input>
             </div>
-            <div style="margin-left: 35px">
+            <div style="margin-left: 35px" @click="getCodeImg">
               <img :src="form.verificationImage" alt="验证码图片">
             </div>
           </div>
         </el-form-item>
-        <el-form-item label="邮箱验证码" prop="emailCode">
+        <el-form-item label="邮箱验证码" prop="validCode">
           <div style="display: flex;">
             <div>
-              <el-input v-model="form.emailCode" placeholder="请输入邮箱验证码"></el-input>
+              <el-input v-model="form.validCode" placeholder="请输入邮箱验证码"></el-input>
             </div>
             <div style="margin-left: 35px">
               <el-button type="primary" @click="getEmailCode" :disabled="emailCodeDisabled">获取验证码</el-button>
             </div>
           </div>
         </el-form-item>
-        <el-form-item label="新密码" prop="newPassword">
-          <el-input type="password" v-model="form.newPassword" placeholder="请输入新密码"></el-input>
+        <el-form-item label="新密码" prop="password">
+          <el-input  v-model="form.password" placeholder="请输入新密码" show-password type="password" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="确认新密码" prop="confirmPassword">
-          <el-input type="password" v-model="form.confirmPassword" placeholder="请再次输入新密码"></el-input>
+          <el-input  v-model="form.confirmPassword" placeholder="请再次输入新密码" show-password type="password" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm" style="width: 100%">确认修改</el-button>
           <!--          <el-button @click="resetForm">重置</el-button>-->
         </el-form-item>
-
-
       </el-form>
     </div>
 
@@ -48,31 +50,29 @@
 </template>
 
 <script>
-
+import forgotApi from '@/api/forgot/forgot'
 
 export default {
   name: 'login',
   data() {
     return {
       form: {
-        email: '',
-        verificationCode: '',
-        verificationImage: '',
-        emailCode: '',
-        newPassword: '',
-        confirmPassword: ''
+        verificationImage: '', //图片验证码
       },
       rules: {
-        email: [
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        identify: [
           { required: true, message: '请输入企业邮箱', trigger: 'blur' }
         ],
-        verificationCode: [
+        captchaCode: [
           { required: true, message: '请输入验证码', trigger: 'blur' }
         ],
-        emailCode: [
+        validCode: [
           { required: true, message: '请输入邮箱验证码', trigger: 'blur' }
         ],
-        newPassword: [
+        password: [
           { required: true, message: '请输入新密码', trigger: 'blur' }
         ],
         confirmPassword: [
@@ -97,17 +97,59 @@ export default {
     }
   },
   created() {
-
+    /* 获取验证码 */
+    this.getCodeImg()
   },
   methods: {
+    getCodeImg(){
+      forgotApi.sendCode().then(res => {
+        if(res.code === 200){
+          let imgElement = document.createElement('img');
+          this.form.verificationImage = 'data:image/*;base64,' + res.img;
+          this.form.uuid = res.uuid;
+        }
+      })
+    },
     getEmailCode() {
-      // 获取邮箱验证码的逻辑
+      let formData = new FormData()
+      formData.append('validType','2')
+      formData.append('identify',this.form.identify)
+      forgotApi.getEmail(formData).then(res => {
+        if(res.code === 200){
+          this.form.validUuid=res.uuid;
+        }
+      })
     },
     submitForm() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          // 提交表单的逻辑
-        } else {
+          if(this.form.password!== this.form.confirmPassword){
+            this.$message({
+              message: '两次密码不一致',
+              type:'error'
+            })
+            return false
+          }
+          let formData = new FormData()
+          formData.append('username', this.form.username)
+          formData.append('captchaCode', this.form.captchaCode)
+          formData.append('validCode', this.form.validCode)
+          formData.append('password', this.form.password)
+          formData.append('uuid', this.form.uuid)
+          formData.append('validUuid', this.form.validUuid)
+          formData.append('identify', this.form.identify)
+          forgotApi.checkEmail(formData).then(res => {
+            if(res.code === 200){
+              this.$message({
+                message: '修改成功',
+                type:'success'
+              })
+              this.$router.push({
+                path: '/login'
+              })
+            }
+          })
+        }else {
           console.log('表单校验失败')
           return false
         }

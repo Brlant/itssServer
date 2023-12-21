@@ -4,7 +4,7 @@
       <div style="font-weight: bold;font-size: 15px">{{ formTitle }}</div>
     </template>
     <template>
-      <el-form ref="form" :model="formData" label-width="100px" :rules="rules">
+      <el-form ref="formRef" :model="formData" label-width="100px" :rules="rules">
         <el-row :gutter="20">
           <!-- 第一行 -->
           <el-col :span="8">
@@ -196,7 +196,7 @@
           <!-- 提交按钮 -->
           <el-col >
             <el-button type="primary" @click="submitForm">提交</el-button>
-            <el-button>返回</el-button>
+            <el-button @click="closeAddFiles">返回</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -304,6 +304,9 @@ export default {
     },
     /*关闭新建弹框*/
     closeAddFiles() {
+      this.formData = {}
+      this.formData.attachmentInfos = [];
+      // this.$refs['formRef'].resetFields();
       this.$emit('closeAddFiles');
     },
     submitForm() {

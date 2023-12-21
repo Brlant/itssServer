@@ -174,25 +174,25 @@
     />
 
     <!--    详情弹框-->
-    <el-dialog :visible="dialogDetailsProcessDialog"
-      :title="detailsTitle"
+    <el-dialog :visible="dialogDetailsContractDialog"
+      :title="detailsContractTitle"
       width="75%"
-      @close="closeDialog">
+      @close="closeContractDialog">
       <template v-slot:title>
-        <div style="font-weight: bold;font-size: 15px">{{ detailsTitle }}</div>
+        <div style="font-weight: bold;font-size: 15px">{{ detailsContractTitle }}</div>
       </template>
       <template class="templateDialogStyle">
-        <el-tabs v-model="activeTab"
-          @tab-click="handleTabClick">
+        <el-tabs v-model="activeContractTab"
+          @tab-click="handleContractTabClick">
           <el-tab-pane
-            v-for="tab in tabs"
+            v-for="tab in tabsContract"
             :key="tab.name"
             :label="tab.label"
             :name="tab.name">
             <!-- 使用组件作为标签页内容 -->
             <component :is="tab.component"
               :contractId="contractId"
-              @closeDetail="closeDialog"></component>
+              @closeDetail="closeContractDialog"></component>
           </el-tab-pane>
         </el-tabs>
         <div class="tabStatus">
@@ -229,17 +229,17 @@ export default {
   },
   data() {
     return {
-      activeTab: 'fileInfo',
-      tabs: [
+      activeContractTab: 'fileInfo',
+      tabsContract: [
         {label: '档案信息', name: 'fileInfo',component:managerInfo },
         {label: '审核信息', name: 'auditInfo',component:managerAuditInfo },
         {label: '操作日志', name: 'operationLog',component:managerOperationLog }
       ],
       // tabName: null,
       //详情信息
-      detailsTitle: "详情信息",
+      detailsContractTitle: "详情信息",
       //详情信息弹框
-      dialogDetailsProcessDialog: false,
+      dialogDetailsContractDialog: false,
 
       dialogContractFilesFiles: false,
       // 遮罩层
@@ -340,15 +340,15 @@ export default {
     },
 
     /*处理标签页信息*/
-    handleTabClick(tab, event) {
+    handleContractTabClick(tab, event) {
 
     },
-    closeDialog(flg) {
+    closeContractDialog(flg) {
       // this.tabName = null;
-      this.activeTab = "fileInfo";
+      this.activeContractTab = "fileInfo";
       this.contractId = null;
       this.contractStatus = null;
-      this.dialogDetailsProcessDialog = false;
+      this.dialogDetailsContractDialog = false;
       if (flg) {
         this.handleQuery();
       }
@@ -357,7 +357,7 @@ export default {
     handleDetails(row) {
       this.contractId = row.contractId;
       this.contractStatus = row.contractStatus;
-      this.dialogDetailsProcessDialog = true;
+      this.dialogDetailsContractDialog = true;
     },
     /*查询列表内容*/
     getContractFiles() {

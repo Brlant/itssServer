@@ -363,6 +363,31 @@ export default {
     },
     // 关闭弹框
     closeHandler() {
+      this.formData = {
+        //基本信息
+        supplierName: '',
+        supplierType: '',
+        supplierDate: '',
+        supplierAddress: '',
+        warehouseAddress: '',
+        //工商信息
+        businessInfo: {
+          legalPerson: '',
+          legalPersonID: '',
+          foundingDate: '',
+          creditCode: '',
+          openingBank: '',
+          accountNumber: '',
+          businessScope: '',
+          //工商信息的文件上传
+          businessLicenseUrl: '',
+          attachmentInfos: [],
+          // "attachmentId": "",
+          // {
+          //   "attachmentId": "",
+        }
+      }
+
       this.$emit('close')
     },
     /*表单校验提交*/

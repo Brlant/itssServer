@@ -94,8 +94,8 @@
     <pagination
       v-show="queryParams.total>0"
       :total="queryParams.total"
-      :page.sync="queryParams.page"
-      :limit.sync="queryParams.limit"
+      :page.sync="queryParams.pageNum"
+      :limit.sync="queryParams.pageSize"
       @pagination="getHandleList"
     />
     <!--    详情弹框内容-->
@@ -153,6 +153,42 @@
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
+
+    <!--    合同弹框信息-->
+    <el-dialog :visible="dialogDetailsContractDialog"
+               :title="detailsContractTitle"
+               width="75%"
+               @close="closeContractDialog"
+    >
+      <template v-slot:title>
+        <div style="font-weight: bold;font-size: 15px">{{ detailsContractTitle }}</div>
+      </template>
+      <template class="templateDialogStyle">
+        <el-tabs v-model="activeContractTab"
+                 @tab-click="handleContractTabClick"
+        >
+          <el-tab-pane
+            v-for="tab in tabsContract"
+            :key="tab.name"
+            :label="tab.label"
+            :name="tab.name"
+          >
+            <!-- 使用组件作为标签页内容 -->
+            <component :is="tab.component"
+                       :contractId="contractId"
+                       @closeDetail="closeContractDialog"
+            ></component>
+          </el-tab-pane>
+        </el-tabs>
+        <div class="contractStatusStyle">
+          <span v-if="contractStatus === 0" style="color: #f59b22; font-weight: bold;">待审核</span>
+          <span v-if="contractStatus === 1" style="color: #f59b22; font-weight: bold;">审核中</span>
+          <span v-if="contractStatus === 2" style="color: #000000; font-weight: bold;">审核不通过</span>
+          <span v-if="contractStatus === 3" style="color: #70b503; font-weight: bold;">启用</span>
+          <span v-if="contractStatus === 5" style="color: #d8001b; font-weight: bold;">停用</span>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -174,6 +210,9 @@ import fileManagerInfo from "@/common/fileManager/fileManagerInfo";
 import fileOperationLog from "@/common/fileManager/fileOperationLog";
 
 import filesApi from '@/api/Files/files'
+import managerInfo from '@/common/contractManager/managerInfo'
+import managerAuditInfo from '@/common/contractManager/managerAuditInfo'
+import managerOperationLog from '@/common/contractManager/managerOperationLog'
 
 export default {
   name: "index",
@@ -244,6 +283,18 @@ export default {
       detailsGoodsTitle: "详情信息",
       detailsGoodsData: {},
       activeGoodsTab: 'fileManagerInfo',
+
+      //contract弹框
+      activeContractTab: 'fileInfo',
+      tabsContract: [
+        { label: '档案信息', name: 'fileInfo', component: managerInfo },
+        { label: '审核信息', name: 'auditInfo', component: managerAuditInfo },
+        { label: '操作日志', name: 'operationLog', component: managerOperationLog }
+      ],
+      dialogDetailsContractDialog: false,
+      detailsContractTitle: '详情信息',
+      contractId: null,
+      contractStatus: null
     }
   },
   watch:{
@@ -332,7 +383,9 @@ export default {
         })
       }
       if(row.modelType === "contract"){
-
+        this.contractId = row.relationId
+        this.contractStatus = row.examineStatus
+        this.dialogDetailsContractDialog = true
       }
 
       if(row.modelType === "inOrder"){
@@ -403,6 +456,19 @@ export default {
       this.dialogDetailsProcessGoodsDialog = false;
       this.getHandleList();
     },
+
+    closeContractDialog() {
+      // this.tabName = null;
+      this.activeContractTab = 'fileInfo'
+      this.contractId = null
+      this.contractStatus = null
+      this.dialogDetailsContractDialog = false
+    },
+
+    /*处理标签页信息*/
+    handleContractTabClick(tab, event) {
+
+    }
   },
 
 }
@@ -416,6 +482,16 @@ export default {
 .tabStatus {
   position: absolute;
   top: 10px;
+  left: 300px;
+  width: 80px;
+  height: 20px;
+  text-align: center;
+  color: #F79B22;
+}
+
+.contractStatusStyle{
+  position: absolute;
+  top: 90px;
   left: 300px;
   width: 80px;
   height: 20px;

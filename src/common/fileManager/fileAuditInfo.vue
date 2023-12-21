@@ -16,9 +16,12 @@
                 {{ item.nodeContent }}
               </div>
             </div>
-            <div class="content-right" v-show="item.nodeStatus == 2">
+            <div class="content-right" v-show="item.remark">
               不通过原因：{{ item.remark }}
             </div>
+            <!--            <div class="content-right" v-show="item.nodeStatus == 2">-->
+            <!--              不通过原因：{{ item.remark }}-->
+            <!--            </div>-->
           </div>
 
         </div>
@@ -48,7 +51,8 @@ export default {
                 modelNode: item.modelNode,
                 nodeStatus: item.nodeStatus,
                 nodeContent: item.nodeContent,
-                color: !item.updateTime || new Date(item.updateTime).getTime() > new Date().getTime() ? "#E4E7ED" : "green",
+                color: item.nodeStatus === 0? "#E4E7ED" : "green",
+                // color: !item.updateTime || new Date(item.updateTime).getTime() > new Date().getTime() ? "#E4E7ED" : "green",
                 reviewedName: item.reviewedName,
                 remark: item.remark,
               }

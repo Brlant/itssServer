@@ -70,7 +70,7 @@
       <el-table-column label="发起人" align="center" prop="promoterId">
         <template slot-scope="scope">
           <div v-if="scope.row.promoterId === queryParams.promoterId">
-            {{queryParams.remark}}
+            {{ queryParams.remark }}
           </div>
         </template>
       </el-table-column>
@@ -93,7 +93,8 @@
             已撤回
           </span>
         </template>
-      </el-table-column>>
+      </el-table-column>
+      >
       <el-table-column label="审核节点" align="center" prop="modelNode"/>
       <el-table-column label="审核人" align="center" prop="reviewedName"/>
       <el-table-column label="操作" align="center">
@@ -146,7 +147,9 @@
 
 
     <!--    goods弹框内容-->
-    <el-dialog :visible="dialogDetailsProcessGoodsDialog" :title="detailsGoodsTitle" width="75%" @close="closeGoodsDialog">
+    <el-dialog :visible="dialogDetailsProcessGoodsDialog" :title="detailsGoodsTitle" width="75%"
+               @close="closeGoodsDialog"
+    >
       <div style="position: relative">
         <div class="tabStatus">
           <span v-if="activeGoodsStatus === 0" style="color: #F79B22">待审核</span>
@@ -164,14 +167,49 @@
           <file-manager-info :detailsGoodsData="detailsGoodsData" @closeHandler="closeHandler"></file-manager-info>
         </el-tab-pane>
         <el-tab-pane label="审核信息" name="fileAuditInfo">
-          <file-audit-info :goodsId = 'goodsId'></file-audit-info>
+          <file-audit-info :goodsId="goodsId"></file-audit-info>
         </el-tab-pane>
         <el-tab-pane label="操作日志" name="fileOperationLog">
-          <file-operation-log :goodsId = 'goodsId'></file-operation-log>
+          <file-operation-log :goodsId="goodsId"></file-operation-log>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
 
+    <!--    合同弹框信息-->
+    <el-dialog :visible="dialogDetailsContractDialog"
+               :title="detailsContractTitle"
+               width="75%"
+               @close="closeContractDialog"
+    >
+      <template v-slot:title>
+        <div style="font-weight: bold;font-size: 15px">{{ detailsContractTitle }}</div>
+      </template>
+      <template class="templateDialogStyle">
+        <el-tabs v-model="activeContractTab"
+                 @tab-click="handleContractTabClick"
+        >
+          <el-tab-pane
+            v-for="tab in tabsContract"
+            :key="tab.name"
+            :label="tab.label"
+            :name="tab.name"
+          >
+            <!-- 使用组件作为标签页内容 -->
+            <component :is="tab.component"
+                       :contractId="contractId"
+                       @closeDetail="closeContractDialog"
+            ></component>
+          </el-tab-pane>
+        </el-tabs>
+        <div class="contractStatusStyle">
+          <span v-if="contractStatus === 0" style="color: #f59b22; font-weight: bold;">待审核</span>
+          <span v-if="contractStatus === 1" style="color: #f59b22; font-weight: bold;">审核中</span>
+          <span v-if="contractStatus === 2" style="color: #000000; font-weight: bold;">审核不通过</span>
+          <span v-if="contractStatus === 3" style="color: #70b503; font-weight: bold;">启用</span>
+          <span v-if="contractStatus === 5" style="color: #d8001b; font-weight: bold;">停用</span>
+        </div>
+      </template>
+    </el-dialog>
 
 
     <!--   提示信息 -->
@@ -180,7 +218,7 @@
 </template>
 
 <script>
-import {getInitiatedList} from "@/api/auditCenter/initiated/initiated";
+import { getInitiatedList } from '@/api/auditCenter/initiated/initiated'
 //我发起的页面
 // import fileInfo from '@/common/details/fileInfo.vue'
 // import auditInfo from '@/common/details/auditInfo.vue'
@@ -192,16 +230,20 @@ import supplierInfo from '@/common/supplierDetails/supplierInfo'
 import supplierOperationLog from '@/common/supplierDetails/supplierOperationLog'
 
 //物品
-import fileAuditInfo from "@/common/fileManager/fileAuditInfo";
-import fileManagerInfo from "@/common/fileManager/fileManagerInfo";
-import fileOperationLog from "@/common/fileManager/fileOperationLog";
+import fileAuditInfo from '@/common/fileManager/fileAuditInfo'
+import fileManagerInfo from '@/common/fileManager/fileManagerInfo'
+import fileOperationLog from '@/common/fileManager/fileOperationLog'
 //提醒消息
 import promptInfo from '@/common/promptInfo/promptInfo'
 
+//合同
+import managerInfo from '@/common/contractManager/managerInfo'
+import managerAuditInfo from '@/common/contractManager/managerAuditInfo'
+import managerOperationLog from '@/common/contractManager/managerOperationLog'
 
 export default {
   name: 'index',
-  components:{
+  components: {
     promptInfo,
     supplierAuditInfo,
     supplierInfo,
@@ -209,19 +251,14 @@ export default {
 
     fileAuditInfo,
     fileManagerInfo,
-    fileOperationLog,
+    fileOperationLog
   },
   data() {
     return {
       detailsSupplierData: {},
       //提醒消息
-      promptInfoForm:false,
+      promptInfoForm: false,
       activeTab: 'fileInfo',
-      // tabs: [
-      //   { label: '档案信息', name: 'fileInfo', component: fileInfo },
-      //   { label: '审核信息', name: 'auditInfo', component: auditInfo },
-      //   { label: '操作日志', name: 'operationLog', component: operationLog }
-      // ],
       tabName: null,
       houseOptions: [],
       //详情信息
@@ -234,49 +271,62 @@ export default {
       showSearch: true,
       // 查询参数
       queryParams: {
-        key:"",
-        applyTime:"",
-        modelName:"",
-        remark:"",
-        promoterId:'',
-        examineStatus:"",
+        key: '',
+        applyTime: '',
+        modelName: '',
+        remark: '',
+        promoterId: '',
+        examineStatus: '',
         //分页
         total: 10,
         pageNum: 1,
         pageSize: 10,
         order: 'id desc'
       },
-      modelNameArray:[
+      modelNameArray: [
         { label: '供应商档案审批流程' },
         { label: '物品档案审批流程' },
         { label: '合同档案审批流程' }
       ],
-      examineStatusArray:[
-        {label:"待审核",value:0},
-        {label:"审核中",value:1},
-        {label:"已完成",value:3},
-        {label:"已撤回",value:4},
-        {label:"审核不通过",value:2},
+      examineStatusArray: [
+        { label: '待审核', value: 0 },
+        { label: '审核中', value: 1 },
+        { label: '已完成', value: 3 },
+        { label: '已撤回', value: 4 },
+        { label: '审核不通过', value: 2 }
       ],
       //流程名称
       flowPathName: [],
-      detailsRow:{
-        modelType:"",
-        relationId:"",
+      detailsRow: {
+        modelType: '',
+        relationId: ''
       },
       // 我发起的表格数据
       initiateList: [],
       //状态
-      tabStatus:'',
+      tabStatus: '',
 
       //goods弹框
       dialogDetailsProcessGoodsDialog: false,
-      detailsGoodsTitle: "详情信息",
+      detailsGoodsTitle: '详情信息',
       detailsGoodsData: {},
       activeGoodsTab: 'fileManagerInfo',
+
+      //contract弹框
+      activeContractTab: 'fileInfo',
+      tabsContract: [
+        { label: '档案信息', name: 'fileInfo', component: managerInfo },
+        { label: '审核信息', name: 'auditInfo', component: managerAuditInfo },
+        { label: '操作日志', name: 'operationLog', component: managerOperationLog }
+      ],
+      dialogDetailsContractDialog: false,
+      detailsContractTitle: '详情信息',
+      contractId: null,
+      contractStatus: null
+
     }
   },
-  computed:{
+  computed: {
     activeStatus() {
       if (!this.detailsSupplierData) {
         return ''
@@ -285,50 +335,49 @@ export default {
       let status = this.detailsSupplierData && this.detailsSupplierData.supplierStatus
       return status
     },
-    supplierId(){
-      if (this.detailsSupplierData){
+    supplierId() {
+      if (this.detailsSupplierData) {
         return this.detailsSupplierData.supplierId
       }
       return ''
     },
 
-    activeGoodsStatus(){
+    activeGoodsStatus() {
       if (!this.detailsGoodsData) {
         return ''
       }
-      let status = this.detailsGoodsData && this.detailsGoodsData.goodsStatus;
-      return status;
+      let status = this.detailsGoodsData && this.detailsGoodsData.goodsStatus
+      return status
     },
-    goodsId(){
-      if (this.detailsGoodsData){
+    goodsId() {
+      if (this.detailsGoodsData) {
         return this.detailsGoodsData.goodsId
       }
       return ''
     }
   },
   created() {
-    let userInfo = window.localStorage.getItem("user");
-    let userInfoParse = JSON.parse(userInfo);
-    this.queryParams.remark = userInfoParse.remark;
-    this.queryParams.promoterId = userInfoParse.userId;
+    let userInfo = window.localStorage.getItem('user')
+    let userInfoParse = JSON.parse(userInfo)
+    this.queryParams.remark = userInfoParse.remark
+    this.queryParams.promoterId = userInfoParse.userId
   },
   mounted() {
     //调用查询接口
     this.getInitiateList()
   },
   methods: {
-    changeHandleTime(row){
-      if(this.queryParams.applyTime === ""){
-        this.queryParams.pageSize = 1;  //将页码设置为第一页
+    changeHandleTime(row) {
+      if (this.queryParams.applyTime === '') {
+        this.queryParams.pageSize = 1  //将页码设置为第一页
       }
-      this.queryParams.applyTime = row;
-      this.getInitiateList();
+      this.queryParams.applyTime = row
+      this.getInitiateList()
     },
 
-
     /* 关闭消息提醒 */
-    handleClosePrompt(){
-      this.promptInfoForm = false;
+    handleClosePrompt() {
+      this.promptInfoForm = false
     },
     closeDialog() {
       this.tabName = null
@@ -340,10 +389,9 @@ export default {
       this.detailsSupplierData = null
     },
 
-    closeHandlerInfo(){
-      this.dialogDetailsProcessDialog = false;
+    closeHandlerInfo() {
+      this.dialogDetailsProcessDialog = false
     },
-
 
     /*处理标签页信息*/
     handleTabClick(tab, event) {
@@ -352,32 +400,32 @@ export default {
     /** 查询我的发起记录列表 */
     getInitiateList() {
       const params = {
-        key:this.queryParams.key,
-        startDate:this.queryParams.applyTime[0],
-        endDate:this.queryParams.applyTime[1],
-        modelName:this.queryParams.modelName,
-        promoterId:this.queryParams.promoterId,
-        examineStatus:this.queryParams.examineStatus,
-        pageNum:this.queryParams.pageNum,
-        pageSize:this.queryParams.pageSize,
-        queryType:1,
+        key: this.queryParams.key,
+        startDate: this.queryParams.applyTime[0],
+        endDate: this.queryParams.applyTime[1],
+        modelName: this.queryParams.modelName,
+        promoterId: this.queryParams.promoterId,
+        examineStatus: this.queryParams.examineStatus,
+        pageNum: this.queryParams.pageNum,
+        pageSize: this.queryParams.pageSize,
+        queryType: 1
       }
       getInitiatedList(params).then((res) => {
         this.loading = false
-        this.initiateList = res.data.rows;
-        this.queryParams.total = res.data.total;
+        this.initiateList = res.data.rows
+        this.queryParams.total = res.data.total
       })
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.applyTime = '';
-      this.$refs.queryForm.resetFields();
-      this.getInitiateList();
+      this.queryParams.applyTime = ''
+      this.$refs.queryForm.resetFields()
+      this.getInitiateList()
     },
     /*详情*/
     handleDetails(row) {
       this.detailsSupplierData = null
-      if(row.modelType === "supplier"){
+      if (row.modelType === 'supplier') {
         supplierApi.getSupplierDetails(row.relationId).then((res) => {
           this.detailsSupplierData = res.data
           this.tabName = '1'
@@ -385,23 +433,26 @@ export default {
         })
       }
       this.detailsGoodsData = null
-      if(row.modelType === "goods"){
-        filesApi.getDetailFiles({goodsId:row.relationId}).then((res) => {
-          this.detailsGoodsData = res.data;
+      if (row.modelType === 'goods') {
+        filesApi.getDetailFiles({ goodsId: row.relationId }).then((res) => {
+          this.detailsGoodsData = res.data
           // this.goodsId = row.goodsId;
           this.tabName = '1'
           this.dialogDetailsProcessGoodsDialog = true
 
         })
       }
-      if(row.modelType === "contract"){
 
+      if (row.modelType === 'contract') {
+        this.contractId = row.relationId
+        this.contractStatus = row.examineStatus
+        this.dialogDetailsContractDialog = true
       }
 
-      if(row.modelType === "inOrder"){
+      if (row.modelType === 'inOrder') {
 
       }
-      if(row.modelType === "outOrder"){
+      if (row.modelType === 'outOrder') {
 
       }
 
@@ -413,8 +464,6 @@ export default {
       //   })
       // }
 
-
-
       // this.detailsRow.modelType = row.modelType
       // this.detailsRow.relationId = row.relationId
       // this.examineStatusArray.forEach((item)=>{
@@ -425,16 +474,29 @@ export default {
       // this.dialogDetailsProcessDialog = true
     },
     closeGoodsDialog() {
-      this.activeGoodsTab = "fileManagerInfo";
-      this.dialogDetailsProcessGoodsDialog = false;
-      this.getInitiateList();
+      this.activeGoodsTab = 'fileManagerInfo'
+      this.dialogDetailsProcessGoodsDialog = false
+      this.getInitiateList()
     },
-    closeHandler(){
-      this.tabName = null;
-      this.activeGoodsTab = "fileManagerInfo";
-      this.dialogDetailsProcessGoodsDialog = false;
-      this.getInitiateList();
+    closeHandler() {
+      this.tabName = null
+      this.activeGoodsTab = 'fileManagerInfo'
+      this.dialogDetailsProcessGoodsDialog = false
+      this.getInitiateList()
     },
+
+    closeContractDialog() {
+      // this.tabName = null;
+      this.activeContractTab = 'fileInfo'
+      this.contractId = null
+      this.contractStatus = null
+      this.dialogDetailsContractDialog = false
+    },
+
+    /*处理标签页信息*/
+    handleContractTabClick(tab, event) {
+
+    }
   }
 }
 </script>
@@ -449,10 +511,19 @@ export default {
   position: relative;
 }
 
-
 .tabStatus {
   position: absolute;
   top: 10px;
+  left: 300px;
+  width: 80px;
+  height: 20px;
+  text-align: center;
+  color: #F79B22;
+}
+
+.contractStatusStyle{
+  position: absolute;
+  top: 90px;
   left: 300px;
   width: 80px;
   height: 20px;
