@@ -387,7 +387,8 @@ export default {
     // 已撤回、审核未通过、提交人、管理员
     btnDelete() {
       let status = this.formData.contractStatus;
-      return (status === 2 || status === 4)
+      let rbtn = this.formData.returnButton;
+      return (status === 2 || status === 4) && rbtn === 1;
     }
   },
   watch:{
