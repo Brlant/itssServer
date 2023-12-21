@@ -105,13 +105,13 @@
         </el-row>
         <!--        第六行-->
         <el-row>
-          <el-col :span="24">
+          <el-col :span="8">
             <el-form-item label="合同续签"
               prop="renewalFlag">
-              <el-radio-group v-model="formData.renewalFlag">
-                <el-radio :label="0">不续签</el-radio>
-                <el-radio :label="1">续签</el-radio>
-              </el-radio-group>
+              <el-select v-model="formData.renewalFlag">
+                <el-option :value="1" label="续签"></el-option>
+                <el-option :value="0" label="不续签"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
