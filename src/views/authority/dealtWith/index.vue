@@ -36,6 +36,22 @@
           />
         </el-select>
       </el-form-item>
+
+      <el-form-item prop="promoterId">
+        <el-select v-model="queryParams.promoterId"
+                   remote
+                   clearable
+                   filterable
+                   :remote-method="getUserList"
+                   placeholder="发起人">
+          <el-option
+            v-for="item in createList"
+            :key="item.value"
+            :value="item.value"
+            :label="item.label"
+          />
+        </el-select>
+      </el-form-item>
       <!--搜索重置-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="getDealtWithList">搜索</el-button>
@@ -48,12 +64,12 @@
       <el-table-column label="流程名称" align="center" prop="modelName"/>
       <el-table-column label="档案/单据编号" align="center" prop="relationCode"/>
       <el-table-column label="档案/单据名称" align="center" prop="relationName"/>
-      <el-table-column label="发起人" align="center" prop="reviewedId">
-        <template slot-scope="scope">
-          <div v-if="scope.row.reviewedId === queryParams.reviewedId">
-            {{ queryParams.remark }}
-          </div>
-        </template>
+      <el-table-column label="发起人" align="center" prop="promoterName">
+<!--        <template slot-scope="scope">-->
+<!--          <div v-if="scope.row.reviewedId === queryParams.reviewedId">-->
+<!--            {{ queryParams.remark }}-->
+<!--          </div>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column label="申请时间" align="center" prop="applyTime"/>
       <el-table-column label="状态" align="center" prop="examineStatus">
@@ -214,6 +230,9 @@ import filesApi from '@/api/Files/files'
 import managerInfo from '@/common/contractManager/managerInfo'
 import managerAuditInfo from '@/common/contractManager/managerAuditInfo'
 import managerOperationLog from '@/common/contractManager/managerOperationLog'
+import { queryUserlist } from '@/api/system/user'
+
+import { getContractFileList,getUserList } from '@/api/contractFilesManagement/contractFilesManagement'
 
 export default {
   name: 'index',
@@ -228,6 +247,9 @@ export default {
   },
   data() {
     return {
+      createList: [],
+
+
       detailsSupplierData: {},
       activeTab: 'fileInfo',
       // tabs: [
@@ -252,6 +274,7 @@ export default {
         modelName: '',
         remark: '',
         reviewedId: '',
+        promoterId:'',
         //分页
         total: 10,
         pageNum: 1,
@@ -259,9 +282,11 @@ export default {
         order: 'id desc'
       },
       modelNameArray: [
-        { label: '供应商档案审批流程' },
-        { label: '物品档案审批流程' },
-        { label: '合同档案审批流程' }
+        { label: '供应商审核流程' },
+        { label: '物品档案审核流程' },
+        { label: '合同档案审核流程' },
+        { label: '入库单审核流程' },
+        { label: '出库单审核流程' },
       ],
       // 我发起的表格数据
       dealtWithList: [],
@@ -336,6 +361,8 @@ export default {
     let userInfoParse = JSON.parse(userInfo)
     this.queryParams.remark = userInfoParse.remark
     this.queryParams.reviewedId = userInfoParse.userId
+
+    this.getUserList();
   },
   mounted() {
     // 通过查询参数接收参数,测试
@@ -343,6 +370,21 @@ export default {
     this.getDealtWithList()
   },
   methods: {
+    getUserList(query){
+      let params = {
+        pageNum: 1,
+        pageSize: 10,
+        nickName:query,
+      }
+      getUserList(params).then((res) => {
+        this.createList = res.rows.map(item => {
+          return {
+            value: item.userId,
+            label: item.nickName
+          }
+        })
+      })
+    },
     changeHandleTime(row) {
       if (this.queryParams.applyTime === '') {
         this.queryParams.pageSize = 1  //将页码设置为第一页
@@ -434,6 +476,7 @@ export default {
         reviewedId: this.queryParams.reviewedId,
         pageNum: this.queryParams.pageNum,
         pageSize: this.queryParams.pageSize,
+        promoterId:this.queryParams.promoterId,
         queryType: 2
       }
       getDealtWithList(params).then((res) => {
@@ -446,6 +489,7 @@ export default {
     resetQuery() {
       this.$refs.queryForm.resetFields()
       this.queryParams.applyTime = ''
+      // this.queryParams.promoterId = ''
       this.getDealtWithList()
     },
 

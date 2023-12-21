@@ -284,9 +284,11 @@ export default {
         order: 'id desc'
       },
       modelNameArray: [
-        { label: '供应商档案审批流程' },
-        { label: '物品档案审批流程' },
-        { label: '合同档案审批流程' }
+        { label: '供应商审核流程' },
+        { label: '物品档案审核流程' },
+        { label: '合同档案审核流程' },
+        { label: '入库单审核流程' },
+        { label: '出库单审核流程' },
       ],
       examineStatusArray: [
         { label: '待审核', value: 0 },

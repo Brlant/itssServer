@@ -26,7 +26,7 @@
             v-if="!scope.row.isStart && !scope.row.isEnd"
             v-model="scope.row.reviewedType"
             placeholder="请选择审批人类型"
-            @focus="focusReviewedType"
+            @change="focusReviewedType(scope.$index)"
           >
             <el-option
               v-for="(item,index) in approverTypes"
@@ -149,9 +149,10 @@ export default {
   created() {
     this.userInfo = JSON.parse(window.localStorage.getItem("user"))
     this.userId = this.userInfo.userId
+    this.remoteSearch();
   },
   mounted() {
-    this.remoteSearch();
+
   },
   methods: {
     /* 获取详情信息*/
@@ -228,13 +229,15 @@ export default {
         //   }
         // });
         let {nickName, userId} = res.data;
+        console.log( res.data)
         this.nickNameArray.push({
           nickName, userId
         })
       })
     },
-    focusReviewedType() {
-
+    focusReviewedType(index) {
+      this.tableData[index].reviewedId = ''
+      // console.log(this.tableData[index])
     }
   }
 }
