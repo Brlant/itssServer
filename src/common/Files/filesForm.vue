@@ -310,7 +310,7 @@ export default {
       this.$emit('closeAddFiles');
     },
     submitForm() {
-      this.$refs.form.validate((valid) => {
+      this.$refs.formRef.validate((valid) => {
         if (valid) {
           this.formData.nonTaxBid = this.nonTaxBid;
           filesApi.addFiles(this.formData).then(res=>{
