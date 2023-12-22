@@ -4,14 +4,14 @@ const forgotApi = {
   // 发送验证码
   sendCode: () => {
     return request({
-      url: `/validCode/captcha`,
+      url: `/system/validCode/captcha`,
       method: 'get',
     });
   },
   //获取邮箱
   getEmail: (data) => {
     return request({
-      url: `/validCode/getValidCode`,
+      url: `/system/validCode/getValidCode`,
       method: 'post',
       data
     });
@@ -19,7 +19,7 @@ const forgotApi = {
   //校验
   checkEmail: (data) => {
     return request({
-      url: `/user/profile/updatePwdByForget`,
+      url: `/system/user/profile/updatePwdByForget`,
       method: 'post',
       data
     });

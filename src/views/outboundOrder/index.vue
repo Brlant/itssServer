@@ -2,31 +2,46 @@
   <div class="app-container">
     <el-row>
       <!--      输入框-->
-      <el-col :span="18">
+      <el-col >
         <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch"
                  label-width="68px">
           <!--      订单编号-->
-          <el-form-item prop="num">
+          <el-form-item prop="pmsOrderNo">
             <el-input
               prefix-icon="el-icon-search"
-              v-model="queryParams.num"
+              v-model="queryParams.pmsOrderNo"
               placeholder="订单编号"
               clearable
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
+
           <!--     时间搜索 -->
-          <el-form-item prop="recv_time">
-            <el-date-picker
-              v-model="queryParams.recv_time"
-              style="width: 300px"
-              value-format="yyyy-MM-dd"
-              type="daterange"
-              range-separator="-"
-              start-placeholder="请选择开始时间"
-              end-placeholder="请选择结束时间"
-            ></el-date-picker>
-          </el-form-item>
+            <el-form-item prop="rangeDate">
+              <el-date-picker
+                style="width: 100%"
+                v-model="queryParams.rangeDate"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                type="datetimerange"
+                :default-time="['00:00:00', '23:59:59']"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+              ></el-date-picker>
+            </el-form-item>
+
+            <!-- 订单类型-->
+            <el-form-item prop="orderBizType">
+              <el-select v-model="queryParams.orderBizType" placeholder="请选择入库单类型" clearable>
+                <el-option
+                  v-for="item in orderBizTypes"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+
+
           <!--      申请部门-->
           <el-form-item prop="house_id">
             <el-select v-model="queryParams.house_id" placeholder="申请部门" clearable>
@@ -88,7 +103,7 @@
       </el-button>
     </el-row>
     <!--    查询表格-->
-    <el-table v-loading="loading" :data="filteredData" style="width: 100%">
+    <el-table v-loading="loading" :data="tableData" style="width: 100%">
       <el-table-column type="index" label="序号"></el-table-column>
       <el-table-column prop="name" label="订单编号"></el-table-column>
       <el-table-column prop="orderType" label="订单类型"></el-table-column>
@@ -201,70 +216,11 @@ export default {
         {text: "已取消", status: "disabled"},
       ],
       activeFilterIndex: 0,
-      tableData: [
-        {
-          name: "项目A",
-          orderType: "国有",
-          orderItems: "私有",
-          applicant: "郑浩",
-          applicationDepartment: "研发部",
-          applicationDate: "2023/12/07",
-          status: "pending"
-        },
-        {
-          name: "项目B",
-          orderType: "国有",
-          orderItems: "私有",
-          applicant: "郑浩",
-          applicationDepartment: "研发部",
-          applicationDate: "2023/12/07",
-          status: "processing"
-        },
-        {
-          name: "项目C",
-          orderType: "国有",
-          orderItems: "私有",
-          applicant: "郑浩",
-          applicationDepartment: "研发部",
-          applicationDate: "2023/12/07",
-          status: "rejected"
-        },
-        {
-          name: "项目D",
-          orderType: "国有",
-          orderItems: "私有",
-          applicant: "郑浩",
-          applicationDepartment: "研发部",
-          applicationDate: "2023/12/07",
-          status: "revoked"
-        },
-        {
-          name: "项目E",
-          orderType: "国有",
-          orderItems: "私有",
-          applicant: "郑浩",
-          applicationDepartment: "研发部",
-          applicationDate: "2023/12/07",
-          status: "enabled"
-        },
-        {
-          name: "项目F",
-          orderType: "国有",
-          orderItems: "私有",
-          applicant: "郑浩",
-          applicationDepartment: "研发部",
-          applicationDate: "2023/12/07",
-          status: "disabled"
-        },
-        {
-          name: "项目G",
-          orderType: "国有",
-          orderItems: "私有",
-          applicant: "郑浩",
-          applicationDepartment: "研发部",
-          applicationDate: "2023/12/07",
-          status: "obsolete"
-        },
+      tableData: [],
+      orderBizTypes: [
+        {label: '采购入库', value: '1-0'},
+        {label: '盘盈入库', value: '1-2'},
+        {label: '领用入库', value: '1-4'},
       ],
     }
   },
@@ -275,13 +231,6 @@ export default {
 
   },
   computed: {
-    filteredData() {
-      const activeFilter = this.filters[this.activeFilterIndex];
-      if (!activeFilter.status) {
-        return this.tableData;
-      }
-      return this.tableData.filter((item) => item.status === activeFilter.status);
-    },
     switchType() {
       return this.filters.map((filter) => {
         return {
