@@ -307,8 +307,10 @@ export default {
       this.formData.orderDetailList.splice(index, 1);
     },
     calculateTotal(row) {
-      row.totalTaxBid = row.taxBid * row.taxRate * row.amount;
-      row.nonTotalTaxBid = row.nonTaxBid * row.taxRate * row.amount;
+      // row.totalTaxBid = row.taxBid * row.taxRate * row.amount;
+      row.totalTaxBid = row.taxBid * row.amount;
+      // row.nonTotalTaxBid = row.nonTaxBid * row.taxRate * row.amount;
+      row.nonTotalTaxBid = row.nonTaxBid * row.amount;
     },
     submitForm() {
       this.$refs.form.validate((valid) => {

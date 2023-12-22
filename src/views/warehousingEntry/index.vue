@@ -147,7 +147,7 @@
       <el-table-column prop="totalGoodsName" label="订单物品"></el-table-column>
       <el-table-column prop="orderTotalAmount" label="订单总金额"></el-table-column>
       <el-table-column prop="applyName" label="发起人"></el-table-column>
-      <el-table-column prop="applicationDepartment" label="发起部门"></el-table-column>
+      <el-table-column prop="applyDepartName" label="发起部门"></el-table-column>
       <el-table-column prop="applyDate" label="发起日期"></el-table-column>
       <el-table-column prop="paymentFlag" label="是否已付款">
         <template v-slot="{ row }">

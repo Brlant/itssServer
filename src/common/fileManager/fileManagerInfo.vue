@@ -236,7 +236,7 @@
         </el-button>
         <el-button
                    icon="el-icon-edit"
-                   v-show="formData.goodsStatus === 2 || formData.goodsStatus === 4"
+                   v-show="formData.goodsStatus === 2 || formData.goodsStatus === 3 || formData.goodsStatus === 4"
                    @click="submitForm"
         >重新提交
         </el-button>
@@ -322,7 +322,7 @@ export default {
   },
   computed: {
     readonly() {
-      return !(this.formData.goodsStatus === 2
+      return !(this.formData.goodsStatus === 2 || this.formData.goodsStatus === 3
         || this.formData.goodsStatus === 4)
     },
     attachmentInfos() {

@@ -6,8 +6,18 @@
     <el-table v-loading="detailsLoading" :data="detailsDataList">
       <el-table-column label="序号" align="serialNumber" prop="serialNumber"></el-table-column>
       <el-table-column label="节点名称" align="center" prop="modelNode" />
-      <el-table-column label="审批人类型" align="center" prop="reviewedType" />
-      <el-table-column label="审批人" align="center" prop="reviewedName" />
+      <el-table-column label="审批人类型" align="center" prop="reviewedType" >
+        <template v-slot="{ row }">
+          <span v-if="row.reviewedType === null">/</span>
+          <span v-else>{{row.reviewedType}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="审批人" align="center" prop="reviewedName" >
+        <template v-slot="{ row }">
+          <span v-if="row.reviewedName === null">/</span>
+          <span v-else>{{row.reviewedName}}</span>
+        </template>
+      </el-table-column>
     </el-table>
   </el-dialog>
 </template>

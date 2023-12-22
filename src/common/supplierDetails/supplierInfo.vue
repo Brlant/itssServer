@@ -148,9 +148,9 @@
             <el-row v-for="(attachment, index) in formData.businessInfo.attachmentInfos" :key="index">
               <el-col :span="9">
                 <div style="border: 1px lightgrey solid; padding: 0 10px;height: 36px">
-                  <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 325px;
+                  <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;
                   display: inline-block;" :title="attachment.name">
-                    {{ attachment.name }}
+                    {{ attachment.attachmentPath.split('/').pop() }}
                   </div>
                   <div style="float: right;">
                     <!--下载附件-->
@@ -525,7 +525,7 @@ export default {
       })
     },
     enableSupplier(supplierId, status) {
-      this.$confirm('是否确定启用?', '二次确认', {
+      this.$confirm('是否确定?', '二次确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

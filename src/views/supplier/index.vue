@@ -445,6 +445,7 @@ export default {
     },
     closeHandlerInfo(){
       this.dialogDetailsSupplierDialog = false;
+      this.getSupplierList();
     },
     importSuccessHandler(file) {
       let formData = new FormData()

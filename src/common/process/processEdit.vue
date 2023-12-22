@@ -42,6 +42,11 @@
       <el-table-column label="审批人">
 
           <template slot-scope="scope" >
+
+
+            <div v-if="scope.row.reviewedName === null">
+              /
+            </div>
 <!--            上级领导-->
             <div v-if="scope.row.reviewedType === '上级领导'">
               <el-select

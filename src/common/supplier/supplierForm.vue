@@ -140,9 +140,9 @@
               <el-row v-for="(attachment, index) in formData.businessInfo.attachmentInfos" :key="index">
                 <el-col :span="9">
                   <div style="border: 1px lightgrey solid; padding: 0 10px;height: 36px">
-                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 325px;
+                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width:auto;
                   display: inline-block;" :title="attachment.name">
-                      {{ attachment.name }}
+                      {{ attachment.name }}…
                     </div>
                     <div style="float: right;">
                       <!--下载附件-->
@@ -196,8 +196,8 @@
         <el-row :gutter="20">
           <el-col :span="5">
             <el-form-item :label="'联系人' + (index + 1)" :prop="'contactsInfoList.' + index +'.contactsName'"
-                          :rules="[{ required: true, message: '请输入手机号', trigger: 'blur' }]">
-              <el-input v-model="contact.contactsName" placeholder="请输入联系人姓名"></el-input>
+                          :rules="[{ required: true, message: '请输入联系人', trigger: 'blur' }]">
+              <el-input v-model="contact.contactsName" placeholder="请输入联系人"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">
@@ -311,7 +311,7 @@ export default {
       formRules: {
         supplierName: [{required: true, message: '请输入供应商名称', trigger: 'blur'}],
         supplierDate: [{required: true, message: '请选择供应商日期', trigger: 'change'}],
-        supplierAddress: [{required: true, message: '请输入办公室地址', trigger: 'blur'}],
+        supplierAddress: [{required: true, message: '请输入办公地址', trigger: 'blur'}],
         warehouseAddress: [{required: true, message: '请输入仓库地址', trigger: 'blur'}],
         //工商信息
         // legalPerson: [{required: true, message: '请输入法人', trigger: 'blur'}],
@@ -450,10 +450,11 @@ export default {
       return true
     },
     handleAttachmentSuccess(response, file) {
+      console.log(response,'基本信息')
       // 附件上传成功后的处理
       this.formData.businessInfo.attachmentInfos.push({
         attachmentId: '',
-        name: response.data.name,
+        name: response.data.name.slice(0, 10),
         attachmentPath: response.data.url,
         attachmentFileName: '',
         attachmentValidityDate: '',
