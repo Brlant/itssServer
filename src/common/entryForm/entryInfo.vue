@@ -196,12 +196,16 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="jiBenXinXi" v-show="formData.orderType===0 && formData.pmsOrderStatus === 3">
+      收货信息
+    </div>
     <!-- 提交按钮 -->
     <el-form-item style="margin-top: 22px">
       <el-button
         class="pull-right"
         type="danger"
-        v-show="formData.returnButton && formData.pmsOrderStatus !== 7"
+        v-has-permi="['pms:order:cancel']"
+        v-show="formData.pmsOrderStatus !== 7"
         @click="cancelOrder"
       >取消订单
       </el-button>
@@ -300,7 +304,7 @@ export default {
         applyDepartName: '',
         applyName: '',
         applyUserId: '',
-        orderType: '',
+        orderType: '0',
         pmsOrderStatus: '',
         applyDate: '',
         // 预算类型
@@ -408,7 +412,7 @@ export default {
       editOrderInfo(params).then(res => {
         if (res.code === 200) {
           this.$message.success('编辑成功')
-          this. this.$emit('closeOrderDetail')()
+          this.this.$emit('closeOrderDetail')()
         } else {
           this.$message.error(res.msg)
         }
@@ -421,7 +425,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteSupplier(this.formData.supplierId).then((res) => {
+        cancelOrderInfo(this.formData.pmsOrderId,0).then((res) => {
           this.$message({
             type: 'success',
             message: '取消订单成功'

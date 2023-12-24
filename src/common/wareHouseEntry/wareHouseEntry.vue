@@ -108,8 +108,7 @@
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
               <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%;"
-                         filterable
-                         @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
+                         filterable>
                 <el-option v-for="option in typeOptions" :key="option.value" :label="option.label"
                            :value="option.value"></el-option>
               </el-select>

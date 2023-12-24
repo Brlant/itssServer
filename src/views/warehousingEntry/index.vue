@@ -164,7 +164,6 @@
           <span v-if="row.pmsOrderStatus === 3" style="color: #F79B22">待收货</span>
           <span v-if="row.pmsOrderStatus === 4" style="color: black">已撤回</span>
           <span v-if="row.pmsOrderStatus === 5" style="color: black">已取消</span>
-          <span v-if="row.pmsOrderStatus === 6" style="color: black">已淘汰</span>
           <span v-if="row.pmsOrderStatus === 7" style="color: green">已完成</span>
         </template>
       </el-table-column>
@@ -203,7 +202,6 @@
             <span v-if="activeStatus === 3" style="color: #F79B22">待收货</span>
             <span v-if="activeStatus === 4" style="color: black">已撤回</span>
             <span v-if="activeStatus === 5" style="color: black">已取消</span>
-            <span v-if="activeStatus === 6" style="color: black">已淘汰</span>
             <span v-if="activeStatus === 7" style="color: green">已完成</span>
           </div>
         </div>
@@ -312,14 +310,6 @@ export default {
         limit: 10
       },
       //切换按钮
-      //   AUDIT(0, "待审核"),
-      // IN_REVIEW(1, "审核中"),
-      //   REVIEW_FAILED(2, "审核未通过"),
-      //   WAIT_RECEIVE(3, "待收货"),
-      //   WITHDRAWN(4, "已撤回"),
-      //   CANCELED(5, "已取消"),
-      //   ELIMINATED(6, "已淘汰"),
-      //   COMPLETED(7, "已完成");
       filters: [
         {text: "全部", status: ''},
         {text: "待审核", status: 0},
