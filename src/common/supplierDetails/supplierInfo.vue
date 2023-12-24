@@ -32,7 +32,13 @@
       <el-col :span="8">
         <el-form-item label="营业执照有效期" prop="validityDate"
                       :rules="[{required: true, message: '请选择有效期', trigger: 'blur'}]">
-          <el-date-picker v-model="formData.validityDate" type="date" :readonly="readonly"></el-date-picker>
+          <el-date-picker
+            v-model="formData.validityDate"
+            type="date"
+            placeholder="选择有效期"
+            value-format="yyyy-MM-dd"
+            :readonly="readonly">
+          </el-date-picker>
         </el-form-item>
       </el-col>
     </el-row>
@@ -71,6 +77,7 @@
         <el-form-item label="公司成立时间" prop="businessInfo.foundingDate"
                       :rules="[{ required: true, message: '请选择公司成立时间', trigger: 'blur' }]">
           <el-date-picker v-model="formData.businessInfo.foundingDate" type="date"
+                          value-format="yyyy-MM-dd"
                           :readonly="readonly"></el-date-picker>
         </el-form-item>
       </el-col>
@@ -154,14 +161,14 @@
                   </div>
                   <div style="float: right;">
                     <!--下载附件-->
-<!--                    <a :href="attachment.attachmentPath"-->
-<!--                       :download="attachment.attachmentFileName"-->
-<!--                       class="el-icon-download el-icon&#45;&#45;right"-->
-<!--                       title="下载附件"-->
-<!--                       style="margin-right: 10px"></a>-->
-                                          <a @click.prevent="downloadAttachment(attachment.attachmentPath,attachment.attachmentFileName)"
-                                             class="el-icon-download el-icon--right"
-                                             style="margin-right: 10px"></a>
+                    <!--                    <a :href="attachment.attachmentPath"-->
+                    <!--                       :download="attachment.attachmentFileName"-->
+                    <!--                       class="el-icon-download el-icon&#45;&#45;right"-->
+                    <!--                       title="下载附件"-->
+                    <!--                       style="margin-right: 10px"></a>-->
+                    <a @click.prevent="downloadAttachment(attachment.attachmentPath,attachment.attachmentFileName)"
+                       class="el-icon-download el-icon--right"
+                       style="margin-right: 10px"></a>
                     <!--删除附件-->
                     <a href="#" class="el-icon-delete el-icon--right"
                        title="删除附件"
@@ -261,7 +268,7 @@
       </el-button>
       <el-button v-has-permi="['pms:supplier:edit']"
                  icon="el-icon-edit"
-                 v-show="formData.supplierStatus === 2 || formData.supplierStatus === 3 || formData.supplierStatus === 4"
+                 v-show="!readonly"
                  @click="submitForm"
       >重新提交
       </el-button>
@@ -277,8 +284,7 @@
                  @click="auditNoPass"
       >审核不通过
       </el-button>
-      <el-button v-has-permi="['pms:supplier:edit']"
-                 v-show="formData.supplierStatus === 0 || formData.supplierStatus === 1"
+      <el-button v-show="formData.returnButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
                  type="danger"
                  @click="revocation"
       >撤回
@@ -290,6 +296,7 @@
 <script>
 import supplierApi from '@/api/supplier/supplier'
 import {resetUserPwd} from '@/api/system/user'
+import {notEmpty} from '../../../plop-templates/utils'
 
 export default {
   name: "supplierInfo",
@@ -589,6 +596,7 @@ export default {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
         closeOnClickModal: false,
+        inputValidator: value => !!value,
         inputErrorMessage: "原因不能为空"
       }).then(({value}) => {
         let params = {

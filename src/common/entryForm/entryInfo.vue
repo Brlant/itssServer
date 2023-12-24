@@ -8,7 +8,7 @@
     <el-row :gutter="20">
       <el-col :span="6">
         <el-form-item label="订单编号" prop="pmsOrderNo" required>
-          <el-input v-model="formData.pmsOrderNo" placeholder="请选择入订单编号" disabled></el-input>
+          <el-input v-model="formData.pmsOrderNo" placeholder="请选择入库单编号" disabled></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="6">
@@ -96,8 +96,12 @@
             <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                        filterable :disabled="readonly"
                        @change="getGoodsList(scope.row.supplierId,scope.$index)">
-              <el-option v-for="(option,index) in supplierOptions" :key="option.value" :label="option.label"
-                         :value="option.value"></el-option>
+              <el-option v-for="(option,index) in supplierOptions" :key="option.supplierId"
+                         :label="option.supplierName"
+                         :value="option.supplierId+'__'+option.supplierName" :title="isOverDate(option.validityDate)">
+                <span style="float: left">{{ option.supplierName }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ option.supplierCode }}</span>
+              </el-option>
             </el-select>
           </el-form-item>
         </template>
@@ -167,7 +171,7 @@
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
                         style="margin-top: 22px"
-                        :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,  message: '数量必须大于0（正整数）', trigger: 'blur'}]">
+                        :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
             <el-input @input="calculateTotal(scope.row)"
                       v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
           </el-form-item>
@@ -195,55 +199,39 @@
     <!-- 提交按钮 -->
     <el-form-item style="margin-top: 22px">
       <el-button
-        v-show="formData.supplierStatus === 5"
-        icon="el-icon-delete"
-        @click="enableSupplier(formData.supplierId, 3)"
-      >启用
-      </el-button>
-      <el-button
-        v-show="formData.supplierStatus === 3"
-        icon="el-icon-delete"
-        @click="enableSupplier(formData.supplierId, 5)"
-      >停用
-      </el-button>
-      <el-button
-        v-show="formData.supplierStatus === 5 || formData.supplierStatus === 3"
-        icon="el-icon-delete"
-        @click="enableSupplier(formData.supplierId, 6)"
-      >淘汰
-      </el-button>
-      <el-button
-        v-show="formData.returnButton && (formData.supplierStatus === 2 || formData.supplierStatus === 4)"
-        icon="el-icon-delete"
-        @click="handleDelete"
-      >删除
+        class="pull-right"
+        type="danger"
+        v-show="formData.returnButton && formData.pmsOrderStatus !== 7"
+        @click="cancelOrder"
+      >取消订单
       </el-button>
       <el-button icon="el-icon-edit"
-                 v-show="formData.supplierStatus === 2 || formData.supplierStatus === 3 || formData.supplierStatus === 4"
+                 v-show="!readonly"
                  @click="submitForm"
       >重新提交
       </el-button>
       <el-button type="success"
-                 v-show="formData.examineButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
+                 v-show="formData.examineButton && (formData.pmsOrderStatus === 0 || formData.pmsOrderStatus === 1)"
                  @click="auditPass"
       >审核通过
       </el-button>
       <el-button type="danger"
-                 v-show="formData.examineButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
+                 v-show="formData.examineButton && (formData.pmsOrderStatus === 0 || formData.pmsOrderStatus === 1)"
                  @click="auditNoPass"
       >审核不通过
       </el-button>
-      <el-button v-show="formData.supplierStatus === 0 || formData.supplierStatus === 1"
-                 type="danger"
+      <el-button v-show="formData.returnButton && (formData.pmsOrderStatus === 0 || formData.pmsOrderStatus === 1)"
+                 type="primary"
                  @click="revocation"
       >撤回
       </el-button>
+      <el-button @click="goBack">返回</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
-import {getOrderDetail} from '@/api/pms/order'
+import {examineOrderInfo, getOrderDetail, editOrderInfo, confirmReceipt, cancelOrderInfo} from '@/api/pms/order'
 import request from '@/utils/request'
 
 export default {
@@ -264,9 +252,26 @@ export default {
       return this.$store.state.user.user
     },
     readonly() {
-      return !(this.formData.supplierStatus === 2
-        || this.formData.supplierStatus === 4)
+      return !(this.formData.pmsOrderStatus === 2
+        || this.formData.pmsOrderStatus === 4)
     },
+    oldStr() {
+      let {orderBizType, budgetType, orderDetailList} = this.orderDetail
+      let details = orderDetailList.map(item => {
+        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
+      }).join(',')
+      return orderBizType + '__' + budgetType + '__' + details
+    },
+    newStr() {
+      let {orderBizType, budgetType, orderDetailList} = this.formData
+      let details = orderDetailList.map(item => {
+        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
+      }).join(',')
+      return orderBizType + '__' + budgetType + '__' + details
+    },
+    needAudit() {
+      return this.oldStr != this.newStr
+    }
   },
   watch: {
     orderId: {
@@ -274,7 +279,7 @@ export default {
         if (newVal) {
           console.log('订单详情', newVal);
           // 每次重新进入订单详情后需要重新清空表单校验
-          if (this.$refs.form){
+          if (this.$refs.form) {
             this.$refs.form.clearValidate()
           }
 
@@ -318,6 +323,7 @@ export default {
         consigneeAddress: '',
         orderDetailList: [],
       },
+      orderDetail: {},
       rules: {
         applyName: [{required: true, message: '请选择发起人', trigger: 'blur'}],
         applyDepartName: [{required: true, message: '请选择发起人部门', trigger: 'blur'}],
@@ -356,17 +362,16 @@ export default {
           }
         })
 
-        if (res.data.budgetType){
+        if (res.data.budgetType) {
           let budgetType = res.data.budgetType.split("-")
-          if(budgetType.length === 3){
-            let budgetTypes = []
-            budgetTypes.push(parseInt(budgetType[0]))
-            budgetTypes.push(parseInt(budgetType[1]))
-            budgetTypes.push(parseInt(budgetType[2]))
-            res.data.budgetTypes = budgetTypes
+          let budgetTypes = []
+          for (let i = 0; i < budgetType.length; i++) {
+            budgetTypes.push(Number.parseInt(budgetType[i]))
           }
+          res.data.budgetTypes = budgetTypes
         }
 
+        this.orderDetail = JSON.parse(JSON.stringify(res.data))
         this.formData = res.data
         this.formData.orderDetailList.forEach((item, index) => {
           this.getGoodsList(item.supplierId, index)
@@ -388,40 +393,30 @@ export default {
         });
       })
     },
-    // 编辑供应商
+    // 编辑订单
     editOrder() {
+      console.log('oldStr：', this.oldStr)
+      console.log('newStr：', this.newStr)
       this.formData.changeFlag = this.needAudit
-      editOrder(this.formData).then(res => {
-        if (res.data.code === 200) {
+
+      let params = this.formData
+      params.applyDepart = this.currUser.deptId
+      params.applyDepartName = this.currUser.deptName
+      params.applyName = this.currUser.nickName
+      params.applyUserId = this.currUser.userId
+
+      editOrderInfo(params).then(res => {
+        if (res.code === 200) {
           this.$message.success('编辑成功')
-          this.closeHandlerInfo()
+          this. this.$emit('closeOrderDetail')()
         } else {
-          this.$message.error(res.data.message)
+          this.$message.error(res.msg)
         }
       })
     },
-    enableSupplier(supplierId, status) {
-      this.$confirm('是否确定启用?', '二次确认', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        let params = {
-          supplierId: supplierId,
-          supplierStatus: status,
-        }
-        enableSupplier(params).then((res) => {
-          this.$message({
-            type: 'success',
-            message: '操作成功'
-          })
-          this.closeHandlerInfo();
-        })
-      })
-    },
-    /*删除*/
-    handleDelete() {
-      this.$confirm('此操作将永久删除该供应商档案, 是否继续?', '提示', {
+    // 取消订单
+    cancelOrder() {
+      this.$confirm('此操作将取消订单, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -429,9 +424,9 @@ export default {
         deleteSupplier(this.formData.supplierId).then((res) => {
           this.$message({
             type: 'success',
-            message: '删除成功'
+            message: '取消订单成功'
           })
-          this.closeHandlerInfo();
+          this.$emit('closeOrderDetail')
         })
       })
     },
@@ -443,15 +438,16 @@ export default {
         type: 'warning'
       }).then(() => {
         let params = {
-          supplierId: this.formData.supplierId,
+          pmsOrderId: this.formData.pmsOrderId,
+          orderType: 0,
           examineType: 1,
         }
-        auditSupplier(params).then((res) => {
+        examineOrderInfo(params).then((res) => {
           this.$message({
             type: 'success',
             message: '操作成功'
           })
-          this.closeHandlerInfo();
+          this.$emit('closeOrderDetail')
         })
       })
     },
@@ -461,20 +457,23 @@ export default {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
         closeOnClickModal: false,
+        inputValidator: value => !!value,
         inputErrorMessage: "原因不能为空"
       }).then(({value}) => {
         let params = {
-          supplierId: this.formData.supplierId,
+          pmsOrderId: this.formData.pmsOrderId,
+          orderType: 0,
           examineType: 2,
           remark: value,
         }
 
-        auditSupplier(params).then((res) => {
+        examineOrderInfo(params).then((res) => {
           this.$message({
             type: 'success',
             message: '操作成功'
           })
-          this.closeHandlerInfo();
+
+          this.$emit('closeOrderDetail')
         })
       }).catch(() => {
       });
@@ -487,16 +486,18 @@ export default {
         type: 'warning'
       }).then(() => {
         let params = {
-          supplierId: this.formData.supplierId,
+          pmsOrderId: this.formData.pmsOrderId,
+          orderType: 0,
           examineType: 3
         }
 
-        auditSupplier(params).then((res) => {
+        examineOrderInfo(params).then((res) => {
           this.$message({
             type: 'success',
             message: '操作成功'
           })
-          this.closeHandlerInfo()
+
+          this.$emit('closeOrderDetail')
         })
       })
     },
@@ -538,16 +539,11 @@ export default {
     getSupplierList(keyword = '') {
       request.post('/pms/supplier/queryOverview', {
         codeNameKey: keyword,
+        supplierStatus: 3,// 只查询启用的
         pageNum: 1,
         pageSize: 1000
       }).then((res) => {
-        this.supplierOptions = res.data.rows.map(item => {
-          this.supplierMap[item.supplierId] = item.supplierName
-          return {
-            value: item.supplierId,
-            label: item.supplierName
-          }
-        });
+        this.supplierOptions = res.data.rows
       })
     },
     getBudgetTypeList(keyword = '') {
@@ -607,6 +603,12 @@ export default {
         this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * taxRate
       }
     },
+    goBack() {
+      this.$emit('closeOrderDetail')
+    },
+    isOverDate(dateStr) {
+      return this.monent(dateStr).isBefore(this.monent()) ? '已到期' : ''
+    }
   }
 }
 </script>

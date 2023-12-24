@@ -29,6 +29,8 @@ const ORDER_CONFIRM_RECEIPT = PREFIX + '/confirmReceipt'
 const ORDER_AUDIT_RECORDS = PREFIX + '/queryExamineById'
 // 查询订单的操作日志
 const ORDER_LOG_DETAILS = PREFIX + '/queryOperatorById'
+// 取消订单
+const ORDER_CANCEL = PREFIX + '/cancelOrderInfo'
 
 /**
  * 订单列表
@@ -109,18 +111,11 @@ export function queryOrderLog(orderId) {
   })
 }
 
-// 可以单个调用，也可以全部引用
-export default {
-  getOrderList,
-  getOrderDetail,
-  addPmsOrder,
-  editOrderInfo,
-  examineOrderInfo,
-  importInOrderInfo,
-  exportOrder,
-  queryStockOverview,
-  exportPmsStock,
-  confirmReceipt,
-  queryOrderAuditLog,
-  queryOrderLog
+/**
+ * 取消订单
+ * @param {string} pmsOrderId 订单id
+ * @param {string} orderType 订单类型
+ */
+export function cancelOrderInfo(pmsOrderId,orderType) {
+  return request.post(ORDER_CANCEL,{pmsOrderId,orderType})
 }

@@ -214,7 +214,8 @@
             :label="tab.label"
             :name="tab.name">
             <!-- 使用组件作为标签页内容 -->
-            <component :is="tab.component" :tabName="tabName" :orderId="currOrderId"></component>
+            <component :is="tab.component" :tabName="tabName" :orderId="currOrderId"
+                       @closeOrderDetail="closeOrderDetailHandler"></component>
           </el-tab-pane>
         </el-tabs>
       </template>
@@ -327,7 +328,6 @@ export default {
         {text: "待收货", status: 3},
         {text: "已撤回", status: 4},
         {text: "已取消", status: 5},
-        {text: "已淘汰", status: 6},
         {text: "已完成", status: 7},
       ],
       activeFilterIndex: 0,
@@ -369,17 +369,23 @@ export default {
     handleTabClick(tab, event) {
 
     },
+    // 关闭详情对话框
     closeDialog() {
-      this.tabName = null;
       this.currOrderId = ''
-      this.activeTab = "orderInfo";
       this.dialogDetailsProcessDialog = false;
+    },
+    // 关闭订单详情对话框并刷新订单列表
+    closeOrderDetailHandler() {
+      this.closeDialog()
+      this.getList()
     },
     /*查询列表内容*/
     getList() {
       let params = this.queryParams;
-      params.startDate = params.rangeDate[0]
-      params.endDate = params.rangeDate[1]
+      if (params.rangeDate && params.rangeDate.length === 2){
+        params.startDate = params.rangeDate[0]
+        params.endDate = params.rangeDate[1]
+      }
 
       this.loading = true;
       getOrderList(params).then(res => {
@@ -396,9 +402,10 @@ export default {
       this.queryParams.pageNum = 1;
       this.getList()
     },
-    pageHandler(pageNum, pageSize) {
-      this.queryParams.pageNum = pageNum;
-      this.queryParams.pageSize = pageSize;
+    pageHandler({page, limit}) {
+      this.queryParams.pageNum = page
+      this.queryParams.pageSize = limit
+
       this.getList()
     },
     /*重置*/
@@ -437,9 +444,9 @@ export default {
       exportOrder(this.queryParams)
     },
     /*关闭表单*/
-    handleEntryClose({refresh=false}) {
+    handleEntryClose({refresh = false}) {
       this.dialogAddEntry = false;
-      if (refresh){
+      if (refresh) {
         // 如果需要刷新，那么刷新列表
         this.getList()
       }
