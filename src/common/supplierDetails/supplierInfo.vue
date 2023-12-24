@@ -30,7 +30,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="8">
-        <el-form-item label="供应商有效期" prop="validityDate"
+        <el-form-item label="营业执照有效期" prop="validityDate"
                       :rules="[{required: true, message: '请选择有效期', trigger: 'blur'}]">
           <el-date-picker v-model="formData.validityDate" type="date" :readonly="readonly"></el-date-picker>
         </el-form-item>
@@ -516,7 +516,7 @@ export default {
     updateSupplier() {
       this.formData.changeFlag = this.needAudit
       supplierApi.updateSupplier(this.formData).then(res => {
-        if (res.data.code === 200) {
+        if (res.code === 200) {
           this.$message.success('编辑成功')
           this.closeHandlerInfo()
         } else {

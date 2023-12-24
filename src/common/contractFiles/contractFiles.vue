@@ -18,8 +18,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="合同编号"
-            prop="contractCode"
-            :rules="rules.contractCode">
+            prop="contractCode">
             <el-input v-model="formData.contractCode"
               maxlength="50"
               placeholder="请输入合同编号"/>
@@ -70,7 +69,8 @@
         <el-col :span="8">
           <el-form-item label="合同金额"
             prop="contractAmount">
-            <el-input v-model.number="formData.contractAmount"
+            <el-input v-model.number="formData.contractAmount" type="number"
+                      @input="changeAmount"
               placeholder="请输入合同金额"/>
           </el-form-item>
         </el-col>
@@ -129,6 +129,7 @@
               :action="uploadUrl"
               :show-file-list="false"
               :on-success="handleSuccess"
+              accept=".png,.jpg,.jpeg,application/pdf"
             >
               <el-button size="small"
                 type="primary"
@@ -161,7 +162,7 @@
       <el-form-item>
         <el-button type="primary"
           @click="submitForm">提交</el-button>
-        <el-button @click="resetForm">重置</el-button>
+        <el-button @click="closeAddFiles">返回</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -199,17 +200,17 @@ export default {
         scanningCopyUrl: null
       },
       rules: {
-        contractCode: [{required: true, message: '请输入合同编号', trigger: 'blur'}],
+        // contractCode: [{required: true, message: '请输入合同编号', trigger: 'blur'}],
         contractName:[{required: true, message: '请输入合同名称', trigger: 'blur'}],
         supplierId:[{required: true, message: '请选择供应商', trigger: 'change'}],
-        contractAmount:[
-          {required: true, message: '请输入合同金额', trigger: 'blur'},
-          {type: 'number', message: '合同金额必须是数字', trigger: 'blur'}
-        ],
+        // contractAmount:[
+        //   {required: true, message: '请输入合同金额', trigger: 'blur'},
+        //   {type: 'number', message: '合同金额必须是数字', trigger: 'blur'}
+        // ],
         signingDate:[{required: true, message: '请选择合同签订日期', trigger: 'change'}],
         dueDate:[{required: true, message: '请选择合同到期日期', trigger: 'change'}],
         contractType:[{required: true, message: '请选择合同类型', trigger: 'change'}],
-        contractSignatory:[{required: true, message: '请填写合同签署人', trigger: 'blur'}]
+        // contractSignatory:[{required: true, message: '请填写合同签署人', trigger: 'blur'}]
       },
       loadSupplier: false
     }
@@ -236,12 +237,19 @@ export default {
     }
   },
   methods:{
+    changeAmount(value){
+      const reg = /^\d*$/;
+      if (!reg.test(value)) {
+        this.formData.contractAmount = value.replace(/[^\d]/g, '');
+      }
+    },
     open() {
       this.resetForm('contractForm');
       this.querySupplier();
     },
     /*关闭弹框*/
     closeAddFiles(){
+      this.formData.scanningCopyUrl = '';
       this.$emit('closeAddFiles')
     },
     querySupplier(query) {
@@ -294,7 +302,15 @@ export default {
     // handleRemove(file, fileList) {
     //   console.log(file, fileList);
     // },
-    handleSuccess(res) {
+    handleSuccess(res,file) {
+      const isPNG = file.raw.type === 'image/png';
+      const isJPG = file.raw.type === 'image/jpeg';
+      const isPDF = file.raw.type === 'application/pdf';
+
+      if (!isPNG && !isJPG && !isPDF) {
+        this.$message.error('只能上传PNG、JPG图片或PDF文件');
+        return false;
+      }
       this.formData.scanningCopyUrl = res.data.url;
     }
   }

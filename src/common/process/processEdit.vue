@@ -189,6 +189,37 @@ export default {
       }
     },
     saveProcessEdit() {
+      for(let x in this.tableData){
+        if(this.tableData[x].modelNode === ''){
+          return this.$notify.error({
+            duration: 2000,
+            name: '失败',
+            message: '节点名称不能为空'
+          })
+        }
+      }
+
+      for(let y in this.tableData){
+        if(this.tableData[y].reviewedType === ''){
+          return this.$notify.error({
+            duration: 2000,
+            name: '失败',
+            message: '审批人类型不能为空'
+          })
+        }
+      }
+
+      for(let z in this.tableData){
+        if(this.tableData[z].reviewedId === ''){
+          return this.$notify.error({
+            duration: 2000,
+            name: '失败',
+            message: '审批人不能为空'
+          })
+        }
+      }
+
+
       for (let i in this.tableData) {
         this.tableData[i].serialNumber = Number(i) + 1;
       }

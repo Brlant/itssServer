@@ -362,6 +362,7 @@ export default {
       request.post('/pms/supplier/queryOverview', {
         codeNameKey: keyword,
         pageNum: 1,
+        supplierStatus:3,
         pageSize: 1000
       }).then((res) => {
         this.supplierOptions = res.data.rows.map(item => {
