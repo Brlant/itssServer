@@ -755,6 +755,7 @@
 //提醒消息
 import promptInfo from '@/common/promptInfo/promptInfo'
 import { queryByContractId } from '@/api/contractFilesManagement/contractFilesManagement'
+import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 export default {
   components: {
     promptInfo,
@@ -768,12 +769,33 @@ export default {
       promptInfoForm: false,
       // 版本号
       version: "3.6.0",
+      reviewedId:'',
     };
   },
   created() {
     this.getQueryByContractId();
+    this.getDealtWith();
+    let userInfo = window.localStorage.getItem('user')
+    let userInfoParse = JSON.parse(userInfo)
+    this.reviewedId = userInfoParse.userId
   },
   methods: {
+    getDealtWith() {
+      const params =
+        {
+          key: "",
+          modelName: "",
+          reviewedId: this.reviewedId,
+          pageNum: 1,
+          pageSize: 10,
+          promoterId: "",
+          queryType: 2
+        }
+      getDealtWithList(params).then((res) => {
+        window.sessionStorage.setItem('total', res.data.total)
+        // this.$store.commit("SET_TOTAL", res.data.total);
+      })
+    },
     /* 关闭消息提醒 */
     handleClosePrompt() {
       this.promptInfoForm = false

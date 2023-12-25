@@ -130,7 +130,6 @@ import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
                 };
             },
             handleLogin() {
-
                 this.$refs.loginForm.validate(valid => {
                     if (valid) {
                     this.loading = true;
@@ -145,15 +144,6 @@ import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
                     }
                     this.$store.dispatch("Login", this.user).then(() => {
                         this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
-                        const params = {
-                          pageNum: 1,
-                          pageSize: 10,
-                          queryType: 2
-                        }
-                        getDealtWithList(params).then((res) => {
-                          window.sessionStorage.setItem('total', res.data.total)
-                          // this.$store.commit("SET_TOTAL", res.data.total);
-                        })
                     }).catch(() => {
                         this.loading = false;
                         if (this.captchaEnabled) {
