@@ -9,7 +9,7 @@
       <div class="jiBenXinXi">
         基本信息
       </div>
-      <!-- 第一行 -->
+      <!-- 第一行：订单类型 -->
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="订单类型" prop="orderBizType" :rules="rules.orderBizType">
@@ -26,7 +26,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <!-- 第二行 -->
+      <!-- 第二行：申请人、申请部门、申请日期 -->
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="申请人" prop="applyName" :rules="rules.applyName">
@@ -44,10 +44,11 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <!-- 领用出库时，展示领用人和领用部门，可以下拉选择且有联动效果：选了领用人自动带出领用部门，选了领用部门自动带出部门下的人员信息 -->
       <el-row :gutter="20">
         <el-col :span="6">
-          <el-form-item label="领用人" prop="applyName" :rules="rules.applyName" v-show="formData.orderBizType === '2-4'">
-            <el-select v-model="formData.recipientId" placeholder="发起人" clearable filterable
+          <el-form-item label="领用人" prop="applyName" :rules="rules.applyName" v-show="formData.orderBizType === '2-3'">
+            <el-select v-model="formData.recipientId" placeholder="请选择领用人" clearable filterable
                        @change="userHandler">
               <el-option
                 v-for="item in userList"
@@ -60,7 +61,7 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label="领用部门" prop="applyDepartName" :rules="rules.applyDepartName"
-                        v-show="formData.orderBizType === '2-4'">
+                        v-show="formData.orderBizType === '2-3'">
             <el-cascader
               v-model="formData.recipientDepartId"
               placeholder="请选择领用部门"
@@ -71,6 +72,7 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <!--收货信息收货信息-->
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="收货人" prop="consigneeName">
@@ -88,7 +90,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <!-- 第三行 -->
+      <!-- 预算类型&申请原由 -->
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="预算类型" prop="budgetTypes" :rules="rules.budgetTypes">
@@ -191,12 +193,12 @@
             <span>{{ scope.row.nonTaxBid }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="totalPriceWithoutTax" label="库存数量">
+        <el-table-column prop="stockNum" label="库存数量">
           <template v-slot="scope">
             <span>{{ scope.row.stockNum }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="totalPriceWithoutTax" label="可用数量">
+        <el-table-column prop="availableNum" label="可用数量">
           <template v-slot="scope">
             <span>{{ scope.row.availableNum }}</span>
           </template>
@@ -221,13 +223,13 @@
             <span>{{ scope.row.nonTotalTaxBid }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="totalPrice" label="含税售价" v-if="formData.orderBizType === '2-0'">
+        <el-table-column prop="totalPrice" label="含税售价" v-show="formData.orderBizType === '2-0'">
           <template v-slot="scope">
             <el-input v-model.number="scope.row.taxPrice" placeholder="请输入含税售价"
                       @input="calculatePrice(scope.row)"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="taxRate" label="税率" v-if="formData.orderBizType === '2-0'">
+        <el-table-column prop="taxRate" label="税率" v-show="formData.orderBizType === '2-0'">
           <template v-slot="scope">
             <el-select v-model.number="scope.row.sellingTaxRate" placeholder="请选择税率" clearable
                        @change="calculatePrice(scope.row)">
@@ -240,12 +242,12 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="totalPriceWithoutTax" label="不含税售价" v-if="formData.orderBizType === '2-0'">
+        <el-table-column prop="totalPriceWithoutTax" label="不含税售价" v-show="formData.orderBizType === '2-0'">
           <template v-slot="scope">
             <span>{{ scope.row.nonTaxPrice }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="totalPriceWithoutTax" label="毛利率" v-if="formData.orderBizType === '2-0'">
+        <el-table-column prop="totalPriceWithoutTax" label="毛利率" v-show="formData.orderBizType === '2-0'">
           <template v-slot="scope">
             <span>{{ scope.row.grossMargin }}</span>
           </template>
@@ -502,8 +504,8 @@ export default {
 
 
     },
+
     goodsChangeHandler(goodsInfo, index) {
-      // console.log(goodsInfo)
       let goodsSplit = goodsInfo.split('__')
       let goodsId = goodsSplit[0]
       let goodsCode = goodsSplit[1]
@@ -512,20 +514,39 @@ export default {
       let nonTaxBid = goodsSplit[4]
       let taxRate = Number(goodsSplit[5])
 
-      if (goodsInfo) {
-        this.formData.orderDetailList[index].goodsId = goodsId
-        this.formData.orderDetailList[index].goodsCode = goodsCode
-        this.formData.orderDetailList[index].goodsName = goodsName
-        this.formData.orderDetailList[index].taxBid = taxBid
-        this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
-        this.formData.orderDetailList[index].taxRate = taxRate
-        if (taxRate) {
-          this.formData.orderDetailList[index].taxRateName = (taxRate * 100) + '%'
-        }
+      this.formData.orderDetailList[index].goodsId = goodsId
+      this.formData.orderDetailList[index].goodsCode = goodsCode
+      this.formData.orderDetailList[index].goodsName = goodsName
+      this.formData.orderDetailList[index].taxBid = taxBid
+      this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
+      this.formData.orderDetailList[index].taxRate = taxRate
 
-        this.formData.orderDetailList[index].totalTaxBid = taxBid * taxRate
-        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * taxRate
+      if (taxRate) {
+        this.formData.orderDetailList[index].taxRateName = (taxRate * 100) + '%'
       }
+
+      this.formData.orderDetailList[index].totalTaxBid = taxBid * taxRate
+      this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * taxRate
+
+      this.queryStockCount(goodsId, index)
+    },
+    // 查询库存的数量以及可用库存
+    queryStockCount(goodsId, index = 0) {
+      // 当选择货品以后，需要查询货品的库存，按供应商id、部门id、货品id查询，返回库存数量
+      let supplierId = this.formData.orderDetailList[index].supplierId
+      let deptId = this.formData.applyDepart
+      request.get('/pms/order/queryStockAmount', {
+        params: {
+          goodsId: goodsId,
+          supplierId: supplierId,
+          deptId: deptId
+        }
+      }).then(res => {
+        let {stockId, stockNum, availableNum} = res.data
+        this.formData.orderDetailList[index].stockId = stockId
+        this.formData.orderDetailList[index].stockNum = stockNum
+        this.formData.orderDetailList[index].availableNum = availableNum
+      })
     },
     isOverDate(dateStr) {
       return this.monent(dateStr).isBefore(this.monent()) ? '已到期' : ''
