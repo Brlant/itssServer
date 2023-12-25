@@ -124,7 +124,7 @@
                          filterable
                          @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
                 <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
-                           :key="option.value"
+                           :key="option.goodsId"
                            :label="option.goodsCode"
                            :value="option.goodsId+'__'+option.goodsCode+'__'+option.goodsName+'__'+option.taxBid+'__'+option.nonTaxBid+'__'+option.taxRate"
                 ></el-option>
@@ -141,7 +141,7 @@
                          filterable
                          @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
                 <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
-                           :key="option.value"
+                           :key="option.goodsId"
                            :label="option.goodsName"
                            :value="option.goodsId+'__'+option.goodsCode+'__'+option.goodsName+'__'+option.taxBid+'__'+option.nonTaxBid+'__'+option.taxRate"
                 ></el-option>

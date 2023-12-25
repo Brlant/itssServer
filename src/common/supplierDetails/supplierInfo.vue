@@ -161,14 +161,15 @@
                   </div>
                   <div style="float: right;">
                     <!--下载附件-->
-                    <!--                    <a :href="attachment.attachmentPath"-->
-                    <!--                       :download="attachment.attachmentFileName"-->
-                    <!--                       class="el-icon-download el-icon&#45;&#45;right"-->
-                    <!--                       title="下载附件"-->
-                    <!--                       style="margin-right: 10px"></a>-->
-                    <a @click.prevent="downloadAttachment(attachment.attachmentPath,attachment.attachmentFileName)"
-                       class="el-icon-download el-icon--right"
-                       style="margin-right: 10px"></a>
+                                        <a :href="attachment.attachmentPath"
+                                           target="_blank"
+                                           :download="attachment.attachmentFileName"
+                                           class="el-icon-download el-icon--right"
+                                           title="下载附件"
+                                           style="margin-right: 10px"></a>
+                    <!--<a @click.prevent="downloadAttachment(attachment.attachmentPath,attachment.attachmentFileName)"-->
+                    <!--   class="el-icon-download el-icon&#45;&#45;right"-->
+                    <!--   style="margin-right: 10px"></a>-->
                     <!--删除附件-->
                     <a href="#" class="el-icon-delete el-icon--right"
                        title="删除附件"
@@ -296,7 +297,7 @@
 <script>
 import supplierApi from '@/api/supplier/supplier'
 import {resetUserPwd} from '@/api/system/user'
-import {notEmpty} from '../../../plop-templates/utils'
+import {download} from '@/utils/request'
 
 export default {
   name: "supplierInfo",
@@ -708,7 +709,16 @@ export default {
       })
     },
     downloadAttachment(src, fileName) {
-      this.download(src, fileName)
+      let $a = document.createElement('a');
+      $a.setAttribute('href', src);
+      $a.setAttribute('download', fileName);
+      let fileLink = document.createElement('span');
+      fileLink.setAttribute('style', 'cursor: pointer; -webkit-tap-highlight-color: transparent');
+      $a.appendChild(fileLink);
+      let body = document.getElementsByTagName('body')[0];
+      body.appendChild($a);
+      fileLink.click();
+      body.removeChild($a);
     },
     deleteAttachment(index) {
       this.$confirm('此操作将永久删除该附件, 是否继续?', '提示', {
