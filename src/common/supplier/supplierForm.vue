@@ -24,7 +24,12 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="营业执照有效期" prop="validityDate" :rules="[{required: true, message: '请选择有效期', trigger: 'blur'}]">
-            <el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="formData.validityDate" type="date"></el-date-picker>
+            <el-date-picker
+              v-model="formData.validityDate"
+              type="date"
+              placeholder="选择有效期"
+              value-format="yyyy-MM-dd">
+            </el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -63,7 +68,7 @@
           <el-form-item label="公司成立时间" prop="businessInfo.foundingDate"
                         :rules="[{ required: true, message: '请选择公司成立时间', trigger: 'blur' }]">
             <el-date-picker
-              value-format="yyyy-MM-dd HH:mm:ss"
+              value-format="yyyy-MM-dd"
               v-model="formData.businessInfo.foundingDate"
               type="date"></el-date-picker>
           </el-form-item>

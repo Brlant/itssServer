@@ -92,8 +92,12 @@
               <el-select v-model="scope.row.supplier" placeholder="请选择供应商名称"
                          filterable
                          @change="getGoodsList(scope.row.supplier,scope.$index)">
-                <el-option v-for="(option,index) in supplierOptions" :key="option.value" :label="option.label"
-                           :value="option.value+'__'+option.label"></el-option>
+                <el-option v-for="(option,index) in supplierOptions" :key="option.supplierId"
+                           :label="option.supplierName"
+                           :value="option.supplierId+'__'+option.supplierName" :title="isOverDate(option.validityDate)">
+                  <span style="float: left">{{ option.supplierName }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ option.supplierCode }}</span>
+                </el-option>
               </el-select>
             </el-form-item>
           </template>
@@ -104,8 +108,7 @@
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
               <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%;"
-                         filterable
-                         @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
+                         filterable>
                 <el-option v-for="option in typeOptions" :key="option.value" :label="option.label"
                            :value="option.value"></el-option>
               </el-select>
@@ -165,7 +168,7 @@
           <template v-slot="scope">
             <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
                           style="margin-top: 22px"
-                          :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,  message: '数量必须大于0（正整数）', trigger: 'blur'}]">
+                          :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
               <el-input @input="calculateTotal(scope.row)"
                         v-model.number="scope.row.amount" placeholder="请输入数量"></el-input>
             </el-form-item>
@@ -273,7 +276,7 @@ export default {
     /*关闭弹框*/
     handleEntryClose() {
       this.$refs.form.resetFields()
-      this.$emit('handleEntryClose',{refresh:true})
+      this.$emit('handleEntryClose', {refresh: true})
     },
     /*订单明细表格函数*/
     addRow() {
@@ -362,15 +365,10 @@ export default {
       request.post('/pms/supplier/queryOverview', {
         codeNameKey: keyword,
         pageNum: 1,
-        supplierStatus:3,
+        supplierStatus: 3,
         pageSize: 1000
       }).then((res) => {
-        this.supplierOptions = res.data.rows.map(item => {
-          return {
-            value: item.supplierId,
-            label: item.supplierName
-          }
-        });
+        this.supplierOptions = res.data.rows
       })
     },
     getBudgetTypeList(keyword = '') {
@@ -434,6 +432,9 @@ export default {
         this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * taxRate
       }
     },
+    isOverDate(dateStr) {
+      return this.monent(dateStr).isBefore(this.monent()) ? '已到期' : ''
+    }
   },
   computed: {
     // 当前登录用户
@@ -476,7 +477,7 @@ export default {
           orderDetailList: [],
         }
 
-        if(this.$refs.form){
+        if (this.$refs.form) {
           this.$refs.form.clearValidate()
         }
 
