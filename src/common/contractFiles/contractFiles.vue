@@ -257,6 +257,7 @@ export default {
       supplierApi.getSupplierList({
         codeNameKey: query,
         pageNum: 1,
+        supplierStatus:3,
         pageSize: 10
       }).then(res => {
         if (res.code === 200) {

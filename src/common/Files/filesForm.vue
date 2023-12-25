@@ -293,6 +293,7 @@ export default {
         codeNameKey: query,
         pageNum: 1,
         pageSize: 1000,
+        supplierStatus:3,
       }
       supplierApi.getSupplierList(params).then((res) => {
         this.supplierList = res.data.rows.map(item => {
