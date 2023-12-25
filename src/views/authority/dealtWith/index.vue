@@ -270,7 +270,7 @@ export default {
       // 查询参数
       queryParams: {
         key: '',
-        applyTime: '',
+        applyTime: [],
         modelName: '',
         remark: '',
         reviewedId: '',
