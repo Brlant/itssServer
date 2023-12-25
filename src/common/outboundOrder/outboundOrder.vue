@@ -151,7 +151,7 @@
                          filterable
                          @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
                 <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
-                           :key="option.value"
+                           :key="option.goodsId"
                            :label="option.goodsCode"
                            :value="option.goodsId+'__'+option.goodsCode+'__'+option.goodsName+'__'+option.taxBid+'__'+option.nonTaxBid+'__'+option.taxRate"
                 ></el-option>
@@ -168,7 +168,7 @@
                          filterable
                          @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
                 <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
-                           :key="option.value"
+                           :key="option.goodsId"
                            :label="option.goodsName"
                            :value="option.goodsId+'__'+option.goodsCode+'__'+option.goodsName+'__'+option.taxBid+'__'+option.nonTaxBid+'__'+option.taxRate"
                 ></el-option>
@@ -229,7 +229,8 @@
         </el-table-column>
         <el-table-column prop="taxRate" label="税率" v-if="formData.orderBizType === '2-0'">
           <template v-slot="scope">
-            <el-select v-model.number="scope.row.taxRate" placeholder="请选择税率" clearable @change="calculatePrice(scope.row)">
+            <el-select v-model.number="scope.row.sellingTaxRate" placeholder="请选择税率" clearable
+                       @change="calculatePrice(scope.row)">
               <el-option
                 v-for="(item,index) in taxRateList"
                 :key="index"
@@ -344,11 +345,11 @@ export default {
       userList: [],
       //税率
       taxRateList: [
-        {label: '1%', value: "0.01"},
-        {label: '3%', value: "0.03"},
-        {label: '6%', value: "0.06"},
-        {label: '12%', value: "0.12"},
-        {label: '15%', value: "0.15"},
+        {label: '1%', value: 0.01},
+        {label: '3%', value: 0.03},
+        {label: '6%', value: 0.06},
+        {label: '12%', value: 0.12},
+        {label: '15%', value: 0.15},
       ],
     }
   },
@@ -404,7 +405,7 @@ export default {
         }
         if (taxBid) {
           // 毛利率：系统自动计算，毛利率=（含税售价-含税进价）÷含税售价
-          row.grossMargin = ((taxPrice - Number(taxBid)) / taxPrice*100).toFixed(2) + '%';
+          row.grossMargin = ((taxPrice - Number(taxBid)) / taxPrice * 100).toFixed(2) + '%';
         }
       }
 

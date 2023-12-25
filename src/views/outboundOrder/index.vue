@@ -198,7 +198,7 @@ import boundAuditInfo from "@/common/outBoundForm/boundAuditInfo";
 import boundInfo from "@/common/outBoundForm/boundInfo";
 import boundOperationLog from "@/common/outBoundForm/boundOperationLog";
 
-import {getOrderList, importInOrderInfo, exportOrder, downloadOrderTemplate} from "@/api/pms/order";
+import {getOrderList, importInOrderInfo, exportOutOrder, downloadOrderTemplate} from "@/api/pms/order";
 import {queryUserlist} from "@/api/system/user";
 import {treeselect} from "@/api/system/dept";
 
@@ -372,7 +372,7 @@ export default {
       this.dialogAdd = true;
     },
     exportOrder() {
-      exportOrder(this.queryParams)
+      exportOutOrder(this.queryParams)
     },
     /*关闭表单*/
     handleEntryClose({refresh = false}) {

@@ -73,9 +73,14 @@ export function importInOrderInfo(data) {
 export function downloadOrderTemplate() {
   return download(`/pms/examine/downloadTemplate?type=2`, {}, `订单导入模板_${new Date().getTime()}.xlsx`)
 }
-// 订单导出
-export function exportOrder(data) {
+// 订单导出（入库单）
+export function exportInOrder(data) {
   return download(ORDER_EXPORT, data, `入库单信息_${new Date().getTime()}.xlsx`)
+}
+
+// 订单导出（出库单）
+export function exportOutOrder(data) {
+  return download(ORDER_EXPORT, data, `出库单信息_${new Date().getTime()}.xlsx`)
 }
 
 // 订单库存查询

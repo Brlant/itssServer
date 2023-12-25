@@ -255,7 +255,7 @@ import entryAuditInfo from "@/common/entryForm/entryAuditInfo";
 import entryInfo from "@/common/entryForm/entryInfo";
 import entryOperationLog from "@/common/entryForm/entryOperationLog";
 
-import {getOrderList, importInOrderInfo, exportOrder, downloadOrderTemplate} from "@/api/pms/order";
+import {getOrderList, importInOrderInfo, exportInOrder, downloadOrderTemplate} from "@/api/pms/order";
 import {queryUserlist} from "@/api/system/user";
 import {treeselect} from "@/api/system/dept";
 
@@ -431,7 +431,7 @@ export default {
       this.importOrderDialogShowFlag = true;
     },
     exportOrder() {
-      exportOrder(this.queryParams)
+      exportInOrder(this.queryParams)
     },
     /*关闭表单*/
     handleEntryClose({refresh = false}) {
