@@ -1,7 +1,7 @@
 <template>
   <el-dialog width="20%" :visible="promptInfoForm" @close="handleClosePrompt">
     <div class="promptMsg">
-      你有两条即将到期的合同请及时处理
+      你有{{expirationReminder}}条即将到期的合同请及时处理
     </div>
     <div class="Btn">
       <el-button type="primary" @click="goCheck">
@@ -17,7 +17,9 @@ export default {
   props: {
     promptInfoForm: {
       type: Boolean,
-      default: ''
+    },
+    expirationReminder:{
+      type:Number,
     }
   },
   data() {

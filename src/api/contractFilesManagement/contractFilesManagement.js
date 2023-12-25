@@ -20,11 +20,10 @@ export function queryExpireList(data) {
 }
 
 //合同档案管理-合同档案详情
-export function queryByContractId(data) {
+export function queryByContractId() {
   return request({
-    url: `/pms/contract/queryByContractId`,
+    url: `/pms/contract/queryExpireContractCount`,
     method: 'get',
-    params:data,
   })
 }
 
@@ -106,5 +105,13 @@ export function getUserList(data) {
     url: `/system/user/list`,
     method: 'get',
     params:data,
+  })
+}
+
+//到期提醒
+export function getContractExpireList() {
+  return request({
+    url: `/contract/queryExpireContractCount`,
+    method: 'get',
   })
 }

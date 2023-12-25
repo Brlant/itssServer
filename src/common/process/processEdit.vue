@@ -13,6 +13,7 @@
           <el-input
             v-if="!scope.row.isStart && !scope.row.isEnd"
             v-model="scope.row.modelNode"
+            @input="nodeEvent(scope.$index)"
             placeholder="请输入节点名称"
           ></el-input>
           <span v-else>{{ scope.row.modelNode }}</span>
@@ -188,6 +189,16 @@ export default {
         this.tableData.splice(index, 1)
       }
     },
+    nodeEvent(index){
+      if(this.tableData[index].modelNode === '开始' || this.tableData[index].modelNode === '结束'){
+        this.tableData[index].modelNode = '';
+        return this.$notify.error({
+          duration: 2000,
+          name: '失败',
+          message: '节点名称不允许输入开始或者结束'
+        })
+      }
+    },
     saveProcessEdit() {
       for(let x in this.tableData){
         if(this.tableData[x].modelNode === ''){
@@ -246,7 +257,6 @@ export default {
     handleApproverClick(row, index) {
       this.processRow = row
       this.activeIndex = index;
-      console.log('索引', index)
       this.selectedName = row.nickName; // 将表格中已选的姓名赋值给 selectedName
       // this.selectedUserId = row.id; // 将表格中已选的ID赋值给 selectedId
       this.$emit('handleApproverClick')
@@ -265,7 +275,6 @@ export default {
         //   }
         // });
         let {nickName, userId} = res.data;
-        console.log( res.data)
         this.nickNameArray.push({
           nickName, userId
         })

@@ -9,16 +9,17 @@
         >
           <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title"/>
           <span style="
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
             background-color: red;
             border-radius: 50%;
             color: white;
-            font-size: 12px;
+            font-size: 10px;
             position: fixed;
             text-align: center;
             margin-top: 16px;
+            box-sizing: border-box;
             left: 160px; "
             v-if="onlyOneChild.meta.title === '我的待办'"
           >{{ totalNum }}</span>

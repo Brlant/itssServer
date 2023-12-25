@@ -47,6 +47,7 @@
           <el-button
             size="mini"
             type="text"
+            v-if="!scope.row.childList || scope.row.childList.length === 0"
             icon="el-icon-delete"
             @click="deleteCategoryForm(scope.row)"
           >删除

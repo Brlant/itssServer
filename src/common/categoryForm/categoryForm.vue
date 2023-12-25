@@ -9,7 +9,7 @@
           v-model="formData.parentId"
           :filter-method="getCategoryList"
           :options="categoryList"
-          :props="{ value: 'categoryId', label: 'categoryName', children: 'childList',checkStrictly: true,emitPath:false,  }"
+          :props="{ value: 'categoryId', label: 'categoryName', children: 'childList',checkStrictly: true,  }"
           placeholder="请选择上级类目"
           :filterable="true"
           @change="handleChange"
@@ -88,6 +88,7 @@ export default {
       formDataRef: {
         categoryName: [{ required: true, message: '请输入类目名称', trigger: 'blur' }]
       },
+      cascaderLength:'',
     }
   },
   methods: {
@@ -102,6 +103,9 @@ export default {
     submitForm() {
       this.$refs.formData.validate(valid => {
         if (valid) {
+          if(this.cascaderLength > 2){
+            return this.$notify.error('限制只能三级')
+          }
           categoryApi.addCategory(this.formData).then(res=>{
             this.$notify.success('添加成功')
             this.closeAddEditForm();
@@ -115,6 +119,9 @@ export default {
     editRow(){
       this.$refs.formData.validate(valid => {
         if (valid) {
+          if(this.cascaderLength > 2){
+            return this.$notify.error('限制只能三级')
+          }
           categoryApi.updateCategory(this.formData).then(res=>{
             this.$notify.success('编辑成功')
             this.closeAddEditForm();
@@ -125,11 +132,17 @@ export default {
       })
     },
     closeAddEditForm() {
-      this.$emit('closeAddEditForm')
-      this.formData ={}
+      this.$emit('closeAddEditForm');
+      this.$refs.formData.resetFields();
+      this.cascaderLength = ''
+      this.formData.parentId = ''
+      this.formData.categoryName = ''
+      // this.formData = {}
     },
     handleChange(query){
-      this.formData.parentId = query;
+      const queryLength = query.length;
+      this.cascaderLength = queryLength;
+      this.formData.parentId = query[query.length - 1];
     }
   },
   created() {

@@ -213,12 +213,16 @@
 
 
     <!--   提示信息 -->
-    <prompt-info :promptInfoForm="promptInfoForm" @handleClosePrompt="handleClosePrompt"></prompt-info>
+    <prompt-info :promptInfoForm="promptInfoForm" @handleClosePrompt="handleClosePrompt" :expirationReminder="expirationReminder"></prompt-info>
   </div>
 </template>
 
 <script>
 import { getInitiatedList } from '@/api/auditCenter/initiated/initiated'
+//到期提醒
+import { queryByContractId }  from '@/api/contractFilesManagement/contractFilesManagement'
+
+
 //我发起的页面
 // import fileInfo from '@/common/details/fileInfo.vue'
 // import auditInfo from '@/common/details/auditInfo.vue'
@@ -255,6 +259,8 @@ export default {
   },
   data() {
     return {
+      //到期合同提醒
+      expirationReminder:null,
       detailsSupplierData: {},
       //提醒消息
       promptInfoForm: false,
@@ -363,12 +369,25 @@ export default {
     let userInfoParse = JSON.parse(userInfo)
     this.queryParams.remark = userInfoParse.remark
     this.queryParams.promoterId = userInfoParse.userId
+    this.getQueryByContractId();
   },
   mounted() {
     //调用查询接口
     this.getInitiateList()
   },
   methods: {
+    //到期提醒
+    getQueryByContractId(){
+      queryByContractId().then(res=>{
+        this.expirationReminder = res.data
+        if(this.expirationReminder > 0){
+          this.promptInfoForm = true;
+        }
+        else{
+          this.promptInfoForm = false;
+        }
+      })
+    },
     changeHandleTime(row) {
       if (this.queryParams.applyTime === '') {
         this.queryParams.pageSize = 1  //将页码设置为第一页
