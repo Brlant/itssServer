@@ -37,14 +37,14 @@
         </el-select>
       </el-form-item>
       <!--      发起人-->
-      <el-form-item prop="remark">
-        <el-input
-          :disabled="true"
-          v-model="queryParams.remark"
-          placeholder="发起人"
-          clearable
-        />
-      </el-form-item>
+<!--      <el-form-item prop="remark">-->
+<!--        <el-input-->
+<!--          :disabled="true"-->
+<!--          v-model="queryParams.remark"-->
+<!--          placeholder="发起人"-->
+<!--          clearable-->
+<!--        />-->
+<!--      </el-form-item>-->
       <!--      状态-->
       <el-form-item prop="examineStatus">
         <el-select v-model="queryParams.examineStatus" placeholder="审核状态" clearable>
@@ -423,6 +423,7 @@ export default {
     },
     /** 查询我的发起记录列表 */
     getInitiateList() {
+      this.queryParams.pageNum = 1;
       const params = {
         key: this.queryParams.key,
         startDate: this.queryParams.applyTime[0],
