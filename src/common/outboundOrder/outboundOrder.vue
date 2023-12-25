@@ -50,7 +50,7 @@
           <el-form-item label="领用人" prop="applyName" :rules="rules.applyName"
                         v-show="formData.orderBizType === '2-3'">
             <el-select v-model="formData.recipientId" placeholder="请选择领用人" clearable filterable
-            @change="recipientChange">
+                       @change="recipientChange">
               <el-option
                 v-for="item in recipientUserList"
                 :key="item.userId"
@@ -65,11 +65,11 @@
           <el-form-item label="领用部门" prop="applyDepartName" :rules="rules.applyDepartName"
                         v-show="formData.orderBizType === '2-3'">
             <el-cascader @change="recipientDepartmentChange"
-              v-model="formData.recipientDepartId"
-              placeholder="请选择领用部门"
-              :options="recipientDeptList"
-              :props="{ checkStrictly: true,emitPath:false, value: 'id' }"
-              clearable filterable></el-cascader>
+                         v-model="formData.recipientDepartId"
+                         placeholder="请选择领用部门"
+                         :options="recipientDeptList"
+                         :props="{ checkStrictly: true,emitPath:false, value: 'id' }"
+                         clearable filterable></el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
@@ -119,17 +119,30 @@
             <el-form-item :prop="`orderDetailList.${scope.$index}.supplierId`" label-width="0"
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
-              <el-select v-model="scope.row.supplier" placeholder="请选择供应商名称"
-                         filterable
-                         @change="getGoodsList(scope.row.supplier,scope.$index)">
-                <el-option v-for="(option,index) in supplierOptions" :key="option.supplierId"
+              <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
+                         filterable :disabled="readonly"
+                         @change="getGoodsList(scope.row.supplierId,scope.$index)">
+                <el-option v-for="(option,index) in supplierOptions"
+                           :key="option.supplierId"
                            :label="option.supplierName"
-                           :value="option.supplierId+'__'+option.supplierName" :title="isOverDate(option.validityDate)">
+                           :value="option.supplierId" :title="isOverDate(option.validityDate)">
                   <span style="float: left;color: red" v-if="isOverDate(option.validityDate)">{{
                       option.supplierName
                     }}</span>
                   <span style="float: left" v-else>{{ option.supplierName }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ option.supplierCode }}</span>
+                </el-option>
+                <el-option v-if="supplierOptions.any(option => option.supplierId === scope.row.supplierId)"
+                           :key="scope.row.supplierId"
+                           :label="scope.row.supplierName"
+                           :value="scope.row.supplierId"
+                           :disabled="true"
+                           :title="isOverDate(scope.row.validityDate)">
+                <span style="float: left;color: red" v-if="isOverDate(scope.row.validityDate)">{{
+                    scope.row.supplierName
+                  }}</span>
+                  <span style="float: left" v-else>{{ scope.row.supplierName }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ scope.row.supplierCode }}</span>
                 </el-option>
               </el-select>
             </el-form-item>
@@ -336,13 +349,14 @@ export default {
         orderBizType: [{required: true, message: '请选择订单类型', trigger: 'blur'}],
         budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'blur'}],
       },
+      supplierMap: {},
       supplierOptions: [],
       // 物品类型:固定资产、消耗品、服务、销售品
       typeOptions: [
-        {value: '1', label: '固定资产'},
-        {value: '2', label: '消耗品'},
-        {value: '3', label: '服务'},
-        {value: '4', label: '销售品'},
+        {value: 1, label: '固定资产'},
+        {value: 2, label: '消耗品'},
+        {value: 3, label: '服务'},
+        {value: 4, label: '销售品'},
       ],
       goodsListOption: {
         'supplierId': []
@@ -479,6 +493,9 @@ export default {
         pageSize: 1000
       }).then((res) => {
         this.supplierOptions = res.data.rows
+        this.supplierOptions.forEach(one => {
+          this.supplierMap[one.supplierId] = one.supplierName
+        })
       })
     },
     getBudgetTypeList(keyword = '') {
@@ -490,14 +507,12 @@ export default {
         this.budgetTypes = data;
       })
     },
-    getGoodsList(supplier, index) {
-      this.formData.orderDetailList[index].goodsId = ''
-      this.formData.orderDetailList[index].goodsList = []
-      this.$set(this.goodsListOption, `${index.goodsList}`, [])
-      let supplierId = supplier.split('__')[0]
-      let supplierName = supplier.split('__')[1]
+    getGoodsList(supplierId, index) {
+      // this.formData.orderDetailList[index].goodsId = ''
+      // this.formData.orderDetailList[index].goodsList = []
+      // this.$set(this.goodsListOption, `${index.goodsList}`, [])
       this.formData.orderDetailList[index].supplierId = supplierId
-      this.formData.orderDetailList[index].supplierName = supplierName
+      this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId]
 
       let goodsList = this.goodsListOption[supplierId]
       if (!goodsList) {
@@ -580,12 +595,12 @@ export default {
 
       return false
     },
-    recipientDepartmentChange(deptId){
+    recipientDepartmentChange(deptId) {
       this.formData.recipientId = ''
       this.getUserList(deptId)
     },
-    recipientChange(recipientId){
-      if (recipientId){
+    recipientChange(recipientId) {
+      if (recipientId) {
         this.formData.recipientDepartId = this.recipientUserList
           .find(item => item.userId === this.formData.recipientId)
           .deptId
@@ -646,7 +661,7 @@ export default {
         this.getDeptList('')
       }
     },
-    recipientDepartmentId(val){
+    recipientDepartmentId(val) {
       this.formData.recipientDepartId = val
     }
   }
