@@ -61,9 +61,9 @@ const filesApi = {
   //删除
   deleteFiles(data) {
     return request({
-      url: `/pms/goods/deleteGoodsById`,
-      method: 'put',
-      data
+      url: `/pms/goods/deleteGoodsById/`,
+      method: 'get',
+      params:data
     })
   },
   //编辑

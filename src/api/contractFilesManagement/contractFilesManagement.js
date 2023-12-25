@@ -58,7 +58,7 @@ export function edit(data) {
 export function deleteContractById(data) {
   return request({
     url: `/pms/contract/deleteContractById`,
-    method: 'put',
+    method: 'get',
     params:data,
   })
 }
