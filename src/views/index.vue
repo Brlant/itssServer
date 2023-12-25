@@ -773,11 +773,12 @@ export default {
     };
   },
   created() {
-    this.getQueryByContractId();
-    this.getDealtWith();
     let userInfo = window.localStorage.getItem('user')
     let userInfoParse = JSON.parse(userInfo)
     this.reviewedId = userInfoParse.userId
+    this.getQueryByContractId();
+    this.getDealtWith();
+    // console.log(this.reviewedId)
   },
   methods: {
     getDealtWith() {
@@ -792,6 +793,7 @@ export default {
           queryType: 2
         }
       getDealtWithList(params).then((res) => {
+        // console.log(res.data.total)
         window.sessionStorage.setItem('total', res.data.total)
         // this.$store.commit("SET_TOTAL", res.data.total);
       })
