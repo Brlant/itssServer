@@ -213,7 +213,7 @@
 
 
     <!--   提示信息 -->
-    <prompt-info :promptInfoForm="promptInfoForm" @handleClosePrompt="handleClosePrompt" :expirationReminder="expirationReminder"></prompt-info>
+<!--    <prompt-info :promptInfoForm="promptInfoForm" @handleClosePrompt="handleClosePrompt" :expirationReminder="expirationReminder"></prompt-info>-->
   </div>
 </template>
 

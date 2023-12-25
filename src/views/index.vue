@@ -1,5 +1,7 @@
 <template>
-  <div class="tip-show">新ITSS平台</div>
+  <div class="tip-show">新ITSS平台
+    <prompt-info :promptInfoForm="promptInfoForm" @handleClosePrompt="handleClosePrompt" :expirationReminder="expirationReminder"></prompt-info>
+  </div>
   <!-- <div class="app-container home">
     <el-row :gutter="20">
       <el-col :sm="24" :lg="24">
@@ -750,15 +752,44 @@
 </template>
 
 <script>
+//提醒消息
+import promptInfo from '@/common/promptInfo/promptInfo'
+import { queryByContractId } from '@/api/contractFilesManagement/contractFilesManagement'
 export default {
+  components: {
+    promptInfo,
+  },
   name: "Index",
   data() {
     return {
+      //到期合同提醒
+      expirationReminder:null,
+      //提醒消息
+      promptInfoForm: false,
       // 版本号
       version: "3.6.0",
     };
   },
+  created() {
+    this.getQueryByContractId();
+  },
   methods: {
+    /* 关闭消息提醒 */
+    handleClosePrompt() {
+      this.promptInfoForm = false
+    },
+    //到期提醒
+    getQueryByContractId(){
+      queryByContractId().then(res=>{
+        this.expirationReminder = res.data
+        if(this.expirationReminder > 0){
+          this.promptInfoForm = true;
+        }
+        else{
+          this.promptInfoForm = false;
+        }
+      })
+    },
     goTarget(href) {
       window.open(href, "_blank");
     },

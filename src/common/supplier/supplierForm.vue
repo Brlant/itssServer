@@ -394,9 +394,19 @@ export default {
           // "attachmentId": "",
           // {
           //   "attachmentId": "",
-        }
+        },
+        contactsInfoList: [
+          {
+            id: Date.now(),
+            supplierId: '',
+            contactsName: '',
+            positions: '',
+            contactsPhone: '',
+            contactsMailbox: ''
+          }
+        ],
       }
-
+      this.$refs.form.resetFields();
       this.$emit('close')
     },
     /*表单校验提交*/

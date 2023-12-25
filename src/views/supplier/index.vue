@@ -118,12 +118,14 @@
       <el-table-column prop="contactsPhone" label="手机号"></el-table-column>
       <el-table-column prop="createTime" label="创建时间">
         <template v-slot="scope">
-          {{ new Date(scope.row.createTime).toLocaleString() }}
+          {{ new Date(scope.row.createTime).toLocaleString()}}
         </template>
       </el-table-column>
       <el-table-column prop="validityDate" label="供应商到期时间">
         <template v-slot="scope">
-          {{ scope.row.validityDate }}
+          <span :style="{ color: isExpired(scope.row.validityDate) ? 'red' : 'black' }">
+            {{ scope.row.validityDate }}
+          </span>
         </template>
       </el-table-column>
 
@@ -203,7 +205,8 @@
 
     <el-dialog :visible.sync="supplierImportDialog.showFlag" :title="supplierImportDialog.title" width="410px"
                center
-               @close="closeSupplierImportDialog">
+               @close="closeSupplierImportDialog"
+    >
       <div style="margin-bottom: 22px;">
         <el-button
           type="primary"
@@ -275,25 +278,25 @@ export default {
       },
       //企业类型
       supplierTypeArray: [
-        {label: '内部企业', value: 1},
-        {label: '外部企业', value: 2}
+        { label: '内部企业', value: 1 },
+        { label: '外部企业', value: 2 }
       ],
       //切换按钮
       filtersMenu: [
-        {text: '全部', value: null},
-        {text: '近30天', value: '30'},
-        {text: '近7天', value: '7'}
+        { text: '全部', value: null },
+        { text: '近30天', value: '30' },
+        { text: '近7天', value: '7' }
       ],
       //切换按钮
       filters: [
-        {text: '全部', value: ''},
-        {text: '待审核', value: 0},
-        {text: '审核中', value: 1},
-        {text: '审核未通过', value: 2},
-        {text: '启用', value: 3},
-        {text: '已撤回', value: 4},
-        {text: '停用', value: 5},
-        {text: '已淘汰', value: 6}
+        { text: '全部', value: '' },
+        { text: '待审核', value: 0 },
+        { text: '审核中', value: 1 },
+        { text: '审核未通过', value: 2 },
+        { text: '启用', value: 3 },
+        { text: '已撤回', value: 4 },
+        { text: '停用', value: 5 },
+        { text: '已淘汰', value: 6 }
       ],
       activeFilterIndex: 0,
       activeFilterMenuIndex: 0,
@@ -302,7 +305,7 @@ export default {
       supplierFormData: {
         formTitle: '新建档案',
         showFlag: false,
-        supplierId: '',
+        supplierId: ''
       },
       // 导入的对话框
       supplierImportDialog: {
@@ -317,6 +320,7 @@ export default {
     this.getSupplierList()
   },
   computed: {
+
     switchMenu() {
       return this.filtersMenu.map((menu) => {
         return {
@@ -341,8 +345,8 @@ export default {
       let status = this.detailsSupplierData && this.detailsSupplierData.supplierStatus
       return status
     },
-    supplierId(){
-      if (this.detailsSupplierData){
+    supplierId() {
+      if (this.detailsSupplierData) {
         return this.detailsSupplierData.supplierId
       }
 
@@ -350,11 +354,16 @@ export default {
     }
   },
   methods: {
+    isExpired(date) {
+      const today = new Date()
+      const expiryDate = new Date(date)
+      return expiryDate < today
+    },
     closeDetailDialog() {
       this.activeTab = 'fileInfo'
       this.dialogDetailsSupplierDialog = false
       this.detailsSupplierData = null
-      this.getSupplierList();
+      this.getSupplierList()
     },
     // 打开新增/编辑弹框
     showSupplierForm() {
@@ -385,19 +394,19 @@ export default {
     },
     /*重置搜索内容*/
     resetQuery() {
-      this.$refs.queryForm.resetFields();
-      this.getSupplierList();
+      this.$refs.queryForm.resetFields()
+      this.getSupplierList()
     },
     /*按钮切换*/
     setActiveFilter(row, index) {
       this.queryParams.supplierStatus = row.value
-      this.activeFilterIndex = index;
-      this.getSupplierList();
+      this.activeFilterIndex = index
+      this.getSupplierList()
     },
     setActiveFilterMenu(row, index) {
       this.queryParams.days = row.value
       this.activeFilterMenuIndex = index
-      this.getSupplierList();
+      this.getSupplierList()
     },
     /*详情*/
     handleDetails(row) {
@@ -414,14 +423,14 @@ export default {
       this.supplierFormData = {
         formTitle: '新建档案',
         showFlag: true,
-        supplierId: '',
+        supplierId: ''
       }
     }, /*编辑*/
     supplierEdit(row) {
       this.supplierFormData = {
         formTitle: '编辑档案',
         showFlag: true,
-        supplierId: row.supplierId,
+        supplierId: row.supplierId
       }
     },
     exportSupplier() {
@@ -444,9 +453,9 @@ export default {
     handleTabClick(tab, event) {
       console.log(tab)
     },
-    closeHandlerInfo(){
-      this.dialogDetailsSupplierDialog = false;
-      this.getSupplierList();
+    closeHandlerInfo() {
+      this.dialogDetailsSupplierDialog = false
+      this.getSupplierList()
     },
     importSuccessHandler(file) {
       let formData = new FormData()
