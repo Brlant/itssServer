@@ -112,7 +112,7 @@
 
           <el-col :span="8">
             <el-form-item label="箱规" prop="boxGauge">
-              <el-input v-model="formData.boxGauge" placeholder="箱规">
+              <el-input v-model="formData.boxGauge" placeholder="箱规" type="number">
                 <span slot="append">/箱</span>
               </el-input>
             </el-form-item>
@@ -135,7 +135,7 @@
 
 <!--        附件上传-->
         <el-row :gutter="20">
-          <el-form-item label="其他附件" prop="attachmentInfos">
+          <el-form-item label="其他附件">
             <el-upload :action="uploadUrl"
                        :show-file-list="false"
                        :on-success="handleAttachmentSuccess"
@@ -232,7 +232,7 @@ export default {
         taxBid: [{required: true, message: '请输入含税进价', trigger: 'blur'}],
         taxRate: [{required: true, message: '请选择税率', trigger: 'change'}],
 
-        // boxGauge: [{required: true, message: '请输入箱规', trigger: 'blur'}],
+        boxGauge: [{required: true, message: '请输入箱规', trigger: 'blur'}],
         goodsClassify: [{required: true, message: '请选择物品分类', trigger: 'blur'}],
         attachmentInfos:[{required: true, message: '请选择附件', trigger: 'blur'}]
       },
