@@ -38,7 +38,7 @@ export function getEditActiveModelList(query){
 //部门搜索
 export function getDeptList(){
   return request({
-    url: `/system/dept_manage/list`,
+    url: `/system/dept_manage/treeselect`,
     method: 'get',
   })
 }
