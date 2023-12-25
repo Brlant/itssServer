@@ -6,14 +6,22 @@
         <el-input v-model="queryForm.nickName" prefix-icon="el-icon-search" @keyup.enter.native="getInputList" placeholder="请输入姓名或职位"></el-input>
       </el-form-item>
       <el-form-item prop="deptId">
-        <el-select v-model="queryForm.deptId" placeholder="部门搜索" clearable>
-          <el-option
-            v-for="(item,index) in modelNameArray"
-            :key="index"
-            :label="item.deptName"
-            :value="item.deptId"
-          />
-        </el-select>
+        <el-cascader
+          v-model="queryForm.deptId"
+          placeholder="部门搜索"
+          :options="deptList"
+          :props="{ checkStrictly: true,emitPath:false, value: 'id' }"
+          clearable filterable
+          ></el-cascader>
+
+<!--        <el-select v-model="queryForm.deptId" placeholder="部门搜索" clearable>-->
+<!--          <el-option-->
+<!--            v-for="(item,index) in modelNameArray"-->
+<!--            :key="index"-->
+<!--            :label="item.deptName"-->
+<!--            :value="item.deptId"-->
+<!--          />-->
+<!--        </el-select>-->
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" @click="getInputList" >搜索</el-button>
@@ -39,6 +47,7 @@
 
 <script>
 import { getDeptList,getQueryUserInfoList} from '@/api/auditCenter/process/process'
+import { treeselect } from '@/api/system/dept'
 
 export default {
   name: 'processInput',
@@ -58,10 +67,13 @@ export default {
       showSearch:true,
       members: [],
       modelNameArray:[],
+
+      // 发起部门（多层级）
+      deptList: [],
     }
   },
   created() {
-
+    this.getDeptList('')
   },
   mounted() {
     //获取部门列表
@@ -70,11 +82,17 @@ export default {
     this.getInputList()
   },
   methods:{
-    getDeptList(){
-      getDeptList().then(res=>{
-        this.modelNameArray = res.data
+    getDeptList(query) {
+      treeselect(query).then(res => {
+        this.deptList = res.data
       })
     },
+    // getDeptList(){
+    //   getDeptList().then(res=>{
+    //     console.log(res.data,'------------')
+    //     this.modelNameArray = res.data
+    //   })
+    // },
     getInputList(){
       let params = {
         nickName:this.queryForm.nickName,
