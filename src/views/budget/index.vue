@@ -49,6 +49,7 @@
             size="mini"
             type="text"
             icon="el-icon-delete"
+            v-if="!scope.row.childList || scope.row.childList.length === 0"
             v-hasPermi="['system:budget:delete']"
             @click="deletebudgetForm(scope.row)"
           >删除
@@ -150,7 +151,6 @@ export default {
       this.budgetList();
       this.addForm = ''
     }
-
   }
 }
 </script>

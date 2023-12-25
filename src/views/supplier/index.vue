@@ -354,6 +354,7 @@ export default {
       this.activeTab = 'fileInfo'
       this.dialogDetailsSupplierDialog = false
       this.detailsSupplierData = null
+      this.getSupplierList();
     },
     // 打开新增/编辑弹框
     showSupplierForm() {
