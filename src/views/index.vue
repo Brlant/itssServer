@@ -754,7 +754,9 @@
 <script>
 //提醒消息
 import promptInfo from '@/common/promptInfo/promptInfo'
-import { queryByContractId } from '@/api/contractFilesManagement/contractFilesManagement'
+import {
+  getQueryExpireContractCountList,
+} from '@/api/contractFilesManagement/contractFilesManagement'
 import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 export default {
   components: {
@@ -804,7 +806,7 @@ export default {
     },
     //到期提醒
     getQueryByContractId(){
-      queryByContractId().then(res=>{
+      getQueryExpireContractCountList().then(res=>{
         this.expirationReminder = res.data
         if(this.expirationReminder > 0){
           this.promptInfoForm = true;

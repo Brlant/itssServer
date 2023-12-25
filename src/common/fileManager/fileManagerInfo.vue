@@ -30,6 +30,7 @@
           <el-form-item prop="supplierId" label="供应商">
             <el-select v-model="formData.supplierId" filterable :filter-method="getSupplierList" placeholder="供应商"
                        :disabled="readonly" clearable
+                       :title='formData.supplierName'
             >
               <el-option
                 v-for="(item,index) in supplierList"
@@ -564,7 +565,8 @@ export default {
       let params = {
         codeNameKey: query,
         pageNum: 1,
-        pageSize: 10
+        pageSize: 10,
+        supplierStatus:3,
       }
       supplierApi.getSupplierList(params).then((res) => {
         this.supplierList = res.data.rows.map(item => {

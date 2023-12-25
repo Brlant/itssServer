@@ -207,6 +207,7 @@ export default {
   methods: {
     open() {
       queryByContractId({ contractId: this.contractId}).then(res => {
+        // console.log(res,'------')
         if (res.code === 200) {
           this.formData = res.data;
         }

@@ -262,7 +262,7 @@
       >淘汰
       </el-button>
       <el-button
-        v-show="formData.returnButton && (formData.supplierStatus === 2 || formData.supplierStatus === 4)"
+        v-show="formData.returnButton || (formData.supplierStatus === 2 || formData.supplierStatus === 4)"
         icon="el-icon-delete"
         @click="handleDelete"
       >删除
@@ -275,17 +275,17 @@
       </el-button>
       <el-button v-has-permi="['pms:supplier:edit']"
                  type="success"
-                 v-show="formData.examineButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
+                 v-show="formData.examineButton || (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
                  @click="auditPass"
       >审核通过
       </el-button>
       <el-button v-has-permi="['pms:supplier:edit']"
                  type="danger"
-                 v-show="formData.examineButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
+                 v-show="formData.examineButton || (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
                  @click="auditNoPass"
       >审核不通过
       </el-button>
-      <el-button v-show="formData.returnButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
+      <el-button v-show="formData.returnButton || (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
                  type="danger"
                  @click="revocation"
       >撤回
