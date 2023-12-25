@@ -777,7 +777,7 @@ export default {
       this.formData.receiptUrlName = response.data.name
     },
     confimReceipt(){
-      confirmReceipt()
+      confirmReceipt(this.formData)
     }
   }
 }
