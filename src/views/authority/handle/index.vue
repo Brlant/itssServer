@@ -270,6 +270,7 @@ export default {
         modelName:"",
         remark:"",
         reviewedId:'',
+        promoterId:'',
         //分页
         total: 10,
         pageNum: 1,
@@ -277,7 +278,7 @@ export default {
         order: 'id desc'
       },
       modelNameArray:[
-        { label: '供应商审核流程' },
+        { label: '供应商档案审核流程' },
         { label: '物品档案审核流程' },
         { label: '合同档案审核流程' },
         { label: '入库单审核流程' },
@@ -467,6 +468,7 @@ export default {
         reviewedId:this.queryParams.reviewedId,
         pageNum:this.queryParams.pageNum,
         pageSize:this.queryParams.pageSize,
+        promoterId:this.queryParams.promoterId,
         queryType:3,
       }
       getHandleList(params).then((res)=>{

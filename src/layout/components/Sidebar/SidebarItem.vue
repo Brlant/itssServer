@@ -79,7 +79,7 @@ export default {
   },
   computed:{
     totalNum(){
-      return JSON.parse(window.sessionStorage.getItem('total'));
+      return window.sessionStorage.getItem('total');
     }
   },
   methods: {

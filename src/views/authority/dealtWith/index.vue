@@ -283,7 +283,7 @@ export default {
         order: 'id desc'
       },
       modelNameArray: [
-        { label: '供应商审核流程' },
+        { label: '供应商档案审核流程' },
         { label: '物品档案审核流程' },
         { label: '合同档案审核流程' },
         { label: '入库单审核流程' },
@@ -484,6 +484,7 @@ export default {
         this.loading = false
         this.queryParams.total = res.data.total
         this.dealtWithList = res.data.rows
+        window.sessionStorage.setItem('total', res.data.total)
       })
     },
     /** 重置按钮操作 */

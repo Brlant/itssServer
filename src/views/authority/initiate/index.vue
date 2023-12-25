@@ -58,7 +58,7 @@
       </el-form-item>
       <!--搜索重置-->
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" @click="getInitiateList">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="getQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -293,7 +293,7 @@ export default {
         order: 'id desc'
       },
       modelNameArray: [
-        { label: '供应商审核流程' },
+        { label: '供应商档案审核流程' },
         { label: '物品档案审核流程' },
         { label: '合同档案审核流程' },
         { label: '入库单审核流程' },
@@ -423,7 +423,6 @@ export default {
     },
     /** 查询我的发起记录列表 */
     getInitiateList() {
-      this.queryParams.pageNum = 1;
       const params = {
         key: this.queryParams.key,
         startDate: this.queryParams.applyTime[0],
@@ -441,8 +440,13 @@ export default {
         this.queryParams.total = res.data.total
       })
     },
+    getQuery(){
+      this.queryParams.pageNum = 1;
+      this.getInitiateList();
+    },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.pageNum=1;
       this.queryParams.applyTime = ''
       this.$refs.queryForm.resetFields()
       this.getInitiateList()

@@ -795,9 +795,7 @@ export default {
           queryType: 2
         }
       getDealtWithList(params).then((res) => {
-        // console.log(res.data.total)
         window.sessionStorage.setItem('total', res.data.total)
-        // this.$store.commit("SET_TOTAL", res.data.total);
       })
     },
     /* 关闭消息提醒 */
