@@ -35,9 +35,12 @@
               <el-option
                 v-for="(item,index) in supplierList"
                 :key="index"
-                :label="item.label"
-                :value="item.value"
+                :label="item.supplierName"
+                :value="item.supplierId"
               />
+              <el-option v-if="!supplierList.some(list=> list.supplierId === formData.supplierId)"
+                         :label="formData.supplierName"
+                         v-model="formData.supplierId"/>
             </el-select>
           </el-form-item>
         </el-col>
@@ -568,13 +571,9 @@ export default {
         pageSize: 10,
         supplierStatus:3,
       }
+      // let supplierListName = this.formData.supplierName
       supplierApi.getSupplierList(params).then((res) => {
-        this.supplierList = res.data.rows.map(item => {
-          return {
-            value: item.supplierId,
-            label: item.supplierName
-          }
-        })
+        this.supplierList = res.data.rows
       })
     },
 

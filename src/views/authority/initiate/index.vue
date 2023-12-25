@@ -220,7 +220,10 @@
 <script>
 import { getInitiatedList } from '@/api/auditCenter/initiated/initiated'
 //到期提醒
-import { queryByContractId }  from '@/api/contractFilesManagement/contractFilesManagement'
+import {
+  getQueryExpireContractCountList,
+  queryByContractId
+} from '@/api/contractFilesManagement/contractFilesManagement'
 
 
 //我发起的页面
@@ -369,7 +372,7 @@ export default {
     let userInfoParse = JSON.parse(userInfo)
     this.queryParams.remark = userInfoParse.remark
     this.queryParams.promoterId = userInfoParse.userId
-    this.getQueryByContractId();
+    // this.getQueryByContractId();
   },
   mounted() {
     //调用查询接口
@@ -377,17 +380,17 @@ export default {
   },
   methods: {
     //到期提醒
-    getQueryByContractId(){
-      queryByContractId().then(res=>{
-        this.expirationReminder = res.data
-        if(this.expirationReminder > 0){
-          this.promptInfoForm = true;
-        }
-        else{
-          this.promptInfoForm = false;
-        }
-      })
-    },
+    // getQueryByContractId(){
+    //   getQueryExpireContractCountList().then(res=>{
+    //     this.expirationReminder = res.data
+    //     if(this.expirationReminder > 0){
+    //       this.promptInfoForm = true;
+    //     }
+    //     else{
+    //       this.promptInfoForm = false;
+    //     }
+    //   })
+    // },
     changeHandleTime(row) {
       if (this.queryParams.applyTime === '') {
         this.queryParams.pageSize = 1  //将页码设置为第一页
