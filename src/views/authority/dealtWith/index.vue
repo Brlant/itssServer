@@ -42,6 +42,7 @@
                    remote
                    clearable
                    filterable
+                   @clear="setValueNull"
                    :remote-method="getUserList"
                    placeholder="发起人">
           <el-option
@@ -490,7 +491,11 @@ export default {
       this.$refs.queryForm.resetFields()
       this.queryParams.applyTime = ''
       // this.queryParams.promoterId = ''
-      this.getDealtWithList()
+      this.getDealtWithList();
+      this.getUserList();
+    },
+    setValueNull(){
+      this.getUserList();
     },
 
     closeGoodsDialog() {

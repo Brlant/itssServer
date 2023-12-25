@@ -40,6 +40,7 @@
         <el-select v-model="queryParams.promoterId"
                    remote
                    clearable
+                   @clear="setValueNull"
                    filterable
                    :remote-method="getUserList"
                    placeholder="发起人">
@@ -479,6 +480,10 @@ export default {
       this.$refs.queryForm.resetFields();
       // this.queryParams.applyTime = "";
       this.getHandleList();
+      this.getUserList();
+    },
+    setValueNull(){
+      this.getUserList();
     },
 
     closeGoodsDialog() {
