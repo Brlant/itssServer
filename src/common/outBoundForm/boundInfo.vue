@@ -397,8 +397,8 @@ export default {
     },
     // 编辑订单
     editOrder() {
-      console.log('oldStr：', this.oldStr)
-      console.log('newStr：', this.newStr)
+      // console.log('oldStr：', this.oldStr)
+      // console.log('newStr：', this.newStr)
       this.formData.changeFlag = this.needAudit
 
       let params = this.formData
@@ -410,7 +410,7 @@ export default {
       editOrderInfo(params).then(res => {
         if (res.code === 200) {
           this.$message.success('编辑成功')
-          this.this.$emit('closeOrderDetail')()
+          this.$emit('closeOrderDetail')
         } else {
           this.$message.error(res.msg)
         }

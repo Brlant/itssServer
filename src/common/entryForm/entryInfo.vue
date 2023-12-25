@@ -99,7 +99,8 @@
               <el-option v-for="(option,index) in supplierOptions" :key="option.supplierId"
                          :label="option.supplierName"
                          :value="option.supplierId+'__'+option.supplierName" :title="isOverDate(option.validityDate)">
-                <span style="float: left">{{ option.supplierName }}</span>
+                <span style="float: left;color: red" v-if="isOverDate(option.validityDate)">{{ option.supplierName }}</span>
+                <span style="float: left" v-else>{{ option.supplierName }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ option.supplierCode }}</span>
               </el-option>
             </el-select>
@@ -412,7 +413,7 @@ export default {
       editOrderInfo(params).then(res => {
         if (res.code === 200) {
           this.$message.success('编辑成功')
-          this.this.$emit('closeOrderDetail')()
+          this.$emit('closeOrderDetail')
         } else {
           this.$message.error(res.msg)
         }

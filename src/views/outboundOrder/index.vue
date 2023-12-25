@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true">
       <el-row :gutter="20">
-        <el-col :span="21">
+        <el-col :span="20">
           <!--      订单编号-->
           <el-form-item prop="pmsOrderNo">
             <el-input
@@ -61,7 +61,7 @@
             <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
           </el-form-item>
         </el-col>
-        <el-col :span="3">
+        <el-col :span="4">
           <el-form-item class="pull-right">
             <el-button type="primary" icon="el-icon-plus" @click="addForm">新建</el-button>
             <el-button type="primary" icon="el-icon-download" @click="exportOrder">导出</el-button>

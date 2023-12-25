@@ -47,14 +47,16 @@
       <!-- 领用出库时，展示领用人和领用部门，可以下拉选择且有联动效果：选了领用人自动带出领用部门，选了领用部门自动带出部门下的人员信息 -->
       <el-row :gutter="20">
         <el-col :span="6">
-          <el-form-item label="领用人" prop="applyName" :rules="rules.applyName" v-show="formData.orderBizType === '2-3'">
+          <el-form-item label="领用人" prop="applyName" :rules="rules.applyName"
+                        v-show="formData.orderBizType === '2-3'">
             <el-select v-model="formData.recipientId" placeholder="请选择领用人" clearable filterable
-                       @change="userHandler">
+            @change="recipientChange">
               <el-option
-                v-for="item in userList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in recipientUserList"
+                :key="item.userId"
+                :disabled="item.status==='1'"
+                :label="item.nickName"
+                :value="item.userId"
               />
             </el-select>
           </el-form-item>
@@ -62,13 +64,12 @@
         <el-col :span="6">
           <el-form-item label="领用部门" prop="applyDepartName" :rules="rules.applyDepartName"
                         v-show="formData.orderBizType === '2-3'">
-            <el-cascader
+            <el-cascader @change="recipientDepartmentChange"
               v-model="formData.recipientDepartId"
               placeholder="请选择领用部门"
-              :options="deptList"
+              :options="recipientDeptList"
               :props="{ checkStrictly: true,emitPath:false, value: 'id' }"
-              clearable filterable
-              @change="getUserList"></el-cascader>
+              clearable filterable></el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
@@ -113,7 +114,7 @@
       </div>
       <el-table :data="formData.orderDetailList" border>
         <el-table-column type="index" width="60"></el-table-column>
-        <el-table-column prop="supplier" label="供应商名称">
+        <el-table-column prop="supplier" label="供应商名称" min-width="100px">
           <template v-slot="scope">
             <el-form-item :prop="`orderDetailList.${scope.$index}.supplierId`" label-width="0"
                           style="margin-top: 22px"
@@ -124,7 +125,10 @@
                 <el-option v-for="(option,index) in supplierOptions" :key="option.supplierId"
                            :label="option.supplierName"
                            :value="option.supplierId+'__'+option.supplierName" :title="isOverDate(option.validityDate)">
-                  <span style="float: left">{{ option.supplierName }}</span>
+                  <span style="float: left;color: red" v-if="isOverDate(option.validityDate)">{{
+                      option.supplierName
+                    }}</span>
+                  <span style="float: left" v-else>{{ option.supplierName }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ option.supplierCode }}</span>
                 </el-option>
               </el-select>
@@ -223,13 +227,14 @@
             <span>{{ scope.row.nonTotalTaxBid }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="totalPrice" label="含税售价" v-show="formData.orderBizType === '2-0'">
+        <el-table-column prop="totalPrice" label="含税售价"
+                         v-if="formData.orderBizType === '2-0'">
           <template v-slot="scope">
             <el-input v-model.number="scope.row.taxPrice" placeholder="请输入含税售价"
                       @input="calculatePrice(scope.row)"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="taxRate" label="税率" v-show="formData.orderBizType === '2-0'">
+        <el-table-column prop="taxRate" label="税率" v-if="formData.orderBizType === '2-0'">
           <template v-slot="scope">
             <el-select v-model.number="scope.row.sellingTaxRate" placeholder="请选择税率" clearable
                        @change="calculatePrice(scope.row)">
@@ -242,22 +247,30 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="totalPriceWithoutTax" label="不含税售价" v-show="formData.orderBizType === '2-0'">
+        <el-table-column prop="totalPriceWithoutTax" label="不含税售价" v-if="formData.orderBizType === '2-0'">
           <template v-slot="scope">
             <span>{{ scope.row.nonTaxPrice }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="totalPriceWithoutTax" label="毛利率" v-show="formData.orderBizType === '2-0'">
+        <el-table-column prop="totalPriceWithoutTax" label="毛利率" v-if="formData.orderBizType === '2-0'">
           <template v-slot="scope">
             <span>{{ scope.row.grossMargin }}</span>
           </template>
         </el-table-column>
-        <el-table-column width="100px">
+        <el-table-column width="50px">
           <template v-slot="scope">
-            <el-button circle size="small" icon="el-icon-plus" type="primary" @click="addRow"
-                       v-if="scope.$index === 0"></el-button>
-            <el-button circle size="small" icon="el-icon-minus" type="danger" @click="deleteRow(scope.$index)"
-                       v-if="formData.orderDetailList.length > 1"></el-button>
+            <el-row :gutter="20">
+              <el-col :span="24">
+                <el-button circle size="small" icon="el-icon-plus" type="primary" @click="addRow"
+                           v-if="scope.$index === 0"></el-button>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20" style="margin-top: 10px">
+              <el-col :span="24">
+                <el-button circle size="small" icon="el-icon-minus" type="danger" @click="deleteRow(scope.$index)"
+                           v-if="formData.orderDetailList.length > 1"></el-button>
+              </el-col>
+            </el-row>
           </template>
         </el-table-column>
       </el-table>
@@ -342,9 +355,9 @@ export default {
       ],
       budgetTypes: [],
       // 发起部门（多层级）
-      deptList: [],
+      recipientDeptList: [],
       // 发起人，按部门筛选
-      userList: [],
+      recipientUserList: [],
       //税率
       taxRateList: [
         {label: '1%', value: 0.01},
@@ -501,10 +514,7 @@ export default {
         this.goodsListOption[supplierId] = goodsList
         this.formData.orderDetailList[index].goodsList = goodsList
       }
-
-
     },
-
     goodsChangeHandler(goodsInfo, index) {
       let goodsSplit = goodsInfo.split('__')
       let goodsId = goodsSplit[0]
@@ -535,13 +545,7 @@ export default {
       // 当选择货品以后，需要查询货品的库存，按供应商id、部门id、货品id查询，返回库存数量
       let supplierId = this.formData.orderDetailList[index].supplierId
       let deptId = this.formData.applyDepart
-      request.get('/pms/order/queryStockAmount', {
-        params: {
-          goodsId: goodsId,
-          supplierId: supplierId,
-          deptId: deptId
-        }
-      }).then(res => {
+      request.post('/pms/order/queryStockAmount', {goodsId, supplierId, deptId}).then(res => {
         let {stockId, stockNum, availableNum} = res.data
         this.formData.orderDetailList[index].stockId = stockId
         this.formData.orderDetailList[index].stockNum = stockNum
@@ -552,30 +556,48 @@ export default {
       return this.monent(dateStr).isBefore(this.monent()) ? '已到期' : ''
     },
     getDeptList(query) {
+      this.recipientDeptList = []
       treeselect(query).then(res => {
-        this.deptList = res.data
+        this.recipientDeptList = res.data
       })
     },
     getUserList(deptId) {
+      this.recipientUserList = []
       queryUserlist({deptId}).then(res => {
-        this.userList = res.data.map(item => {
-          return {
-            label: item.nickName,
-            value: item.userId
-          }
-        })
+        this.recipientUserList = res.data
       })
     },
-    userHandler(userId) {
-      let deptId = this.userList.find(item => item.value === userId).deptId
-      this.getDeptList({deptId})
+    // 通过递归的方式对当前的部门进行过滤，找到领用人所在的部门
+    deptFilter(dept, deptId) {
+      if (dept.id === deptId) {
+        return true
+      }
+
+      if (dept.children && dept.children.length > 0) {
+        dept.children = dept.children.filter(item => this.deptFilter(item, deptId))
+        return dept.children && dept.children.length > 0
+      }
+
+      return false
+    },
+    recipientDepartmentChange(deptId){
+      this.formData.recipientId = ''
+      this.getUserList(deptId)
+    },
+    recipientChange(recipientId){
+      if (recipientId){
+        this.formData.recipientDepartId = this.recipientUserList
+          .find(item => item.userId === this.formData.recipientId)
+          .deptId
+      }
     }
   },
   computed: {
     // 当前登录用户
     currUser() {
       return this.$store.state.user.user
-    }
+    },
+
   },
   mounted() {
 
@@ -620,8 +642,13 @@ export default {
         this.addRow()
         this.getBudgetTypeList()
         this.getSupplierList()
+        this.getUserList(this.formData.applyDepart)
+        this.getDeptList('')
       }
     },
+    recipientDepartmentId(val){
+      this.formData.recipientDepartId = val
+    }
   }
 }
 </script>
