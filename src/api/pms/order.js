@@ -69,9 +69,17 @@ export function importInOrderInfo(data) {
   return request.post(ORDER_IMPORT, data)
 }
 
+// 上传签收单
+export function uploadReceipt(data) {
+  return request.post(ORDER_IMPORT, data)
+}
 // 下载订单导入模板
 export function downloadOrderTemplate() {
   return download(`/pms/examine/downloadTemplate?type=2`, {}, `订单导入模板_${new Date().getTime()}.xlsx`)
+}
+// 下载签收单模板
+export function downloadReceiptTemplate() {
+  return download(`/pms/examine/downloadTemplate?type=3`, {}, `签收单模板_${new Date().getTime()}.xlsx`)
 }
 // 订单导出（入库单）
 export function exportInOrder(data) {
