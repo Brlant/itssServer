@@ -778,10 +778,8 @@ export default {
     this.getQueryByContractId();
     let userInfo = window.localStorage.getItem('user')
     let userInfoParse = JSON.parse(userInfo)
-    console.log(userInfoParse,'用户信息')
     this.reviewedId = userInfoParse.userId
-    this.getDealtWith();
-    // console.log(this.reviewedId)
+
   },
   methods: {
     getDealtWith() {
