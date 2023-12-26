@@ -23,12 +23,12 @@ export default {
   watch: {
     '$route': {
       handler(router) {
-        console.log(router)
+        // console.log(router)
         this.key = router.name
         if (this.key) {
           this.jumpUrl = ''
-          request.get(`pms/hengshi/getUrlByKey?key=${this.key}`).then(res => {
-            this.jumpUrl = res.data
+          request.get(`/pms/hengshi/getUrlByKey?key=${this.key}`).then(url => {
+            this.jumpUrl = url
           })
         }
       },

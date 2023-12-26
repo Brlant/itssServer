@@ -59,6 +59,11 @@ module.exports = {
           // '^/itss': ''
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
+      },
+      '^/hengshi': {
+        target: 'http://172.20.8.31:8080',
+        changeOrigin: true,
+        logLevel:"debug",
       }
     },
     disableHostCheck: true
