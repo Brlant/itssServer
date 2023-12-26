@@ -143,6 +143,7 @@ import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
                         Cookies.remove('rememberMe');
                     }
                     this.$store.dispatch("Login", this.user).then(() => {
+
                         this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
                     }).catch(() => {
                         this.loading = false;

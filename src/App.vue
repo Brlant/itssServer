@@ -15,10 +15,12 @@ export default  {
     }
   },
   created() {
-    let userInfo = window.localStorage.getItem('user')
-    let userInfoParse = JSON.parse(userInfo)
-    this.reviewedId = userInfoParse.userId
-    this.getUserList();
+    if(window.localStorage.getItem('user')){
+      let userInfo = window.localStorage.getItem('user')
+      let userInfoParse = JSON.parse(userInfo)
+      this.reviewedId = userInfoParse.userId
+      this.getUserList();
+    }
   },
   methods:{
     getUserList(){
