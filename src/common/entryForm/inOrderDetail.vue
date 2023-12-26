@@ -216,7 +216,8 @@
           <span>{{ scope.row.nonTotalTaxBid }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="actualReceiptAmount" label="实际收货数量" v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
+      <el-table-column prop="actualReceiptAmount" label="实际收货数量"
+                       v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.actualReceiptAmount`" label-width="0"
                         style="margin-top: 22px"
@@ -225,7 +226,8 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="actualReceiptPrice" label="实际收货金额" v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
+      <el-table-column prop="actualReceiptPrice" label="实际收货金额"
+                       v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.actualReceiptPrice`" label-width="0"
                         style="margin-top: 22px"
@@ -233,19 +235,23 @@
                         { required: true, message: '金额不能为空', trigger: 'blur'},
                         { pattern: /^(([1-9]{1}\d{0,9})|(0{1}))(\.\d{1,3})?$/,message:'金额不合法，最多3位小数', trigger: 'blur' }
                       ]">
-            <el-input v-model="scope.row.actualReceiptPrice" placeholder="请输入实际收货金额，最多三位小数" :readonly="formData.pmsOrderStatus !== 3"></el-input>
+            <el-input v-model="scope.row.actualReceiptPrice" placeholder="请输入实际收货金额，最多三位小数"
+                      :readonly="formData.pmsOrderStatus !== 3"></el-input>
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="receiptRemark" label="收货备注" v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
+      <el-table-column prop="receiptRemark" label="收货备注"
+                       v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.receiptRemark`" label-width="0"
                         style="margin-top: 22px">
-            <el-input type="textarea" v-model="scope.row.receiptRemark" placeholder="请输入数量" :readonly="formData.pmsOrderStatus !== 3"></el-input>
+            <el-input type="textarea" v-model="scope.row.receiptRemark" placeholder="请输入数量"
+                      :readonly="formData.pmsOrderStatus !== 3"></el-input>
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column label="有效期" v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7" min-width="180px">
+      <el-table-column label="有效期" v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7"
+                       min-width="180px">
         <template v-slot="scope">
           <el-row :gutter="10">
             <el-col :span="10">
@@ -295,7 +301,7 @@
     </el-table>
 
     <!--收货信息-->
-    <el-form-item label="签收单" label-width="100px"
+    <el-form-item label="签收单"
                   v-show="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7" style="margin-top: 22px">
       <el-form-item v-show="formData.pmsOrderStatus === 3" style="margin-bottom: 22px">
         <el-button title="下载签收单模板" type="primary" @click="downloadReceipt">
@@ -320,7 +326,7 @@
                   display: inline-block;" :title="attachment.attachmentFileName">
                 {{ attachment.attachmentFileName }}
               </div>
-              <div style="float: right;margin-right: 20px">
+              <div style="float: right;margin-right: 10px">
                 <!--下载附件-->
                 <a :href="attachment.attachmentPath"
                    target="_blank"
@@ -334,6 +340,86 @@
         </el-row>
       </el-form-item>
     </el-form-item>
+
+    <div class="jiBenXinXi">
+      财务信息
+    </div>
+    <el-form-item label="付款凭证" v-show="formData.pmsOrderStatus === 7">
+      <el-row :gutter="20">
+        <el-col :span="2">
+          <el-upload :action="uploadUrl" multiple
+                     :show-file-list="false"
+                     :on-success="paymentAttachmentUploadSuccessHandler"
+                     :before-upload="paymentAttachmentUploadbeforeHandler">
+            <el-button type="primary">
+              选择文件<i class="el-icon-upload el-icon--right"/>
+            </el-button>
+          </el-upload>
+        </el-col>
+        <el-col :span="9" v-if="paymentAttachment">
+          <div style="border: 1px lightgrey solid; padding: 0 10px;height: 36px">
+            <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width:auto;
+                  display: inline-block;" :title="paymentAttachment.attachmentFileName">
+              {{ paymentAttachment.attachmentFileName }}
+            </div>
+            <div style="float: right;margin-right: 10px">
+              <!--下载附件-->
+              <a :href="paymentAttachment.attachmentPath"
+                 target="_blank"
+                 :download="paymentAttachment.attachmentFileName"
+                 class="el-icon-download el-icon--right"
+                 title="下载凭证"
+              ></a>
+              <a href="#" class="el-icon-delete el-icon--right"
+                 title="删除附件" style="margin-left: 10px"
+                 @click.prevent="deleteAttachment(paymentAttachment.attachmentId,true)"></a>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </el-form-item>
+    <el-form-item label="发票" v-show="formData.pmsOrderStatus === 7">
+      <el-row :gutter="20">
+        <el-col :span="2">
+          <el-upload :action="uploadUrl" multiple
+                     :show-file-list="false"
+                     :on-success="invoiceAttachmentUploadSuccessHandler"
+                     :before-upload="invoiceAttachmentUploadbeforeHandler">
+            <el-button type="primary">
+              选择文件<i class="el-icon-upload el-icon--right"/>
+            </el-button>
+          </el-upload>
+        </el-col>
+        <el-col :span="9" v-if="invoiceAttachment">
+          <div style="border: 1px lightgrey solid; padding: 0 10px;height: 36px">
+            <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width:auto;
+                  display: inline-block;" :title="invoiceAttachment.attachmentFileName">
+              {{ invoiceAttachment.attachmentFileName }}
+            </div>
+            <div style="float: right;margin-right: 10px">
+              <!--下载附件-->
+              <a :href="invoiceAttachment.attachmentPath"
+                 target="_blank"
+                 :download="invoiceAttachment.attachmentFileName"
+                 class="el-icon-download el-icon--right"
+                 title="下载凭证"
+              ></a>
+              <a href="#" class="el-icon-delete el-icon--right"
+                 title="删除附件" style="margin-left: 10px"
+                 @click.prevent="deleteAttachment(invoiceAttachment.attachmentId,false)"></a>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </el-form-item>
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <el-form-item label="发票号" v-show="formData.pmsOrderStatus === 7">
+          <el-input v-model="formData.invoiceNum" placeholder="请输入发票号" @change="changeInvoiceNumHandler"></el-input>
+        </el-form-item>
+      </el-col>
+    </el-row>
+
     <el-divider></el-divider>
     <!-- 提交按钮 -->
     <el-form-item style="margin-top: 22px">
@@ -387,6 +473,7 @@ import {
   downloadReceiptTemplate
 } from '@/api/pms/order'
 import request, {uploadUrl} from '@/utils/request'
+import supplierApi from '@/api/supplier/supplier'
 
 export default {
   name: "InOrderDetail",
@@ -425,6 +512,12 @@ export default {
     },
     needAudit() {
       return this.oldStr != this.newStr
+    },
+    paymentAttachment() {
+      return this.paymentAttachmentInfos && this.paymentAttachmentInfos.length > 0 ? this.paymentAttachmentInfos[0] : null
+    },
+    invoiceAttachment() {
+      return this.invoiceAttachmentInfos && this.invoiceAttachmentInfos.length > 0 ? this.invoiceAttachmentInfos[0] : null
     }
   },
   watch: {
@@ -434,8 +527,11 @@ export default {
           console.log('订单详情', newVal);
           // 每次重新进入订单详情后需要重新清空表单校验
           if (this.$refs.form) {
-            this.$refs.form.clearValidate()
+            this.$refs.form.resetFields()
           }
+
+          this.paymentAttachmentInfos = []
+          this.invoiceAttachmentInfos = []
 
           this.getSupplierList()
           this.getBudgetTypeList()
@@ -481,7 +577,7 @@ export default {
         examineButton: 0,// 审核：判断是否有审核权限，0否1是
         returnButton: 0,// 撤回：判断是否有撤回权限，0否1是
         receiptButton: 0,// 签收：判断是否有收货权限，0否1是
-        attachmentInfos:[]
+        attachmentInfos: []
       },
       orderDetail: {},
       rules: {
@@ -515,7 +611,9 @@ export default {
         {label: '无需效期', value: '0'},
         {label: '无效期', value: '1'},
         {label: '有效期', value: '2'},
-      ]
+      ],
+      paymentAttachmentInfos: [],
+      invoiceAttachmentInfos: [],
     }
   },
   methods: {
@@ -555,7 +653,10 @@ export default {
 
         this.orderDetail = JSON.parse(JSON.stringify(res.data))
         this.formData = res.data
-        this.formData.attachmentInfos = res.data.attachmentInfos || []
+        let attachmentInfos = res.data.attachmentInfos || []
+        this.invoiceAttachmentInfos = attachmentInfos.filter(item => item.attachmentObjectType === 'orderInvoice')
+        this.paymentAttachmentInfos = attachmentInfos.filter(item => item.attachmentObjectType === 'orderPayment')
+        this.formData.attachmentInfos = attachmentInfos.filter(item => item.attachmentObjectType === 'orderReceipt')
         this.formData.orderDetailList.forEach((item, index) => {
           this.getGoodsList(item.supplierId, index)
         })
@@ -811,12 +912,51 @@ export default {
       // 附件上传成功后的处理
       this.formData.attachmentInfos.push({
         attachmentId: '',
-        attachmentFileName:  response.data.name,
+        attachmentFileName: response.data.name,
         attachmentPath: response.data.url,
       });
     },
-    confirmReceipt() {
+    paymentAttachmentUploadbeforeHandler(file) {
+      const isLt10M = file.size / 1024 / 1024 < 10
+      if (!isLt10M) {
+        this.$message.error('上传的付款凭证大小不能超过 10MB!')
+        return false
+      }
 
+      return true
+    },
+    paymentAttachmentUploadSuccessHandler(response, file) {
+      // 附件上传成功后的处理
+      this.paymentAttachmentInfos = [{
+        attachmentId: '',
+        attachmentFileName: response.data.name,
+        attachmentPath: response.data.url,
+      }]
+
+      // 附件上传成功后更新订单的付款凭证
+      this.editOrderPayment()
+    },
+    invoiceAttachmentUploadbeforeHandler(file) {
+      const isLt10M = file.size / 1024 / 1024 < 10
+      if (!isLt10M) {
+        this.$message.error('上传的发票大小不能超过 10MB!')
+        return false
+      }
+
+      return true
+    },
+    invoiceAttachmentUploadSuccessHandler(response, file) {
+      // 附件上传成功后的处理
+      this.invoiceAttachmentInfos = [{
+        attachmentId: '',
+        attachmentFileName: response.data.name,
+        attachmentPath: response.data.url,
+      }]
+
+      // 附件上传成功后更新订单的发票
+      this.editOrderInvoice()
+    },
+    confirmReceipt() {
       this.$refs.form.validate(valid => {
         if (valid) {
           // 表单验证通过，可以在这里进行提交操作
@@ -837,6 +977,65 @@ export default {
       } else {
         callback();
       }
+    },
+    // 编辑付款凭证
+    editOrderPayment() {
+      let pmsOrderId = this.formData.pmsOrderId
+      let attachmentInfos = this.paymentAttachmentInfos
+      request.post('/pms/order/editOrderPayment', {pmsOrderId, attachmentInfos}).then(res => {
+        if (res.code === 200) {
+          this.$message.success('付款凭证上传成功')
+        } else {
+          this.$message.error(res.msg)
+        }
+      })
+    },
+    // 编辑发票信息
+    editOrderInvoice(uploadFlag) {
+      let pmsOrderId = this.formData.pmsOrderId
+      let invoiceNum = this.formData.invoiceNum
+      let attachmentInfos = this.paymentAttachmentInfos
+      request.post('/pms/order/editOrderInvoice', {pmsOrderId, invoiceNum, attachmentInfos}).then(res => {
+        if (res.code === 200) {
+          this.$message.success(uploadFlag?'发票上传成功':'发票号修改成功')
+        } else {
+          this.$message.error(res.msg)
+        }
+      })
+    },
+    deleteAttachment(attachmentId,paymentFlag) {
+      this.$confirm('此操作将永久删除该附件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        if (attachmentId) {
+          supplierApi.deleteAttachment(attachmentId).then(res => {
+            if (res.code === 200) {
+              this.localDelAttachment(paymentFlag)
+            } else {
+              this.$message.error(res.message)
+            }
+          })
+        } else {
+          // 没有附件id的直接本地删除
+          this.localDelAttachment(paymentFlag)
+        }
+      })
+    },
+    localDelAttachment(paymentFlag) {
+      if(paymentFlag){
+        this.paymentAttachmentInfos.splice(0, 1)
+      }else{
+        this.invoiceAttachmentInfos.splice(0, 1)
+      }
+
+      this.$message.success('删除成功')
+    },
+    changeInvoiceNumHandler(value){
+      if(value){
+        this.editOrderInvoice(false)
+      }
     }
   }
 }
@@ -851,15 +1050,6 @@ export default {
   margin-bottom: 22px;
   padding-bottom: 10px;
   box-sizing: content-box;
-}
-
-/*/deep/ .el-input__inner {*/
-/*  border: none;*/
-/*  background-color: rgba(255, 255, 255, 0);*/
-/*}*/
-
->>> .el-form-item {
-  margin-left: 0;
 }
 
 </style>
