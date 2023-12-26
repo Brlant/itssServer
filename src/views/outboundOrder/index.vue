@@ -277,7 +277,8 @@ export default {
       // 发起部门（多层级）
       deptList: [],
       // 发起人，按部门筛选
-      userList: []
+      userList: [],
+      activeStatus:'',
     }
   },
   created() {
@@ -289,13 +290,13 @@ export default {
 
   },
   computed: {
-    activeStatus() {
-      if (!this.detailsSupplierData) {
-        return ''
-      }
-
-      return this.detailsSupplierData.supplierStatus
-    },
+    // activeStatus() {
+    //   if (!this.detailsSupplierData) {
+    //     return ''
+    //   }
+    //
+    //   return this.detailsSupplierData.supplierStatus
+    // },
   },
   methods: {
     /*处理标签页信息*/
@@ -384,6 +385,7 @@ export default {
     },
     /*详情*/
     handleDetails(row) {
+      this.activeStatus = row.pmsOrderStatus
       this.currOrderId = row.pmsOrderId;
       this.dialogDetailsProcessDialog = true;
     },
@@ -445,7 +447,7 @@ export default {
 
 .tabStatus {
   position: absolute;
-  top: 90px;
+  top: 10px;
   left: 300px;
   width: 80px;
   height: 20px;
