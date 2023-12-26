@@ -5,8 +5,39 @@
 </template>
 
 <script>
+import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
+
 export default  {
   name:  'App',
+  data() {
+    return {
+      reviewedId:'', //用户id
+    }
+  },
+  created() {
+    let userInfo = window.localStorage.getItem('user')
+    let userInfoParse = JSON.parse(userInfo)
+    this.reviewedId = userInfoParse.userId
+    this.getUserList();
+  },
+  methods:{
+    getUserList(){
+      //更新下角标
+      const updateParams =
+        {
+          key: "",
+          modelName: "",
+          reviewedId: this.reviewedId,
+          pageNum: 1,
+          pageSize: 10,
+          promoterId: "",
+          queryType: 2
+        }
+      getDealtWithList(updateParams).then((res) => {
+        this.$store.dispatch('updateItem', res.data.total);
+      })
+    }
+  },
     metaInfo() {
         return {
             title: this.$store.state.settings.dynamicTitle && this.$store.state.settings.title,

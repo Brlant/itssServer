@@ -50,19 +50,25 @@
             </div>
 <!--            上级领导-->
             <div v-if="scope.row.reviewedType === '上级领导'">
-              <el-select
-                filterable
-                v-if="!scope.row.isStart && !scope.row.isEnd"
-                v-model="scope.row.reviewedId"
-                placeholder="请选择审批人类型"
-              >
-                <el-option
-                  v-for="(item,index) in nickNameArray"
-                  :key="index"
-                  :label="item.nickName"
-                  :value="item.userId"
-                ></el-option>
-              </el-select>
+              <el-input
+                v-if="!scope.row.isStart &&!scope.row.isEnd"
+                readonly
+                v-model="leaders"
+              ></el-input>
+
+<!--              <el-select-->
+<!--                filterable-->
+<!--                v-if="!scope.row.isStart && !scope.row.isEnd"-->
+<!--                v-model="scope.row.reviewedId"-->
+<!--                placeholder="请选择审批人类型"-->
+<!--              >-->
+<!--                <el-option-->
+<!--                  v-for="(item,index) in nickNameArray"-->
+<!--                  :key="index"-->
+<!--                  :label="item.nickName"-->
+<!--                  :value="item.userId"-->
+<!--                ></el-option>-->
+<!--              </el-select>-->
             </div>
 
 
@@ -157,6 +163,11 @@ export default {
     this.userId = this.userInfo.userId
     this.remoteSearch();
   },
+  computed:{
+    leaders(){
+      return '上级领导'
+    }
+  },
   mounted() {
 
   },
@@ -221,12 +232,14 @@ export default {
       }
 
       for(let z in this.tableData){
-        if(this.tableData[z].reviewedId === ''){
-          return this.$notify.error({
-            duration: 2000,
-            name: '失败',
-            message: '审批人不能为空'
-          })
+        if(this.tableData[z].reviewedType === '指定人员'){
+          if(this.tableData[z].reviewedId === ''){
+            return this.$notify.error({
+              duration: 2000,
+              name: '失败',
+              message: '审批人不能为空'
+            })
+          }
         }
       }
 

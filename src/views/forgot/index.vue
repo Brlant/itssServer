@@ -29,7 +29,8 @@
               <el-input v-model="form.validCode" placeholder="请输入邮箱验证码"></el-input>
             </div>
             <div style="margin-left: 35px">
-              <el-button type="primary" @click="getEmailCode" :disabled="emailCodeDisabled">获取验证码</el-button>
+              <el-button type="primary" @click="getEmailCode" v-if="!sendMsgDisabled" :disabled="emailCodeDisabled">获取验证码</el-button>
+              <el-button v-if="sendMsgDisabled" plain>{{ time+'秒后获取' }}</el-button>
             </div>
           </div>
         </el-form-item>
@@ -78,8 +79,9 @@ export default {
         confirmPassword: [
           { required: true, message: '请再次输入新密码', trigger: 'blur' }
         ]
-      }
-
+      },
+      time: 60, // 发送验证码倒计时
+      sendMsgDisabled: false
     }
   },
   watch: {
@@ -111,14 +113,31 @@ export default {
       })
     },
     getEmailCode() {
-      let formData = new FormData()
-      formData.append('validType','2')
-      formData.append('identify',this.form.identify)
-      forgotApi.getEmail(formData).then(res => {
-        if(res.code === 200){
-          this.form.validUuid=res.uuid;
-        }
-      })
+      if(this.form.identify){
+        this.sendMsgDisabled = true
+        const interval = window.setInterval(function() {
+          if ((this.time--) <= 0) {
+            this.time = 60
+            this.sendMsgDisabled = false
+            window.clearInterval(interval)
+          }
+        }, 1000)
+
+        let formData = new FormData()
+        formData.append('validType','2')
+        formData.append('identify',this.form.identify)
+        forgotApi.getEmail(formData).then(res => {
+          if(res.code === 200){
+            this.form.validUuid=res.uuid;
+          }
+        })
+
+      }else{
+        this.$message({
+          message: '请输入企业邮箱',
+          type:'error'
+        })
+      }
     },
     submitForm() {
       this.$refs.loginForm.validate(valid => {

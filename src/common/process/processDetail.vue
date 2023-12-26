@@ -15,6 +15,7 @@
       <el-table-column label="审批人" align="center" prop="reviewedName" >
         <template v-slot="{ row }">
           <span v-if="row.reviewedName === null">/</span>
+          <span v-else-if="row.reviewedType === '上级领导'">上级领导</span>
           <span v-else>{{row.reviewedName}}</span>
         </template>
       </el-table-column>

@@ -323,6 +323,7 @@ export default {
       handler(newVal, oldVal) {
         if (newVal && newVal.supplierId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
+          this.backData = {...this.formData}
         }
       },
       immediate: true,
@@ -403,6 +404,7 @@ export default {
         //   {required: true, message: '请输入手机号', trigger: 'blur'}
         // ]
       },
+      backData: null,//原始数据
       companyTypes: [],
       supplierTypes: [
         {
@@ -523,6 +525,13 @@ export default {
     // 编辑供应商
     updateSupplier() {
       this.formData.changeFlag = this.needAudit
+
+      let changes = Object.keys(this.formData).filter(key => this.formData[key] !== this.backData[key]);
+
+      if(!changes){
+        this.$message.error('内容未做任何修改，无需提交')
+      }
+
       supplierApi.updateSupplier(this.formData).then(res => {
         if (res.code === 200) {
           this.$message.success('编辑成功')

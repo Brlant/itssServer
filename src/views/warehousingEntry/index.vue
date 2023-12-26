@@ -334,7 +334,8 @@ export default {
       // 发起部门（多层级）
       deptList: [],
       // 发起人，按部门筛选
-      userList: []
+      userList: [],
+
     }
   },
   created() {
