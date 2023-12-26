@@ -134,30 +134,30 @@
     />
 
     <!--    详情弹框-->
-    <el-dialog :visible="dialogDetailsProcessDialog" :title="detailsTitle" width="80%" @close="closeDialog">
+    <el-dialog :visible="dialogOutDetailsProcessDialog" :title="detailsOutTitle" width="80%" @close="closeOutDialog">
       <template v-slot:title>
-        <div style="font-weight: bold;font-size: 15px">{{ detailsTitle }}</div>
+        <div style="font-weight: bold;font-size: 15px">{{ detailsOutTitle }}</div>
       </template>
-      <template class="templateDialogStyle">
+      <template class="templateOutDialogStyle">
         <div style="position: relative">
-          <div class="tabStatus">
-            <span v-if="activeStatus === 0" style="color: #F79B22">待审核</span>
-            <span v-if="activeStatus === 1" style="color: #F79B22">审核中</span>
-            <span v-if="activeStatus === 2" style="color: black">审核未通过</span>
-            <span v-if="activeStatus === 4" style="color: black">已撤回</span>
-            <span v-if="activeStatus === 5" style="color: black">已取消</span>
-            <span v-if="activeStatus === 3" style="color: green">已完成</span>
+          <div class="tabOutStatus">
+            <span v-if="activeOutStatus === 0" style="color: #F79B22">待审核</span>
+            <span v-if="activeOutStatus === 1" style="color: #F79B22">审核中</span>
+            <span v-if="activeOutStatus === 2" style="color: black">审核未通过</span>
+            <span v-if="activeOutStatus === 4" style="color: black">已撤回</span>
+            <span v-if="activeOutStatus === 5" style="color: black">已取消</span>
+            <span v-if="activeOutStatus === 3" style="color: green">已完成</span>
           </div>
         </div>
-        <el-tabs v-model="activeTab" @tab-click="handleTabClick">
+        <el-tabs v-model="activeOutTab" @tab-click="handleOutTabClick">
           <el-tab-pane
-            v-for="tab in tabs"
+            v-for="tab in tabsOut"
             :key="tab.name"
             :label="tab.label"
             :name="tab.name">
             <!-- 使用组件作为标签页内容 -->
-            <component :is="tab.component" :tabName="tabName" :orderId="currOrderId"
-                       @closeOrderDetail="closeOrderDetailHandler"></component>
+            <component :is="tab.component" :tabName="tabName" :orderId="currOutOrderId"
+                       @closeOrderDetail="closeOutOrderDetailHandler"></component>
           </el-tab-pane>
         </el-tabs>
       </template>
@@ -211,18 +211,18 @@ export default {
   data() {
     return {
       // 当前订单的订单id，切换不同订单详情会变化
-      currOrderId: '',
-      activeTab: 'orderInfo',
-      tabs: [
+      currOutOrderId: '',
+      activeOutTab: 'orderInfo',
+      tabsOut: [
         {label: '订单信息', name: 'orderInfo', component: boundInfo},
         {label: '审核信息', name: 'auditInfo', component: boundAuditInfo},
         {label: '操作日志', name: 'operationLog', component: boundOperationLog}
       ],
       tabName: null,
       //详情信息
-      detailsTitle: "详情信息",
+      detailsOutTitle: "详情信息",
       //详情信息弹框
-      dialogDetailsProcessDialog: false,
+      dialogOutDetailsProcessDialog: false,
       //新建弹框
       dialogAdd: false,
       importOrderDialogShowFlag: false,
@@ -279,7 +279,7 @@ export default {
       deptList: [],
       // 发起人，按部门筛选
       userList: [],
-      activeStatus:'',
+      activeOutStatus:'',
     }
   },
   created() {
@@ -291,7 +291,7 @@ export default {
 
   },
   computed: {
-    // activeStatus() {
+    // activeOutStatus() {
     //   if (!this.detailsSupplierData) {
     //     return ''
     //   }
@@ -301,17 +301,17 @@ export default {
   },
   methods: {
     /*处理标签页信息*/
-    handleTabClick(tab, event) {
+    handleOutTabClick(tab, event) {
 
     },
     // 关闭详情对话框
-    closeDialog() {
-      this.currOrderId = ''
-      this.dialogDetailsProcessDialog = false;
+    closeOutDialog() {
+      this.currOutOrderId = ''
+      this.dialogOutDetailsProcessDialog = false;
     },
     // 关闭订单详情对话框并刷新订单列表
-    closeOrderDetailHandler() {
-      this.closeDialog()
+    closeOutOrderDetailHandler() {
+      this.closeOutDialog()
       this.getList()
     },
     /*查询列表内容*/
@@ -386,9 +386,9 @@ export default {
     },
     /*详情*/
     handleDetails(row) {
-      this.activeStatus = row.pmsOrderStatus
-      this.currOrderId = row.pmsOrderId;
-      this.dialogDetailsProcessDialog = true;
+      this.activeOutStatus = row.pmsOrderStatus
+      this.currOutOrderId = row.pmsOrderId;
+      this.dialogOutDetailsProcessDialog = true;
     },
     getDeptList(query) {
       treeselect(query).then(res => {
@@ -442,11 +442,11 @@ export default {
   margin: 10px 0px;
 }
 
-.templateDialogStyle {
+.templateOutDialogStyle {
   position: relative;
 }
 
-.tabStatus {
+.tabOutStatus {
   position: absolute;
   top: 10px;
   left: 300px;

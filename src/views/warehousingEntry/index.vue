@@ -190,25 +190,25 @@
     />
 
     <!--    详情弹框-->
-    <el-dialog :visible="dialogDetailsProcessDialog" :title="detailsTitle" width="80%" @close="closeDialog">
+    <el-dialog :visible="dialogEntryDetailsProcessDialog" :title="detailsEntryTitle" width="80%" @close="closeEntryDialog">
       <template v-slot:title>
-        <div style="font-weight: bold;font-size: 15px">{{ detailsTitle }}</div>
+        <div style="font-weight: bold;font-size: 15px">{{ detailsEntryTitle }}</div>
       </template>
-      <template class="templateDialogStyle">
+      <template class="templateEntryDialogStyle">
         <div style="position: relative">
-          <div class="tabStatus">
-            <span v-if="activeStatus === 0" style="color: #F79B22">待审核</span>
-            <span v-if="activeStatus === 1" style="color: #F79B22">审核中</span>
-            <span v-if="activeStatus === 2" style="color: black">审核未通过</span>
-            <span v-if="activeStatus === 3" style="color: #F79B22">待收货</span>
-            <span v-if="activeStatus === 4" style="color: black">已撤回</span>
-            <span v-if="activeStatus === 5" style="color: black">已取消</span>
-            <span v-if="activeStatus === 7" style="color: green">已完成</span>
+          <div class="tabEntryStatus">
+            <span v-if="activeEntryStatus === 0" style="color: #F79B22">待审核</span>
+            <span v-if="activeEntryStatus === 1" style="color: #F79B22">审核中</span>
+            <span v-if="activeEntryStatus === 2" style="color: black">审核未通过</span>
+            <span v-if="activeEntryStatus === 3" style="color: #F79B22">待收货</span>
+            <span v-if="activeEntryStatus === 4" style="color: black">已撤回</span>
+            <span v-if="activeEntryStatus === 5" style="color: black">已取消</span>
+            <span v-if="activeEntryStatus === 7" style="color: green">已完成</span>
           </div>
         </div>
-        <el-tabs v-model="activeTab" @tab-click="handleTabClick">
+        <el-tabs v-model="activeEntryTab" @tab-click="handleEntryTabClick">
           <el-tab-pane
-            v-for="tab in tabs"
+            v-for="tab in tabsEntry"
             :key="tab.name"
             :label="tab.label"
             :name="tab.name">
@@ -269,17 +269,17 @@ export default {
     return {
       // 当前订单的订单id，切换不同订单详情会变化
       currOrderId: '',
-      activeTab: 'orderInfo',
-      tabs: [
+      activeEntryTab: 'orderInfo',
+      tabsEntry: [
         {label: '订单信息', name: 'orderInfo', component: entryInfo},
         {label: '审核信息', name: 'auditInfo', component: entryAuditInfo},
         {label: '操作日志', name: 'operationLog', component: entryOperationLog}
       ],
       tabName: null,
       //详情信息
-      detailsTitle: "详情信息",
+      detailsEntryTitle: "详情信息",
       //详情信息弹框
-      dialogDetailsProcessDialog: false,
+      dialogEntryDetailsProcessDialog: false,
       //新建弹框
       dialogAddEntry: false,
       importOrderDialogShowFlag: false,
@@ -337,7 +337,7 @@ export default {
       // 发起人，按部门筛选
       userList: [],
       //状态
-      activeStatus:'',
+      activeEntryStatus:'',
     }
   },
   created() {
@@ -349,7 +349,7 @@ export default {
 
   },
   computed: {
-    // activeStatus() {
+    // activeEntryStatus() {
     //   if (!this.detailsSupplierData) {
     //     return ''
     //   }
@@ -359,17 +359,17 @@ export default {
   },
   methods: {
     /*处理标签页信息*/
-    handleTabClick(tab, event) {
+    handleEntryTabClick(tab, event) {
 
     },
     // 关闭详情对话框
-    closeDialog() {
+    closeEntryDialog() {
       this.currOrderId = ''
-      this.dialogDetailsProcessDialog = false;
+      this.dialogEntryDetailsProcessDialog = false;
     },
     // 关闭订单详情对话框并刷新订单列表
     closeOrderDetailHandler() {
-      this.closeDialog()
+      this.closeEntryDialog()
       this.getList()
     },
     /*查询列表内容*/
@@ -446,9 +446,9 @@ export default {
     },
     /*详情*/
     handleDetails(row) {
-      this.activeStatus = row.pmsOrderStatus
+      this.activeEntryStatus = row.pmsOrderStatus
       this.currOrderId = row.pmsOrderId;
-      this.dialogDetailsProcessDialog = true;
+      this.dialogEntryDetailsProcessDialog = true;
     },
     getDeptList(query) {
       treeselect(query).then(res => {
@@ -502,11 +502,11 @@ export default {
   margin: 10px 0px;
 }
 
-.templateDialogStyle {
+.templateEntryDialogStyle {
   position: relative;
 }
 
-.tabStatus {
+.tabEntryStatus {
   position: absolute;
   top: 10px;
   left: 300px;
