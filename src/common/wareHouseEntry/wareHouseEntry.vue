@@ -133,12 +133,6 @@
                 :value="option.goodsId"
                 :disabled="option.disabled"
               ></el-option>
-              <el-option v-if="!formData.orderDetailList[scope.$index].goodsList.some(goods => goods.goodsId === scope.row.goodsId)"
-                         :key="scope.row.goodsId"
-                         :label="scope.row.goodsCode"
-                         :value="scope.row.goodsId"
-                         :disabled="true"
-                ></el-option>
               </el-select>
             </el-form-item>
           </template>
@@ -157,12 +151,6 @@
                 :value="option.goodsId"
                 :disabled="option.disabled"
               ></el-option>
-              <el-option v-if="!formData.orderDetailList[scope.$index].goodsList.some(goods => goods.goodsId === scope.row.goodsId)"
-                         :key="scope.row.goodsId"
-                         :label="scope.row.goodsName"
-                         :value="scope.row.goodsId"
-                         :disabled="true"
-                ></el-option>
               </el-select>
             </el-form-item>
           </template>
