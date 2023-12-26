@@ -1,6 +1,6 @@
 <template>
   <div class="tip-show">新ITSS平台
-    <prompt-info v-hasPermi="['pms:goods:expire']" :promptInfoForm="promptInfoForm" @handleClosePrompt="handleClosePrompt" :expirationReminder="expirationReminder"></prompt-info>
+    <prompt-info  :promptInfoForm="promptInfoForm" @handleClosePrompt="handleClosePrompt" :expirationReminder="expirationReminder"></prompt-info>
   </div>
   <!-- <div class="app-container home">
     <el-row :gutter="20">
