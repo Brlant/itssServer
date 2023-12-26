@@ -238,7 +238,7 @@ export default {
   },
   methods:{
     changeAmount(value){
-      const reg = /^\d*$/;
+      const reg = /^\d+(\.\d+)?$/;
       if (!reg.test(value)) {
         this.formData.contractAmount = value.replace(/[^\d]/g, '');
       }

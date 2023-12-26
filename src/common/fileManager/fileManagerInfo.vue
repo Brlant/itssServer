@@ -434,15 +434,18 @@ export default {
       })
     },
     overFilesNoExamin(){
-      this.$confirm('是否确定审核不通过?', '二次确认', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+      this.$prompt('请填写审核不通过的原因', "", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        closeOnClickModal: false,
+        inputValidator: value => !!value,
+        inputErrorMessage: "原因不能为空"
+      }).then(({ value }) => {
         let params = {
           goodsId: this.formData.goodsId,
           goodsStatus: 2,
           examineType:2,
+          remark: value,
         }
         filesApi.checkPass(params).then(res => {
           this.$message({

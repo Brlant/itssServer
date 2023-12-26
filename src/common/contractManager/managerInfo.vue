@@ -158,7 +158,7 @@
         <el-col :span="8">
           <el-form-item label="合同金额"
             prop="contractAmount">
-            <el-input v-model.number="formData.contractAmount"
+            <el-input v-model.number="formData.contractAmount" type="number" @input="changeAmount"
               placeholder="请输入合同金额"/>
           </el-form-item>
         </el-col>
@@ -322,14 +322,14 @@ export default {
         contractCode: [{required: true, message: '请输入合同编号', trigger: 'blur'}],
         contractName:[{required: true, message: '请输入合同名称', trigger: 'blur'}],
         supplierId:[{required: true, message: '请选择供应商', trigger: 'change'}],
-        contractAmount:[
-          {required: true, message: '请输入合同金额'},
-          {type: 'number', message: '合同金额必须是数字'}
-        ],
+        // contractAmount:[
+        //   {required: true, message: '请输入合同金额'},
+        //   {type: 'number', message: '合同金额必须是数字'}
+        // ],
         signingDate:[{required: true, message: '请选择合同签订日期', trigger: 'change'}],
         dueDate:[{required: true, message: '请选择合同到期日期', trigger: 'change'}],
         contractType:[{required: true, message: '请选择合同类型', trigger: 'change'}],
-        contractSignatory:[{required: true, message: '请填写合同签署人', trigger: 'blur'}]
+        // contractSignatory:[{required: true, message: '请填写合同签署人', trigger: 'blur'}]
       },
       backData: null
     }
@@ -411,6 +411,12 @@ export default {
     this.queryContract();
   },
   methods: {
+    changeAmount(value){
+      const reg = /^\d+(\.\d+)?$/;
+      if (!reg.test(value)) {
+        this.formData.contractAmount = value.replace(/[^\d]/g, '');
+      }
+    },
     hasPermission(permissionStr) {
       const all_permission = "*:*:*";
       return this.permissions?.some(permission => {
