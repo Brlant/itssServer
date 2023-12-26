@@ -140,6 +140,7 @@
                        :show-file-list="false"
                        :on-success="handleAttachmentSuccess"
                        :before-upload="attachmentUploadBeforeHandler"
+                       accept=".png,.jpg,.jpeg,application/pdf"
                        multiple>
               <el-button type="primary">选择文件<i class="el-icon-upload el-icon--right"/></el-button>
             </el-upload>
@@ -328,6 +329,14 @@ export default {
       });
     },
     handleAttachmentSuccess(response, file) {
+      const isPNG = file.raw.type === 'image/png';
+      const isJPG = file.raw.type === 'image/jpeg';
+      const isPDF = file.raw.type === 'application/pdf';
+
+      if (!isPNG && !isJPG && !isPDF) {
+        this.$message.error('只能上传PNG、JPG图片或PDF文件');
+        return false;
+      }
 
       // 附件上传成功后的处理
       this.formData.attachmentInfos.push({

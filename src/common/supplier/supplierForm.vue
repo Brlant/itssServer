@@ -138,6 +138,7 @@
                        :show-file-list="false"
                        :on-success="handleAttachmentSuccess"
                        :before-upload="attachmentUploadBeforeHandler"
+                       accept=".png,.jpg,.jpeg,application/pdf"
                        multiple>
               <el-button type="primary">选择文件<i class="el-icon-upload el-icon--right"/></el-button>
             </el-upload>
@@ -465,7 +466,14 @@ export default {
       return true
     },
     handleAttachmentSuccess(response, file) {
-      console.log(response,'基本信息')
+      const isPNG = file.raw.type === 'image/png';
+      const isJPG = file.raw.type === 'image/jpeg';
+      const isPDF = file.raw.type === 'application/pdf';
+
+      if (!isPNG && !isJPG && !isPDF) {
+        this.$message.error('只能上传PNG、JPG图片或PDF文件');
+        return false;
+      }
       // 附件上传成功后的处理
       this.formData.businessInfo.attachmentInfos.push({
         attachmentId: '',
