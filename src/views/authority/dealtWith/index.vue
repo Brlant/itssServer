@@ -206,6 +206,70 @@
         </div>
       </template>
     </el-dialog>
+
+    <!--    入库订单信息-->
+    <el-dialog :visible="dialogEntryDetailsProcessDialog" :title="detailsEntryTitle" width="80%" @close="closeEntryDialog">
+      <template v-slot:title>
+        <div style="font-weight: bold;font-size: 15px">{{ detailsEntryTitle }}</div>
+      </template>
+      <template class="templateEntryDialogStyle">
+        <div style="position: relative">
+          <div class="tabEntryStatus">
+            <span v-if="activeEntryStatus === 0" style="color: #F79B22">待审核</span>
+            <span v-if="activeEntryStatus === 1" style="color: #F79B22">审核中</span>
+            <span v-if="activeEntryStatus === 2" style="color: black">审核未通过</span>
+            <span v-if="activeEntryStatus === 3" style="color: #F79B22">待收货</span>
+            <span v-if="activeEntryStatus === 4" style="color: black">已撤回</span>
+            <span v-if="activeEntryStatus === 5" style="color: black">已取消</span>
+            <span v-if="activeEntryStatus === 7" style="color: green">已完成</span>
+          </div>
+        </div>
+        <el-tabs v-model="activeEntryTab" @tab-click="handleEntryTabClick">
+          <el-tab-pane
+            v-for="tab in tabsEntry"
+            :key="tab.name"
+            :label="tab.label"
+            :name="tab.name">
+            <!-- 使用组件作为标签页内容 -->
+            <component :is="tab.component" :tabName="tabName" :orderId="currOrderId"
+                       @closeOrderDetail="closeOrderDetailHandler"></component>
+          </el-tab-pane>
+        </el-tabs>
+      </template>
+    </el-dialog>
+
+    <!--    出库订单信息-->
+    <el-dialog :visible="dialogOutDetailsProcessDialog" :title="detailsOutTitle" width="80%" @close="closeOutDialog">
+      <template v-slot:title>
+        <div style="font-weight: bold;font-size: 15px">{{ detailsOutTitle }}</div>
+      </template>
+      <template class="templateOutDialogStyle">
+        <div style="position: relative">
+          <div class="tabOutStatus">
+            <span v-if="activeOutStatus === 0" style="color: #F79B22">待审核</span>
+            <span v-if="activeOutStatus === 1" style="color: #F79B22">审核中</span>
+            <span v-if="activeOutStatus === 2" style="color: black">审核未通过</span>
+            <span v-if="activeOutStatus === 4" style="color: black">已撤回</span>
+            <span v-if="activeOutStatus === 5" style="color: black">已取消</span>
+            <span v-if="activeOutStatus === 3" style="color: green">已完成</span>
+          </div>
+        </div>
+        <el-tabs v-model="activeOutTab" @tab-click="handleOutTabClick">
+          <el-tab-pane
+            v-for="tab in tabsOut"
+            :key="tab.name"
+            :label="tab.label"
+            :name="tab.name">
+            <!-- 使用组件作为标签页内容 -->
+            <component :is="tab.component" :tabName="tabName" :orderId="currOutOrderId"
+                       @closeOrderDetail="closeOutOrderDetailHandler"></component>
+          </el-tab-pane>
+        </el-tabs>
+      </template>
+    </el-dialog>
+
+
+
   </div>
 </template>
 
@@ -233,6 +297,17 @@ import managerOperationLog from '@/common/contractManager/managerOperationLog'
 import { queryUserlist } from '@/api/system/user'
 
 import { getContractFileList,getUserList } from '@/api/contractFilesManagement/contractFilesManagement'
+
+
+//入库
+import entryAuditInfo from "@/common/entryForm/entryAuditInfo";
+import entryInfo from "@/common/entryForm/inOrderDetail";
+import entryOperationLog from "@/common/entryForm/entryOperationLog";
+
+//出库
+import boundInfo from '@/common/outBoundForm/outOrderDetail';
+import boundAuditInfo from '@/common/outBoundForm/boundAuditInfo';
+import boundOperationLog from '@/common/outBoundForm/boundOperationLog';
 
 export default {
   name: 'index',
@@ -320,7 +395,31 @@ export default {
       dialogDetailsContractDialog: false,
       detailsContractTitle: '详情信息',
       contractId: null,
-      contractStatus: null
+      contractStatus: null,
+
+      //入库订单
+      dialogEntryDetailsProcessDialog: false,
+      detailsEntryTitle: "详情信息",
+      activeEntryStatus:'',
+      activeEntryTab: 'orderInfo',
+      currOrderId: '',
+      tabsEntry: [
+        {label: '订单信息', name: 'orderInfo', component: entryInfo},
+        {label: '审核信息', name: 'auditInfo', component: entryAuditInfo},
+        {label: '操作日志', name: 'operationLog', component: entryOperationLog}
+      ],
+
+      //出库订单
+      dialogOutDetailsProcessDialog: false,
+      detailsOutTitle: "详情信息",
+      activeOutStatus:'',
+      activeOutTab: 'orderInfo',
+      tabsOut: [
+        {label: '订单信息', name: 'orderInfo', component: boundInfo},
+        {label: '审核信息', name: 'auditInfo', component: boundAuditInfo},
+        {label: '操作日志', name: 'operationLog', component: boundOperationLog}
+      ],
+      currOutOrderId: '',
     }
   },
   watch: {},
@@ -433,35 +532,18 @@ export default {
         this.dialogDetailsContractDialog = true
       }
 
-      if(row.modelType === "inOrder"){
-
+      if (row.modelType === 'inOrder') {
+        this.activeEntryStatus = row.examineStatus
+        this.currOrderId = row.relationId;
+        this.dialogEntryDetailsProcessDialog = true;
       }
-      if(row.modelType === "outOrder"){
 
+      if (row.modelType === 'outOrder') {
+        this.activeOutStatus = row.examineStatus
+        this.currOutOrderId = row.relationId;
+        this.dialogOutDetailsProcessDialog = true;
       }
 
-
-
-
-
-
-      // this.detailsSupplierData = null
-      // if (row.modelType === "supplier" || row.modelType === "goods" || row.modelType === "contract"|| row.modelType === "inOrder" || row.modelType === "outOrder") {
-      //   supplierApi.getSupplierDetails(row.relationId).then((res) => {
-      //     this.detailsSupplierData = res.data
-      //     this.tabName = '1'
-      //     this.dialogDetailsProcessDialog = true
-      //   })
-      // }
-
-      // this.detailsRow.modelType = row.modelType
-      // this.detailsRow.relationId = row.relationId
-      // this.examineStatusArray.forEach((item)=>{
-      //   if(item.value === row.examineStatus){
-      //     this.tabStatus = item.label
-      //   }
-      // })
-      // this.dialogDetailsProcessDialog = true;
     },
     /*处理标签页信息*/
     handleTabClick(tab, event) {
@@ -522,7 +604,41 @@ export default {
     /*处理标签页信息*/
     handleContractTabClick(tab, event) {
 
-    }
+    },
+
+
+    // 关闭详情对话框
+    closeEntryDialog() {
+      this.currOrderId = ''
+      this.dialogEntryDetailsProcessDialog = false;
+    },
+
+    // 关闭订单详情对话框并刷新订单列表
+    closeOrderDetailHandler() {
+      this.closeEntryDialog()
+      this.getDealtWithList()
+    },
+
+    /*处理标签页信息*/
+    handleEntryTabClick(tab, event) {
+
+    },
+
+
+    /*处理标签页信息*/
+    handleOutTabClick(tab, event) {
+
+    },
+    // 关闭详情对话框
+    closeOutDialog() {
+      this.currOutOrderId = ''
+      this.dialogOutDetailsProcessDialog = false;
+    },
+    // 关闭订单详情对话框并刷新订单列表
+    closeOutOrderDetailHandler() {
+      this.closeOutDialog()
+      this.getDealtWithList()
+    },
   }
 
 }
@@ -545,6 +661,34 @@ export default {
 .contractStatusStyle{
   position: absolute;
   top: 90px;
+  left: 300px;
+  width: 80px;
+  height: 20px;
+  text-align: center;
+  color: #F79B22;
+}
+
+.tabEntryStatus {
+  position: absolute;
+  top: 10px;
+  left: 300px;
+  width: 80px;
+  height: 20px;
+  text-align: center;
+  color: #F79B22;
+}
+
+.templateEntryDialogStyle {
+  position: relative;
+}
+
+.templateOutDialogStyle {
+  position: relative;
+}
+
+.tabOutStatus {
+  position: absolute;
+  top: 10px;
   left: 300px;
   width: 80px;
   height: 20px;

@@ -311,9 +311,11 @@ import managerOperationLog from '@/common/contractManager/managerOperationLog'
 import entryAuditInfo from "@/common/entryForm/entryAuditInfo";
 import entryInfo from "@/common/entryForm/inOrderDetail";
 import entryOperationLog from "@/common/entryForm/entryOperationLog";
-import boundInfo from '@/common/outBoundForm/outOrderDetail'
-import boundAuditInfo from '@/common/outBoundForm/boundAuditInfo'
-import boundOperationLog from '@/common/outBoundForm/boundOperationLog'
+
+//出库
+import boundInfo from '@/common/outBoundForm/outOrderDetail';
+import boundAuditInfo from '@/common/outBoundForm/boundAuditInfo';
+import boundOperationLog from '@/common/outBoundForm/boundOperationLog';
 
 export default {
   name: 'index',
