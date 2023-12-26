@@ -13,15 +13,14 @@
       </el-form-item>
       <!--     时间搜索 -->
       <el-form-item  prop="applyTime">
-        <el-date-picker
+        <el-date-picker  style="width: 300px"
           v-model="queryParams.applyTime"
-          style="width: 300px"
-          value-format="yyyy-MM-dd"
-          format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          type="datetimerange"
+         :default-time="['00:00:00', '23:59:59']"
           start-placeholder="请选择开始时间"
           end-placeholder="请选择结束时间"
+          @change="changeHandleTime"
         ></el-date-picker>
       </el-form-item>
       <!--      流程名称-->

@@ -202,6 +202,7 @@ import fileAuditInfo from "@/common/fileManager/fileAuditInfo";
 import fileManagerInfo from "@/common/fileManager/fileManagerInfo";
 import fileOperationLog from "@/common/fileManager/fileOperationLog";
 import supplierApi from '@/api/supplier/supplier'
+import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 
 
 export default {
@@ -269,9 +270,14 @@ export default {
         showFlag: false
       },
       detailsGoodsData: {},
+      reviewedId:'', //用户id
     }
   },
   created() {
+    let userInfo = window.localStorage.getItem('user')
+    let userInfoParse = JSON.parse(userInfo)
+    this.reviewedId = userInfoParse.userId
+
     this.getFilesList();
     this.getSupplierList();
   },
@@ -377,6 +383,21 @@ export default {
         this.loading = false;
         this.tableData = res.rows;
         this.queryParams.total = res.total;
+        //更新下角标
+        const updateParams =
+          {
+            key: "",
+            modelName: "",
+            reviewedId: this.reviewedId,
+            pageNum: 1,
+            pageSize: 10,
+            promoterId: "",
+            queryType: 2
+          }
+        getDealtWithList(updateParams).then((res) => {
+          this.$store.dispatch('updateItem', res.data.total);
+        })
+
       })
 
     },

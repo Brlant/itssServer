@@ -795,7 +795,7 @@ export default {
           queryType: 2
         }
       getDealtWithList(params).then((res) => {
-        window.sessionStorage.setItem('total', res.data.total)
+        this.$store.dispatch('updateItem', res.data.total);
       })
     },
     /* 关闭消息提醒 */

@@ -238,6 +238,7 @@ import supplierForm from '@/common/supplier/supplierForm'
 import supplierAuditInfo from '@/common/supplierDetails/supplierAuditInfo'
 import supplierInfo from '@/common/supplierDetails/supplierInfo'
 import supplierOperationLog from '@/common/supplierDetails/supplierOperationLog'
+import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 
 export default {
   name: 'index',
@@ -310,11 +311,14 @@ export default {
       // 导入的对话框
       supplierImportDialog: {
         showFlag: false
-      }
+      },
+      reviewedId:'', //用户id
     }
   },
   created() {
-
+    let userInfo = window.localStorage.getItem('user')
+    let userInfoParse = JSON.parse(userInfo)
+    this.reviewedId = userInfoParse.userId
   },
   mounted() {
     this.getSupplierList()
@@ -390,6 +394,22 @@ export default {
         this.loading = false
         this.queryParams.total = res.data.total
         this.tableData = res.data.rows
+
+        //更新下角标
+        const updateParams =
+          {
+            key: "",
+            modelName: "",
+            reviewedId: this.reviewedId,
+            pageNum: 1,
+            pageSize: 10,
+            promoterId: "",
+            queryType: 2
+          }
+        getDealtWithList(updateParams).then((res) => {
+          this.$store.dispatch('updateItem', res.data.total);
+        })
+
       })
     },
     /*重置搜索内容*/

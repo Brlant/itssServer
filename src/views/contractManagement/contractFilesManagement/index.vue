@@ -120,6 +120,7 @@
     <!--    查询表格-->
     <el-table v-loading="loading"
       :data="filteredData"
+              v-hasPermi="['pms:contract:list']"
       style="width: 100%">
       <el-table-column type="index"
         label="序号"></el-table-column>
@@ -222,6 +223,7 @@ import managerOperationLog from "@/common/contractManager/managerOperationLog";
 import { getContractFileList,getUserList } from '@/api/contractFilesManagement/contractFilesManagement'
 import supplierApi from '@/api/supplier/supplier'
 import { download } from '@/utils/request'
+import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 
 export default {
   name: "index",
@@ -283,10 +285,14 @@ export default {
       ],
       tableData: [],
       contractId: null,
-      contractStatus: null
+      contractStatus: null,
+      reviewedId:'', //用户id
     }
   },
   created() {
+    let userInfo = window.localStorage.getItem('user')
+    let userInfoParse = JSON.parse(userInfo)
+    this.reviewedId = userInfoParse.userId
     this.getContractFiles();
     this.getSupplierList();
     this.getUserList();
@@ -379,6 +385,21 @@ export default {
         this.loading = false;
         this.tableData = res.rows;
         this.queryParams.total = res.total;
+        //更新下角标
+        const updateParams =
+          {
+            key: "",
+            modelName: "",
+            reviewedId: this.reviewedId,
+            pageNum: 1,
+            pageSize: 10,
+            promoterId: "",
+            queryType: 2
+          }
+        getDealtWithList(updateParams).then((res) => {
+          this.$store.dispatch('updateItem', res.data.total);
+        })
+
       })
     },
     /*搜索查询*/

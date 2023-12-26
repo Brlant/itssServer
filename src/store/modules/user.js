@@ -15,11 +15,12 @@ const user = {
     updatePassFlag:false,
     deptId:'',
     deptTitle:'',
-    total:'',
+    total:'', //待办总数
   },
 
   mutations: {
-    SET_TOTAL:(state, total)=>{
+    //待办总数
+    UPDATE_TOTAL:(state, total)=>{
       state.total = total
     },
     SET_DEPTID: (state, deptId) => {
@@ -55,6 +56,10 @@ const user = {
   },
 
   actions: {
+    //获取待办总数
+    updateItem(context, payload) {
+      context.commit('UPDATE_TOTAL', payload);
+    },
     // 登录
     Login({ commit }, userInfo) {
       const username = userInfo.username.trim()

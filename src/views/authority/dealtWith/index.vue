@@ -13,14 +13,12 @@
       </el-form-item>
       <!--     时间搜索 -->
       <el-form-item prop="applyTime">
-        <el-date-picker
+        <el-date-picker  style="width: 300px"
           v-model="queryParams.applyTime"
-          style="width: 300px"
-          value-format="yyyy-MM-dd"
-          format="yyyy-MM-dd"
-          type="daterange"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          type="datetimerange"
+          :default-time="['00:00:00', '23:59:59']"
           @change="changeHandleTime"
-          range-separator="-"
           start-placeholder="请选择开始时间"
           end-placeholder="请选择结束时间"
         ></el-date-picker>
@@ -387,6 +385,7 @@ export default {
       })
     },
     changeHandleTime(row) {
+      console.log(row)
       if (this.queryParams.applyTime === '') {
         this.queryParams.pageSize = 1  //将页码设置为第一页
       }
