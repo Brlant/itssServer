@@ -30,10 +30,11 @@
           <el-form-item prop="supplierType">
             <el-select v-model="queryParams.supplierType" placeholder="企业类型" clearable>
               <el-option
-                v-for="(item,index) in supplierTypeArray"
+                v-for="(item,index) in supplierTypes"
                 :key="index"
-                :label="item.label"
-                :value="item.value"
+                :label="item.dictLabel"
+                :value="item.dictCode"
+                :disabled="item.status==='0'"
               />
             </el-select>
           </el-form-item>
@@ -239,6 +240,7 @@ import supplierAuditInfo from '@/common/supplierDetails/supplierAuditInfo'
 import supplierInfo from '@/common/supplierDetails/supplierInfo'
 import supplierOperationLog from '@/common/supplierDetails/supplierOperationLog'
 import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
+import {getDicts} from '@/api/system/dict/data'
 
 export default {
   name: 'index',
@@ -279,8 +281,8 @@ export default {
       },
       //企业类型
       supplierTypeArray: [
-        { label: '内部企业', value: 1 },
-        { label: '外部企业', value: 2 }
+        // { label: '内部企业', value: 1 },
+        // { label: '外部企业', value: 2 }
       ],
       //切换按钮
       filtersMenu: [
@@ -322,6 +324,7 @@ export default {
   },
   mounted() {
     this.getSupplierList()
+    this.getSupplierTypes()
   },
   computed: {
 
@@ -490,6 +493,11 @@ export default {
     },
     importErrorHandler(err, file) {
       console.log(err)
+    },
+    getSupplierTypes(){
+      return getDicts('supplier_type').then((res) => {
+        this.supplierTypes = res.data
+      })
     }
   }
 

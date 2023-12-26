@@ -20,10 +20,11 @@
           <el-form-item prop="goodsType">
             <el-select v-model="queryParams.goodsType" placeholder="物品类型" clearable>
               <el-option
-                v-for="(item,index) in listOfItemTypes"
+                v-for="(item,index) in goodsTypes"
                 :key="index"
-                :label="item.label"
-                :value="item.value"
+                :label="item.dictLabel"
+                :value="item.dictCode"
+                :disabled="item.status !== '0'"
               />
             </el-select>
           </el-form-item>
@@ -203,6 +204,7 @@ import fileManagerInfo from "@/common/fileManager/fileManagerInfo";
 import fileOperationLog from "@/common/fileManager/fileOperationLog";
 import supplierApi from '@/api/supplier/supplier'
 import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
+import {getDicts} from '@/api/system/dict/data'
 
 
 export default {
@@ -244,11 +246,11 @@ export default {
       // 显示搜索条件
       showSearch: true,
       //物品类型
-      listOfItemTypes: [
-        {label:'固定资产',value:1},
-        {label:'消耗品',value:2},
-        {label:'服务',value:3},
-        {label:'销售品',value:4},
+      goodsTypes: [
+        // {label:'固定资产',value:1},
+        // {label:'消耗品',value:2},
+        // {label:'服务',value:3},
+        // {label:'销售品',value:4},
       ],
       supplierList:[],
 
@@ -280,6 +282,7 @@ export default {
 
     this.getFilesList();
     this.getSupplierList();
+    this.getGoodsTypes()
   },
   computed: {
     switchType() {
@@ -440,6 +443,11 @@ export default {
     handleTabClick(tab, event) {
 
     },
+    getGoodsTypes(){
+      return getDicts('goods_types').then((res) => {
+        this.goodsTypes = res.data
+      })
+    }
   }
 }
 </script>

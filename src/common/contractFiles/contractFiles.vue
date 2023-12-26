@@ -38,10 +38,13 @@
             prop="contractType">
             <el-select v-model="formData.contractType"
               placeholder="请选择合同类型">
-              <el-option label="采购合同"
-                :value="1"></el-option>
-              <el-option label="框架合同"
-                :value="2"></el-option>
+              <el-option
+                v-for="(item,index) in contractTypeList"
+                :key="index"
+                :label="item.dictLabel"
+                :value="item.dictCode"
+                :disabled="item.status !== '0'"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -172,6 +175,7 @@
 import { addContractFile } from '@/api/contractFilesManagement/contractFilesManagement';
 import supplierApi from '@/api/supplier/supplier';
 import { uploadUrl } from '@/utils/request'
+import {getDicts} from '@/api/system/dict/data'
 
 export default {
   name: "contractFiles",
@@ -212,7 +216,8 @@ export default {
         contractType:[{required: true, message: '请选择合同类型', trigger: 'change'}],
         // contractSignatory:[{required: true, message: '请填写合同签署人', trigger: 'blur'}]
       },
-      loadSupplier: false
+      loadSupplier: false,
+      contractTypeList:[]
     }
   },
   computed: {
@@ -277,8 +282,9 @@ export default {
       this.$refs.contractForm.validate(valid => {
         if (valid) {
           // 表单验证通过
-
-          addContractFile(this.formData).then(res => {
+          let params = this.formData;
+          params.contractTypeName = this.contractTypeList.find(item => item.dictCode === this.formData.contractType)?.dictLabel;
+          addContractFile(params).then(res => {
             // console.log(res);
             if (res.code === 200) {
               this.$message.success(res.msg);
@@ -313,11 +319,16 @@ export default {
         return false;
       }
       this.formData.scanningCopyUrl = res.data.url;
-    }
-  }
-  // created() {
-  //
-  // },
+    },
+    getContractTypeList(){
+      return getDicts('contract_type').then((res) => {
+        this.contractTypeList = res.data
+      })
+    },
+  },
+  created() {
+    this.getContractTypeList()
+  },
   // mounted() {
   //
   // }

@@ -18,10 +18,11 @@
           <el-form-item prop="goodsType">
             <el-select v-model="queryParams.goodsType" placeholder="物品类型" clearable>
               <el-option
-                v-for="(item,index) in goodsTypeArray"
+                v-for="(item,index) in goodsTypes"
                 :key="index"
-                :label="item.label"
-                :value="item.value"
+                :label="item.dictLabel"
+                :value="item.dictCode"
+                :disabled="item.status !== '0'"
               />
             </el-select>
           </el-form-item>
@@ -111,6 +112,7 @@ import inventoryApi from '@/api/inventory/inventory'
 import { treeselect } from '@/api/system/dept'
 import { queryUserlist } from '@/api/system/user'
 import inventoryForm from '@/common/inventoryForm/inventoryForm'
+import {getDicts} from '@/api/system/dict/data'
 export default {
   name: "index",
   components: {
@@ -135,11 +137,11 @@ export default {
       //查询列表数据
       handleList: [],
       //物品类型列表
-      goodsTypeArray:[
-        {label:"固定资产",value:1},
-        {label:"易耗品",value:2},
-        {label:"服务",value:3},
-        {label:"销售品",value:4},
+      goodsTypes:[
+        // {label:"固定资产",value:1},
+        // {label:"易耗品",value:2},
+        // {label:"服务",value:3},
+        // {label:"销售品",value:4},
       ],
       supplierList:[],
       // 发起部门（多层级）
@@ -153,6 +155,7 @@ export default {
     this.getSupplierList();
     this.getDeptList('')
     this.getUserList('')
+    this.getGoodsTypes()
   },
   methods: {
     /* 导出 */
@@ -220,7 +223,11 @@ export default {
       this.$refs.queryForm.resetFields();
       this.getInventoryList();
     },
-
+    getGoodsTypes(){
+      return getDicts('goods_types').then((res) => {
+        this.goodsTypes = res.data
+      })
+    }
   }
 }
 </script>

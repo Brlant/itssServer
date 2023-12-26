@@ -143,8 +143,13 @@
                           :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
               <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%;"
                          filterable>
-                <el-option v-for="option in typeOptions" :key="option.value" :label="option.label"
-                           :value="option.value"></el-option>
+                <el-option
+                  v-for="(item,index) in goodsTypes"
+                  :key="index"
+                  :label="item.dictLabel"
+                  :value="item.dictCode"
+                  :disabled="item.status !== '0'"
+                />
               </el-select>
             </el-form-item>
           </template>
@@ -242,8 +247,9 @@
               <el-option
                 v-for="(item,index) in taxRateList"
                 :key="index"
-                :label="item.label"
-                :value="item.value"
+                :label="item.dictLabel"
+                :value="item.dictCode"
+                :disabled="item.status !== '0'"
               />
             </el-select>
           </template>
@@ -290,6 +296,7 @@ import request from '@/utils/request'
 import {addPmsOrder} from '@/api/pms/order'
 import {treeselect} from '@/api/system/dept'
 import {queryUserlist} from '@/api/system/user'
+import {getDicts} from '@/api/system/dict/data'
 
 export default {
   name: "OutOrderAdd",
@@ -340,11 +347,11 @@ export default {
       supplierMap: {},
       supplierOptions: [],
       // 物品类型:固定资产、消耗品、服务、销售品
-      typeOptions: [
-        {value: 1, label: '固定资产'},
-        {value: 2, label: '消耗品'},
-        {value: 3, label: '服务'},
-        {value: 4, label: '销售品'},
+      goodsTypes: [
+        // {value: 1, label: '固定资产'},
+        // {value: 2, label: '消耗品'},
+        // {value: 3, label: '服务'},
+        // {value: 4, label: '销售品'},
       ],
       goodsListOption: {
         'supplierId': []
@@ -362,16 +369,26 @@ export default {
       recipientUserList: [],
       //税率
       taxRateList: [
-        {label: '1%', value: 0.01},
-        {label: '3%', value: 0.03},
-        {label: '6%', value: 0.06},
-        {label: '12%', value: 0.12},
-        {label: '15%', value: 0.15},
+        // {label: '1%', value: 0.01},
+        // {label: '3%', value: 0.03},
+        // {label: '6%', value: 0.06},
+        // {label: '12%', value: 0.12},
+        // {label: '15%', value: 0.15},
       ],
       goodsMap: {}
     }
   },
   methods: {
+    getGoodsTypes(){
+      return getDicts('goods_types').then((res) => {
+        this.goodsTypes = res.data
+      })
+    },
+    getTaxRateList(){
+      return getDicts('tax_rate').then((res) => {
+        this.taxRateList = res.data
+      })
+    },
     /*关闭弹框*/
     handleEntryClose() {
       this.$refs.form.resetFields()
@@ -615,7 +632,8 @@ export default {
     },
   },
   mounted() {
-
+    this.getGoodsTypes()
+    this.getTaxRateList()
   },
   watch: {
     dialogAdd(val) {

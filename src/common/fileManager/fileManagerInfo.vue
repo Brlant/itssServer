@@ -13,10 +13,11 @@
           <el-form-item label="物品类型" prop="goodsType">
             <el-select v-model="formData.goodsType" placeholder="物品类型" clearable :disabled="readonly">
               <el-option
-                v-for="(item,index) in listOfItemTypes"
+                v-for="(item,index) in goodsTypes"
                 :key="index"
-                :label="item.label"
-                :value="item.value"
+                :label="item.dictLabel"
+                :value="item.dictCode"
+                :disabled="item.status !== '0'"
               />
             </el-select>
           </el-form-item>
@@ -63,8 +64,9 @@
               <el-option
                 v-for="(item,index) in unitList"
                 :key="index"
-                :label="item.label"
-                :value="item.label"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+                :disabled="item.status!=='0'"
               />
             </el-select>
           </el-form-item>
@@ -81,12 +83,13 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="税率" prop="taxRate">
-            <el-select v-model="formData.taxRate" placeholder="物品类型" clearable :disabled="readonly">
+            <el-select v-model="formData.taxRate" placeholder="请选择税率" clearable :disabled="readonly">
               <el-option
                 v-for="(item,index) in taxRateList"
                 :key="index"
-                :label="item.label"
-                :value="item.value"
+                :label="item.dictLabel"
+                :value="item.dictCode"
+                :disabled="item.status !== '0'"
               />
             </el-select>
           </el-form-item>
@@ -254,6 +257,7 @@
 import supplierApi from '@/api/supplier/supplier'
 import categoryApi from '@/api/category/category'
 import filesApi from '@/api/Files/files'
+import {getDicts} from '@/api/system/dict/data'
 
 export default {
   name: 'fileManagerInfo',
@@ -301,28 +305,28 @@ export default {
         ],
         goodsClassify: [{ required: true, message: '请选择物品分类', trigger: 'blur' }]
       },
-      listOfItemTypes: [
-        { label: '固定资产', value: 1 },
-        { label: '消耗品', value: 2 },
-        { label: '服务', value: 3 },
-        { label: '销售品', value: 4 }
+      goodsTypes: [
+        // { label: '固定资产', value: 1 },
+        // { label: '消耗品', value: 2 },
+        // { label: '服务', value: 3 },
+        // { label: '销售品', value: 4 }
       ],
       //供应商
       supplierList: [],
       //单位
       unitList: [
-        { label: '支', value: 1 },
-        { label: '套', value: 2 },
-        { label: '个', value: 3 },
-        { label: '盒', value: 4 }
+        // { label: '支', value: 1 },
+        // { label: '套', value: 2 },
+        // { label: '个', value: 3 },
+        // { label: '盒', value: 4 }
       ],
       //税率
       taxRateList:[
-        {label:'1%',value:"0.01"},
-        {label:'3%',value:"0.03"},
-        {label:'6%',value:"0.06"},
-        {label:'12%',value:"0.12"},
-        {label:'15%',value:"0.15"},
+        // {label:'1%',value:"0.01"},
+        // {label:'3%',value:"0.03"},
+        // {label:'6%',value:"0.06"},
+        // {label:'12%',value:"0.12"},
+        // {label:'15%',value:"0.15"},
       ],
       categoryList: []
     }
@@ -633,7 +637,26 @@ export default {
     closeHandler(){
       this.$emit('closeHandler')
     },
-
+    getGoodsTypes(){
+      return getDicts('goods_types').then((res) => {
+        this.goodsTypes = res.data
+      })
+    },
+    getTaxRateList(){
+      return getDicts('goods_types').then((res) => {
+        this.taxRateList = res.data
+      })
+    },
+    getGoodsUnits(){
+      return getDicts('goods_unit').then((res) => {
+        this.unitList = res.data
+      })
+    }
+  },
+  mounted() {
+    this.getGoodsTypes()
+    this.getTaxRateList()
+    this.getGoodsUnits()
   }
 }
 </script>

@@ -113,8 +113,13 @@
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
             <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly">
-                <el-option v-for="option in typeOptions" :key="option.value" :label="option.label"
-                           :value="option.value"></el-option>
+              <el-option
+                v-for="(item,index) in goodsTypes"
+                :key="index"
+                :label="item.dictLabel"
+                :value="item.dictCode"
+                :disabled="item.status !== '0'"
+              />
               </el-select>
             </el-form-item>
           </template>
@@ -220,6 +225,7 @@
 <script>
 import request from '@/utils/request'
 import {addPmsOrder} from '@/api/pms/order'
+import {getDicts} from '@/api/system/dict/data'
 
 export default {
   name: "wareHouseEntry",
@@ -274,11 +280,11 @@ export default {
       supplierMap: {},
       supplierOptions: [],
       // 物品类型:固定资产、消耗品、服务、销售品
-      typeOptions: [
-        {value: 1, label: '固定资产'},
-        {value: 2, label: '消耗品'},
-        {value: 3, label: '服务'},
-        {value: 4, label: '销售品'},
+      goodsTypes: [
+        // {value: 1, label: '固定资产'},
+        // {value: 2, label: '消耗品'},
+        // {value: 3, label: '服务'},
+        // {value: 4, label: '销售品'},
       ],
       goodsListOption: {
         'supplierId': []
@@ -299,6 +305,16 @@ export default {
     }
   },
   methods: {
+    getGoodsTypes(){
+      return getDicts('goods_types').then((res) => {
+        this.goodsTypes = res.data
+      })
+    },
+    getTaxRateList(){
+      return getDicts('tax_rate').then((res) => {
+        this.taxRateList = res.data
+      })
+    },
     /*关闭弹框*/
     handleEntryClose() {
       this.$refs.form.resetFields()
@@ -475,7 +491,8 @@ export default {
     },
   },
   mounted() {
-
+    this.getGoodsTypes()
+    this.getTaxRateList()
   },
   watch: {
     dialogAddEntry(val) {

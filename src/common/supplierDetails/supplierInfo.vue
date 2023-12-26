@@ -21,11 +21,13 @@
       <el-col :span="8">
         <el-form-item label="企业类型" prop="supplierType">
           <el-select v-model="formData.supplierType" :disabled="readonly">
-            <el-option v-for="item in supplierTypes"
-                       :key="item.value"
-                       :label="item.label"
-                       :value="item.value">
-            </el-option>
+            <el-option
+              v-for="(item,index) in supplierTypes"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictCode"
+              :disabled="item.status==='0'"
+            />
           </el-select>
         </el-form-item>
       </el-col>
@@ -299,6 +301,7 @@
 import supplierApi from '@/api/supplier/supplier'
 import {resetUserPwd} from '@/api/system/user'
 import {download} from '@/utils/request'
+import {getDicts} from '@/api/system/dict/data'
 
 export default {
   name: "supplierInfo",
@@ -406,17 +409,7 @@ export default {
         // ]
       },
       backData: null,//原始数据
-      companyTypes: [],
-      supplierTypes: [
-        {
-          label: '内部企业',
-          value: 1
-        },
-        {
-          label: '外部企业',
-          value: 2
-        }
-      ],
+      supplierTypes: [],
     }
   },
   computed: {
@@ -707,22 +700,9 @@ export default {
       // 手动触发校验
       this.$refs.form.validateField('businessInfo.businessLicenseUrl');
     },
-    getCompanyTypes() {
-      let params = {
-        type: 'companyType',
-        status: '0'
-      }
-
-      dictDataAll(params).then(res => {
-        this.companyTypes = res.rows.map(item => {
-          return {
-            value: item.dictValue,
-            label: item.dictLabel
-          }
-        })
-      }).catch(err => {
-        console.log(err)
-        this.companyTypes = []
+    getSupplierTypes(){
+      return getDicts('supplier_type').then((res) => {
+        this.supplierTypes = res.data
       })
     },
     downloadAttachment(src, fileName) {
@@ -762,8 +742,7 @@ export default {
     }
   },
   mounted() {
-    // this.getCompanyTypes();
-    // this.formData = Object.assign({}, this.supplierData)
+    this.getSupplierTypes()
   },
 }
 </script>

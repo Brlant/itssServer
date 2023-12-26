@@ -1,8 +1,8 @@
 <template>
   <el-form ref="formData"
-    :model="formData"
-    :rules="formRules"
-    label-width="120px">
+           :model="formData"
+           :rules="formRules"
+           label-width="120px">
     <!--    基本信息-->
     <div class="JiBenXinXi">
       基本信息
@@ -12,19 +12,19 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="合同档案编号"
-            prop="contractRecordCode">
+                        prop="contractRecordCode">
             {{ formData.contractRecordCode }}
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="合同编号"
-            prop="contractCode">
+                        prop="contractCode">
             {{ formData.contractCode }}
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="合同名称"
-            prop="contractName">
+                        prop="contractName">
             {{ formData.contractName }}
           </el-form-item>
         </el-col>
@@ -33,19 +33,19 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="合同类型"
-            prop="contractType">
+                        prop="contractType">
             {{ formData.contractType === 1 ? '采购合同' : '框架合同' }}
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="供应商名称"
-            prop="supplierName">
+                        prop="supplierName">
             {{ formData.supplierName }}
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="合同金额"
-            prop="contractAmount">
+                        prop="contractAmount">
             {{ formData.contractAmount }}
           </el-form-item>
         </el-col>
@@ -54,19 +54,19 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="签订日期"
-            prop="signingDate">
+                        prop="signingDate">
             {{ formData.signingDate }}
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="到期日期"
-            prop="dueDate">
+                        prop="dueDate">
             {{ formData.dueDate }}
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="合同签署人"
-            prop="contractSignatory">
+                        prop="contractSignatory">
             {{ formData.contractSignatory }}
           </el-form-item>
         </el-col>
@@ -75,7 +75,7 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="备注"
-            prop="remark">
+                        prop="remark">
             {{ formData.remark }}
           </el-form-item>
         </el-col>
@@ -85,17 +85,17 @@
         <el-col :span="24">
           <el-form-item label="文件下载">
             <el-input v-model="fileName"
-              readonly>
+                      readonly>
               <template v-if="fileName"
-                slot="append">
+                        slot="append">
                 <el-button>
                   <el-link :href="formData.scanningCopyUrl"
-                    :underline="false"
-                    icon="el-icon-download"></el-link>
+                           :underline="false"
+                           icon="el-icon-download"></el-link>
                 </el-button>
                 <el-button @click="fileDelete">
                   <el-link :underline="false"
-                    icon="el-icon-delete"></el-link>
+                           icon="el-icon-delete"></el-link>
                 </el-button>
               </template>
             </el-input>
@@ -108,29 +108,32 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="合同编号"
-            prop="contractCode">
+                        prop="contractCode">
             <el-input v-model="formData.contractCode"
-              maxlength="50"
-              placeholder="请输入合同编号"/>
+                      maxlength="50"
+                      placeholder="请输入合同编号"/>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="合同名称"
-            prop="contractName">
+                        prop="contractName">
             <el-input v-model="formData.contractName"
-              maxlength="50"
-              placeholder="请输入合同名称"/>
+                      maxlength="50"
+                      placeholder="请输入合同名称"/>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="合同类型"
-            prop="contractType">
+                        prop="contractType">
             <el-select v-model="formData.contractType"
-              placeholder="请选择合同类型">
-              <el-option label="采购合同"
-                :value="1"></el-option>
-              <el-option label="框架合同"
-                :value="2"></el-option>
+                       placeholder="请选择合同类型">
+              <el-option
+                v-for="(item,index) in contractTypeList"
+                :key="index"
+                :label="item.dictLabel"
+                :value="item.dictCode"
+                :disabled="item.status !== '0'"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -140,35 +143,35 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="供应商名称"
-            prop="supplierId">
+                        prop="supplierId">
             <el-select v-model="selectSupplier"
-              remote
-              filterable
-              value-key="val"
-              :loading="loadSupplier"
-              :remote-method="querySupplier"
-              placeholder="请选择供应商">
+                       remote
+                       filterable
+                       value-key="val"
+                       :loading="loadSupplier"
+                       :remote-method="querySupplier"
+                       placeholder="请选择供应商">
               <el-option v-for="supplier in suppliers"
-                :key="supplier.val"
-                :value="supplier"
-                :label="supplier.txt"></el-option>
+                         :key="supplier.val"
+                         :value="supplier"
+                         :label="supplier.txt"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="合同金额"
-            prop="contractAmount">
+                        prop="contractAmount">
             <el-input v-model.number="formData.contractAmount" type="number" @input="changeAmount"
-              placeholder="请输入合同金额"/>
+                      placeholder="请输入合同金额"/>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="签订日期"
-            prop="signingDate">
+                        prop="signingDate">
             <el-date-picker v-model="formData.signingDate"
-              type="date"
-              placeholder="选择日期"
-              style="width: 100%"></el-date-picker>
+                            type="date"
+                            placeholder="选择日期"
+                            style="width: 100%"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
@@ -177,19 +180,19 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="到期日期"
-            prop="dueDate">
+                        prop="dueDate">
             <el-date-picker v-model="formData.dueDate"
-              type="date"
-              placeholder="选择日期"
-              style="width: 100%"></el-date-picker>
+                            type="date"
+                            placeholder="选择日期"
+                            style="width: 100%"></el-date-picker>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="合同签署人"
-            prop="contractSignatory">
+                        prop="contractSignatory">
             <el-input v-model="formData.contractSignatory"
-              maxlength="20"
-              placeholder="请输入合同签署人"/>
+                      maxlength="20"
+                      placeholder="请输入合同签署人"/>
           </el-form-item>
         </el-col>
         <el-col :span="8"></el-col>
@@ -199,11 +202,11 @@
       <el-row>
         <el-col :span="24">
           <el-form-item label="备注"
-            prop="remark">
+                        prop="remark">
             <el-input v-model="formData.remark"
-              maxlength="1000"
-              type="textarea"
-              placeholder="请输入备注"/>
+                      maxlength="1000"
+                      type="textarea"
+                      placeholder="请输入备注"/>
           </el-form-item>
         </el-col>
       </el-row>
@@ -220,25 +223,26 @@
               accept=".png,.jpg,.jpeg,application/pdf"
             >
               <el-button size="small"
-                type="primary"
-                icon="el-icon-upload">选择文件</el-button>
+                         type="primary"
+                         icon="el-icon-upload">选择文件
+              </el-button>
               <!--              <i v-if="!formData.scanningCopyUrl" class="el-icon-plus"></i>-->
               <!--              <img v-else :src="formData.scanningCopyUrl" alt="合同扫描件"/>-->
             </el-upload>
             <el-input v-if="fileName"
-              v-model="fileName"
-              readonly
-              style="margin-top: 20px;">
+                      v-model="fileName"
+                      readonly
+                      style="margin-top: 20px;">
               <template v-if="fileName"
-                slot="append">
+                        slot="append">
                 <el-button>
                   <el-link :href="formData.scanningCopyUrl"
-                    :underline="false"
-                    icon="el-icon-download"></el-link>
+                           :underline="false"
+                           icon="el-icon-download"></el-link>
                 </el-button>
                 <el-button @click="fileDelete">
                   <el-link :underline="false"
-                    icon="el-icon-delete"></el-link>
+                           icon="el-icon-delete"></el-link>
                 </el-button>
               </template>
             </el-input>
@@ -250,31 +254,38 @@
     <!--        提交-->
     <el-row>
       <el-col :span="24"
-        style="text-align: center; margin-top: 20px;">
+              style="text-align: center; margin-top: 20px;">
         <el-button type="success"
-          v-if="btnAudit"
-          @click="auditContract(1)">通过</el-button>
+                   v-if="btnAudit"
+                   @click="auditContract(1)">通过
+        </el-button>
         <el-button type="danger"
-          v-if="btnAudit"
-          @click="auditContract(2)">不通过</el-button>
+                   v-if="btnAudit"
+                   @click="auditContract(2)">不通过
+        </el-button>
         <el-button
           type="primary"
           v-if="btnReturn"
-          @click="auditContract(3)">撤回</el-button>
+          @click="auditContract(3)">撤回
+        </el-button>
         <el-button
           type="primary"
           v-if="btnEnable"
-          @click="editContractStatus(3)">启用</el-button>
+          @click="editContractStatus(3)">启用
+        </el-button>
         <el-button
           type="danger"
           v-if="btnUnable"
-          @click="editContractStatus(5)">停用</el-button>
+          @click="editContractStatus(5)">停用
+        </el-button>
         <el-button type="primary"
-          v-if="btnSumbit"
-          @click="modifyContract">重新提交</el-button>
+                   v-if="btnSumbit"
+                   @click="modifyContract">重新提交
+        </el-button>
         <el-button type="danger"
-          v-if="btnDelete"
-          @click="removeContract">删除</el-button>
+                   v-if="btnDelete"
+                   @click="removeContract">删除
+        </el-button>
         <el-button @click="() => $emit('closeDetail')">返回</el-button>
       </el-col>
     </el-row>
@@ -282,14 +293,21 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import {mapState, mapGetters} from 'vuex';
 import supplierApi from '@/api/supplier/supplier';
-import { edit, deleteContractById, queryByContractId, examineContractInfo, editStatus  } from '@/api/contractFilesManagement/contractFilesManagement'
-import { uploadUrl } from '@/utils/request'
+import {
+  edit,
+  deleteContractById,
+  queryByContractId,
+  examineContractInfo,
+  editStatus
+} from '@/api/contractFilesManagement/contractFilesManagement'
+import {uploadUrl} from '@/utils/request'
+import {getDicts} from '@/api/system/dict/data'
 
 export default {
   name: "managerInfo",
-  props:{
+  props: {
     // tabName: {
     //   type:String,
     //   default:'',
@@ -321,15 +339,15 @@ export default {
       formRules: {
         contractRecordCode: [{required: true, message: '请输入合同档案编号', trigger: 'blur'}],
         contractCode: [{required: true, message: '请输入合同编号', trigger: 'blur'}],
-        contractName:[{required: true, message: '请输入合同名称', trigger: 'blur'}],
-        supplierId:[{required: true, message: '请选择供应商', trigger: 'change'}],
+        contractName: [{required: true, message: '请输入合同名称', trigger: 'blur'}],
+        supplierId: [{required: true, message: '请选择供应商', trigger: 'change'}],
         // contractAmount:[
         //   {required: true, message: '请输入合同金额'},
         //   {type: 'number', message: '合同金额必须是数字'}
         // ],
-        signingDate:[{required: true, message: '请选择合同签订日期', trigger: 'change'}],
-        dueDate:[{required: true, message: '请选择合同到期日期', trigger: 'change'}],
-        contractType:[{required: true, message: '请选择合同类型', trigger: 'change'}],
+        signingDate: [{required: true, message: '请选择合同签订日期', trigger: 'change'}],
+        dueDate: [{required: true, message: '请选择合同到期日期', trigger: 'change'}],
+        contractType: [{required: true, message: '请选择合同类型', trigger: 'change'}],
         // contractSignatory:[{required: true, message: '请填写合同签署人', trigger: 'blur'}]
       },
       backData: null
@@ -392,7 +410,7 @@ export default {
       return (status === 2 || status === 4) && rbtn === 1;
     }
   },
-  watch:{
+  watch: {
     // tabName: {
     //   handler(newVal, oldVal) {
     //     console.log('档案信息',newVal);
@@ -410,9 +428,16 @@ export default {
   mounted() {
     this.querySupplier();
     this.queryContract();
+    this.getContractTypeList()
+
   },
   methods: {
-    changeAmount(value){
+    getContractTypeList() {
+      return getDicts('contract_type').then((res) => {
+        this.contractTypeList = res.data
+      })
+    },
+    changeAmount(value) {
       const reg = /^\d+(\.\d+)?$/;
       if (!reg.test(value)) {
         this.formData.contractAmount = value.replace(/[^\d]/g, '');
@@ -442,14 +467,14 @@ export default {
       })
     },
     queryContract() {
-      queryByContractId({ contractId: this.contractId}).then(res => {
+      queryByContractId({contractId: this.contractId}).then(res => {
         if (res.code === 200) {
           this.formData = res.data;
-          this.backData = { ...res.data };
+          this.backData = {...res.data};
         }
       });
     },
-    handleSuccess(res,file) {
+    handleSuccess(res, file) {
       const isPNG = file.raw.type === 'image/png';
       const isJPG = file.raw.type === 'image/jpeg';
       const isPDF = file.raw.type === 'application/pdf';
@@ -475,7 +500,7 @@ export default {
           cancelButtonText: '取消',
           inputPattern: /.+/,
           inputErrorMessage: '审批不通过必须填写原因'
-        }).then(({ value }) => {
+        }).then(({value}) => {
           this.examineContract(examineType, value);
         });
       } else {
@@ -483,7 +508,7 @@ export default {
       }
     },
     examineContract(examineType, remark) {
-      examineContractInfo(Object.assign({ ...this.formData }, { examineType, remark })).then(res => {
+      examineContractInfo(Object.assign({...this.formData}, {examineType, remark})).then(res => {
         if (res.code === 200) {
           this.$message.success(res.msg)
           this.$emit('closeDetail', true);
@@ -497,7 +522,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        editStatus(Object.assign({ ...this.formData }, { contractStatus })).then(res => {
+        editStatus(Object.assign({...this.formData}, {contractStatus})).then(res => {
           if (res.code === 200) {
             this.$message.success(res.msg)
             this.$emit('closeDetail', true);
@@ -521,7 +546,7 @@ export default {
           let changes = Object.keys(this.formData).filter(key => this.formData[key] !== this.backData[key]);
           let requireChange = changes.filter(key => this.formRules[key]?.some(item => item.required));
           // console.log(requireChange)
-          edit(Object.assign(this.formData, { changeFlag: requireChange.length > 0 })).then(res => {
+          edit(Object.assign(this.formData, {changeFlag: requireChange.length > 0})).then(res => {
             if (res.code === 200) {
               this.$message.success(res.msg);
               this.$emit('closeDetail', true);
@@ -540,7 +565,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteContractById({ contractId: this.contractId }).then(res => {
+        deleteContractById({contractId: this.contractId}).then(res => {
           if (res.code === 200) {
             this.$message.success(res.msg);
             this.$emit('closeDetail', true);
@@ -572,17 +597,17 @@ export default {
 </script>
 
 <style scoped>
-  .jiBenXinXi {
-    font-weight: bolder;
-    font-size: 14px;
-    width: 100%;
-    border-bottom: 1px solid #F2F2F2;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    box-sizing: content-box;
-  }
+.jiBenXinXi {
+  font-weight: bolder;
+  font-size: 14px;
+  width: 100%;
+  border-bottom: 1px solid #F2F2F2;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  box-sizing: content-box;
+}
 
-  /deep/ .el-input-group__append {
-    background-color: #ffffff;
-  }
+/deep/ .el-input-group__append {
+  background-color: #ffffff;
+}
 </style>

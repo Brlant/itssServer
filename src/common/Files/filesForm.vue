@@ -11,10 +11,11 @@
             <el-form-item label="物品类型" prop="goodsType">
               <el-select v-model="formData.goodsType" placeholder="物品类型" clearable>
                 <el-option
-                  v-for="(item,index) in listOfItemTypes"
+                  v-for="(item,index) in unitList"
                   :key="index"
-                  :label="item.label"
-                  :value="item.value"
+                  :label="item.dictLabel"
+                  :value="item.dictCode"
+                  :disabled="item.status !== '0'"
                 />
               </el-select>
             </el-form-item>
@@ -51,13 +52,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="单位" prop="goodsUnit">
-              <el-select v-model="formData.goodsUnit" placeholder="单位" clearable>
+            <el-form-item label="单位" prop="goodsUnitId">
+              <el-select v-model="formData.goodsUnitId" placeholder="请选择单位" clearable>
                 <el-option
                   v-for="(item,index) in unitList"
                   :key="index"
-                  :label="item.label"
-                  :value="item.label"
+                  :label="item.dictLabel"
+                  :value="item.dictCode"
+                  :disabled="item.status !== '0'"
                 />
               </el-select>
             </el-form-item>
@@ -74,13 +76,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="税率" prop="taxRate">
-              <el-select v-model="formData.taxRate" placeholder="物品类型" clearable>
+            <el-form-item label="税率" prop="taxRateId">
+              <el-select v-model="formData.taxRateId" placeholder="物品类型" clearable>
                 <el-option
                   v-for="(item,index) in taxRateList"
                   :key="index"
-                  :label="item.label"
-                  :value="item.value"
+                  :label="item.dictLabel"
+                  :value="item.dictCode"
+                  :disabled="item.status !== '0'"
                 />
               </el-select>
             </el-form-item>
@@ -209,6 +212,7 @@
 import filesApi from '@/api/Files/files'
 import supplierApi from '@/api/supplier/supplier'
 import categoryApi from '@/api/category/category'
+import {getDicts} from '@/api/system/dict/data'
 export default {
   name: "filesForm",
   props: {
@@ -221,7 +225,8 @@ export default {
     dialogAddFiles:{
       handler(val){
         if(val){
-
+          // 重新打开新建对话框时，表单重置
+          this.$refs.formRef && this.$refs.formRef.resetFields();
         }
       },
       immediate:true,
@@ -232,6 +237,19 @@ export default {
     return {
       formTitle: "基本信息",
       formData: {
+        taxRateId:'',
+        goodsType: '',
+        goodsName: '',
+        supplierId: '',
+        goodsUnitId: '',
+        taxBid: '',
+        taxRate: '',
+        boxGauge: '',
+        brand: '',
+        goodsClassify: '',
+        remark: '',
+        goodsSpecifications:'',
+        goodsModel:'',
         attachmentInfos: [],
       },
       rules: {
@@ -239,9 +257,9 @@ export default {
         goodsName: [{required: true, message: '请输入物品名称', trigger: 'blur'}],
         supplierId: [{required: true, message: '请选择供应商', trigger: 'change'}],
 
-        goodsUnit: [{required: true, message: '请选择单位', trigger: 'change'}],
+        goodsUnitId: [{required: true, message: '请选择单位', trigger: 'change'}],
         taxBid: [{required: true, message: '请输入含税进价', trigger: 'blur'}],
-        taxRate: [{required: true, message: '请选择税率', trigger: 'change'}],
+        taxRateId: [{required: true, message: '请选择税率', trigger: 'change'}],
 
         boxGauge: [
           {required: true, message: '请输入箱规', trigger: 'blur'},
@@ -251,26 +269,26 @@ export default {
         attachmentInfos:[{required: true, message: '请选择附件', trigger: 'blur'}]
       },
       //物品类型
-      listOfItemTypes: [
-        {label:'固定资产',value:1},
-        {label:'消耗品',value:2},
-        {label:'服务',value:3},
-        {label:'销售品',value:4},
+      goodsTypes: [
+        // {label:'固定资产',value:1},
+        // {label:'消耗品',value:2},
+        // {label:'服务',value:3},
+        // {label:'销售品',value:4},
       ],
       //单位
       unitList:[
-        {label:'支',value:1},
-        {label:'套',value:2},
-        {label:'个',value:3},
-        {label:'盒',value:4},
+        // {label:'支',value:1},
+        // {label:'套',value:2},
+        // {label:'个',value:3},
+        // {label:'盒',value:4},
       ],
       //税率
       taxRateList:[
-        {label:'1%',value:"0.01"},
-        {label:'3%',value:"0.03"},
-        {label:'6%',value:"0.06"},
-        {label:'12%',value:"0.12"},
-        {label:'15%',value:"0.15"},
+        // {label:'1%',value:"0.01"},
+        // {label:'3%',value:"0.03"},
+        // {label:'6%',value:"0.06"},
+        // {label:'12%',value:"0.12"},
+        // {label:'15%',value:"0.15"},
       ],
       //供应商
       supplierList:[],
@@ -290,8 +308,26 @@ export default {
   created() {
     this.getCategoryList()
     this.getSupplierList();
+    this.getTaxRateList()
+    this.getGoodsTypes()
+    this.getGoodsUnits()
   },
   methods: {
+    getGoodsUnits(){
+      return getDicts('goods_unit').then((res) => {
+        this.unitList = res.data
+      })
+    },
+    getGoodsTypes(){
+      return getDicts('goods_types').then((res) => {
+        this.goodsTypes = res.data
+      })
+    },
+    getTaxRateList(){
+      return getDicts('tax_rate').then((res) => {
+        this.taxRateList = res.data
+      })
+    },
     /* 获取上级类目列表 */
     getCategoryList(){
       categoryApi.getCategoryList().then(res=>{
@@ -330,6 +366,9 @@ export default {
       this.$refs.formRef.validate((valid) => {
         if (valid) {
           this.formData.nonTaxBid = this.nonTaxBid;
+          this.formData.goodsUnit = this.unitList.find(item => item.dictCode === this.formData.goodsUnitId)?.dictLabel;
+          this.formData.taxRate = this.taxRateList.find(item => item.dictCode === this.formData.taxRateId)?.dictLabel;
+          this.formData.goodsTypeName = this.goodsTypes.find(item => item.dictCode === this.formData.goodsType)?.dictLabel;
           filesApi.addFiles(this.formData).then(res=>{
             if(res.code === 200){
               this.$notify.success('新增成功')

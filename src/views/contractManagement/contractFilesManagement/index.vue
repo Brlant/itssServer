@@ -40,8 +40,9 @@
               <el-option
                 v-for="(item,index) in contractTypeList"
                 :key="index"
-                :label="item.label"
-                :value="item.value"
+                :label="item.dictLabel"
+                :value="item.dictCode"
+                :disabled="item.state === '0'"
               />
             </el-select>
           </el-form-item>
@@ -280,8 +281,8 @@ export default {
       supplierList:[],
       //合同类型
       contractTypeList:[
-        {label:'采购合同',value:1},
-        {label:'框架合同',value:2},
+        // {label:'采购合同',value:1},
+        // {label:'框架合同',value:2},
       ],
       tableData: [],
       contractId: null,
