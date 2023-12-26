@@ -776,10 +776,12 @@ export default {
   },
   created() {
     this.getQueryByContractId();
+  },
+  mounted() {
     let userInfo = window.localStorage.getItem('user')
     let userInfoParse = JSON.parse(userInfo)
     this.reviewedId = userInfoParse.userId
-
+    this.getDealtWith();
   },
   methods: {
     getDealtWith() {
