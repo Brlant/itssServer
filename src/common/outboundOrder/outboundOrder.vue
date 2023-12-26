@@ -132,18 +132,6 @@
                   <span style="float: left" v-else>{{ option.supplierName }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ option.supplierCode }}</span>
                 </el-option>
-                <el-option v-if="supplierOptions.any(option => option.supplierId === scope.row.supplierId)"
-                           :key="scope.row.supplierId"
-                           :label="scope.row.supplierName"
-                           :value="scope.row.supplierId"
-                           :disabled="true"
-                           :title="isOverDate(scope.row.validityDate)">
-                <span style="float: left;color: red" v-if="isOverDate(scope.row.validityDate)">{{
-                    scope.row.supplierName
-                  }}</span>
-                  <span style="float: left" v-else>{{ scope.row.supplierName }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ scope.row.supplierCode }}</span>
-                </el-option>
               </el-select>
             </el-form-item>
           </template>
@@ -166,13 +154,13 @@
             <el-form-item :prop="`orderDetailList.${scope.$index}.goodsCode`" label-width="0"
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品编号'}]">
-              <el-select v-model="scope.row.goodsInfo" placeholder="请选择物品编号" style="width: 100%"
+              <el-select v-model="scope.row.goodsId" placeholder="请选择物品编号" style="width: 100%"
                          filterable
-                         @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
+                         @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
                 <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
                            :key="option.goodsId"
                            :label="option.goodsCode"
-                           :value="option.goodsId+'__'+option.goodsCode+'__'+option.goodsName+'__'+option.taxBid+'__'+option.nonTaxBid+'__'+option.taxRate"
+                           :value="option.goodsId"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -185,11 +173,11 @@
                           :rules="[{required: true, message: '请选择物品名称'}]">
               <el-select v-model="scope.row.goodsInfo" placeholder="请选择物品名称" style="width: 100%"
                          filterable
-                         @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
+                         @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
                 <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
                            :key="option.goodsId"
                            :label="option.goodsName"
-                           :value="option.goodsId+'__'+option.goodsCode+'__'+option.goodsName+'__'+option.taxBid+'__'+option.nonTaxBid+'__'+option.taxRate"
+                           :value="option.goodsId"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -380,6 +368,7 @@ export default {
         {label: '12%', value: 0.12},
         {label: '15%', value: 0.15},
       ],
+      goodsMap: {}
     }
   },
   methods: {
@@ -472,6 +461,13 @@ export default {
       })
 
       params.budgetTypeName = budgetTypeNames.join("-")
+
+      let recipientId = params.recipientId
+      let user = this.recipientUserList.find(one => one.userId === recipientId)
+      if (user) {
+        params.recipientName = user.nickName
+      }
+
       addPmsOrder(this.formData).then((res) => {
         this.$message({
           type: 'success',
@@ -508,9 +504,8 @@ export default {
       })
     },
     getGoodsList(supplierId, index) {
-      // this.formData.orderDetailList[index].goodsId = ''
-      // this.formData.orderDetailList[index].goodsList = []
-      // this.$set(this.goodsListOption, `${index.goodsList}`, [])
+      this.formData.orderDetailList[index].goodsId = ''
+      this.formData.orderDetailList[index].goodsList = []
       this.formData.orderDetailList[index].supplierId = supplierId
       this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId]
 
@@ -523,21 +518,22 @@ export default {
         }).then(res => {
           this.goodsListOption[supplierId] = res.data
           this.formData.orderDetailList[index].goodsList = res.data
-          this.$set(this.formData.orderDetailList, `${index.goodsList}`, res.data)
+          res.data.forEach(one => {
+            this.goodsMap[one.goodsId] = one.goodsName
+          })
         })
       } else {
         this.goodsListOption[supplierId] = goodsList
         this.formData.orderDetailList[index].goodsList = goodsList
       }
     },
-    goodsChangeHandler(goodsInfo, index) {
-      let goodsSplit = goodsInfo.split('__')
-      let goodsId = goodsSplit[0]
-      let goodsCode = goodsSplit[1]
-      let goodsName = goodsSplit[2]
-      let taxBid = goodsSplit[3]
-      let nonTaxBid = goodsSplit[4]
-      let taxRate = Number(goodsSplit[5])
+    goodsChangeHandler(goodsId, index) {
+      let goodsInfo = this.getGoodsInfo(goodsId)
+      let goodsCode = goodsInfo.goodsCode
+      let goodsName = goodsInfo.goodsName
+      let taxBid = goodsInfo.taxBid
+      let nonTaxBid = goodsInfo.nonTaxBid
+      let taxRate = Number(goodsInfo.taxRate)
 
       this.formData.orderDetailList[index].goodsId = goodsId
       this.formData.orderDetailList[index].goodsCode = goodsCode
@@ -548,12 +544,14 @@ export default {
 
       if (taxRate) {
         this.formData.orderDetailList[index].taxRateName = (taxRate * 100) + '%'
+        this.formData.orderDetailList[index].totalTaxBid = taxBid * taxRate
+        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * taxRate
       }
 
-      this.formData.orderDetailList[index].totalTaxBid = taxBid * taxRate
-      this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * taxRate
-
       this.queryStockCount(goodsId, index)
+    },
+    getGoodsInfo(goodsId) {
+      return this.goodsMap[goodsId]
     },
     // 查询库存的数量以及可用库存
     queryStockCount(goodsId, index = 0) {
@@ -612,7 +610,9 @@ export default {
     currUser() {
       return this.$store.state.user.user
     },
-
+    readonly() {
+      return false
+    },
   },
   mounted() {
 

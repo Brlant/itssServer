@@ -195,7 +195,7 @@
 import outboundOrder from "@/common/outboundOrder/outboundOrder";
 
 import boundAuditInfo from "@/common/outBoundForm/boundAuditInfo";
-import boundInfo from "@/common/outBoundForm/boundInfo";
+import boundInfo from "@/common/outBoundForm/outOrderDetail";
 import boundOperationLog from "@/common/outBoundForm/boundOperationLog";
 
 import {getOrderList, importInOrderInfo, exportOutOrder, downloadOrderTemplate} from "@/api/pms/order";

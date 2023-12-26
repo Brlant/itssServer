@@ -25,11 +25,6 @@
 
         </el-form-item>
       </el-col>
-      <el-col :span="6" v-show="formData.orderBizType==='1-4'">
-        <el-form-item label="出库单号" prop="outOrderNo" required>
-          <el-input v-model="formData.outOrderNo" disabled></el-input>
-        </el-form-item>
-      </el-col>
     </el-row>
     <!-- 第二行 -->
     <el-row :gutter="20">
@@ -49,6 +44,38 @@
         </el-form-item>
       </el-col>
     </el-row>
+    <!-- 领用出库时，展示领用人和领用部门，可以下拉选择且有联动效果：选了领用人自动带出领用部门，选了领用部门自动带出部门下的人员信息 -->
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <el-form-item label="领用人" prop="applyName" :rules="rules.applyName"
+                      v-show="formData.orderBizType === '2-3'">
+          <el-select v-model="formData.recipientId" placeholder="请选择领用人" clearable filterable
+                     @change="recipientChange"
+                     :readonly="readonly">
+            <el-option
+              v-for="item in recipientUserList"
+              :key="item.userId"
+              :disabled="item.status==='1'"
+              :label="item.nickName"
+              :value="item.userId"
+            />
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="6">
+        <el-form-item label="领用部门" prop="applyDepartName" :rules="rules.applyDepartName"
+                      v-show="formData.orderBizType === '2-3'">
+          <el-cascader @change="recipientDepartmentChange"
+                       v-model="formData.recipientDepartId"
+                       placeholder="请选择领用部门"
+                       :options="recipientDeptList"
+                       :props="{ checkStrictly: true,emitPath:false, value: 'id' }"
+                       :disabled="readonly"
+                       clearable filterable></el-cascader>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <!--收货信息收货信息-->
     <el-row :gutter="20">
       <el-col :span="6">
         <el-form-item label="收货人" prop="consigneeName">
@@ -66,7 +93,7 @@
         </el-form-item>
       </el-col>
     </el-row>
-    <!-- 第三行 -->
+    <!-- 预算类型&申请原由 -->
     <el-row :gutter="20">
       <el-col :span="6">
         <el-form-item label="预算类型" prop="budgetTypes" :rules="rules.budgetTypes">
@@ -97,27 +124,17 @@
             <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                        filterable :disabled="readonly"
                        @change="getGoodsList(scope.row.supplierId,scope.$index)">
-              <el-option v-for="(option,index) in supplierOptions" :key="option.supplierId"
+              <el-option v-for="(option,index) in supplierOptions"
+                         :key="option.supplierId"
                          :label="option.supplierName"
                          :value="option.supplierId"
+                         :disabled="option.disabaled"
                          :title="isOverDate(option.validityDate)">
                 <span style="float: left;color: red" v-if="isOverDate(option.validityDate)">{{
                     option.supplierName
                   }}</span>
                 <span style="float: left" v-else>{{ option.supplierName }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{ option.supplierCode }}</span>
-              </el-option>
-              <el-option v-if="!supplierOptions.some(option => option.supplierId === scope.row.supplierId)"
-                         :key="option.supplierId"
-                         :label="scope.row.supplierName"
-                         :value="scope.row.supplierId"
-                         :disabled="true"
-                         :title="isOverDate(scope.row.validityDate)">
-                <span style="float: left;color: red" v-if="isOverDate(scope.row.validityDate)">{{
-                    scope.row.supplierName
-                  }}</span>
-                <span style="float: left" v-else>{{ scope.row.supplierName }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">{{ scope.row.supplierCode }}</span>
               </el-option>
             </el-select>
           </el-form-item>
@@ -128,7 +145,8 @@
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsType`" label-width="0"
                         style="margin-top: 22px"
                         :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
-            <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly">
+            <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" filterable
+                       :disabled="readonly">
               <el-option v-for="option in typeOptions" :key="option.value" :label="option.label"
                          :value="option.value"></el-option>
             </el-select>
@@ -140,13 +158,21 @@
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsCode`" label-width="0"
                         style="margin-top: 22px"
                         :rules="[{required: true, message: '请选择物品编号'}]">
-            <el-select v-model="scope.row.goodsInfo" placeholder="请选择物品编号" style="width: 100%"
+            <el-select v-model="scope.row.goodsId" placeholder="请选择物品编号" style="width: 100%"
                        filterable :disabled="readonly"
-                       @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
+                       @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
               <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
-                         :key="option.value"
+                         :key="option.goodsId"
                          :label="option.goodsCode"
-                         :value="option.goodsId+'__'+option.goodsCode+'__'+option.goodsName+'__'+option.taxBid+'__'+option.nonTaxBid+'__'+option.taxRate"
+                :value="option.goodsId"
+                :disabled="option.disabled"
+              ></el-option>
+              <el-option
+                v-if="!formData.orderDetailList[scope.$index].goodsList.some(goods => goods.goodsId === scope.row.goodsId)"
+                :key="scope.row.goodsId"
+                :label="scope.row.goodsCode"
+                :value="scope.row.goodsId"
+                :disabled="true"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -157,13 +183,21 @@
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsName`" label-width="0"
                         style="margin-top: 22px"
                         :rules="[{required: true, message: '请选择物品名称'}]">
-            <el-select v-model="scope.row.goodsInfo" placeholder="请选择物品名称" style="width: 100%"
+            <el-select v-model="scope.row.goodsId" placeholder="请选择物品名称" style="width: 100%"
                        filterable :disabled="readonly"
-                       @change="goodsChangeHandler(scope.row.goodsInfo,scope.$index)">
+                       @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
               <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
-                         :key="option.value"
+                         :key="option.goodsId"
                          :label="option.goodsName"
-                         :value="option.goodsId+'__'+option.goodsCode+'__'+option.goodsName+'__'+option.taxBid+'__'+option.nonTaxBid+'__'+option.taxRate"
+                :value="option.goodsId"
+                :disabled="option.disabled"
+              ></el-option>
+              <el-option
+                v-if="!formData.orderDetailList[scope.$index].goodsList.some(goods => goods.goodsId === scope.row.goodsId)"
+                :key="scope.row.goodsId"
+                :label="scope.row.goodsName"
+                :value="scope.row.goodsId"
+                :disabled="true"
               ></el-option>
             </el-select>
           </el-form-item>
@@ -182,6 +216,16 @@
       <el-table-column prop="priceWithoutTax" label="不含税进价">
         <template v-slot="scope">
           <span>{{ scope.row.nonTaxBid }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="stockNum" label="库存数量">
+        <template v-slot="scope">
+          <span>{{ scope.row.stockNum }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="availableNum" label="可用数量">
+        <template v-slot="scope">
+          <span>{{ scope.row.availableNum }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="amount" label="数量">
@@ -204,74 +248,39 @@
           <span>{{ scope.row.nonTotalTaxBid }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="amount" label="实际收货数量">
+      <el-table-column prop="totalPrice" label="含税售价"
+                       v-if="formData.orderBizType === '2-0'">
         <template v-slot="scope">
-          <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
-                        style="margin-top: 22px"
-                        :rules="[{ required: true, message: '请输入实际收货数量', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
-            <el-input v-model.number="scope.row.amount" placeholder="请输入实际收货数量" :readonly="readonly"></el-input>
-          </el-form-item>
+          <el-input v-model.number="scope.row.taxPrice" placeholder="请输入含税售价"
+                    :readonly="readonly"
+                    @input="calculatePrice(scope.row)"></el-input>
         </template>
       </el-table-column>
-      <el-table-column prop="amount" label="实际收货金额">
+      <el-table-column prop="taxRate" label="税率" v-if="formData.orderBizType === '2-0'">
         <template v-slot="scope">
-          <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
-                        style="margin-top: 22px"
-                        :rules="[{ required: true, message: '请输入实际收货金额', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
-            <el-input v-model.number="scope.row.amount" placeholder="请输入实际收货金额" :readonly="readonly"></el-input>
-          </el-form-item>
+          <el-select v-model.number="scope.row.sellingTaxRate" placeholder="请选择税率" clearable
+                     :disabled="readonly"
+                     @change="calculatePrice(scope.row)">
+            <el-option
+              v-for="(item,index) in taxRateList"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </template>
       </el-table-column>
-      <el-table-column prop="amount" label="收货备注">
+      <el-table-column prop="totalPriceWithoutTax" label="不含税售价" v-if="formData.orderBizType === '2-0'">
         <template v-slot="scope">
-          <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
-                        style="margin-top: 22px"
-                        :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
-            <el-input v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
-          </el-form-item>
+          <span>{{ scope.row.nonTaxPrice }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="validate" label="有效期">
+      <el-table-column prop="totalPriceWithoutTax" label="毛利率" v-if="formData.orderBizType === '2-0'">
         <template v-slot="scope">
-          <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
-                        style="margin-top: 22px"
-                        :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
-            <el-select v-model="scope.row.validityFlag" placeholder="请输入数量" :readonly="readonly">
-              <el-option v-for="option in validityFlagOptions"
-                         :key="option.value"
-                         :label="option.label"
-                         :value="option.value"
-              ></el-option>
-            </el-select>
-            <el-date-picker
-              v-model="scope.row.validityDate"
-              type="date"
-              placeholder="选择有效期"
-              value-format="yyyy-MM-dd"
-              :disabled="readonly">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
-                        style="margin-top: 22px"
-                        :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
-            <el-select v-model="scope.row.validate" placeholder="请输入数量" :readonly="readonly">
-              <el-option v-for="option in formData.validityDateList"
-                         :key="option.value"
-                         :label="option.name"
-                         :value="option.value"
-              ></el-option>
-            </el-select>
-            <el-date-picker
-              v-model="formData.validityDate"
-              type="date"
-              placeholder="选择有效期"
-              value-format="yyyy-MM-dd"
-              :disabled="readonly">
-            </el-date-picker>
-          </el-form-item>
+          <span>{{ scope.row.grossMargin }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="50px">
+      <el-table-column width="50px" v-if="!readonly">
         <template v-slot="scope">
           <el-row :gutter="20">
             <el-col :span="24">
@@ -288,44 +297,13 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <!--收货信息-->
-    <el-form-item label="签收单" label-width="100px" v-show="formData.orderType===0 && formData.pmsOrderStatus === 3">
-      <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-download"
-          @click="downloadReceipt"
-        >下载签收单
-        </el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-upload2"
-          @click="uploadReceipt"
-        >上传签收单
-        </el-button>
-
-        <div>
-          <el-upload :action="uploadUrl"
-                     :show-file-list="false"
-                     :on-success="handleAttachmentSuccess"
-                     :before-upload="attachmentUploadBeforeHandler"
-                     v-show="!readonly">
-            <el-button type="primary">上传签收单<i class="el-icon-upload el-icon--right"/></el-button>
-          </el-upload>
-        </div>
-      </el-form-item>
-
-    </el-form-item>
     <!-- 提交按钮 -->
     <el-form-item style="margin-top: 22px">
       <el-button
         class="pull-right"
         type="danger"
         v-has-permi="['pms:order:cancel']"
-        v-show="formData.pmsOrderStatus !== 7"
+        v-show="formData.pmsOrderStatus !== 3"
         @click="cancelOrder"
       >取消订单
       </el-button>
@@ -349,31 +327,17 @@
                  @click="revocation"
       >撤回
       </el-button>
-
-      <el-button v-has-permi="['pms:order:confirm']"
-        v-show="formData.recepitButton && (formData.pmsOrderStatus === 3)"
-                 type="primary"
-                 @click="confimReceipt"
-      >确认收货
-      </el-button>
-      <el-button @click="goBack">返回</el-button>
+      <el-button @click="handleEntryClose">返回</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
-import {
-  examineOrderInfo,
-  getOrderDetail,
-  editOrderInfo,
-  confirmReceipt,
-  cancelOrderInfo,
-  downloadReceiptTemplate
-} from '@/api/pms/order'
-import request, {uploadUrl} from '@/utils/request'
+import {examineOrderInfo, getOrderDetail, editOrderInfo, confirmReceipt, cancelOrderInfo} from '@/api/pms/order'
+import request from '@/utils/request'
 
 export default {
-  name: "entryInfo",
+  name: "OutOrderDetail",
   props: {
     tabName: {
       type: String,
@@ -428,18 +392,20 @@ export default {
         }
       },
       immediate: true,
+    },
+    recipientDepartmentId(val) {
+      this.formData.recipientDepartId = val
     }
   },
   data() {
     return {
-      uploadUrl: uploadUrl,
       formTitle: "基本信息",
       formData: {
         applyDepart: '',
         applyDepartName: '',
         applyName: '',
         applyUserId: '',
-        orderType: '0',
+        orderType: '1',
         pmsOrderStatus: '',
         applyDate: '',
         // 预算类型
@@ -454,6 +420,7 @@ export default {
         recipientDepartId: '',
         recipientDepartName: '',
         receiptUrl: '',
+        receiptName: '',
         invoiceNum: '',
         paymentUrl: '',
         invoiceUrl: '',
@@ -461,6 +428,10 @@ export default {
         consigneePhone: '',
         consigneeAddress: '',
         orderDetailList: [],
+        // 按钮权限标识
+        examineButton: 0,// 审核：判断是否有审核权限，0否1是
+        returnButton: 0,// 撤回：判断是否有撤回权限，0否1是
+        receiptButton: 0,// 签收：判断是否有收货权限，0否1是
       },
       orderDetail: {},
       rules: {
@@ -482,17 +453,25 @@ export default {
       goodsListOption: {
         'supplierId': []
       },
+      goodsMap: {},
       orderBizTypes: [
-        {label: '采购入库', value: '1-0'},
-        {label: '盘盈入库', value: '1-2'},
-        {label: '领用入库', value: '1-4'},
+        {label: '销售出库', value: '2-0'},
+        {label: '退货出库', value: '2-1'},
+        {label: '盘亏出库', value: '2-2'},
+        {label: '领用出库', value: '2-3'},
       ],
       budgetTypes: [],
-      // 无需效期，无效期，有效期
-      validityFlagOptions: [
-        {label: '无需效期', value: '0'},
-        {label: '无效期', value: '1'},
-        {label: '有效期', value: '2'},
+      // 发起部门（多层级）
+      recipientDeptList: [],
+      // 发起人，按部门筛选
+      recipientUserList: [],
+      //税率
+      taxRateList: [
+        {label: '1%', value: 0.01},
+        {label: '3%', value: 0.03},
+        {label: '6%', value: 0.06},
+        {label: '12%', value: 0.12},
+        {label: '15%', value: 0.15},
       ]
     }
   },
@@ -505,10 +484,18 @@ export default {
     getOrderDetail(orderId) {
       getOrderDetail(orderId).then(res => {
         res.data.orderDetailList = res.data.orderDetailList.map((item, index) => {
+          if (!this.supplierOptions.some(supplier => supplier.supplierId === item.supplierId)) {
+            this.supplierOptions.push({
+              supplierId: item.supplierId,
+              supplierCode: item.supplierCode,
+              supplierName: item.supplierName,
+              disabled: true
+            })
+          }
+
           return {
             ...item,
             taxRateName: Number(item.taxRate) + '%',
-            goodsInfo: item.goodsId + '__' + item.goodsCode + '__' + item.goodsName + '__' + item.taxBid + '__' + item.nonTaxBid + '__' + item.taxRate
           }
         })
 
@@ -571,7 +558,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        cancelOrderInfo(this.formData.pmsOrderId, 0).then((res) => {
+        cancelOrderInfo(this.formData.pmsOrderId, 1).then((res) => {
           this.$message({
             type: 'success',
             message: '取消订单成功'
@@ -589,7 +576,7 @@ export default {
       }).then(() => {
         let params = {
           pmsOrderId: this.formData.pmsOrderId,
-          orderType: 0,
+          orderType: 1,
           examineType: 1,
         }
         examineOrderInfo(params).then((res) => {
@@ -612,7 +599,7 @@ export default {
       }).then(({value}) => {
         let params = {
           pmsOrderId: this.formData.pmsOrderId,
-          orderType: 0,
+          orderType: 1,
           examineType: 2,
           remark: value,
         }
@@ -637,7 +624,7 @@ export default {
       }).then(() => {
         let params = {
           pmsOrderId: this.formData.pmsOrderId,
-          orderType: 0,
+          orderType: 1,
           examineType: 3
         }
 
@@ -683,8 +670,24 @@ export default {
       this.formData.orderDetailList.splice(index, 1);
     },
     calculateTotal(row) {
-      row.totalTaxBid = row.taxBid * row.taxRate * row.amount;
-      row.nonTotalTaxBid = row.nonTaxBid * row.taxRate * row.amount;
+      // row.totalTaxBid = row.taxBid * row.taxRate * row.amount;
+      row.totalTaxBid = row.taxBid * row.amount;
+      // row.nonTotalTaxBid = row.nonTaxBid * row.taxRate * row.amount;
+      row.nonTotalTaxBid = row.nonTaxBid * row.amount;
+    },
+    calculatePrice(row) {
+      let {taxPrice, taxRate, taxBid} = row
+      if (taxPrice) {
+        if (taxRate) {
+          // 不含税售价：系统自动计算,不含税售价=含税售价÷（1+税率）
+          row.nonTaxPrice = (taxPrice / (1 + taxRate)).toFixed(2);
+        }
+        if (taxBid) {
+          // 毛利率：系统自动计算，毛利率=（含税售价-含税进价）÷含税售价
+          row.grossMargin = ((taxPrice - Number(taxBid)) / taxPrice * 100).toFixed(2) + '%';
+        }
+      }
+
     },
     getSupplierList(keyword = '') {
       request.post('/pms/supplier/queryOverview', {
@@ -709,9 +712,8 @@ export default {
       })
     },
     getGoodsList(supplierId, index) {
-      // this.formData.orderDetailList[index].goodsId = ''
-      // this.formData.orderDetailList[index].goodsList = []
-      // this.$set(this.goodsListOption, `${index.goodsList}`, [])
+      this.formData.orderDetailList[index].goodsId = ''
+      this.formData.orderDetailList[index].goodsList = []
       this.formData.orderDetailList[index].supplierId = supplierId
       this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId]
 
@@ -724,21 +726,22 @@ export default {
         }).then(res => {
           this.goodsListOption[supplierId] = res.data
           this.formData.orderDetailList[index].goodsList = res.data
-          this.$set(this.formData.orderDetailList, `${index.goodsList}`, res.data)
+          res.data.forEach(one => {
+            this.goodsMap[one.goodsId] = one
+          })
         })
       } else {
         this.goodsListOption[supplierId] = goodsList
         this.formData.orderDetailList[index].goodsList = goodsList
       }
     },
-    goodsChangeHandler(goodsInfo, index) {
-      let goodsSplit = goodsInfo.split('__')
-      let goodsId = goodsSplit[0]
-      let goodsCode = goodsSplit[1]
-      let goodsName = goodsSplit[2]
-      let taxBid = goodsSplit[3]
-      let nonTaxBid = goodsSplit[4]
-      let taxRate = Number(goodsSplit[5])
+    goodsChangeHandler(goodsId, index) {
+      let goodsInfo = this.getGoodsInfo(goodsId)
+      let goodsCode = goodsInfo.goodsCode
+      let goodsName = goodsInfo.goodsName
+      let taxBid = goodsInfo.taxBid
+      let nonTaxBid = goodsInfo.nonTaxBid
+      let taxRate = Number(goodsInfo.taxRate)
 
       this.formData.orderDetailList[index].goodsId = goodsId
       this.formData.orderDetailList[index].goodsCode = goodsCode
@@ -748,38 +751,68 @@ export default {
       this.formData.orderDetailList[index].taxRate = taxRate
       if (taxRate) {
         this.formData.orderDetailList[index].taxRateName = (taxRate * 100) + '%'
-      }
-
       this.formData.orderDetailList[index].totalTaxBid = taxBid * taxRate
       this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * taxRate
+      }
+    },
+    getGoodsInfo(goodsId) {
+      return this.goodsMap[goodsId]
     },
     goBack() {
       this.$emit('closeOrderDetail')
     },
+    // 查询库存的数量以及可用库存
+    queryStockCount(goodsId, index = 0) {
+      // 当选择货品以后，需要查询货品的库存，按供应商id、部门id、货品id查询，返回库存数量
+      let supplierId = this.formData.orderDetailList[index].supplierId
+      let deptId = this.formData.applyDepart
+      request.post('/pms/order/queryStockAmount', {goodsId, supplierId, deptId}).then(res => {
+        let {stockId, stockNum, availableNum} = res.data
+        this.formData.orderDetailList[index].stockId = stockId
+        this.formData.orderDetailList[index].stockNum = stockNum
+        this.formData.orderDetailList[index].availableNum = availableNum
+      })
+    },
     isOverDate(dateStr) {
       return this.monent(dateStr).isBefore(this.monent()) ? '已到期' : ''
     },
-    downloadReceipt() {
-      downloadReceiptTemplate()
+    getDeptList(query) {
+      this.recipientDeptList = []
+      treeselect(query).then(res => {
+        this.recipientDeptList = res.data
+      })
     },
-    attachmentUploadBeforeHandler(file) {
-      const isLt10M = file.size / 1024 / 1024 < 10
-      if (!isLt10M) {
-        this.$message.error('上传的签收单大小不能超过 10MB!')
-        return false
+    getUserList(deptId) {
+      this.recipientUserList = []
+      queryUserlist({deptId}).then(res => {
+        this.recipientUserList = res.data
+      })
+    },
+    // 通过递归的方式对当前的部门进行过滤，找到领用人所在的部门
+    deptFilter(dept, deptId) {
+      if (dept.id === deptId) {
+        return true
       }
 
-      return true
+      if (dept.children && dept.children.length > 0) {
+        dept.children = dept.children.filter(item => this.deptFilter(item, deptId))
+        return dept.children && dept.children.length > 0
+      }
+
+      return false
     },
-    handleAttachmentSuccess(response, file) {
-      // 附件上传成功后的处理
-      this.formData.receiptUrl = response.data.url
-      this.formData.receiptUrlName = response.data.name
+    recipientDepartmentChange(deptId) {
+      this.formData.recipientId = ''
+      this.getUserList(deptId)
     },
-    confimReceipt(){
-      confirmReceipt(this.formData)
+    recipientChange(recipientId) {
+      if (recipientId) {
+        this.formData.recipientDepartId = this.recipientUserList
+          .find(item => item.userId === this.formData.recipientId)
+          .deptId
+      }
     }
-  }
+  },
 }
 </script>
 
@@ -789,15 +822,10 @@ export default {
   font-size: 14px;
   width: 100%;
   border-bottom: 1px solid #F2F2F2;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   padding-bottom: 10px;
   box-sizing: content-box;
 }
-
-/*/deep/ .el-input__inner {*/
-/*  border: none;*/
-/*  background-color: rgba(255, 255, 255, 0);*/
-/*}*/
 
 >>> .el-form-item {
   margin-left: 0;

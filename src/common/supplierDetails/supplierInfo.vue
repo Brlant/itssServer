@@ -152,7 +152,7 @@
                      v-show="!readonly">
             <el-button type="primary">选择文件<i class="el-icon-upload el-icon--right"/></el-button>
           </el-upload>
-          <el-form-item v-if="attachmentInfos.length > 0" style="margin-top: 20px">
+          <el-form-item v-if="attachmentInfos.length > 0" style="margin-top: 22px">
             <el-row v-for="(attachment, index) in formData.businessInfo.attachmentInfos" :key="index">
               <el-col :span="9">
                 <div style="border: 1px lightgrey solid; padding: 0 10px;height: 36px">

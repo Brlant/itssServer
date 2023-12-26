@@ -219,7 +219,7 @@
       </template>
     </el-dialog>
     <!--    新增弹框信息-->
-    <ware-house-entry :dialogAddEntry="dialogAddEntry" @handleEntryClose="handleEntryClose"></ware-house-entry>
+    <ware-house-entry :dialogAddEntry="dialogAddEntry" @close="handleEntryClose"></ware-house-entry>
 
     <!-- 导入对话框-->
     <el-dialog :visible.sync="importOrderDialogShowFlag" title="导入" width="410px" center>
@@ -252,7 +252,7 @@
 import wareHouseEntry from "@/common/wareHouseEntry/wareHouseEntry";
 
 import entryAuditInfo from "@/common/entryForm/entryAuditInfo";
-import entryInfo from "@/common/entryForm/entryInfo";
+import entryInfo from "@/common/entryForm/inOrderDetail";
 import entryOperationLog from "@/common/entryForm/entryOperationLog";
 
 import {getOrderList, importInOrderInfo, exportInOrder, downloadOrderTemplate} from "@/api/pms/order";
