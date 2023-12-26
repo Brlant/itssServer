@@ -775,10 +775,11 @@ export default {
     };
   },
   created() {
+    this.getQueryByContractId();
     let userInfo = window.localStorage.getItem('user')
     let userInfoParse = JSON.parse(userInfo)
+    console.log(userInfoParse,'用户信息')
     this.reviewedId = userInfoParse.userId
-    this.getQueryByContractId();
     this.getDealtWith();
     // console.log(this.reviewedId)
   },
