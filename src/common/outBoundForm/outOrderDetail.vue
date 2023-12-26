@@ -335,6 +335,7 @@
 <script>
 import {examineOrderInfo, getOrderDetail, editOrderInfo, confirmReceipt, cancelOrderInfo} from '@/api/pms/order'
 import request from '@/utils/request'
+import { queryUserlist } from '@/api/system/user'
 
 export default {
   name: "OutOrderDetail",
