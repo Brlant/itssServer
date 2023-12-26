@@ -125,7 +125,7 @@
       <el-table-column type="index"
         label="序号"></el-table-column>
       <el-table-column prop="contractRecordCode"
-        label="合同档案编号"></el-table-column>
+        label="合同系统编号"></el-table-column>
       <el-table-column prop="contractCode"
         label="合同编号"></el-table-column>
       <el-table-column prop="contractType"
