@@ -145,13 +145,13 @@
               <el-button type="primary">选择文件<i class="el-icon-upload el-icon--right"/></el-button>
             </el-upload>
           </el-form-item>
-          <el-form-item v-if="formData.attachmentInfos.length > 0" style="margin-top: 20px">
+          <el-form-item v-show="formData.attachmentInfos.length > 0" style="margin-top: 20px">
             <el-row v-for="(attachment, index) in formData.attachmentInfos" :key="index">
               <el-col :span="9">
                 <div style="border: 1px lightgrey solid; padding: 0 10px;height: 36px">
-                  <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 325px;
+                  <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 100px;
                   display: inline-block;" :title="attachment.name">
-                    {{ attachment.name }}
+                    {{ attachment.attachmentPath.split('/').pop() }}
                   </div>
                   <div style="float: right;">
                     <!--下载附件-->
@@ -217,6 +217,16 @@ export default {
       default: "",
     }
   },
+  watch:{
+    dialogAddFiles:{
+      handler(val){
+        if(val){
+
+        }
+      },
+      immediate:true,
+    }
+  },
 
   data() {
     return {
@@ -233,7 +243,10 @@ export default {
         taxBid: [{required: true, message: '请输入含税进价', trigger: 'blur'}],
         taxRate: [{required: true, message: '请选择税率', trigger: 'change'}],
 
-        boxGauge: [{required: true, message: '请输入箱规', trigger: 'blur'}],
+        boxGauge: [
+          {required: true, message: '请输入箱规', trigger: 'blur'},
+          { pattern: /^[1-9]\d*$/, message: '请输入正整数',trigger: 'blur' }
+        ],
         goodsClassify: [{required: true, message: '请选择物品分类', trigger: 'blur'}],
         attachmentInfos:[{required: true, message: '请选择附件', trigger: 'blur'}]
       },
@@ -307,7 +320,8 @@ export default {
     },
     /*关闭新建弹框*/
     closeAddFiles() {
-      this.formData = {}
+      // this.formData = {}
+      this.$refs.formRef.resetFields();
       this.formData.attachmentInfos = [];
       // this.$refs['formRef'].resetFields();
       this.$emit('closeAddFiles');

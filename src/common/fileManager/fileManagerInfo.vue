@@ -93,7 +93,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="不含税进价" prop="nonTaxBid">
-            <el-input v-model="formData.nonTaxBid" :disabled="true" :readonly="readonly">
+            <el-input v-model="nonTaxBid" :disabled="true" :readonly="readonly">
               <span slot="append">元</span>
             </el-input>
           </el-form-item>
@@ -296,7 +296,9 @@ export default {
         taxBid: [{ required: true, message: '请输入含税进价', trigger: 'blur' }],
         taxRate: [{ required: true, message: '请选择税率', trigger: 'change' }],
 
-        boxGauge: [{ required: true, message: '请输入箱规', trigger: 'blur' }],
+        boxGauge: [{ required: true, message: '请输入箱规', trigger: 'blur' },
+          { pattern: /^[1-9]\d*$/, message: '请输入正整数',trigger: 'blur' }
+        ],
         goodsClassify: [{ required: true, message: '请选择物品分类', trigger: 'blur' }]
       },
       listOfItemTypes: [
@@ -326,6 +328,9 @@ export default {
     }
   },
   computed: {
+    nonTaxBid(){
+      return this.formData.taxBid / (1 + Number(this.formData.taxRate));
+    },
     readonly() {
       return !(this.formData.goodsStatus === 2 || this.formData.goodsStatus === 3
         || this.formData.goodsStatus === 4)
@@ -593,6 +598,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.formData.nonTaxBid = this.nonTaxBid;
         this.$refs.formData.validate((valid) => {
           if (valid) {
             // 在这里可以进行表单提交操作，比如调用接口提交数据
