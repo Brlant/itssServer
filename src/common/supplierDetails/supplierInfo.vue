@@ -517,7 +517,13 @@ export default {
         this.$refs.form.validate(valid => {
           if (valid) {
             // 表单验证通过，可以在这里进行提交操作
-            this.updateSupplier()
+            let changes = Object.keys(this.formData).some(key => this.formData[key] !== this.backData[key]);
+            console.log(changes)
+            if(changes === false){
+              return this.$message.error('内容未做任何修改，无需提交')
+            }else{
+              this.updateSupplier()
+            }
           }
         });
       })
@@ -525,13 +531,6 @@ export default {
     // 编辑供应商
     updateSupplier() {
       this.formData.changeFlag = this.needAudit
-
-      let changes = Object.keys(this.formData).filter(key => this.formData[key] !== this.backData[key]);
-
-      if(!changes){
-        this.$message.error('内容未做任何修改，无需提交')
-      }
-
       supplierApi.updateSupplier(this.formData).then(res => {
         if (res.code === 200) {
           this.$message.success('编辑成功')
