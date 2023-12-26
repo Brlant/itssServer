@@ -34,7 +34,7 @@
                 :key="index"
                 :label="item.dictLabel"
                 :value="item.dictCode"
-                :disabled="item.status==='0'"
+                :disabled="item.status!=='0'"
               />
             </el-select>
           </el-form-item>
@@ -280,7 +280,7 @@ export default {
         pageSize: 10
       },
       //企业类型
-      supplierTypeArray: [
+      supplierTypes: [
         // { label: '内部企业', value: 1 },
         // { label: '外部企业', value: 2 }
       ],
