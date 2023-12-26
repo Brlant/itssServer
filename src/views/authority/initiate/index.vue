@@ -15,6 +15,7 @@
       <el-form-item prop="time">
         <el-date-picker style="width: 300px"
           v-model="queryParams.applyTime"
+                        :clearable="false"
           value-format="yyyy-MM-dd HH:mm:ss"
           type="datetimerange"
           :default-time="['00:00:00', '23:59:59']"

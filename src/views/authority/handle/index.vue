@@ -17,6 +17,7 @@
           v-model="queryParams.applyTime"
           value-format="yyyy-MM-dd HH:mm:ss"
           type="datetimerange"
+                         :clearable="false"
          :default-time="['00:00:00', '23:59:59']"
           start-placeholder="请选择开始时间"
           end-placeholder="请选择结束时间"
