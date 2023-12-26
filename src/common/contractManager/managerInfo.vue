@@ -217,6 +217,7 @@
               :action="uploadUrl"
               :show-file-list="false"
               :on-success="handleSuccess"
+              accept=".png,.jpg,.jpeg,application/pdf"
             >
               <el-button size="small"
                 type="primary"
@@ -448,7 +449,15 @@ export default {
         }
       });
     },
-    handleSuccess(res) {
+    handleSuccess(res,file) {
+      const isPNG = file.raw.type === 'image/png';
+      const isJPG = file.raw.type === 'image/jpeg';
+      const isPDF = file.raw.type === 'application/pdf';
+
+      if (!isPNG && !isJPG && !isPDF) {
+        this.$message.error('只能上传PNG、JPG图片或PDF文件');
+        return false;
+      }
       this.formData.scanningCopyUrl = res.data.url;
     },
     /*组件传递,关闭表单*/
