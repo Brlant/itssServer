@@ -324,7 +324,7 @@ export default {
       handler(newVal, oldVal) {
         if (newVal && newVal.supplierId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
-          this.backData = {...this.formData}
+          this.backData = JSON.stringify(this.formData)
         }
       },
       immediate: true,
@@ -518,9 +518,8 @@ export default {
         this.$refs.form.validate(valid => {
           if (valid) {
             // 表单验证通过，可以在这里进行提交操作
-            let changes = Object.keys(this.formData).some(key => this.formData[key] !== this.backData[key]);
-            console.log(changes)
-            if(changes === false){
+            let stringParams = JSON.stringify(this.formData) !== this.backData
+            if(stringParams === false){
               return this.$message.error('内容未做任何修改，无需提交')
             }else{
               this.updateSupplier()

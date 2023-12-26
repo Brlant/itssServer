@@ -22,15 +22,14 @@
     <div slot="footer" class="dialog-footer">
       <el-button
         type="primary"
-        v-show="addForm === '提交'"
         @click="submitForm">
         提交
       </el-button>
-      <el-button
-        @click="editRow"
-        v-show="formData.budgetId"
-      >编辑
-      </el-button>
+<!--      <el-button-->
+<!--        @click="editRow"-->
+<!--        v-show="formData.budgetId"-->
+<!--      >编辑-->
+<!--      </el-button>-->
       <el-button
         @click="closeAddEditForm"
       >取消
@@ -101,19 +100,36 @@ export default {
 
     /* 提交 */
     submitForm() {
-      this.$refs.formData.validate(valid => {
-        if (valid) {
-          if(this.cascaderLength > 2){
-            return this.$notify.error('限制只能三级')
+      if(this.editRowContent.budgetId){
+        this.$refs.formData.validate(valid => {
+          if (valid) {
+            if(this.cascaderLength > 2){
+              return this.$notify.error('限制只能三级')
+            }
+            budgetApi.updateBudget(this.formData).then(res=>{
+              this.$notify.success('编辑成功')
+              this.closeAddEditForm();
+            })
+          } else {
+            return false
           }
-          budgetApi.addBudget(this.formData).then(res=>{
-            this.$notify.success('添加成功')
-            this.closeAddEditForm();
-          })
-        } else {
-          return false
-        }
-      })
+        })
+      }else{
+        this.$refs.formData.validate(valid => {
+          if (valid) {
+            if(this.cascaderLength > 2){
+              return this.$notify.error('限制只能三级')
+            }
+            budgetApi.addBudget(this.formData).then(res=>{
+              this.$notify.success('添加成功')
+              this.closeAddEditForm();
+            })
+          } else {
+            return false
+          }
+        })
+      }
+
     },
     /* 编辑 */
     editRow(){

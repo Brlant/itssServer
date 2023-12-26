@@ -24,6 +24,14 @@ const forgotApi = {
       data
     });
   },
+  //获取邮箱
+  getEmailByName: (data) => {
+    return request({
+      url: `/system/validCode/getEmail`,
+      method: 'post',
+      data
+    });
+  },
 }
 
 export default forgotApi;

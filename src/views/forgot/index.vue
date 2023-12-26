@@ -7,10 +7,10 @@
                onsubmit="return false"
       >
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
+          <el-input v-model="form.username" placeholder="请输入用户名" @change="submitUserName"></el-input>
         </el-form-item>
         <el-form-item label="企业邮箱" prop="identify">
-          <el-input v-model="form.identify" placeholder="请输入企业邮箱"></el-input>
+          <el-input v-model="form.identify" placeholder="请输入企业邮箱" :readonly="true"></el-input>
         </el-form-item>
 
         <el-form-item label="验证码" prop="captchaCode">
@@ -29,7 +29,7 @@
               <el-input v-model="form.validCode" placeholder="请输入邮箱验证码"></el-input>
             </div>
             <div style="margin-left: 35px">
-              <el-button type="primary" @click="getEmailCode" v-if="!sendMsgDisabled" :disabled="emailCodeDisabled">获取验证码</el-button>
+              <el-button type="primary" @click="getEmailCode" v-if="!sendMsgDisabled">获取验证码</el-button>
               <el-button v-if="sendMsgDisabled" plain>{{ time+'秒后获取' }}</el-button>
             </div>
           </div>
@@ -58,15 +58,16 @@ export default {
   data() {
     return {
       form: {
+        identify:'',
         verificationImage: '', //图片验证码
       },
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
         ],
-        identify: [
-          { required: true, message: '请输入企业邮箱', trigger: 'blur' }
-        ],
+        // identify: [
+        //   { required: true, message: '请输入企业邮箱', trigger: 'blur' }
+        // ],
         captchaCode: [
           { required: true, message: '请输入验证码', trigger: 'blur' }
         ],
@@ -103,6 +104,16 @@ export default {
     this.getCodeImg()
   },
   methods: {
+    submitUserName(query){
+      console.log(query)
+      let formData = new FormData()
+      formData.append('username',query)
+      forgotApi.getEmailByName(formData).then(res=>{
+        if(res.code === 200){
+          this.form.identify = res.email;
+        }
+      })
+    },
     getCodeImg(){
       forgotApi.sendCode().then(res => {
         if(res.code === 200){
@@ -113,31 +124,28 @@ export default {
       })
     },
     getEmailCode() {
-      if(this.form.identify){
-        this.sendMsgDisabled = true
-        const interval = window.setInterval(function() {
-          if ((this.time--) <= 0) {
-            this.time = 60
-            this.sendMsgDisabled = false
-            window.clearInterval(interval)
-          }
-        }, 1000)
+      const that = this
+      let formData = new FormData()
+      formData.append('validType','2')
+      formData.append('identify',that.form.identify)
+      forgotApi.getEmail(formData).then(res => {
+        if(res.code === 200){
+          that.form.validUuid=res.uuid;
+        }
+      })
 
-        let formData = new FormData()
-        formData.append('validType','2')
-        formData.append('identify',this.form.identify)
-        forgotApi.getEmail(formData).then(res => {
-          if(res.code === 200){
-            this.form.validUuid=res.uuid;
-          }
-        })
 
-      }else{
-        this.$message({
-          message: '请输入企业邮箱',
-          type:'error'
-        })
-      }
+      that.sendMsgDisabled = true
+      const interval = window.setInterval(function() {
+        if ((that.time--) <= 0) {
+          that.time = 60
+          that.sendMsgDisabled = false
+          window.clearInterval(interval)
+        }
+      }, 1000)
+
+
+
     },
     submitForm() {
       this.$refs.loginForm.validate(valid => {
