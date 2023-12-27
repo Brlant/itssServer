@@ -19,7 +19,7 @@
       <!-- 第一行 -->
       <el-row>
         <el-col :span="8">
-          <el-form-item label="合同档案编号"
+          <el-form-item label="合同系统编号"
                         prop="contractRecordCode">
             {{ formData.contractRecordCode }}
           </el-form-item>
@@ -115,11 +115,11 @@
       <!-- 第一行 -->
       <el-row>
         <el-col :span="8">
-          <el-form-item label="合同档案编号" prop="contractRecordCode">
+          <el-form-item label="合同系统编号" prop="contractRecordCode">
             <el-input v-model="formData.contractRecordCode"
                       maxlength="50"
                       :disabled="true"
-                      placeholder="请输入合同档案编号"/>
+                      placeholder="请输入合同系统编号"/>
           </el-form-item>
         </el-col>
       </el-row>
