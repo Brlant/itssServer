@@ -4,7 +4,15 @@
            :rules="formRules"
            label-width="120px">
     <!--    基本信息-->
-    <div class="JiBenXinXi">
+    <div  style="
+          font-weight: bolder;
+          font-size: 16px;
+          width: 100%;
+          border-bottom: 1px solid #F2F2F2;
+          margin-bottom: 20px;
+          padding-bottom: 10px;
+          box-sizing: content-box;"
+    >
       基本信息
     </div>
     <template v-if="!btnSumbit">
@@ -105,6 +113,16 @@
     </template>
     <template v-else>
       <!-- 第一行 -->
+      <el-row>
+        <el-col :span="8">
+          <el-form-item label="合同档案编号" prop="contractRecordCode">
+            <el-input v-model="formData.contractRecordCode"
+                      maxlength="50"
+                      :disabled="true"
+                      placeholder="请输入合同档案编号"/>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-row>
         <el-col :span="8">
           <el-form-item label="合同编号"
@@ -599,7 +617,7 @@ export default {
 <style scoped>
 .jiBenXinXi {
   font-weight: bolder;
-  font-size: 14px;
+  font-size: 16px;
   width: 100%;
   border-bottom: 1px solid #F2F2F2;
   margin-bottom: 20px;

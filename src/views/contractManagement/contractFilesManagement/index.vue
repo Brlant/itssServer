@@ -203,6 +203,7 @@
           <span v-if="contractStatus === 1" style="color: #f59b22; font-weight: bold;">审核中</span>
           <span v-if="contractStatus === 2" style="color: #000000; font-weight: bold;">审核不通过</span>
           <span v-if="contractStatus === 3" style="color: #70b503; font-weight: bold;">启用</span>
+          <span v-if="contractStatus === 4" style="color: black; font-weight: bold;">已撤回</span>
           <span v-if="contractStatus === 5" style="color: #d8001b; font-weight: bold;">停用</span>
         </div>
       </template>
