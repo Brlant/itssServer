@@ -132,7 +132,7 @@
               :action="uploadUrl"
               :show-file-list="false"
               :on-success="handleSuccess"
-              accept=".png,.jpg,.jpeg,application/pdf"
+              accept=".png,.jpg,application/pdf"
             >
               <el-button size="small"
                 type="primary"
@@ -311,7 +311,7 @@ export default {
     // },
     handleSuccess(res,file) {
       const isPNG = file.raw.type === 'image/png';
-      const isJPG = file.raw.type === 'image/jpeg';
+      const isJPG = file.raw.type === 'image/jpg';
       const isPDF = file.raw.type === 'application/pdf';
 
       if (!isPNG && !isJPG && !isPDF) {
