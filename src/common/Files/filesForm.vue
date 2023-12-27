@@ -11,7 +11,7 @@
             <el-form-item label="物品类型" prop="goodsType">
               <el-select v-model="formData.goodsType" placeholder="物品类型" clearable>
                 <el-option
-                  v-for="(item,index) in unitList"
+                  v-for="(item,index) in goodsTypes"
                   :key="index"
                   :label="item.dictLabel"
                   :value="item.dictCode"

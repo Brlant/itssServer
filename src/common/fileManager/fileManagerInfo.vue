@@ -639,11 +639,12 @@ export default {
     },
     getGoodsTypes(){
       return getDicts('goods_types').then((res) => {
+        console.log(res.data)
         this.goodsTypes = res.data
       })
     },
     getTaxRateList(){
-      return getDicts('goods_types').then((res) => {
+      return getDicts('tax_rate').then((res) => {
         this.taxRateList = res.data
       })
     },

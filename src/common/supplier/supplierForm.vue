@@ -16,7 +16,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="企业类型" prop="supplierType">
-            <el-select v-model="formData.supplierType">
+            <el-select v-model="formData.supplierType"  @change="handleDirChange($event)">
               <el-option
                 v-for="(item,index) in supplierTypes"
                 :key="index"
@@ -276,6 +276,7 @@ export default {
         //基本信息
         supplierName: '',
         supplierType: '',
+        supplierTypeName:'',
         supplierDate: '',
         supplierAddress: '',
         warehouseAddress: '',
@@ -356,6 +357,11 @@ export default {
     }
   },
   methods: {
+    //企业类型
+    handleDirChange(id){
+      let dir = this.supplierTypes.find((item) => item.dictCode === id);
+      this.formData.supplierTypeName = dir.dictLabel
+    },
     addContact() {
       this.formData.contactsInfoList.push({
         id: Date.now(),
