@@ -36,7 +36,7 @@ export default {
     /* 去查看 */
     goCheck(){
       this.$router.push({
-        path:"pms/contractManagement/contractExpiration"
+        path:"/pms/contract/archives"
       })
     }
   },
