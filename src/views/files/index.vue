@@ -163,7 +163,6 @@
       </el-tabs>
     </el-dialog>
 
-
     <!--    新建弹框内容-->
     <files-form :dialogAddFiles="dialogAddFiles" @closeAddFiles="closeAddFiles"></files-form>
 
@@ -205,7 +204,7 @@ import fileOperationLog from "@/common/fileManager/fileOperationLog";
 import supplierApi from '@/api/supplier/supplier'
 import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 import {getDicts} from '@/api/system/dict/data'
-
+import request from '@/utils/request'
 
 export default {
   name: "index",
@@ -345,14 +344,14 @@ export default {
     importErrorHandler(err, file) {
 
     },
-    getSupplierList(query){
+    getSupplierList(query) {
       let params = {
         codeNameKey: query,
-        pageNum: 1,
-        pageSize: 1000,
+        supplierStatus: 3,
       }
-      supplierApi.getSupplierList(params).then((res) => {
-        this.supplierList = res.data.rows.map(item => {
+      // 查询供应商下拉列表
+      request.post('pms/supplier/getSupplierList',params).then((res) => {
+        this.supplierList = res.data.map(item => {
           return {
             value: item.supplierId,
             label: item.supplierName

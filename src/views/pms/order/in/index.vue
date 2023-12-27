@@ -180,7 +180,6 @@
         </template>
       </el-table-column>
     </el-table>
-
     <!--    翻页-->
     <pagination v-show="pageParams.total > 0"
                 :total="pageParams.total"
@@ -208,19 +207,23 @@
         </div>
         <el-tabs v-model="activeEntryTab" @tab-click="handleEntryTabClick">
           <el-tab-pane
-            v-for="tab in tabsEntry"
+            v-for="tab in tabs"
             :key="tab.name"
             :label="tab.label"
             :name="tab.name">
             <!-- 使用组件作为标签页内容 -->
-            <component :is="tab.component" :tabName="tabName" :orderId="currOrderId"
-                       @closeOrderDetail="closeOrderDetailHandler"></component>
+            <component :is="tab.component"
+                       :tabName="tabName"
+                       :orderId="currOrderId"
+                       :orderType="0"
+                       @closeOrderDetail="closeOrderDetailHandler"
+            ></component>
           </el-tab-pane>
         </el-tabs>
       </template>
     </el-dialog>
     <!--    新增弹框信息-->
-    <ware-house-entry :dialogAddEntry="dialogAddEntry" @close="handleEntryClose"></ware-house-entry>
+    <in-order-add :dialogAddEntry="dialogAddEntry" @close="handleEntryClose"></in-order-add>
 
     <!-- 导入对话框-->
     <el-dialog :visible.sync="importOrderDialogShowFlag" title="导入" width="410px" center>
@@ -250,11 +253,11 @@
 </template>
 
 <script>
-import wareHouseEntry from "@/common/wareHouseEntry/wareHouseEntry";
 
-import entryAuditInfo from "@/common/entryForm/entryAuditInfo";
-import entryInfo from "@/common/entryForm/inOrderDetail";
-import entryOperationLog from "@/common/entryForm/entryOperationLog";
+import InOrderAdd from "@/views/pms/order/in/inOrderAdd";
+import InOrderDetail from "@/views/pms/order/in/inOrderDetail";
+import OrderLog from "@/common/order/log/orderLog";
+import OrderAuditInfo from "@/common/order/audit/orderAuditInfo";
 
 import {getOrderList, importInOrderInfo, exportInOrder, downloadOrderTemplate} from "@/api/pms/order";
 import {queryUserlist} from "@/api/system/user";
@@ -262,19 +265,19 @@ import {treeselect} from "@/api/system/dept";
 import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 
 export default {
-  name: "in-order",
+  name: "InOrderList",
   components: {
-    wareHouseEntry,
+    InOrderAdd,
   },
   data() {
     return {
       // 当前订单的订单id，切换不同订单详情会变化
       currOrderId: '',
       activeEntryTab: 'orderInfo',
-      tabsEntry: [
-        {label: '订单信息', name: 'orderInfo', component: entryInfo},
-        {label: '审核信息', name: 'auditInfo', component: entryAuditInfo},
-        {label: '操作日志', name: 'operationLog', component: entryOperationLog}
+      tabs: [
+        {label: '订单信息', name: 'orderInfo', component: InOrderDetail},
+        {label: '审核信息', name: 'auditInfo', component: OrderAuditInfo},
+        {label: '操作日志', name: 'orderLog', component: OrderLog}
       ],
       tabName: null,
       //详情信息
@@ -536,6 +539,5 @@ export default {
   width: 80px;
   height: 20px;
   text-align: center;
-  color: #F79B22;
 }
 </style>

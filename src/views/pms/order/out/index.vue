@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm">
+    <el-form :model="queryParams" ref="queryForm" :inline="true">
       <el-row :gutter="20">
-        <el-col :span="3">
+        <el-col :span="20">
           <!--      订单编号-->
           <el-form-item prop="pmsOrderNo">
             <el-input
@@ -13,25 +13,22 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-        </el-col>
-        <el-col :span="4">
           <!--     时间搜索 -->
           <el-form-item prop="rangeDate">
-            <el-date-picker style="width: 100%"
-                            v-model="queryParams.rangeDate"
-                            value-format="yyyy-MM-dd HH:mm:ss"
-                            type="datetimerange"
-                            :default-time="['00:00:00', '23:59:59']"
-                            start-placeholder="开始时间"
-                            :clearable="false"
-                            end-placeholder="结束时间"
+            <el-date-picker
+              style="width: 100%"
+              v-model="queryParams.rangeDate"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              type="datetimerange"
+              :default-time="['00:00:00', '23:59:59']"
+              start-placeholder="开始时间"
+              end-placeholder="结束时间"
+              :clearable="false"
             ></el-date-picker>
           </el-form-item>
-        </el-col>
-        <el-col :span="4">
           <!-- 订单类型-->
           <el-form-item prop="orderBizType">
-            <el-select v-model="queryParams.orderBizType" placeholder="请选择入库单类型" clearable>
+            <el-select v-model="queryParams.orderBizType" placeholder="请选择出库单类型" clearable>
               <el-option
                 v-for="item in orderBizTypes"
                 :key="item.value"
@@ -40,30 +37,6 @@
               />
             </el-select>
           </el-form-item>
-        </el-col>
-        <el-col :span="2">
-          <el-form-item prop="paymentFlag">
-            <el-select v-model="queryParams.paymentFlag" placeholder="是否已付款" clearable>
-              <el-option
-                v-for="item in paymentFlags"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="3">
-          <el-form-item prop="invoiceNum">
-            <el-input
-              v-model="queryParams.invoiceNum"
-              placeholder="发票号"
-              clearable
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="4">
           <el-form-item prop="applyDepart">
             <el-cascader
               v-model="queryParams.applyDepart"
@@ -73,8 +46,6 @@
               clearable filterable
               @change="getUserList"></el-cascader>
           </el-form-item>
-        </el-col>
-        <el-col :span="3">
           <!-- 申请人-->
           <el-form-item prop="applyUserId">
             <el-select v-model="queryParams.applyUserId" placeholder="发起人" clearable filterable>
@@ -86,35 +57,15 @@
               />
             </el-select>
           </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
+            <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
+          </el-form-item>
         </el-col>
-      </el-row>
-      <el-row>
         <el-col :span="4">
-          <el-button type="primary" icon="el-icon-search" @click="handleQuery">搜索</el-button>
-          <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
-        </el-col>
-        <el-col :span="12">
           <el-form-item class="pull-right">
-            <el-button
-              type="primary"
-              icon="el-icon-plus"
-              @click="addEntryForm"
-            >新建
-            </el-button>
-            <el-button
-              type="primary"
-              icon="el-icon-upload2"
-              @click="importOrder"
-            >
-              导入新建/修改
-            </el-button>
-            <!--        导出-->
-            <el-button
-              type="primary"
-              icon="el-icon-download"
-              @click="exportOrder"
-            >导出
-            </el-button>
+            <el-button type="primary" icon="el-icon-plus" @click="addForm">新建</el-button>
+            <el-button type="primary" icon="el-icon-download" @click="exportOrder">导出</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -140,32 +91,25 @@
       <el-table-column prop="pmsOrderNo" label="订单编号"></el-table-column>
       <el-table-column prop="orderBizType" label="订单类型">
         <template v-slot="{ row }">
-          <span v-if="row.orderBizType === '1-0'">采购入库</span>
-          <span v-if="row.orderBizType === '1-2'">盘盈入库</span>
-          <span v-if="row.orderBizType === '1-4'">领用入库</span>
+          <span v-if="row.orderBizType === '2-0'">销售出库</span>
+          <span v-if="row.orderBizType === '2-1'">退货出库</span>
+          <span v-if="row.orderBizType === '2-3'">领用出库</span>
+          <span v-if="row.orderBizType === '2-2'">盘亏出库</span>
         </template>
       </el-table-column>
-      <el-table-column prop="totalGoodsName" label="订单物品"></el-table-column>
       <el-table-column prop="orderTotalAmount" label="订单总金额"></el-table-column>
+      <el-table-column prop="totalGoodsName" label="订单物品"></el-table-column>
       <el-table-column prop="applyName" label="发起人"></el-table-column>
       <el-table-column prop="applyDepartName" label="发起部门"></el-table-column>
       <el-table-column prop="applyDate" label="发起日期"></el-table-column>
-      <el-table-column prop="paymentFlag" label="是否已付款">
-        <template v-slot="{ row }">
-          <span v-if="row.paymentFlag">已付款</span>
-          <span v-else>未付款</span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="invoiceNum" label="发票号"></el-table-column>
       <el-table-column prop="pmsOrderStatus" label="状态">
         <template v-slot="{ row }">
           <span v-if="row.pmsOrderStatus === 0" style="color: #F79B22">待审核</span>
           <span v-if="row.pmsOrderStatus === 1" style="color: #F79B22">审核中</span>
           <span v-if="row.pmsOrderStatus === 2" style="color: black">审核未通过</span>
-          <span v-if="row.pmsOrderStatus === 3" style="color: #F79B22">待收货</span>
           <span v-if="row.pmsOrderStatus === 4" style="color: black">已撤回</span>
           <span v-if="row.pmsOrderStatus === 5" style="color: black">已取消</span>
-          <span v-if="row.pmsOrderStatus === 7" style="color: green">已完成</span>
+          <span v-if="row.pmsOrderStatus === 3" style="color: green">已完成</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -190,41 +134,36 @@
     />
 
     <!--    详情弹框-->
-    <el-dialog :visible="dialogEntryDetailsProcessDialog" :title="detailsEntryTitle" width="80%" @close="closeEntryDialog">
+    <el-dialog :visible="dialogOutDetailsProcessDialog" :title="detailsOutTitle" width="80%" @close="closeOutDialog">
       <template v-slot:title>
-        <div style="font-weight: bold;font-size: 15px">{{ detailsEntryTitle }}</div>
+        <div style="font-weight: bold;font-size: 15px">{{ detailsOutTitle }}</div>
       </template>
-      <template class="templateEntryDialogStyle">
+      <template class="templateOutDialogStyle">
         <div style="position: relative">
-          <div class="tabEntryStatus">
-            <span v-if="activeEntryStatus === 0" style="color: #F79B22">待审核</span>
-            <span v-if="activeEntryStatus === 1" style="color: #F79B22">审核中</span>
-            <span v-if="activeEntryStatus === 2" style="color: black">审核未通过</span>
-            <span v-if="activeEntryStatus === 3" style="color: #F79B22">待收货</span>
-            <span v-if="activeEntryStatus === 4" style="color: black">已撤回</span>
-            <span v-if="activeEntryStatus === 5" style="color: black">已取消</span>
-            <span v-if="activeEntryStatus === 7" style="color: green">已完成</span>
+          <div class="tabOutStatus">
+            <span v-if="activeOutStatus === 0" style="color: #F79B22">待审核</span>
+            <span v-if="activeOutStatus === 1" style="color: #F79B22">审核中</span>
+            <span v-if="activeOutStatus === 2" style="color: black">审核未通过</span>
+            <span v-if="activeOutStatus === 4" style="color: black">已撤回</span>
+            <span v-if="activeOutStatus === 5" style="color: black">已取消</span>
+            <span v-if="activeOutStatus === 3" style="color: green">已完成</span>
           </div>
         </div>
-        <el-tabs v-model="activeEntryTab" @tab-click="handleEntryTabClick">
+        <el-tabs v-model="activeOutTab" @tab-click="handleOutTabClick">
           <el-tab-pane
-            v-for="tab in tabs"
+            v-for="tab in tabsOut"
             :key="tab.name"
             :label="tab.label"
             :name="tab.name">
             <!-- 使用组件作为标签页内容 -->
-            <component :is="tab.component"
-                       :tabName="tabName"
-                       :orderId="currOrderId"
-                       :orderType="0"
-                       @closeOrderDetail="closeOrderDetailHandler"
-            ></component>
+            <component :is="tab.component" :tabName="tabName" :orderId="currOutOrderId"
+                       @closeOrderDetail="closeOutOrderDetailHandler"></component>
           </el-tab-pane>
         </el-tabs>
       </template>
     </el-dialog>
     <!--    新增弹框信息-->
-    <in-order-add :dialogAddEntry="dialogAddEntry" @close="handleEntryClose"></in-order-add>
+    <out-order-add :dialogAdd="dialogAdd" @close="handleEntryClose"></out-order-add>
 
     <!-- 导入对话框-->
     <el-dialog :visible.sync="importOrderDialogShowFlag" title="导入" width="410px" center>
@@ -255,37 +194,38 @@
 
 <script>
 
-import InOrderAdd from "@/views/pms/order/inOrderAdd";
-import OrderAuditInfo from "@/views/pms/order/detail/orderAuditInfo";
-import InOrderDetail from "@/views/pms/order/detail/inOrderDetail";
-import OrderLog from "@/views/pms/order/detail/orderLog";
+import outOrderAdd from "@/views/pms/order/out/outOrderAdd";
+import OrderInfo from "@/views/pms/order/out/outOrderDetail";
+import OrderLog from "@/common/order/log/orderLog";
+import OrderAuditInfo from "@/common/order/audit/orderAuditInfo";
 
-import {getOrderList, importInOrderInfo, exportInOrder, downloadOrderTemplate} from "@/api/pms/order";
+import {getOrderList, importInOrderInfo, exportOutOrder, downloadOrderTemplate} from "@/api/pms/order";
 import {queryUserlist} from "@/api/system/user";
 import {treeselect} from "@/api/system/dept";
+import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 
 export default {
-  name: "InOrderList",
+  name: "out-order",
   components: {
-    InOrderAdd,
+    outOrderAdd,
   },
   data() {
     return {
       // 当前订单的订单id，切换不同订单详情会变化
-      currOrderId: '',
-      activeEntryTab: 'orderInfo',
-      tabs: [
-        {label: '订单信息', name: 'orderInfo', component: InOrderDetail},
+      currOutOrderId: '',
+      activeOutTab: 'orderInfo',
+      tabsOut: [
+        {label: '订单信息', name: 'orderInfo', component: OrderInfo},
         {label: '审核信息', name: 'auditInfo', component: OrderAuditInfo},
-        {label: '操作日志', name: 'orderLog', component: OrderLog}
+        {label: '操作日志', name: 'operationLog', component: OrderLog}
       ],
       tabName: null,
       //详情信息
-      detailsEntryTitle: "详情信息",
+      detailsOutTitle: "详情信息",
       //详情信息弹框
-      dialogEntryDetailsProcessDialog: false,
+      dialogOutDetailsProcessDialog: false,
       //新建弹框
-      dialogAddEntry: false,
+      dialogAdd: false,
       importOrderDialogShowFlag: false,
       // 遮罩层
       loading: true,
@@ -303,7 +243,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         // 订单类型(0-入库；1-出库)
-        orderType: '0',
+        orderType: '1',
         rangeDate: []
       },
       //供应商
@@ -320,17 +260,17 @@ export default {
         {text: "待审核", status: 0},
         {text: "审核中", status: 1},
         {text: "审核未通过", status: 2},
-        {text: "待收货", status: 3},
+        {text: "已完成", status: 3},
         {text: "已撤回", status: 4},
         {text: "已取消", status: 5},
-        {text: "已完成", status: 7},
       ],
       activeFilterIndex: 0,
       tableData: [],
       orderBizTypes: [
-        {label: '采购入库', value: '1-0'},
-        {label: '盘盈入库', value: '1-2'},
-        {label: '领用入库', value: '1-4'},
+        {label: '销售出库', value: '2-0'},
+        {label: '退货出库', value: '2-1'},
+        {label: '盘亏出库', value: '2-2'},
+        {label: '领用出库', value: '2-3'},
       ],
       paymentFlags: [
         {label: '是', value: 1},
@@ -340,11 +280,15 @@ export default {
       deptList: [],
       // 发起人，按部门筛选
       userList: [],
-      //状态
-      activeEntryStatus:'',
+      activeOutStatus:'',
+      reviewedId:'',
     }
   },
   created() {
+    let userInfo = window.localStorage.getItem('user');
+    let userInfoParse = JSON.parse(userInfo);
+    this.reviewedId = userInfoParse.userId
+
     this.getList()
     this.getDeptList('')
     this.getUserList('')
@@ -353,7 +297,7 @@ export default {
 
   },
   computed: {
-    // activeEntryStatus() {
+    // activeOutStatus() {
     //   if (!this.detailsSupplierData) {
     //     return ''
     //   }
@@ -363,23 +307,39 @@ export default {
   },
   methods: {
     /*处理标签页信息*/
-    handleEntryTabClick(tab, event) {
+    handleOutTabClick(tab, event) {
 
     },
     // 关闭详情对话框
-    closeEntryDialog() {
-      this.currOrderId = ''
-      this.dialogEntryDetailsProcessDialog = false;
+    closeOutDialog() {
+      this.currOutOrderId = ''
+      this.dialogOutDetailsProcessDialog = false;
     },
     // 关闭订单详情对话框并刷新订单列表
-    closeOrderDetailHandler() {
-      this.closeEntryDialog()
+    closeOutOrderDetailHandler() {
+      this.closeOutDialog()
       this.getList()
+    },
+    /* 获取我的待办总数 */
+    getDealtWithListCount() {
+      const params =
+        {
+          key: "",
+          modelName: "",
+          reviewedId: this.reviewedId,
+          pageNum: 1,
+          pageSize: 10,
+          promoterId: "",
+          queryType: 2
+        }
+      getDealtWithList(params).then((res) => {
+        this.$store.dispatch('updateItem', res.data.total);
+      })
     },
     /*查询列表内容*/
     getList() {
       let params = this.queryParams;
-      if (params.rangeDate && params.rangeDate.length === 2){
+      if (params.rangeDate && params.rangeDate.length === 2) {
         params.startDate = params.rangeDate[0]
         params.endDate = params.rangeDate[1]
       }
@@ -388,11 +348,13 @@ export default {
       getOrderList(params).then(res => {
         this.tableData = res.data.rows;
         this.pageParams.total = res.data.total;
+        this.getDealtWithListCount();
       }).catch(err => {
-        console.log("查询入库单列表接口报错：", err)
+        console.log("查询出库单列表接口报错：", err)
       }).finally(() => {
         this.loading = false;
       })
+
     },
     /*搜索查询*/
     handleQuery() {
@@ -418,7 +380,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         // 订单类型(0-入库；1-出库)
-        orderType: '0',
+        orderType: '1',
         rangeDate: []
       }
 
@@ -431,18 +393,15 @@ export default {
       this.getList();
     },
     /*新建表单*/
-    addEntryForm() {
-      this.dialogAddEntry = true;
-    },
-    importOrder() {
-      this.importOrderDialogShowFlag = true;
+    addForm() {
+      this.dialogAdd = true;
     },
     exportOrder() {
-      exportInOrder(this.queryParams)
+      exportOutOrder(this.queryParams)
     },
     /*关闭表单*/
     handleEntryClose({refresh = false}) {
-      this.dialogAddEntry = false;
+      this.dialogAdd = false;
       if (refresh) {
         // 如果需要刷新，那么刷新列表
         this.getList()
@@ -450,9 +409,9 @@ export default {
     },
     /*详情*/
     handleDetails(row) {
-      this.activeEntryStatus = row.pmsOrderStatus
-      this.currOrderId = row.pmsOrderId;
-      this.dialogEntryDetailsProcessDialog = true;
+      this.activeOutStatus = row.pmsOrderStatus
+      this.currOutOrderId = row.pmsOrderId;
+      this.dialogOutDetailsProcessDialog = true;
     },
     getDeptList(query) {
       treeselect(query).then(res => {
@@ -506,11 +465,11 @@ export default {
   margin: 10px 0px;
 }
 
-.templateEntryDialogStyle {
+.templateOutDialogStyle {
   position: relative;
 }
 
-.tabEntryStatus {
+.tabOutStatus {
   position: absolute;
   top: 10px;
   left: 300px;

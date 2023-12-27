@@ -146,7 +146,7 @@
             <el-select v-model="formData.contractType"
                        placeholder="请选择合同类型">
               <el-option
-                v-for="(item,index) in contractTypeList"
+                v-for="(item,index) in contractTypes"
                 :key="index"
                 :label="item.dictLabel"
                 :value="item.dictCode"
@@ -269,7 +269,7 @@
       </el-row>
     </template>
 
-    <!--        提交-->
+    <!-- 提交-->
     <el-row>
       <el-col :span="24"
               style="text-align: center; margin-top: 20px;">
@@ -341,18 +341,18 @@ export default {
       loadSupplier: false,
       formTitle: "基本信息",
       formData: {
-        contractRecordCode: null,
-        contractCode: null,
-        contractName: null,
-        contractType: null,
-        supplierName: null,
-        contractAmount: null,
-        signingDate: null,
-        dueDate: null,
-        contractSignatory: null,
-        remark: null,
-        scanningCopyUrl: null,
-        renewalFlag: null
+        contractRecordCode: '',
+        contractCode: '',
+        contractName: '',
+        contractType: '',
+        supplierName: '',
+        contractAmount: '',
+        signingDate: '',
+        dueDate: '',
+        contractSignatory: '',
+        remark: '',
+        scanningCopyUrl: '',
+        renewalFlag: ''
       },
       formRules: {
         contractRecordCode: [{required: true, message: '请输入合同档案编号', trigger: 'blur'}],
@@ -368,7 +368,8 @@ export default {
         contractType: [{required: true, message: '请选择合同类型', trigger: 'change'}],
         // contractSignatory:[{required: true, message: '请填写合同签署人', trigger: 'blur'}]
       },
-      backData: null
+      backData: '',
+      contractTypes:[]
     }
   },
   computed: {
@@ -391,7 +392,7 @@ export default {
       if (start > -1) {
         return this.formData.scanningCopyUrl.substr(start + 1);
       }
-      return null;
+      return '';
     },
     // 0-待审核；1-审核中；2-审核未通过；3-启用；4-已撤回；5-停用
     // 待审核、审核中、当前审核人、管理员
@@ -452,7 +453,7 @@ export default {
   methods: {
     getContractTypeList() {
       return getDicts('contract_type').then((res) => {
-        this.contractTypeList = res.data
+        this.contractTypes = res.data
       })
     },
     changeAmount(value) {
@@ -508,7 +509,7 @@ export default {
       this.$emit("closeAddForm")
     },
     fileDelete() {
-      this.formData.scanningCopyUrl = null;
+      this.formData.scanningCopyUrl = '';
     },
     /* 合同审核 */
     auditContract(examineType) {
@@ -554,7 +555,10 @@ export default {
     },
     modifyContract() {
       this.$refs.formData.validate(valid => {
-        if (!valid) return;
+        if (!valid) {
+          return;
+        }
+
         this.$confirm('确定重新提交该合同?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -565,7 +569,11 @@ export default {
             return this.$message.error('内容未做任何修改，无需提交')
           }
           let requireChange = changes.filter(key => this.formRules[key]?.some(item => item.required));
-          edit(Object.assign(this.formData, {changeFlag: requireChange.length > 0})).then(res => {
+          let params = this.formData
+          params.changeFlag = requireChange.length > 0
+          params.contractTypeName = this.contractTypes.find(item => item.dictCode === this.formData.contractType)?.dictLabel
+          // console.log(requireChange)
+          edit(params).then(res => {
             if (res.code === 200) {
               this.$message.success(res.msg);
               this.$emit('closeDetail', true);
@@ -596,21 +604,6 @@ export default {
         this.$message.info('删除已取消');
       });
     },
-    /*文件提交*/
-    submitForm() {
-      this.$refs.formData.validate((valid) => {
-        if (valid) {
-          // 在这里可以进行表单提交操作，比如调用接口提交数据
-          this.$message({
-            message: '表单提交成功',
-            type: 'success'
-          });
-        } else {
-          this.$message.error('表单验证失败，请检查输入内容');
-          return false;
-        }
-      });
-    }
   }
 }
 </script>

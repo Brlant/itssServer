@@ -111,8 +111,7 @@
       <el-table-column prop="supplierCode" label="供应商编号"></el-table-column>
       <el-table-column prop="supplierType" label="企业类型">
         <template v-slot="scope">
-          <span v-if="scope.row.supplierType === 1">内部企业</span>
-          <span v-if="scope.row.supplierType === 2">外部企业</span>
+          <span>{{scope.row.supplierTypeName}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="contactsName" label="联系人"></el-table-column>
@@ -150,13 +149,6 @@
             @click="handleDetails(scope.row)"
           >详情
           </el-button>
-          <!--          <el-button v-has-permi="['pms:supplier:edit']"-->
-          <!--                     size="mini"-->
-          <!--                     type="text"-->
-          <!--                     icon="el-icon-edit"-->
-          <!--                     @click="supplierEdit(scope.row)"-->
-          <!--          >编辑-->
-          <!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -243,7 +235,7 @@ import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 import {getDicts} from '@/api/system/dict/data'
 
 export default {
-  name: 'index',
+  name: 'SupplierList',
   components: {
     supplierForm,
     supplierAuditInfo,
@@ -254,12 +246,6 @@ export default {
     return {
       // 详情页展示的tab
       activeTab: 'fileInfo',
-      // tabs: [
-      //   {label: '档案信息', name: 'fileInfo', component: supplierInfo},
-      //   {label: '审核信息', name: 'auditInfo', component: supplierAuditInfo},
-      //   {label: '操作日志', name: 'operationLog', component: supplierOperationLog}
-      // ],
-      tabName: null,
       dialogDetailsSupplierDialog: false,//详情弹框
       //详情信息
       detailsTitle: '详情信息',
@@ -434,10 +420,8 @@ export default {
     /*详情*/
     handleDetails(row) {
       this.detailsSupplierData = null
-
       supplierApi.getSupplierDetails(row.supplierId).then((res) => {
         this.detailsSupplierData = res.data
-        this.tabName = '1'
         this.dialogDetailsSupplierDialog = true
       })
     },

@@ -34,7 +34,7 @@
 <script>
 import inventoryApi from '@/api/inventory/inventory'
 export default {
-  name: 'inventoryForm',
+  name: 'inventoryLog',
   props:['dialogAddForm','formTitle','stockId'],
   watch:{
     stockId:{

@@ -27,7 +27,8 @@
           </el-col>
           <el-col :span="8">
             <el-form-item prop="supplierId" label="供应商">
-              <el-select v-model="formData.supplierId" filterable :filter-method="getSupplierList" placeholder="供应商" clearable>
+              <el-select v-model="formData.supplierId" filterable :filter-method="getSupplierList" placeholder="供应商"
+                         clearable>
                 <el-option
                   v-for="(item,index) in supplierList"
                   :key="index"
@@ -70,14 +71,15 @@
           <!-- 第三行 -->
           <el-col :span="8">
             <el-form-item label="含税进价" prop="taxBid">
-              <el-input v-model="formData.taxBid" placeholder="含税进价" type="number" clearable>
+              <el-input v-model="formData.taxBid" placeholder="含税进价" type="number" clearable @input="countNonTaxBid">
                 <span slot="append">元</span>
               </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="税率" prop="taxRateId">
-              <el-select v-model="formData.taxRateId" placeholder="物品类型" clearable>
+              <el-select v-model="formData.taxRateId" placeholder="请选择税率" clearable
+                         @change="countNonTaxBid">
                 <el-option
                   v-for="(item,index) in taxRateList"
                   :key="index"
@@ -90,7 +92,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="不含税进价" prop="nonTaxBid">
-              <el-input v-model="nonTaxBid" :disabled="true"  readonly >
+              <el-input v-model="formData.nonTaxBid" :disabled="true" readonly>
                 <span slot="append">元</span>
               </el-input>
             </el-form-item>
@@ -136,7 +138,7 @@
           </el-col>
         </el-row>
 
-<!--        附件上传-->
+        <!--        附件上传-->
         <el-row :gutter="20">
           <el-form-item label="其他附件">
             <el-upload :action="uploadUrl"
@@ -198,7 +200,7 @@
 
         <el-row :gutter="20">
           <!-- 提交按钮 -->
-          <el-col >
+          <el-col>
             <el-button type="primary" @click="submitForm">提交</el-button>
             <el-button @click="closeAddFiles">返回</el-button>
           </el-col>
@@ -213,6 +215,8 @@ import filesApi from '@/api/Files/files'
 import supplierApi from '@/api/supplier/supplier'
 import categoryApi from '@/api/category/category'
 import {getDicts} from '@/api/system/dict/data'
+import request from '@/utils/request'
+
 export default {
   name: "filesForm",
   props: {
@@ -221,15 +225,15 @@ export default {
       default: "",
     }
   },
-  watch:{
-    dialogAddFiles:{
-      handler(val){
-        if(val){
+  watch: {
+    dialogAddFiles: {
+      handler(val) {
+        if (val) {
           // 重新打开新建对话框时，表单重置
           this.$refs.formRef && this.$refs.formRef.resetFields();
         }
       },
-      immediate:true,
+      immediate: true,
     }
   },
 
@@ -237,7 +241,7 @@ export default {
     return {
       formTitle: "基本信息",
       formData: {
-        taxRateId:'',
+        taxRateId: '',
         goodsType: '',
         goodsName: '',
         supplierId: '',
@@ -248,8 +252,8 @@ export default {
         brand: '',
         goodsClassify: '',
         remark: '',
-        goodsSpecifications:'',
-        goodsModel:'',
+        goodsSpecifications: '',
+        goodsModel: '',
         attachmentInfos: [],
       },
       rules: {
@@ -263,10 +267,10 @@ export default {
 
         boxGauge: [
           {required: true, message: '请输入箱规', trigger: 'blur'},
-          { pattern: /^[1-9]\d*$/, message: '请输入正整数',trigger: 'blur' }
+          {pattern: /^[1-9]\d*$/, message: '请输入正整数', trigger: 'blur'}
         ],
         goodsClassify: [{required: true, message: '请选择物品分类', trigger: 'blur'}],
-        attachmentInfos:[{required: true, message: '请选择附件', trigger: 'blur'}]
+        attachmentInfos: [{required: true, message: '请选择附件', trigger: 'blur'}]
       },
       //物品类型
       goodsTypes: [
@@ -276,14 +280,14 @@ export default {
         // {label:'销售品',value:4},
       ],
       //单位
-      unitList:[
+      unitList: [
         // {label:'支',value:1},
         // {label:'套',value:2},
         // {label:'个',value:3},
         // {label:'盒',value:4},
       ],
       //税率
-      taxRateList:[
+      taxRateList: [
         // {label:'1%',value:"0.01"},
         // {label:'3%',value:"0.03"},
         // {label:'6%',value:"0.06"},
@@ -291,16 +295,12 @@ export default {
         // {label:'15%',value:"0.15"},
       ],
       //供应商
-      supplierList:[],
+      supplierList: [],
       //物品分类
       categoryList: [],
     }
   },
-  computed:{
-    nonTaxBid(){
-      return this.formData.taxBid / (1 + Number(this.formData.taxRate));
-    },
-
+  computed: {
     uploadUrl() {
       return supplierApi.uploadUrl
     }
@@ -313,40 +313,49 @@ export default {
     this.getGoodsUnits()
   },
   methods: {
-    getGoodsUnits(){
+    countNonTaxBid(val) {
+      let nonTaxBid = ''
+      let taxRate = this.taxRateList.find(item => item.dictCode === this.formData.taxRateId)?.dictLabel;
+      if (taxRate && this.formData.taxBid) {
+        nonTaxBid = this.formData.taxBid / (1 + Number.parseFloat(taxRate) / 100);
+        // nonTaxBid = nonTaxBid.toFixed(3)
+      }
+
+      this.formData.nonTaxBid = nonTaxBid
+    },
+    getGoodsUnits() {
       return getDicts('goods_unit').then((res) => {
         this.unitList = res.data
       })
     },
-    getGoodsTypes(){
+    getGoodsTypes() {
       return getDicts('goods_types').then((res) => {
         this.goodsTypes = res.data
       })
     },
-    getTaxRateList(){
+    getTaxRateList() {
       return getDicts('tax_rate').then((res) => {
         this.taxRateList = res.data
       })
     },
     /* 获取上级类目列表 */
-    getCategoryList(){
-      categoryApi.getCategoryList().then(res=>{
+    getCategoryList() {
+      categoryApi.getCategoryList().then(res => {
         this.categoryList = res.rows;
       })
     },
-    handleChange(query){
+    handleChange(query) {
       this.formData.goodsClassify = query;
     },
 
-    getSupplierList(query){
+    getSupplierList(query) {
       let params = {
         codeNameKey: query,
-        pageNum: 1,
-        pageSize: 1000,
-        supplierStatus:3,
+        supplierStatus: 3,
       }
-      supplierApi.getSupplierList(params).then((res) => {
-        this.supplierList = res.data.rows.map(item => {
+      // 查询供应商下拉列表
+      request.post('pms/supplier/getSupplierList',params).then((res) => {
+        this.supplierList = res.data.map(item => {
           return {
             value: item.supplierId,
             label: item.supplierName
@@ -365,12 +374,11 @@ export default {
     submitForm() {
       this.$refs.formRef.validate((valid) => {
         if (valid) {
-          this.formData.nonTaxBid = this.nonTaxBid;
           this.formData.goodsUnit = this.unitList.find(item => item.dictCode === this.formData.goodsUnitId)?.dictLabel;
           this.formData.taxRate = this.taxRateList.find(item => item.dictCode === this.formData.taxRateId)?.dictLabel;
           this.formData.goodsTypeName = this.goodsTypes.find(item => item.dictCode === this.formData.goodsType)?.dictLabel;
-          filesApi.addFiles(this.formData).then(res=>{
-            if(res.code === 200){
+          filesApi.addFiles(this.formData).then(res => {
+            if (res.code === 200) {
               this.$notify.success('新增成功')
               this.closeAddFiles();
             }

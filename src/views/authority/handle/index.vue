@@ -233,6 +233,7 @@
             :name="tab.name">
             <!-- 使用组件作为标签页内容 -->
             <component :is="tab.component" :tabName="tabName" :orderId="currOrderId"
+                       :orderType="0"
                        @closeOrderDetail="closeOrderDetailHandler"></component>
           </el-tab-pane>
         </el-tabs>
@@ -263,6 +264,7 @@
             :name="tab.name">
             <!-- 使用组件作为标签页内容 -->
             <component :is="tab.component" :tabName="tabName" :orderId="currOutOrderId"
+                       :orderType="1"
                        @closeOrderDetail="closeOutOrderDetailHandler"></component>
           </el-tab-pane>
         </el-tabs>
@@ -294,14 +296,16 @@ import filesApi from '@/api/Files/files'
 import managerInfo from '@/common/contractManager/managerInfo'
 import managerAuditInfo from '@/common/contractManager/managerAuditInfo'
 import managerOperationLog from '@/common/contractManager/managerOperationLog'
-//出库
-import entryInfo from '@/common/entryForm/inOrderDetail'
-import entryAuditInfo from '@/common/entryForm/entryAuditInfo'
-import entryOperationLog from '@/common/entryForm/entryOperationLog'
+
 //入库
-import boundInfo from '@/common/outBoundForm/outOrderDetail'
-import boundAuditInfo from '@/common/outBoundForm/boundAuditInfo'
-import boundOperationLog from '@/common/outBoundForm/boundOperationLog'
+import entryInfo from "@/views/pms/order/in/inOrderDetail";
+import entryOperationLog from "@/common/order/log/orderLog";
+import entryAuditInfo from "@/common/order/audit/orderAuditInfo";
+
+//出库
+import boundInfo from '@/views/pms/order/out/outOrderDetail';
+import boundOperationLog from "@/common/order/log/orderLog";
+import boundAuditInfo from "@/common/order/audit/orderAuditInfo";
 
 export default {
   name: "index",

@@ -15,7 +15,6 @@
       <el-col :span="8">
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="formData.supplierName" :readonly="readonly"></el-input>
-          <!--          <div v-show="readonly">{{ formData.supplierName }}</div>-->
         </el-form-item>
       </el-col>
       <el-col :span="8">
@@ -26,7 +25,7 @@
               :key="index"
               :label="item.dictLabel"
               :value="item.dictCode"
-              :disabled="item.status==='0'"
+              :disabled="item.status!=='0'"
             />
           </el-select>
         </el-form-item>
@@ -164,12 +163,12 @@
                   </div>
                   <div style="float: right;">
                     <!--下载附件-->
-                                        <a :href="attachment.attachmentPath"
-                                           target="_blank"
-                                           :download="attachment.attachmentFileName"
-                                           class="el-icon-download el-icon--right"
-                                           title="下载附件"
-                                           style="margin-right: 10px"></a>
+                    <a :href="attachment.attachmentPath"
+                       target="_blank"
+                       :download="attachment.attachmentFileName"
+                       class="el-icon-download el-icon--right"
+                       title="下载附件"
+                       style="margin-right: 10px"></a>
                     <!--<a @click.prevent="downloadAttachment(attachment.attachmentPath,attachment.attachmentFileName)"-->
                     <!--   class="el-icon-download el-icon&#45;&#45;right"-->
                     <!--   style="margin-right: 10px"></a>-->
@@ -512,9 +511,9 @@ export default {
           if (valid) {
             // 表单验证通过，可以在这里进行提交操作
             let stringParams = JSON.stringify(this.formData) !== this.backData
-            if(stringParams === false){
+            if (stringParams === false) {
               return this.$message.error('内容未做任何修改，无需提交')
-            }else{
+            } else {
               this.updateSupplier()
             }
           }
@@ -524,6 +523,7 @@ export default {
     // 编辑供应商
     updateSupplier() {
       this.formData.changeFlag = this.needAudit
+      this.formData.supplierTypeName = this.supplierTypes.find(item => item.dictCode === this.formData.supplierType)?.dictLabel
       supplierApi.updateSupplier(this.formData).then(res => {
         if (res.code === 200) {
           this.$message.success('编辑成功')
@@ -700,7 +700,7 @@ export default {
       // 手动触发校验
       this.$refs.form.validateField('businessInfo.businessLicenseUrl');
     },
-    getSupplierTypes(){
+    getSupplierTypes() {
       return getDicts('supplier_type').then((res) => {
         this.supplierTypes = res.data
       })

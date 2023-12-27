@@ -59,8 +59,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="单位" prop="goodsUnit">
-            <el-select v-model="formData.goodsUnit" placeholder="单位" clearable :disabled="readonly">
+          <el-form-item label="单位" prop="goodsUnitId">
+            <el-select v-model="formData.goodsUnitId" placeholder="单位" clearable :disabled="readonly">
               <el-option
                 v-for="(item,index) in unitList"
                 :key="index"
@@ -82,8 +82,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="税率" prop="taxRate">
-            <el-select v-model="formData.taxRate" placeholder="请选择税率" clearable :disabled="readonly">
+          <el-form-item label="税率" prop="taxRateId">
+            <el-select v-model="formData.taxRateId" placeholder="请选择税率" clearable :disabled="readonly">
               <el-option
                 v-for="(item,index) in taxRateList"
                 :key="index"
@@ -285,8 +285,10 @@ export default {
         goodsName: '',
         supplierId: '',
         goodsUnit: '',
+        goodsUnitId: '',
         taxBid: '',
         taxRate: '',
+        taxRateId: '',
         boxGauge:'',
         goodsClassify:'',
         attachmentInfos: []
@@ -296,9 +298,9 @@ export default {
         goodsName: [{ required: true, message: '请输入物品名称', trigger: 'blur' }],
         supplierId: [{ required: true, message: '请选择供应商', trigger: 'change' }],
 
-        goodsUnit: [{ required: true, message: '请选择单位', trigger: 'change' }],
+        goodsUnitId: [{ required: true, message: '请选择单位', trigger: 'change' }],
         taxBid: [{ required: true, message: '请输入含税进价', trigger: 'blur' }],
-        taxRate: [{ required: true, message: '请选择税率', trigger: 'change' }],
+        taxRateId: [{ required: true, message: '请选择税率', trigger: 'change' }],
 
         boxGauge: [{ required: true, message: '请输入箱规', trigger: 'blur' },
           { pattern: /^[1-9]\d*$/, message: '请输入正整数',trigger: 'blur' }
@@ -333,7 +335,12 @@ export default {
   },
   computed: {
     nonTaxBid(){
-      return this.formData.taxBid / (1 + Number(this.formData.taxRate));
+      let taxRate = this.taxRateList.find(item => item.dictCode === this.formData.taxRateId)?.label;
+      if (taxRate){
+        return this.formData.taxBid / (1 + Number.parseFloat(taxRate)/100);
+      }
+
+      return ''
     },
     readonly() {
       return !(this.formData.goodsStatus === 2 || this.formData.goodsStatus === 3
@@ -351,9 +358,9 @@ export default {
         goodsType,
         goodsName,
         supplierId,
-        goodsUnit,
+        goodsUnitId,
         taxBid,
-        taxRate,
+        taxRateId,
         boxGauge,
         goodsClassify,
       } = this.detailsGoodsData
@@ -361,7 +368,7 @@ export default {
         return item.attachmentFileName
       }).join(',')
 
-      let str = goodsType + goodsName + supplierId + goodsUnit + taxBid + taxRate + boxGauge + goodsClassify;
+      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify;
       str += + attachmentFileNames
       return str;
     },
@@ -371,9 +378,9 @@ export default {
         goodsType,
         goodsName,
         supplierId,
-        goodsUnit,
+        goodsUnitId,
         taxBid,
-        taxRate,
+        taxRateId,
         boxGauge,
         goodsClassify,
       } = this.formData
@@ -381,7 +388,7 @@ export default {
         return item.attachmentFileName
       }).join(',')
 
-      let str = goodsType + goodsName + supplierId + goodsUnit + taxBid + taxRate + boxGauge + goodsClassify;
+      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify;
       str += + attachmentFileNames
       return str;
     },
@@ -623,6 +630,9 @@ export default {
     },
     updateSupplier(){
       this.formData.changeFlag = this.needAudit
+      this.formData.goodsTypeName = this.goodsTypes.find(item => item.dictCode === this.formData.goodsType)?.dictLabel
+      this.formData.goodsUnit = this.goodsTypes.find(item => item.dictCode === this.formData.goodsUnitId)?.dictLabel
+      this.formData.taxRate = this.taxRateList.find(item => item.dictCode === this.formData.taxRateId)?.dictLabel
       filesApi.editFiles(this.formData).then(res=>{
         this.$message.success('编辑成功')
         this.closeHandler()

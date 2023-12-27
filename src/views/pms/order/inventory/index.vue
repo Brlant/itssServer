@@ -111,7 +111,7 @@ import supplierApi from '@/api/supplier/supplier'
 import inventoryApi from '@/api/inventory/inventory'
 import { treeselect } from '@/api/system/dept'
 import { queryUserlist } from '@/api/system/user'
-import inventoryForm from '@/common/inventoryForm/inventoryForm'
+import inventoryForm from '@/views/pms/order/inventory/inventoryLog'
 import {getDicts} from '@/api/system/dict/data'
 export default {
   name: "index",
