@@ -8,7 +8,9 @@
                       :class="{'submenu-title-noDropdown':!isNest}"
         >
           <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title"/>
-          <span style="
+          <span
+            v-show="totalNum > 0"
+            style="
             width: 25px;
             height: 25px;
             line-height: 25px;
