@@ -8,7 +8,8 @@
       <div style="font-weight: bold;font-size: 15px;display: none">{{ formTitle }}</div>
     </template>
     <div class="jiBenXinXi">
-      基本信息
+      <span>基本信息</span>
+      <span style="margin-left: 10px" v-if="expireDays" :style="expireColor(expireDays)">{{ expireText(expireDays) }}</span>
     </div>
     <!--绘制基本信息表单-->
     <el-form ref="formData"
@@ -147,6 +148,7 @@ export default {
   data() {
     return {
       formTitle: "基本信息",
+      expireDays:'',
       formData: {
         contractRecordCode: null,
         contractCode: null,
@@ -196,6 +198,10 @@ export default {
     }
   },
   computed: {
+
+
+
+
     fileName() {
       let start = this.formData.scanningCopyUrl?.lastIndexOf('/');
       if (start > -1) {
@@ -205,10 +211,29 @@ export default {
     }
   },
   methods: {
+    expireColor(days) {
+      let style = {};
+      if (days > 30) {
+        style.color = '#000000';
+      } else if (days > 7) {
+        style.color = '#f59b22'
+      } else {
+        style.color = '#d8001b'
+      }
+      return style;
+    },
+    expireText(days) {
+      if (days >=0) {
+        return `${days}天后`;
+      } else {
+        return `已过期${-days}天`;
+      }
+    },
     open() {
       queryByContractId({ contractId: this.contractId}).then(res => {
         if (res.code === 200) {
           this.formData = res.data;
+          this.expireDays = res.data.expireDays;
           console.log(this.formData)
         }
       });
@@ -238,6 +263,7 @@ export default {
 
 <style scoped>
   .jiBenXinXi {
+    display: flex;
     font-weight: bolder;
     font-size: 14px;
     width: 100%;
