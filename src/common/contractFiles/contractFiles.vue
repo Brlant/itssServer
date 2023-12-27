@@ -60,12 +60,12 @@
               filterable
               value-key="val"
               :loading="loadSupplier"
-              :remote-method="querySupplier"
+              :remote-method="getSupplierList"
               placeholder="请选择供应商">
-              <el-option v-for="supplier in suppliers"
-                :key="supplier.val"
-                :value="supplier"
-                :label="supplier.txt"></el-option>
+              <el-option v-for="supplier in supplierList"
+                :key="supplier.supplierId"
+                :value="supplier.supplierId"
+                :label="supplier.supplierName"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -174,7 +174,7 @@
 <script>
 import { addContractFile } from '@/api/contractFilesManagement/contractFilesManagement';
 import supplierApi from '@/api/supplier/supplier';
-import { uploadUrl } from '@/utils/request'
+import request, { uploadUrl } from '@/utils/request'
 import {getDicts} from '@/api/system/dict/data'
 
 export default {
@@ -189,7 +189,7 @@ export default {
     return{
       uploadUrl: uploadUrl,
       formTitle:"合同档案信息",
-      suppliers: [],
+      supplierList: [],
       formData: {
         contractCode: null,
         contractName: null,
@@ -224,13 +224,13 @@ export default {
     selectSupplier: {
       get() {
         return {
-          val: this.formData.supplierId,
-          txt: this.formData.supplierName
+          supplierId: this.formData.supplierId,
+          supplierName: this.formData.supplierName
         };
       },
       set(supplier) {
-        this.formData.supplierId = supplier.val;
-        this.formData.supplierName = supplier.txt;
+        this.formData.supplierId = supplier.supplierId;
+        this.formData.supplierName = supplier.supplierName;
       }
     },
     fileName() {
@@ -250,29 +250,21 @@ export default {
     },
     open() {
       this.resetForm('contractForm');
-      this.querySupplier();
+      this.getSupplierList();
     },
     /*关闭弹框*/
     closeAddFiles(){
       this.formData.scanningCopyUrl = '';
       this.$emit('closeAddFiles')
     },
-    querySupplier(query) {
-      this.loadSupplier = true;
-      supplierApi.getSupplierList({
+    getSupplierList(query) {
+      let params = {
         codeNameKey: query,
-        pageNum: 1,
-        supplierStatus:3,
-        pageSize: 10
-      }).then(res => {
-        if (res.code === 200) {
-          this.suppliers = res.data.rows?.map(row => ({
-            val: row.supplierId,
-            txt: row.supplierName
-          }));
-        }
-      }).finally(() => {
-        this.loadSupplier = false;
+        supplierStatus: 3,
+      }
+      // 查询供应商下拉列表
+      request.post('pms/supplier/getSupplierList',params).then((res) => {
+        this.supplierList = res.data
       })
     },
     fileDelete() {

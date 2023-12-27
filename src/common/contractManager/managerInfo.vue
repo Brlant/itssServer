@@ -171,7 +171,7 @@
                        placeholder="请选择供应商">
               <el-option v-for="supplier in supplierList"
                          :key="supplier.supplierId"
-                         :value="supplier.supplierId"
+                         :value="supplier"
                          :label="supplier.supplierName"></el-option>
             </el-select>
           </el-form-item>
@@ -378,19 +378,19 @@ export default {
     selectSupplier: {
       get() {
         return {
-          val: this.formData.supplierId,
-          txt: this.formData.supplierName
+          supplierId: this.formData.supplierId,
+          supplierName: this.formData.supplierName
         };
       },
       set(supplier) {
-        this.formData.supplierId = supplier.val;
-        this.formData.supplierName = supplier.txt;
+        this.formData.supplierId = supplier.supplierId;
+        this.formData.supplierName = supplier.supplierName;
       }
     },
     fileName() {
       let start = this.formData.scanningCopyUrl?.lastIndexOf('/');
       if (start > -1) {
-        return this.formData.scanningCopyUrl.substr(start + 1);
+        return this.formData.scanningCopyUrl.substring(start + 1);
       }
       return '';
     },
@@ -439,13 +439,13 @@ export default {
     // },
     contractId(val) {
       if (val) {
-        this.querySupplier();
+        this.getSupplierList();
         this.queryContract(val);
       }
     }
   },
   mounted() {
-    this.querySupplier();
+    this.getSupplierList();
     this.queryContract();
     this.getContractTypeList()
 
