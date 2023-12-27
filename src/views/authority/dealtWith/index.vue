@@ -566,7 +566,8 @@ export default {
         this.loading = false
         this.queryParams.total = res.data.total
         this.dealtWithList = res.data.rows
-        window.sessionStorage.setItem('total', res.data.total)
+        this.$store.dispatch('updateItem', res.data.total);
+        // window.sessionStorage.setItem('total', res.data.total)
       })
     },
     /** 重置按钮操作 */

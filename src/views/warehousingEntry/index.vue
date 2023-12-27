@@ -259,6 +259,7 @@ import entryOperationLog from "@/common/entryForm/entryOperationLog";
 import {getOrderList, importInOrderInfo, exportInOrder, downloadOrderTemplate} from "@/api/pms/order";
 import {queryUserlist} from "@/api/system/user";
 import {treeselect} from "@/api/system/dept";
+import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 
 export default {
   name: "in-order",
@@ -338,9 +339,14 @@ export default {
       userList: [],
       //状态
       activeEntryStatus:'',
+      reviewedId:'',
     }
   },
   created() {
+    let userInfo = window.localStorage.getItem('user');
+    let userInfoParse = JSON.parse(userInfo);
+    this.reviewedId = userInfoParse.userId
+
     this.getList()
     this.getDeptList('')
     this.getUserList('')
@@ -372,6 +378,22 @@ export default {
       this.closeEntryDialog()
       this.getList()
     },
+    /* 获取我的待办总数 */
+    getDealtWithListCount() {
+      const params =
+        {
+          key: "",
+          modelName: "",
+          reviewedId: this.reviewedId,
+          pageNum: 1,
+          pageSize: 10,
+          promoterId: "",
+          queryType: 2
+        }
+      getDealtWithList(params).then((res) => {
+        this.$store.dispatch('updateItem', res.data.total);
+      })
+    },
     /*查询列表内容*/
     getList() {
       let params = this.queryParams;
@@ -384,6 +406,7 @@ export default {
       getOrderList(params).then(res => {
         this.tableData = res.data.rows;
         this.pageParams.total = res.data.total;
+        this.getDealtWithListCount();
       }).catch(err => {
         console.log("查询入库单列表接口报错：", err)
       }).finally(() => {
