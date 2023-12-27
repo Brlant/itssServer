@@ -338,7 +338,7 @@ export default {
       },
       formRules: {
         contractRecordCode: [{required: true, message: '请输入合同档案编号', trigger: 'blur'}],
-        contractCode: [{required: true, message: '请输入合同编号', trigger: 'blur'}],
+        // contractCode: [{required: true, message: '请输入合同编号', trigger: 'blur'}],
         contractName: [{required: true, message: '请输入合同名称', trigger: 'blur'}],
         supplierId: [{required: true, message: '请选择供应商', trigger: 'change'}],
         // contractAmount:[
