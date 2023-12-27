@@ -52,7 +52,7 @@
         <el-col :span="8">
           <el-form-item label="合同金额"
             prop="contractAmount">
-            {{ formData.contractAmount }}
+            <span v-if="formData.contractAmount">{{ formData.contractAmount.toFixed(2) }}</span>
           </el-form-item>
         </el-col>
         <!--        第三行-->
