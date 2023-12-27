@@ -46,7 +46,7 @@ export default {
           filesApi.checkFiles({goodsId: newVal}).then(res=>{
             this.timelineData = res.data.map(item => {
               return {
-                updateTime: item.updateTime,
+                updateTime: item.updateTime || item.createTime,
                 modelNode: item.modelNode,
                 nodeStatus: item.nodeStatus,
                 nodeContent: item.nodeContent,
