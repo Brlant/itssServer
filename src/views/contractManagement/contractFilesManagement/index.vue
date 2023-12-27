@@ -55,9 +55,9 @@
               :remote-method="getSupplierList"
               placeholder="供应商">
               <el-option v-for="supplier in supplierList"
-                :key="supplier.value"
-                :value="supplier.value"
-                :label="supplier.label"></el-option>
+                :key="supplier.supplierId"
+                :value="supplier.supplierId"
+                :label="supplier.supplierName"></el-option>
             </el-select>
           </el-form-item>
 
@@ -224,7 +224,7 @@ import managerOperationLog from "@/common/contractManager/managerOperationLog";
 
 import { getContractFileList,getUserList } from '@/api/contractFilesManagement/contractFilesManagement'
 import supplierApi from '@/api/supplier/supplier'
-import { download } from '@/utils/request'
+import request, { download } from '@/utils/request'
 import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
 
 export default {
@@ -317,20 +317,14 @@ export default {
     },
   },
   methods: {
-    getSupplierList(query){
-      console.log(query)
+    getSupplierList(query) {
       let params = {
         codeNameKey: query,
-        pageNum: 1,
-        pageSize: 10,
+        supplierStatus: 3,
       }
-      supplierApi.getSupplierList(params).then((res) => {
-        this.supplierList = res.data.rows.map(item => {
-          return {
-            value: item.supplierId,
-            label: item.supplierName
-          }
-        })
+      // 查询供应商下拉列表
+      request.post('pms/supplier/getSupplierList',params).then((res) => {
+        this.supplierList = res.data
       })
     },
     getUserList(query){

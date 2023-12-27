@@ -167,12 +167,12 @@
                        filterable
                        value-key="val"
                        :loading="loadSupplier"
-                       :remote-method="querySupplier"
+                       :remote-method="getSupplierList"
                        placeholder="请选择供应商">
-              <el-option v-for="supplier in suppliers"
-                         :key="supplier.val"
-                         :value="supplier"
-                         :label="supplier.txt"></el-option>
+              <el-option v-for="supplier in supplierList"
+                         :key="supplier.supplierId"
+                         :value="supplier.supplierId"
+                         :label="supplier.supplierName"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -320,7 +320,7 @@ import {
   examineContractInfo,
   editStatus
 } from '@/api/contractFilesManagement/contractFilesManagement'
-import {uploadUrl} from '@/utils/request'
+import request, {uploadUrl} from '@/utils/request'
 import {getDicts} from '@/api/system/dict/data'
 
 export default {
@@ -336,7 +336,7 @@ export default {
   },
   data() {
     return {
-      suppliers: [],
+      supplierList: [],
       uploadUrl: uploadUrl,
       loadSupplier: false,
       formTitle: "基本信息",
@@ -468,21 +468,14 @@ export default {
         return all_permission === permission || permissionStr === permission;
       })
     },
-    querySupplier(query) {
-      this.loadSupplier = true;
-      supplierApi.getSupplierList({
+    getSupplierList(query) {
+      let params = {
         codeNameKey: query,
-        pageNum: 1,
-        pageSize: 10
-      }).then(res => {
-        if (res.code === 200) {
-          this.suppliers = res.data.rows?.map(row => ({
-            val: row.supplierId,
-            txt: row.supplierName
-          }));
-        }
-      }).finally(() => {
-        this.loadSupplier = false;
+        supplierStatus: 3,
+      }
+      // 查询供应商下拉列表
+      request.post('pms/supplier/getSupplierList',params).then((res) => {
+        this.supplierList = res.data
       })
     },
     queryContract() {

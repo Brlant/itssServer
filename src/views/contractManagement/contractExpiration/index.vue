@@ -113,7 +113,7 @@
 import contractForm from "@/common/contractForm/contractForm";
 import supplierApi from '@/api/supplier/supplier'
 import { queryExpireList } from '@/api/contractFilesManagement/contractFilesManagement'
-import { download } from '@/utils/request'
+import request, { download } from '@/utils/request'
 
 export default {
   name: "index",
@@ -166,22 +166,16 @@ export default {
     this.getSupplierList();
   },
   methods: {
-    getSupplierList(query){
+    getSupplierList(query) {
       let params = {
         codeNameKey: query,
-        pageNum: 1,
-        pageSize: 10,
+        supplierStatus: 3,
       }
-      supplierApi.getSupplierList(params).then((res) => {
-        this.supplierList = res.data.rows.map(item => {
-          return {
-            value: item.supplierId,
-            label: item.supplierName
-          }
-        })
+      // 查询供应商下拉列表
+      request.post('pms/supplier/getSupplierList',params).then((res) => {
+        this.supplierList = res.data
       })
     },
-
     /*查询列表*/
     getContractExpiration() {
       let params = {

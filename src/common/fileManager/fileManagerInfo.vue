@@ -231,7 +231,7 @@
         >删除
         </el-button>
         <el-button
-          v-show="formData.goodsStatus === 0 || formData.goodsStatus === 1"
+          v-show="formData.returnButton && (formData.goodsStatus === 0 || formData.goodsStatus === 1)"
           type="danger"
           @click="overFilesCheHui"
         >撤回
@@ -258,6 +258,7 @@ import supplierApi from '@/api/supplier/supplier'
 import categoryApi from '@/api/category/category'
 import filesApi from '@/api/Files/files'
 import {getDicts} from '@/api/system/dict/data'
+import request from '@/utils/request'
 
 export default {
   name: 'fileManagerInfo',
@@ -596,16 +597,13 @@ export default {
     getSupplierList(query) {
       let params = {
         codeNameKey: query,
-        pageNum: 1,
-        pageSize: 10,
-        supplierStatus:3,
+        supplierStatus: 3,
       }
-      // let supplierListName = this.formData.supplierName
-      supplierApi.getSupplierList(params).then((res) => {
-        this.supplierList = res.data.rows
+      // 查询供应商下拉列表
+      request.post('pms/supplier/getSupplierList',params).then((res) => {
+        this.supplierList = res.data
       })
     },
-
     submitForm() {
       this.$confirm('此操作将重新提交数据, 是否继续?', '提示', {
         confirmButtonText: '确定',
