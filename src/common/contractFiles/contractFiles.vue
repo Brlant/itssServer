@@ -82,6 +82,7 @@
             prop="signingDate">
             <el-date-picker v-model="formData.signingDate"
               type="date"
+              value-format="yyyy-MM-dd"
               placeholder="选择日期"
               style="width: 100%"></el-date-picker>
           </el-form-item>
@@ -95,6 +96,7 @@
             prop="dueDate">
             <el-date-picker v-model="formData.dueDate"
               type="date"
+              value-format="yyyy-MM-dd"
               placeholder="选择日期"
               style="width: 100%"></el-date-picker>
           </el-form-item>
