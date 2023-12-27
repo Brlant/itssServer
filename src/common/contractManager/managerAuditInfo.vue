@@ -7,7 +7,7 @@
         <div class="timeline-item-content">
           <div class="timeline-item-header">
             <div class="status">{{ item.modelNode }}</div>
-            <div class="timestamp">{{ item.createTime }}</div>
+            <div class="timestamp">{{ item.updateTime || item.createTime }}</div>
           </div>
           <div style="display: flex; min-height: 60px;">
             <div class="content">
