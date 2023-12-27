@@ -465,6 +465,10 @@ export default {
       if (taxRate) {
         this.formData.orderDetailList[index].totalTaxBid = taxBid * ParseFloat(taxRate)
         this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * ParseFloat(taxRate)
+
+
+
+
       }
     },
     getGoodsInfo(goodsId) {
