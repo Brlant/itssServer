@@ -555,15 +555,16 @@ export default {
     modifyContract() {
       this.$refs.formData.validate(valid => {
         if (!valid) return;
-
         this.$confirm('确定重新提交该合同?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           let changes = Object.keys(this.formData).filter(key => this.formData[key] !== this.backData[key]);
+          if(changes.length === 0){
+            return this.$message.error('内容未做任何修改，无需提交')
+          }
           let requireChange = changes.filter(key => this.formRules[key]?.some(item => item.required));
-          // console.log(requireChange)
           edit(Object.assign(this.formData, {changeFlag: requireChange.length > 0})).then(res => {
             if (res.code === 200) {
               this.$message.success(res.msg);
