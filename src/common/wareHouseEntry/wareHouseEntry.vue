@@ -310,11 +310,6 @@ export default {
         this.goodsTypes = res.data
       })
     },
-    getTaxRateList(){
-      return getDicts('tax_rate').then((res) => {
-        this.taxRateList = res.data
-      })
-    },
     /*关闭弹框*/
     handleEntryClose() {
       this.$refs.form.resetFields()
@@ -390,7 +385,9 @@ export default {
       })
 
       params.budgetTypeName = budgetTypeNames.join("-")
-      addPmsOrder(this.formData).then((res) => {
+
+      params.goodsTypeName = this.goodsTypes.find(one => one.dictCode === params.goodsType)?.dictLabel
+      addPmsOrder(params).then((res) => {
         this.$message({
           type: 'success',
           message: '提交成功'
@@ -492,7 +489,6 @@ export default {
   },
   mounted() {
     this.getGoodsTypes()
-    this.getTaxRateList()
   },
   watch: {
     dialogAddEntry(val) {
