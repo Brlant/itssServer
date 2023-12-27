@@ -5,7 +5,7 @@
     @open="open"
     @close="closeAddForm">
     <template v-slot:title>
-      <div style="font-weight: bold;font-size: 15px">{{ formTitle }}</div>
+      <div style="font-weight: bold;font-size: 15px;display: none">{{ formTitle }}</div>
     </template>
     <div class="jiBenXinXi">
       基本信息
@@ -165,9 +165,9 @@ export default {
         contractRecordCode: [
           {required: true, message: '请输入合同档案编号', trigger: 'blur'}
         ],
-        contractCode: [
-          {required: true, message: '请输入合同编号', trigger: 'blur'}
-        ],
+        // contractCode: [
+        //   {required: true, message: '请输入合同编号', trigger: 'blur'}
+        // ],
         contractName: [
           {required: true, message: '请输入合同名称', trigger: 'blur'}
         ],
@@ -177,9 +177,9 @@ export default {
         supplierName: [
           {required: true, message: '请输入供应商名称', trigger: 'blur'}
         ],
-        contractAmount: [
-          {required: true, message: '请输入合同金额', trigger: 'blur'}
-        ],
+        // contractAmount: [
+        //   {required: true, message: '请输入合同金额', trigger: 'blur'}
+        // ],
         signingDate: [
           {required: true, message: '请选择签订日期', trigger: 'change'}
         ],
@@ -207,9 +207,9 @@ export default {
   methods: {
     open() {
       queryByContractId({ contractId: this.contractId}).then(res => {
-        // console.log(res,'------')
         if (res.code === 200) {
           this.formData = res.data;
+          console.log(this.formData)
         }
       });
     },
