@@ -9,7 +9,7 @@
             <el-input
               prefix-icon="el-icon-search"
               v-model="queryParams.key"
-              placeholder="合同编号"
+              placeholder="合同档案编号/合同编号"
               clearable
               @keyup.enter.native="getContractExpiration"
             />
