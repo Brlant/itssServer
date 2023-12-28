@@ -83,12 +83,13 @@
           <span v-if="scope.row.examineStatus === 2" style="color: black">
             审核不通过
           </span>
-          <span v-if="scope.row.examineStatus === 3">
-            已完成
-          </span>
+          <span v-if="scope.row.examineStatus === 3 && scope.row.modelType === 'inOrder'" style="color: #F79B22">待收货</span>
+          <span v-if="scope.row.examineStatus === 3 && scope.row.modelType === 'outOrder'" style="color: green">已完成</span>
           <span v-if="scope.row.examineStatus === 4" style="color: black">
             已撤回
           </span>
+          <span v-if="scope.row.examineStatus === 5" style="color: black">已取消</span>
+          <span v-if="scope.row.examineStatus === 7" style="color: green">已完成</span>
         </template>
       </el-table-column>
       >
