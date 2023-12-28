@@ -40,8 +40,9 @@
                 :label="item.supplierName"
                 :value="item.supplierId"
               />
-              <el-option v-if="!supplierList.some(list=> list.supplierId === formData.supplierId)"
+              <el-option v-if="supplierList.some(list=> list.supplierId === formData.supplierId)"
                          :label="formData.supplierName"
+                         :disabled="true"
                          v-model="formData.supplierId"/>
             </el-select>
           </el-form-item>
@@ -274,7 +275,7 @@ export default {
         if (newVal && newVal.goodsId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
           this.backData = newVal
-          console.log(this.backData,'旧数据')
+          console.log(this.formData,'旧数据')
         }
       },
       immediate: true,
@@ -610,6 +611,7 @@ export default {
       // 查询供应商下拉列表
       request.post('pms/supplier/getSupplierList',params).then((res) => {
         this.supplierList = res.data
+        console.log(this.supplierList,'供应商')
       })
     },
     submitForm() {
