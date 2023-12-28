@@ -2,22 +2,27 @@
   <div class="app-container">
     <div class="routerBar">
       <router-link :to="'/chanceManager/chanceList'" class="priority3">
-        < 机会详情</router-link
+        < 机会详情
+      </router-link
       >
       <div class="rightBox">
         <!-- <router-link class="priority3 ft13" :to="'/chanceManager/chanceEdit'"
           >编辑基本信息</router-link
         > -->
-        <a href="javascript:;" class="priority3 ft13" @click="enterChanceEdict"  v-hasPermi="['chanceManage:chance:duty']"
-          >编辑基本信息</a
+        <a href="javascript:;" class="priority3 ft13" @click="enterChanceEdict"
+           v-hasPermi="['chanceManage:chance:duty']"
+        >编辑基本信息</a
         >
-        <span class="priority3 ft13" style="cursor: pointer;" @click="addFollow"  v-hasPermi="['chanceManage:chance:duty']">| 添加跟进记录</span>
+        <span class="priority3 ft13" style="cursor: pointer;" @click="addFollow"
+              v-hasPermi="['chanceManage:chance:duty']">| 添加跟进记录</span>
         <!-- <router-link class="priority3 ft13" :to="'/chanceManager/addChance'">| 机会详情</router-link> -->
         <!--   转为正式  需要 项目创建权限    ( 项目创建    projectManager:proManager:create   )  -->
         <span v-hasPermi="['projectManager:proManager:create']">
 
-          <span class="priority4 ft13"  v-if="formData.projectId"    v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
-          <span class="priority3 ft13" v-else  style="cursor: pointer;" @click="transformProject" v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
+          <span class="priority4 ft13" v-if="formData.projectId"
+                v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
+          <span class="priority3 ft13" v-else style="cursor: pointer;" @click="transformProject"
+                v-hasPermi="['chanceManage:chance:duty']">| 转为正式项目</span>
         </span>
       </div>
     </div>
@@ -46,8 +51,8 @@
               <!-- // 低（灰色）、普通（蓝色）、紧急（橙色）、非常紧急（红色）显示； -->
               <span :class="['yuan', 'priorityBg' + formData.priority]"></span>
               <span :class="['priority' + formData.priority]">{{
-                formData.priority | toPriority
-              }}</span>
+                  formData.priority | toPriority
+                }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="7" :offset="1">
@@ -113,7 +118,8 @@
     <div class="toggleBar">
       <!-- 资源配置和跟进记录的切换 -->
       <template v-for="(item, i) in BarList">
-        <span :class="[nowActive == i ? 'nowActive' : '']" @click="toggleWho(i)"  v-hasPermi="['chanceManage:chance:duty']">
+        <span :class="[nowActive == i ? 'nowActive' : '']" @click="toggleWho(i)"
+              v-hasPermi="['chanceManage:chance:duty']">
           {{ item }}
         </span>
       </template>
@@ -121,9 +127,10 @@
         <el-button
           size="mini"
           v-show="nowActive == 0"
-          @click="addConfigListHandel"  v-hasPermi="['chanceManage:chance:duty']"
+          @click="addConfigListHandel" v-hasPermi="['chanceManage:chance:duty']"
           type="primary"
-          >+ 添加配置</el-button
+        >+ 添加配置
+        </el-button
         >
       </div>
     </div>
@@ -147,7 +154,7 @@
             <span
               v-for="(item, i) in scope.row.skillList"
               :class="['skillBox', 'skill' + item.cssClass]"
-              >{{ item.skillName }}</span
+            >{{ item.skillName }}</span
             >
           </template>
         </el-table-column>
@@ -158,8 +165,8 @@
         <el-table-column prop="chanceConfigUserList" label="最终人选" width="120">
           <template slot-scope="scope">
             <span v-for="(item, i) in scope.row.chanceConfigUserList" class="priority3">{{
-              item.nickName
-            }}</span>
+                item.nickName
+              }}</span>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="180">
@@ -168,7 +175,7 @@
               type="text"
               size="small"
               class="priority3"
-              @click.native.stop="editResourceRow(scope.row, scope.$index)"  v-hasPermi="['chanceManage:chance:duty']"
+              @click.native.stop="editResourceRow(scope.row, scope.$index)" v-hasPermi="['chanceManage:chance:duty']"
             >
               修改
             </el-button>
@@ -176,7 +183,7 @@
               type="text"
               size="small"
               class="priority1"
-              @click.native.stop="delResourceRow(scope.row, scope.$index)"  v-hasPermi="['chanceManage:chance:duty']"
+              @click.native.stop="delResourceRow(scope.row, scope.$index)" v-hasPermi="['chanceManage:chance:duty']"
             >
               删除
             </el-button>
@@ -221,7 +228,7 @@
                     <span
                       v-for="(item, i) in chanceConfigItem.skillList"
                       :class="['skillBox', 'skill' + item.cssClass]"
-                      >{{ item.skillName }}</span
+                    >{{ item.skillName }}</span
                     >
                   </div>
                 </el-form-item>
@@ -243,10 +250,10 @@
                 计划负荷：<span class="priority3">{{ chanceConfigItem.planLoad }}%</span>
               </el-col>
               <el-col :span="4" :offset="1" class="lineTT">
-                预计成本：<span class="priority3"  v-hasPermi="['chanceManage:chance:viewCost']" >{{
+                预计成本：<span class="priority3" v-hasPermi="['chanceManage:chance:viewCost']">{{
                   chanceConfigItem.expectedCost || chanceConfigItem.expectedCost == 0 ? moneyFormat(chanceConfigItem.expectedCost) : ''
                 }}</span
-                >元
+              >元
               </el-col>
             </el-row>
             <!-- 动态生成的内部 strat  -->
@@ -344,7 +351,7 @@
               <el-col :span="5">
                 <el-form-item
                   label="职位："
-                 :prop="'chanceConfigList.'+chanceConfigIndex+'.postNameId'"
+                  :prop="'chanceConfigList.'+chanceConfigIndex+'.postNameId'"
                   :rules="rules.chanceConfigItempostNameId"
                 >
                   <el-select
@@ -393,7 +400,7 @@
                     type="primary"
                     size="mini"
                     v-show="editOrAdd == 1 || editOrAdd == 2"
-                    @click="saveConfigList(chanceConfigIndex)"  v-hasPermi="['chanceManage:chance:duty']"
+                    @click="saveConfigList(chanceConfigIndex)" v-hasPermi="['chanceManage:chance:duty']"
                   >
                     保存
                   </el-button>
@@ -401,7 +408,7 @@
                     type="info"
                     size="mini"
                     v-show="editOrAdd == 1 || editOrAdd == 2"
-                    @click="cancelConfigList(chanceConfigIndex)"  v-hasPermi="['chanceManage:chance:duty']"
+                    @click="cancelConfigList(chanceConfigIndex)" v-hasPermi="['chanceManage:chance:duty']"
                   >
                     取消
                   </el-button>
@@ -474,7 +481,7 @@
                 预计成本：<span class="priority3">{{
                   chanceConfigItem.expectedCost
                 }}</span
-                >元
+              >元
               </el-col>
             </el-row>
             <!-- 动态生成的内部 strat  -->
@@ -539,8 +546,8 @@
           :size="follow.size"
         >
           <span class="follow follow1">{{
-            follow.createTime + "   " + follow.createName
-          }}</span>
+              follow.createTime + "   " + follow.createName
+            }}</span>
           <span class="follow follow2">跟进记录：{{ follow.followRecord }}</span>
           <span class="follow follow3">跟进方式：{{ follow.followType }}</span>
           <span class="follow follow4">下次跟进时间：{{ follow.nextDate }}</span>
@@ -585,8 +592,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer">
-        <el-button @click="close"  v-hasPermi="['chanceManage:chance:duty']">取消</el-button>
-        <el-button type="primary" @click="handleConfirm"  v-hasPermi="['chanceManage:chance:duty']">确定</el-button>
+        <el-button @click="close" v-hasPermi="['chanceManage:chance:duty']">取消</el-button>
+        <el-button type="primary" @click="handleConfirm" v-hasPermi="['chanceManage:chance:duty']">确定</el-button>
       </div>
     </el-dialog>
     <!-- 人选推荐 表格 0 => 显示资源配置 -->
@@ -616,7 +623,7 @@
               <span
                 v-for="(item, i) in scope.row.skillList"
                 :class="['skillBox', 'skill' + item.cssClass]"
-                >{{ item.skillName }}</span
+              >{{ item.skillName }}</span
               >
             </div>
           </template>
@@ -624,31 +631,33 @@
         <el-table-column prop="freeLoad" label="空闲负荷"></el-table-column>
         <el-table-column prop="price" label="单价">
           <template slot-scope="scope">
-            <span>{{scope.row.price || scope.row.price == 0 ? moneyFormat(scope.row.price) : ''}}</span>
+            <span>{{ scope.row.price || scope.row.price == 0 ? moneyFormat(scope.row.price) : '' }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="allPrice" label="总价">
           <template slot-scope="scope">
-            <span>{{scope.row.allPrice || scope.row.allPrice == 0 ? moneyFormat(scope.row.allPrice) : ''}}</span>
+            <span>{{ scope.row.allPrice || scope.row.allPrice == 0 ? moneyFormat(scope.row.allPrice) : '' }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <div>
-               <el-button type="text" size="mini" >
-                <span class="priority3" @click="detail(scope.row.userId)"  v-hasPermi="['system:user:query']"
-                  >详情
+              <el-button type="text" size="mini">
+                <span class="priority3" @click="detail(scope.row.userId)" v-hasPermi="['system:user:query']"
+                >详情
                 </span>
               </el-button>
               <!-- 1 不显示 有审核记录，0显示  没有审核记录 -->
               <el-button type="text" size="mini" v-if="scope.row.showOrCancel == 1">
-                <span class="priority3" @click="addUserToProject(scope.row, scope.$index)"  v-hasPermi="['chanceManage:chance:duty']"
-                  >添加
+                <span class="priority3" @click="addUserToProject(scope.row, scope.$index)"
+                      v-hasPermi="['chanceManage:chance:duty']"
+                >添加
                 </span>
               </el-button>
               <el-button type="text" size="mini" v-if="scope.row.showOrCancel == 2">
-                <span class="priority4" @click="delUserToProject(scope.row, scope.index)"  v-hasPermi="['chanceManage:chance:duty']"
-                  >取消
+                <span class="priority4" @click="delUserToProject(scope.row, scope.index)"
+                      v-hasPermi="['chanceManage:chance:duty']"
+                >取消
                 </span>
               </el-button>
             </div>
@@ -666,27 +675,24 @@
 </template>
 <script>
 import {
-  queryDict, // 字典查询 传入字典名称
-  addChance,
-  chanceDetail,
-  getFollowList,
-  getResourceLineDetail,
-  updateChanceConfig,
   addChanceConfig,
-  delChanceConfigLine,
   addChanceRecord,
-  getRecommendUserList,
+  chanceDetail,
+  delChanceConfigLine,
+  getFollowList,
   getLevelCostNum,
-  updateConfigUser,
   getPostName,
-  toProject,
+  getRecommendUserList,
+  getResourceLineDetail,
+  queryDict,
+  updateChanceConfig,
+  updateConfigUser,
 } from "@/api/chanceManager/chanceManager";
-import { getTimeProcess } from "@/api/proManager/proManager";
-import { queryUserlist } from "@/api/system/user";
+import {getTimeProcess} from "@/api/proManager/proManager";
+import request from '@/utils/request'
 
-import followIcon from "@/assets/images/followIcon.png";
 export default {
-  name:"ChanceDetail",
+  name: "ChanceDetail",
   data() {
     return {
       childDateArea: {
@@ -810,7 +816,7 @@ export default {
           value: 4,
         },
       ],
-      chanceUserIdOptions: [],
+      userList: [],
       priorityOptions: [
         {
           label: "最高",
@@ -839,8 +845,7 @@ export default {
           value: 2,
         },
       ],
-      rules: {
-      },
+      rules: {},
       rulesTemp: {
         chanceName: [
           {
@@ -874,7 +879,7 @@ export default {
         customerLink: [],
         tel: [
           {
-            pattern: /^1(3|4|5|7|8|9)\d{9}$/,
+            pattern: /^1([345789])\d{9}$/,
             message: "请输入正确的手机号！",
             trigger: "blur",
           },
@@ -883,7 +888,6 @@ export default {
         successRate: [],
         expectStartTime: [],
         expectEndTime: [],
-        expectOffer: [],
         expectOffer: [],
         chanceService: [
           {
@@ -894,7 +898,7 @@ export default {
         ],
         remark: [],
         // 配置信息的
-          // 配置信息的
+        // 配置信息的
         chanceConfigItemAreaId: [
           {
             required: true,
@@ -946,7 +950,7 @@ export default {
       // 配置的基本信息
       chanceConfigList: {
         postNameId: "", //职位id
-        postTypeId:"",// 职位类型id
+        postTypeId: "",// 职位类型id
         regionId: "", //区域id
         postLevelId: "", //等级id
         skillIdList: [], //技能id
@@ -958,17 +962,15 @@ export default {
         expectedCost: "", //预计成本
         chanceConfigScheduleList: [], //
         week: "", //周数
-        startTime: "", //开始时间
         startEndTime: [],
         postLevelIdActive: true,
         postNameIdActive: true,
         postTypeActive: true,
         nextActive: true,
-        chanceConfigScheduleList: [],
       },
       nowIndex: "", // 点击修改和点击单行的时候 记录当前选择的是哪一行，不然无法添加人选
       id: "",
-      userId:""
+      userId: ""
     };
   },
   mounted() {
@@ -978,36 +980,45 @@ export default {
     this.getDictList("region"); //区域
     this.getDictList("post_level"); // 等级
     this.getDictList("skill_type"); // 技能 technique
-   this.queryAllUser()
+    // this.getUserList('')
   },
   methods: {
-    queryAllUser(){
-      let data = {status:0};
-      queryUserlist(data).then((res) => {
-            res.data.map(item=>{
-              item.label=item.nickName
-              item.value=item.userId
-            })
-            this.chanceUserIdOptions = res.data
+    getUserList(keyword) {
+      let params = {
+        deptId: this.queryParams.applyDepart,
+        nickName: keyword,
+        // 用户状态（0正常 1停用）
+        status: 0
+      }
+
+      request.get('system/user/selectUserList', {
+        params
+      }).then(res => {
+        this.userList = res.rows.map(item => {
+          return {
+            label: item.nickName,
+            value: item.userId
+          }
+        })
       })
     },
     detail(id) {
-    // window.localStorage.setItem('depttId',this.queryParams.deptId)
-    // window.localStorage.setItem('deptTitle',this.deptTitle)
+      // window.localStorage.setItem('depttId',this.queryParams.deptId)
+      // window.localStorage.setItem('deptTitle',this.deptTitle)
       // const obj = { path: "/system/user-auth/userInfo", query: { userId: id , deptId:this.queryParams.deptId,deptTitle:this.deptTitle} };
-      const obj = { path: "/system/user-auth/userInfo", query: { userId: id } };
+      const obj = {path: "/system/user-auth/userInfo", query: {userId: id}};
       // getToday()
       this.$tab.closeOpenPage(obj);
     },
-    rowUserStyle({row}){
+    rowUserStyle({row}) {
       // 人选推荐的 高亮行
-       if (this.userId === row.userId) {
+      if (this.userId === row.userId) {
         return {
           background: "#f7f4d3",
         };
       }
     },
-    rowStyle({ row }) {
+    rowStyle({row}) {
       // 资源配置的高亮行
       if (this.id === row.id) {
         return {
@@ -1057,37 +1068,37 @@ export default {
       this.rules = this.rulesTemp;
       this.$forceUpdate();
     },
-    changePlanLoad(number, weekDay, fatherIndex, myIndex){
+    changePlanLoad(number, weekDay, fatherIndex, myIndex) {
       console.log("changePlanLoad");
       // 修改每周期间 计划负荷
       // 工作时间为固定的8
-      if(number!=0){// 不等于0  就拿修改之后的百分比 除以 100 拿到比例
-        this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workDay = ((number/100)*weekDay).toFixed(2) //人日==> 现有百分比除以100 乘以天数
-        this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workTime = ((number/100)*8).toFixed(2)      //每日工时==> 现有百分比除以100 乘以 8
-      }else{
-       this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workDay = 0
+      if (number != 0) {// 不等于0  就拿修改之后的百分比 除以 100 拿到比例
+        this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workDay = ((number / 100) * weekDay).toFixed(2) //人日==> 现有百分比除以100 乘以天数
+        this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workTime = ((number / 100) * 8).toFixed(2)      //每日工时==> 现有百分比除以100 乘以 8
+      } else {
+        this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workDay = 0
         this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList[myIndex].workTime = 0
       }
       /*----------------以上是 配置安排的具体计算-------------------*/
       // 循环 取出每周的工作时长
       let totalTime = 0,
         totalDay = 0;
-     this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList.map(
+      this.formData.chanceConfigList[fatherIndex].chanceConfigScheduleList.map(
         (item, i) => {
-            // 其他的没有修改的 直接 拿天数累加
-            totalDay += parseFloat(item.workDay); // 总天数 == 每周人日累计
-            totalTime += parseFloat(item.workDay*8);// 总时长 == 每周人日*8
-          })
-          this.formData.chanceConfigList[fatherIndex].workTime = totalTime.toFixed(2)
-          this.formData.chanceConfigList[fatherIndex].workDay = totalDay.toFixed(2)
-          const tempWorkDay = this.formData.chanceConfigList[fatherIndex].workDayTemp; // 之前的总天数
-          console.log(tempWorkDay);
-           if (totalDay === 0) { // 防止憨批选到 节假日
-            this.formData.chanceConfigList[fatherIndex].planLoad = 0;
-          } else {
-            this.formData.chanceConfigList[fatherIndex].planLoad = ((totalDay/tempWorkDay)*100).toFixed(2) //计划负荷 == 实际人日/计划的人日 *100%
-          }
-          this.formData.chanceConfigList[fatherIndex].expectedCost = (totalDay*this.formData.chanceConfigList[fatherIndex].costNum).toFixed(2) /**预计成本*/
+          // 其他的没有修改的 直接 拿天数累加
+          totalDay += parseFloat(item.workDay); // 总天数 == 每周人日累计
+          totalTime += parseFloat(item.workDay * 8);// 总时长 == 每周人日*8
+        })
+      this.formData.chanceConfigList[fatherIndex].workTime = totalTime.toFixed(2)
+      this.formData.chanceConfigList[fatherIndex].workDay = totalDay.toFixed(2)
+      const tempWorkDay = this.formData.chanceConfigList[fatherIndex].workDayTemp; // 之前的总天数
+      console.log(tempWorkDay);
+      if (totalDay === 0) { // 防止憨批选到 节假日
+        this.formData.chanceConfigList[fatherIndex].planLoad = 0;
+      } else {
+        this.formData.chanceConfigList[fatherIndex].planLoad = ((totalDay / tempWorkDay) * 100).toFixed(2) //计划负荷 == 实际人日/计划的人日 *100%
+      }
+      this.formData.chanceConfigList[fatherIndex].expectedCost = (totalDay * this.formData.chanceConfigList[fatherIndex].costNum).toFixed(2) /**预计成本*/
 
       /*----------------以上是 总计的安排的具体计算-------------------*/
 
@@ -1143,7 +1154,7 @@ export default {
           if (this.editOrAdd == 1) {
             // 1是修改 2 是新增
             updateChanceConfig(chanceConfigListTemp).then((res) => {
-              let { code, msg } = res;
+              let {code, msg} = res;
               this.$message.success(msg);
               // 保存之后 立即刷新 资源配置 跟进记录 人选推荐
               // this.$router.go(0)// 刷新当前页面
@@ -1156,7 +1167,7 @@ export default {
           if (this.editOrAdd == 2) {
             // 1是修改 2 是新增
             addChanceConfig(chanceConfigListTemp).then((res) => {
-              let { code, msg } = res;
+              let {code, msg} = res;
               this.$message.success(msg);
               // 保存之后 立即刷新 资源配置 跟进记录 人选推荐
               // this.$router.go(0)// 刷新当前页面
@@ -1179,7 +1190,7 @@ export default {
         .then(() => {
           console.log(111);
           delChanceConfigLine(row.id).then((res) => {
-            let { code, msg } = res;
+            let {code, msg} = res;
             this.$message.success(msg);
             this.recommendUserActive = false; // 隐藏人选推荐
             this.init(this.$route.query.chanceId);
@@ -1191,7 +1202,8 @@ export default {
             // },800)
           });
         })
-        .catch(() => {});
+        .catch(() => {
+        });
     },
     // 取消当前编辑
     cancelConfigList(index) {
@@ -1203,7 +1215,8 @@ export default {
         .then(() => {
           this.formData.chanceConfigList.splice(index, 1);
         })
-        .catch(() => {});
+        .catch(() => {
+        });
     },
     // delConfigList(index) {},
     // 选择技能之后 的变色逻辑
@@ -1231,7 +1244,7 @@ export default {
               v.classList && v.classList.add("skill" + arr[i]["cssClass"]); // 添加类名
             }
           });
-      this.getRecommendUserHandel(0, this.formData.chanceConfigList[0]);
+          this.getRecommendUserHandel(0, this.formData.chanceConfigList[0]);
         }, 800);
       });
 
@@ -1311,9 +1324,9 @@ export default {
           );
           // 并计算 下面的周排期
           this.constAll(this.formData.chanceConfigList[index].startEndTime, index);
-         setTimeout(() => {
-             this.getRecommendUserHandel(0, this.formData.chanceConfigList[0]);
-         }, 500)
+          setTimeout(() => {
+            this.getRecommendUserHandel(0, this.formData.chanceConfigList[0]);
+          }, 500)
           break;
       }
     },
@@ -1342,7 +1355,7 @@ export default {
         userId: row.userId, //用户id
       };
       updateConfigUser(data).then((res) => {
-        let { code, msg } = res;
+        let {code, msg} = res;
         this.$message.success(msg);
         this.init(this.$route.query.chanceId);
         this.formData.chanceConfigList = [];
@@ -1373,7 +1386,7 @@ export default {
         userId: row.userId, //用户id
       };
       updateConfigUser(data).then((res) => {
-        let { code, msg } = res;
+        let {code, msg} = res;
         this.$message.success(msg);
         this.init(this.$route.query.chanceId);
         setTimeout(() => {
@@ -1454,12 +1467,12 @@ export default {
       // });
     },
     // 存储下标 单击行的下标
-    tableRowClassName({ row, rowIndex }) {
+    tableRowClassName({row, rowIndex}) {
       row.index = rowIndex;
     },
     // 单机行 查看详情
     showRowDetail(row, column) {
-      if(column && column.label=='操作'){
+      if (column && column.label == '操作') {
         return;
       }
       this.id = row.id;
@@ -1472,10 +1485,10 @@ export default {
     // 获取推荐人选的
     getRecommendUserHandel(index, row) {
 
-      console.log("getRecommendUserHandel-----",row);
+      console.log("getRecommendUserHandel-----", row);
       let params = {
         id: row.id, //机会配置表的主键
-        chanceId: row.chanceId||this.formData.chanceId, //机会id
+        chanceId: row.chanceId || this.formData.chanceId, //机会id
         postNameId: row.postNameId, //职位id
         regionId: row.regionId, //区域id
         postTypeId: row.postTypeId, //职位类型id
@@ -1530,7 +1543,7 @@ export default {
       // 跳转到项目详情页 再转换
       const obj = {
         path: "/projectManager/proManager-auth/addProject",
-        query: { chanceId: this.formData.chanceId },
+        query: {chanceId: this.formData.chanceId},
       };
       this.$tab.closeOpenPage(obj);
     },
@@ -1542,7 +1555,8 @@ export default {
         this.$refs['followElForm'].resetFields()
       }
     },
-    onClose() {},
+    onClose() {
+    },
     close() {
       this.followActive = false;
       if (this.$refs.followElForm !== undefined) {
@@ -1559,7 +1573,7 @@ export default {
             ...this.followFormData,
           };
           addChanceRecord(followFormDataTemp).then((res) => {
-            let { code, msg } = res;
+            let {code, msg} = res;
             this.$message.success(msg);
             this.close();
             this.followInit(this.$route.query.chanceId);
@@ -1584,24 +1598,31 @@ export default {
 .app-container {
   padding: 0;
 }
+
 .mmTable {
   padding: 20px;
 }
+
 .priority4 {
   color: #909399;
 }
+
 .priority3 {
   color: #409eff;
 }
+
 .priority2 {
   color: #e6a23c;
 }
+
 .priority1 {
   color: #f56c6c;
 }
+
 .ft13 {
   font-size: 13px;
 }
+
 .yuan {
   border-radius: 20px;
   height: 10px;
@@ -1609,18 +1630,23 @@ export default {
   display: inline-block;
   margin-right: 10px;
 }
+
 .priorityBg4 {
   background-color: #909399;
 }
+
 .priorityBg3 {
   background-color: #409eff;
 }
+
 .priorityBg2 {
   background-color: #e6a23c;
 }
+
 .priorityBg1 {
   background-color: #f56c6c;
 }
+
 .toggleBar {
   height: 50px;
   font-size: 13px;
@@ -1629,41 +1655,51 @@ export default {
   line-height: 50px;
   background-color: #e8e8f4;
   position: relative;
+
   span {
     cursor: pointer;
     font-size: 14px;
   }
 }
+
 .nowActive {
   color: #409eff;
   font-weight: bold;
 }
+
 .follow1 {
   color: #ccc;
 }
+
 .follow2 {
   color: #333;
 }
+
 .follow3 {
   color: #333;
 }
+
 .follow4 {
   color: #333;
 }
+
 .follow {
   width: 100%;
   display: block;
   padding: 5px 0;
 }
+
 .lineTT {
   // margin-left:40px;
   font-size: 14px;
   color: #adb3b9;
   line-height: 40px;
 }
+
 .configFont {
   color: #adb3b9;
 }
+
 .UserListBox .el-form-item {
   margin-bottom: 0px;
 }
@@ -1683,23 +1719,27 @@ export default {
   background-repeat: no-repeat;
   background-size: contain;
 }
+
 .left-lineBox /deep/ .el-timeline-item__node--normal {
   background-color: #cee2ff;
 }
+
 .left-lineBox /deep/ .el-timeline-item__tail {
   border-left: 2px solid #ced7e9;
   top: 4px;
 }
+
 .gaoliang /deep/ .el-table__body tr.hover-row > td.el-table__cell,
 .gaoliang /deep/ .el-table__body tr.hover-row.current-row > td.el-table__cell,
 .gaoliang /deep/ .el-table__body tr.hover-row.el-table__row--striped > td.el-table__cell,
 .gaoliang
-  /deep/
-  .el-table__body
-  tr.hover-row.el-table__row--striped.current-row
-  > td.el-table__cell {
+/deep/
+.el-table__body
+tr.hover-row.el-table__row--striped.current-row
+> td.el-table__cell {
   background-color: #f7f4d3;
 }
+
 .myUserTable /deep/ .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
   background-color: #f7f4d3;
 }
@@ -1709,30 +1749,37 @@ export default {
   background: rgb(0, 113, 189) !important;
   color: white !important;
 }
+
 .skillcolor2 {
   background: rgb(77, 171, 119) !important;
   color: white !important;
 }
+
 .skillcolor3 {
   background: rgb(21, 206, 190) !important;
   color: white !important;
 }
+
 .skillcolor4 {
   background: rgb(147, 106, 184) !important;
   color: white !important;
 }
+
 .skillcolor5 {
   background: rgb(254, 213, 27) !important;
   color: white !important;
 }
+
 .skillcolor6 {
   background: rgb(246, 147, 28) !important;
   color: white !important;
 }
+
 .skillcolor7 {
   background: rgb(255, 67, 89) !important;
   color: white !important;
 }
+
 /* //   { cssClass: 'color1', color: 'rgb(0,113,189)' },
           //   { cssClass: 'color2', color: 'rgb(77,171,119)' },
           //   { cssClass: 'color3', color: 'rgb(21,206,190)' },
@@ -1743,16 +1790,19 @@ export default {
 .skillcc .el-tag__close {
   background-color: transparent !important;
 }
+
 .skillBox {
   padding: 4px 8px;
   border: 1px white solid;
   border-radius: 5px;
   margin-left: 4px;
 }
+
 .nickNameBox {
   padding: 4px;
   display: inline-block;
 }
+
 .colText2 {
   height: inherit;
   line-height: 150%;
@@ -1761,6 +1811,7 @@ export default {
   color: #999;
   text-align: left;
 }
+
 .resourceEdit {
   min-height: 120px;
 }

@@ -104,9 +104,9 @@
 import supplierApi from '@/api/supplier/supplier'
 import inventoryApi from '@/api/inventory/inventory'
 import { treeselect } from '@/api/system/dept'
-import { queryUserlist } from '@/api/system/user'
 import inventoryForm from '@/views/pms/order/inventory/inventoryLog'
 import {getDicts} from '@/api/system/dict/data'
+import request from '@/utils/request'
 export default {
   name: "index",
   components: {
@@ -161,9 +161,18 @@ export default {
         this.deptList = res.data
       })
     },
-    getUserList(deptId) {
-      queryUserlist({deptId}).then(res => {
-        this.userList = res.data.map(item => {
+    getUserList(keyword) {
+      let params = {
+        deptId: this.queryParams.applyDepart,
+        nickName: keyword,
+        // 用户状态（0正常 1停用）
+        status: 0
+      }
+
+      request.get('system/user/selectUserList', {
+        params
+      }).then(res => {
+        this.userList = res.rows.map(item => {
           return {
             label: item.nickName,
             value: item.userId
