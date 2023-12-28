@@ -99,6 +99,7 @@
               type="primary"
               icon="el-icon-plus"
               @click="addEntryForm"
+              v-has-permi="['pms:order:add']"
             >新建
             </el-button>
             <el-button

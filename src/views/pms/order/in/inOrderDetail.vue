@@ -434,6 +434,7 @@
       </el-button>
       <el-button icon="el-icon-edit"
                  v-show="!readonly"
+                 v-has-permi="['pms:order:edit']"
                  @click="submitForm"
       >重新提交
       </el-button>
@@ -447,7 +448,8 @@
                  @click="auditNoPass"
       >审核不通过
       </el-button>
-      <el-button v-show="formData.returnButton && (formData.pmsOrderStatus === 0 || formData.pmsOrderStatus === 1)"
+      <el-button v-has-permi="['pms:order:confirm']"
+                 v-show="formData.returnButton && (formData.pmsOrderStatus === 0 || formData.pmsOrderStatus === 1)"
                  type="primary"
                  @click="revocation"
       >撤回

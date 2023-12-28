@@ -54,7 +54,9 @@
         </el-form>
       </el-col>
       <el-col :span="4">
-        <el-button type="primary" icon="el-icon-download" @click="exportExcel">
+        <el-button type="primary" icon="el-icon-download"
+                   v-has-permi="['pms:stock:export']"
+                   @click="exportExcel">
           导出
         </el-button>
       </el-col>

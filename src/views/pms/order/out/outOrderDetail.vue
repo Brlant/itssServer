@@ -313,6 +313,7 @@
       >取消订单
       </el-button>
       <el-button icon="el-icon-edit"
+                 v-has-permi="['pms:order:edit']"
                  v-show="!readonly"
                  @click="submitForm"
       >重新提交

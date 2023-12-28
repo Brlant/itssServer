@@ -455,6 +455,7 @@ export default {
         return
       }
 
+      debugger
       this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId].supplierName
       let goodsType = this.formData.orderDetailList[index].goodsType
       if (!goodsType) {
