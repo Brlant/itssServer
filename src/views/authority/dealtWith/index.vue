@@ -45,7 +45,7 @@
                    :remote-method="getUserList"
                    placeholder="发起人">
           <el-option
-            v-for="item in createList"
+            v-for="item in userList"
             :key="item.value"
             :value="item.value"
             :label="item.label"
@@ -277,12 +277,11 @@
 </template>
 
 <script>
-import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
+import {getDealtWithList} from '@/api/auditCenter/dealtWith/dealtWith'
 //我的待办页面
 // import fileInfo from '@/common/details/fileInfo'
 // import auditInfo from '@/common/details/auditInfo'
 // import operationLog from '@/common/details/operationLog'
-
 import supplierApi from '@/api/supplier/supplier'
 import supplierAuditInfo from '@/common/supplierDetails/supplierAuditInfo'
 import supplierInfo from '@/common/supplierDetails/supplierInfo'
@@ -297,20 +296,17 @@ import filesApi from '@/api/Files/files'
 import managerInfo from '@/common/contractManager/managerInfo'
 import managerAuditInfo from '@/common/contractManager/managerAuditInfo'
 import managerOperationLog from '@/common/contractManager/managerOperationLog'
-import { queryUserlist } from '@/api/system/user'
-
-import { getContractFileList,getUserList } from '@/api/contractFilesManagement/contractFilesManagement'
 
 
 //入库
 import entryInfo from "@/views/pms/order/in/inOrderDetail";
 import entryOperationLog from "@/common/order/log/orderLog";
+import boundOperationLog from "@/common/order/log/orderLog";
 import entryAuditInfo from "@/common/order/audit/orderAuditInfo";
+import boundAuditInfo from "@/common/order/audit/orderAuditInfo";
 
 //出库
 import boundInfo from '@/views/pms/order/out/outOrderDetail';
-import boundOperationLog from "@/common/order/log/orderLog";
-import boundAuditInfo from "@/common/order/audit/orderAuditInfo";
 import request from '@/utils/request'
 
 export default {
@@ -326,9 +322,7 @@ export default {
   },
   data() {
     return {
-      createList: [],
-
-
+      userList: [],
       detailsSupplierData: {},
       activeTab: 'fileInfo',
       // tabs: [
@@ -465,7 +459,7 @@ export default {
     this.queryParams.remark = userInfoParse.remark
     this.queryParams.reviewedId = userInfoParse.userId
 
-    this.getUserList();
+    this.getUserList('');
   },
   mounted() {
     // 通过查询参数接收参数,测试

@@ -69,7 +69,7 @@
               :remote-method="getUserList"
               placeholder="创建人">
               <el-option
-                v-for="item in createList"
+                v-for="item in userList"
                 :key="item.value"
                 :value="item.value"
                 :label="item.label"
@@ -267,7 +267,7 @@ export default {
       //供应商
       supplierArray: [],
       //创建人
-      createList:[],
+      userList:[],
       //切换按钮
       filters: [
         {label: "全部", value: null},
@@ -334,7 +334,7 @@ export default {
         nickName:query,
       }
       getUserList(params).then((res) => {
-        this.createList = res.rows.map(item => {
+        this.userList = res.rows.map(item => {
           return {
             value: item.userId,
             label: item.nickName

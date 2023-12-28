@@ -45,7 +45,7 @@
                    :remote-method="getUserList"
                    placeholder="发起人">
           <el-option
-            v-for="item in createList"
+            v-for="item in userList"
             :key="item.value"
             :value="item.value"
             :label="item.label"
@@ -322,7 +322,7 @@ export default {
   },
   data(){
     return{
-      createList: [],
+      userList: [],
       detailsSupplierData: {},
       activeTab: 'fileInfo',
       // tabs: [
