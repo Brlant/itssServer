@@ -11,7 +11,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="供应商名称" prop="supplierName">
-            <el-input v-model="formData.supplierName"></el-input>
+            <el-input v-model="formData.supplierName" maxlength="50" show-word-limit></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -42,14 +42,14 @@
       <el-row>
         <el-col :span="16">
           <el-form-item label="办公地址" prop="supplierAddress">
-            <el-input v-model="formData.supplierAddress"></el-input>
+            <el-input v-model="formData.supplierAddress" maxlength="200" show-word-limit></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="16">
           <el-form-item label="仓库地址" prop="warehouseAddress">
-            <el-input v-model="formData.warehouseAddress"></el-input>
+            <el-input v-model="formData.warehouseAddress" maxlength="200" show-word-limit></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -62,7 +62,7 @@
         <el-col :span="8">
           <el-form-item label="法人" prop="businessInfo.legalPerson"
                         :rules="[{required: true, message: '请输入法人', trigger: 'blur'}]">
-            <el-input v-model="formData.businessInfo.legalPerson"></el-input>
+            <el-input v-model="formData.businessInfo.legalPerson" maxlength="30" show-word-limit></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -90,13 +90,13 @@
         <el-col :span="8">
           <el-form-item label="开户行" prop="businessInfo.openingBank"
                         :rules="[{ required: true, message: '请输入开户行', trigger: 'blur' }]">
-            <el-input v-model="formData.businessInfo.openingBank"></el-input>
+            <el-input v-model="formData.businessInfo.openingBank" maxlength="30" show-word-limit></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="收款账号" prop="businessInfo.accountNumber"
                         :rules="[{ required: true, message: '请输入收款账号', trigger: 'blur' }]">
-            <el-input v-model="formData.businessInfo.accountNumber"></el-input>
+            <el-input v-model="formData.businessInfo.accountNumber" maxlength="30" show-word-limit></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -210,7 +210,7 @@
           <el-col :span="5">
             <el-form-item :label="'联系人' + (index + 1)" :prop="'contactsInfoList.' + index +'.contactsName'"
                           :rules="[{ required: true, message: '请输入联系人', trigger: 'blur' }]">
-              <el-input v-model="contact.contactsName" placeholder="请输入联系人"></el-input>
+              <el-input v-model="contact.contactsName" placeholder="请输入联系人" maxlength="30" show-word-limit></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">
@@ -220,8 +220,11 @@
           </el-col>
           <el-col :span="5">
             <el-form-item label="手机号" :prop="'contactsInfoList.' + index +'.contactsPhone'"
-                          :rules="[{ required: true, message: '请输入手机号', trigger: 'blur' }]">
-              <el-input v-model="contact.contactsPhone" placeholder="请输入手机号"></el-input>
+                          :rules="[
+                            { required: true, message: '请输入手机号', trigger: 'blur' },
+                            { pattern: /^[0-9]*$/, message: '请输入正整数0-9', trigger: 'blur' },
+                            ]">
+              <el-input v-model="contact.contactsPhone" placeholder="请输入手机号" maxlength="11" show-word-limit></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">
@@ -324,7 +327,9 @@ export default {
       },
       //表单校验
       formRules: {
-        supplierName: [{required: true, message: '请输入供应商名称', trigger: 'blur'}],
+        supplierName: [
+          {required: true, message: '请输入供应商名称', trigger: 'blur'}
+        ],
         supplierDate: [{required: true, message: '请选择供应商日期', trigger: 'change'}],
         supplierAddress: [{required: true, message: '请输入办公地址', trigger: 'blur'}],
         warehouseAddress: [{required: true, message: '请输入仓库地址', trigger: 'blur'}],
@@ -636,4 +641,11 @@ export default {
   height: 100%;
   color: rgba(198, 211, 226, 1);
 }
+//::v-deep input::-webkit-inner-spin-button {
+//  -webkit-appearance: none !important;
+//}
+//::v-deep input[type="number"] {
+//  -moz-appearance: textfield !important;
+//}
+
 </style>
