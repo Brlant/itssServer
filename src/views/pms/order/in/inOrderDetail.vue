@@ -26,7 +26,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="6">
-        <el-form-item label="出库单号" prop="outOrderNo" required v-if="formData.orderBizType==='1-4'">
+        <el-form-item  label="出库单号" prop="outOrderNo" required v-if=" formData.orderBizType==='1-4' && formData.outOrderNo ">
           <el-input v-model="formData.outOrderNo" disabled></el-input>
         </el-form-item>
       </el-col>
