@@ -123,7 +123,7 @@
                         :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
             <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                        filterable :disabled="readonly"
-                       @change="getGoodsList(scope.row.supplierId,scope.$index)">
+                         @change="supplierChangeHandler(scope.$index)">
               <el-option v-for="(option,index) in supplierOptions"
                          :key="option.supplierId"
                          :label="option.supplierName"
@@ -145,8 +145,8 @@
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsType`" label-width="0"
                         style="margin-top: 22px"
                         :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
-            <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" filterable
-                       :disabled="readonly">
+              <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly"
+                         @change="supplierChangeHandler(scope.$index)">
               <el-option
                 v-for="(item,index) in goodsTypes"
                 :key="index"
@@ -166,14 +166,14 @@
             <el-select v-model="scope.row.goodsId" placeholder="请选择物品编号" style="width: 100%"
                        filterable :disabled="readonly"
                        @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
-              <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
+                <el-option v-for="option in goodsListOptions[scope.row.supplierId + '_' + scope.row.goodsType]"
                          :key="option.goodsId"
                          :label="option.goodsCode"
                 :value="option.goodsId"
                 :disabled="option.disabled"
               ></el-option>
               <el-option
-                v-if="!formData.orderDetailList[scope.$index].goodsList.some(goods => goods.goodsId === scope.row.goodsId)"
+                v-if="!hasGoods(scope.row)"
                 :key="scope.row.goodsId"
                 :label="scope.row.goodsCode"
                 :value="scope.row.goodsId"
@@ -191,14 +191,14 @@
             <el-select v-model="scope.row.goodsId" placeholder="请选择物品名称" style="width: 100%"
                        filterable :disabled="readonly"
                        @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
-              <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
+                <el-option v-for="option in goodsListOptions[scope.row.supplierId + '_' + scope.row.goodsType]"
                          :key="option.goodsId"
                          :label="option.goodsName"
                 :value="option.goodsId"
                 :disabled="option.disabled"
               ></el-option>
               <el-option
-                v-if="!formData.orderDetailList[scope.$index].goodsList.some(goods => goods.goodsId === scope.row.goodsId)"
+                v-if="!hasGoods(scope.row)"
                 :key="scope.row.goodsId"
                 :label="scope.row.goodsName"
                 :value="scope.row.goodsId"
@@ -215,7 +215,7 @@
       </el-table-column>
       <el-table-column prop="taxRate" label="税率">
         <template v-slot="scope">
-          <span>{{ scope.row.taxRateName }}</span>
+          <span>{{ scope.row.taxRate }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="priceWithoutTax" label="不含税进价">
@@ -263,8 +263,7 @@
       </el-table-column>
       <el-table-column prop="taxRate" label="税率" v-if="formData.orderBizType === '2-0'">
         <template v-slot="scope">
-          <el-select v-model.number="scope.row.sellingTaxRate" placeholder="请选择税率" clearable
-                     :disabled="readonly"
+            <el-select v-model.number="scope.row.sellingTaxRateId" placeholder="请选择税率" clearable
                      @change="calculatePrice(scope.row)">
             <el-option
               v-for="(item,index) in taxRateList"
@@ -309,7 +308,7 @@
         class="pull-right"
         type="danger"
         v-has-permi="['pms:order:cancel']"
-        v-show="formData.pmsOrderStatus !== 3"
+        v-show="formData.pmsOrderStatus !== 3 && formData.pmsOrderStatus !== 5"
         @click="cancelOrder"
       >取消订单
       </el-button>
@@ -435,7 +434,33 @@ export default {
         consigneeName: '',
         consigneePhone: '',
         consigneeAddress: '',
-        orderDetailList: [],
+        orderDetailList: [{
+          "orderDetailId": "",
+          "pmsOrderId": "",
+          "goodsId": "",
+          "goodsType": '',
+          "goodsCode": "",
+          "goodsName": "",
+          "supplierId": "",
+          "supplierName": "",
+          "unitPrice": '',
+          "taxRate": "",
+          "amount": '',
+          "totalPrice": '',
+          "taxBid": '',
+          "nonTaxBid": '',
+          "totalTaxBid": '',
+          "nonTotalTaxBid": '',
+          "deleteFlag": '',
+          "actualReceiptAmount": '',
+          "actualReceiptPrice": '',
+          "receiptRemark": "",
+          "validityFlag": "",
+          "validityDate": "",
+          "grossMargin": "",
+          availableNum: '',
+          stockNum: ''
+        }],
         // 按钮权限标识
         examineButton: 0,// 审核：判断是否有审核权限，0否1是
         returnButton: 0,// 撤回：判断是否有撤回权限，0否1是
@@ -458,9 +483,8 @@ export default {
         // {value: 3, label: '服务'},
         // {value: 4, label: '销售品'},
       ],
-      goodsListOption: {
-        'supplierId': []
-      },
+      // { supplierId:goodsList}
+      goodsListOptions: {},
       goodsMap: {},
       orderBizTypes: [
         {label: '销售出库', value: '2-0'},
@@ -475,11 +499,11 @@ export default {
       recipientUserList: [],
       //税率
       taxRateList: [
-        {label: '1%', value: 0.01},
-        {label: '3%', value: 0.03},
-        {label: '6%', value: 0.06},
-        {label: '12%', value: 0.12},
-        {label: '15%', value: 0.15},
+        // {label: '1%', value: 0.01},
+        // {label: '3%', value: 0.03},
+        // {label: '6%', value: 0.06},
+        // {label: '12%', value: 0.12},
+        // {label: '15%', value: 0.15},
       ]
     }
   },
@@ -487,6 +511,11 @@ export default {
     getGoodsTypes(){
       return getDicts('goods_types').then((res) => {
         this.goodsTypes = res.data
+      })
+    },
+    getTaxRateList() {
+      return getDicts('tax_rate').then((res) => {
+        this.taxRateList = res.data
       })
     },
     /*关闭弹框*/
@@ -508,7 +537,6 @@ export default {
 
           return {
             ...item,
-            taxRateName: Number(item.taxRate) + '%',
           }
         })
 
@@ -523,9 +551,9 @@ export default {
 
         this.orderDetail = JSON.parse(JSON.stringify(res.data))
         this.formData = res.data
-        this.formData.orderDetailList.forEach((item, index) => {
-          this.getGoodsList(item.supplierId, index)
-        })
+        for (let index = 0; index < this.formData.orderDetailList.length; index++){
+          this.setGoodsList(index)
+        }
       })
     },
     /*表单校验提交*/
@@ -676,7 +704,9 @@ export default {
         "receiptRemark": "",
         "validityFlag": "",
         "validityDate": "",
-        "grossMargin": ""
+        "grossMargin": "",
+        availableNum: '',
+        stockNum: ''
       });
     },
     deleteRow(index) {
@@ -689,9 +719,11 @@ export default {
       row.nonTotalTaxBid = row.nonTaxBid * row.amount;
     },
     calculatePrice(row) {
-      let {taxPrice, taxRate, taxBid} = row
+      let {taxPrice, sellingTaxRateId, taxBid} = row
       if (taxPrice) {
+        let taxRate = this.taxRateList.find(one => one.dictCode === sellingTaxRateId)?.dictLabel
         if (taxRate) {
+          taxRate = Number.parseFloat(taxRate) / 100
           // 不含税售价：系统自动计算,不含税售价=含税售价÷（1+税率）
           row.nonTaxPrice = (taxPrice / (1 + taxRate)).toFixed(2);
         }
@@ -703,13 +735,13 @@ export default {
 
     },
     getSupplierList(keyword = '') {
-      request.post('/pms/supplier/queryOverview', {
+      let params = {
         codeNameKey: keyword,
-        supplierStatus: 3,// 只查询启用的
-        pageNum: 1,
-        pageSize: 1000
-      }).then((res) => {
-        this.supplierOptions = res.data.rows
+        supplierStatus: 3,
+      }
+      // 查询供应商下拉列表
+      request.post('pms/supplier/getSupplierList', params).then((res) => {
+        this.supplierOptions = res.data
         this.supplierOptions.forEach(one => {
           this.supplierMap[one.supplierId] = one.supplierName
         })
@@ -724,37 +756,48 @@ export default {
         this.budgetTypes = data;
       })
     },
-    getGoodsList(supplierId, index) {
+    supplierChangeHandler(index) {
       this.formData.orderDetailList[index].goodsId = ''
-      this.formData.orderDetailList[index].goodsList = []
-      this.formData.orderDetailList[index].supplierId = supplierId
-      this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId]
+      this.setGoodsList(index)
+    },
+    setGoodsList(index) {
+      let supplierId = this.formData.orderDetailList[index].supplierId
+      if (!supplierId) {
+        return
+      }
 
-      let goodsList = this.goodsListOption[supplierId]
+      this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId]
+      let goodsType = this.formData.orderDetailList[index].goodsType
+      if (!goodsType) {
+        return
+      }
+
+      let key = supplierId +'_'+ goodsType
+      let goodsList = this.goodsListOptions[key]
       if (!goodsList) {
         request.get('/pms/goods/queryAllList', {
           params: {
-            supplierId: supplierId
+            supplierId, goodsType,
+            goodsStatus: 3,
           }
         }).then(res => {
-          this.goodsListOption[supplierId] = res.data
-          this.formData.orderDetailList[index].goodsList = res.data
-          res.data.forEach(one => {
-            this.goodsMap[one.goodsId] = one
+          goodsList = res.data
+          this.$set(this.goodsListOptions, key, goodsList)
+          goodsList.forEach(goods => {
+            this.goodsMap[goods.goodsId] = goods
           })
         })
       } else {
-        this.goodsListOption[supplierId] = goodsList
-        this.formData.orderDetailList[index].goodsList = goodsList
+        this.$set(this.goodsListOptions, key, goodsList)
       }
     },
     goodsChangeHandler(goodsId, index) {
-      let goodsInfo = this.getGoodsInfo(goodsId)
+      let goodsInfo = this.goodsMap[goodsId]
       let goodsCode = goodsInfo.goodsCode
       let goodsName = goodsInfo.goodsName
       let taxBid = goodsInfo.taxBid
       let nonTaxBid = goodsInfo.nonTaxBid
-      let taxRate = Number(goodsInfo.taxRate)
+      let taxRate = goodsInfo.taxRate
 
       this.formData.orderDetailList[index].goodsId = goodsId
       this.formData.orderDetailList[index].goodsCode = goodsCode
@@ -763,23 +806,22 @@ export default {
       this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
       this.formData.orderDetailList[index].taxRate = taxRate
       if (taxRate) {
-        this.formData.orderDetailList[index].taxRateName = (taxRate * 100) + '%'
-      this.formData.orderDetailList[index].totalTaxBid = taxBid * taxRate
-      this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * taxRate
+        this.formData.orderDetailList[index].totalTaxBid = taxBid * parseFloat(taxRate)/100
+        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * parseFloat(taxRate)/100
       }
-    },
-    getGoodsInfo(goodsId) {
-      return this.goodsMap[goodsId]
-    },
-    goBack() {
-      this.$emit('closeOrderDetail')
+
+      this.queryStockCount(goodsId, index)
     },
     // 查询库存的数量以及可用库存
     queryStockCount(goodsId, index = 0) {
+      this.formData.orderDetailList[index].stockId = ''
+      this.formData.orderDetailList[index].stockNum = ''
+      this.formData.orderDetailList[index].availableNum = ''
+
       // 当选择货品以后，需要查询货品的库存，按供应商id、部门id、货品id查询，返回库存数量
+      let departId = this.formData.applyDepart
       let supplierId = this.formData.orderDetailList[index].supplierId
-      let deptId = this.formData.applyDepart
-      request.post('/pms/order/queryStockAmount', {goodsId, supplierId, deptId}).then(res => {
+      request.post('/pms/order/queryStockAmount', {goodsId, supplierId, departId}).then(res => {
         let {stockId, stockNum, availableNum} = res.data
         this.formData.orderDetailList[index].stockId = stockId
         this.formData.orderDetailList[index].stockNum = stockNum
@@ -824,10 +866,18 @@ export default {
           .find(item => item.userId === this.formData.recipientId)
           .deptId
       }
+    },
+    hasGoods(row) {
+      let list = this.goodsListOptions[row.supplierId + '_' + row.goodsType]
+      if (!list) {
+        return false
+      }
+      return this.goodsListOptions[row.supplierId + '_' + row.goodsType].some(goods => goods.goodsId === row.goodsId)
     }
   },
   mounted() {
    this.getGoodsTypes()
+    this.getTaxRateList()
   }
 }
 </script>

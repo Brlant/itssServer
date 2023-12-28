@@ -121,11 +121,13 @@
                           :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
               <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                          filterable :disabled="readonly"
-                         @change="getGoodsList(scope.row.supplierId,scope.$index)">
+                         @change="setGoodsList(scope.$index)">
                 <el-option v-for="(option,index) in supplierOptions"
                            :key="option.supplierId"
                            :label="option.supplierName"
-                           :value="option.supplierId" :title="isOverDate(option.validityDate)">
+                           :value="option.supplierId"
+                           :disabled="option.disabaled"
+                           :title="isOverDate(option.validityDate)">
                   <span style="float: left;color: red" v-if="isOverDate(option.validityDate)">{{
                       option.supplierName
                     }}</span>
@@ -141,8 +143,8 @@
             <el-form-item :prop="`orderDetailList.${scope.$index}.goodsType`" label-width="0"
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
-              <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%;"
-                         filterable>
+              <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly"
+                         @change="setGoodsList(scope.$index)">
                 <el-option
                   v-for="(item,index) in goodsTypes"
                   :key="index"
@@ -160,12 +162,13 @@
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品编号'}]">
               <el-select v-model="scope.row.goodsId" placeholder="请选择物品编号" style="width: 100%"
-                         filterable
+                         filterable :disabled="readonly"
                          @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
-                <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
+                <el-option v-for="option in goodsListOptions[scope.row.supplierId + '_' + scope.row.goodsType]"
                            :key="option.goodsId"
                            :label="option.goodsCode"
                            :value="option.goodsId"
+                           :disabled="option.disabled"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -176,13 +179,14 @@
             <el-form-item :prop="`orderDetailList.${scope.$index}.goodsName`" label-width="0"
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品名称'}]">
-              <el-select v-model="scope.row.goodsInfo" placeholder="请选择物品名称" style="width: 100%"
-                         filterable
+              <el-select v-model="scope.row.goodsId" placeholder="请选择物品名称" style="width: 100%"
+                         filterable :disabled="readonly"
                          @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
-                <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
+                <el-option v-for="option in goodsListOptions[scope.row.supplierId + '_' + scope.row.goodsType]"
                            :key="option.goodsId"
                            :label="option.goodsName"
                            :value="option.goodsId"
+                           :disabled="option.disabled"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -195,7 +199,7 @@
         </el-table-column>
         <el-table-column prop="taxRate" label="税率">
           <template v-slot="scope">
-            <span>{{ scope.row.taxRateName }}</span>
+            <span>{{ scope.row.taxRate }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="priceWithoutTax" label="不含税进价">
@@ -264,18 +268,18 @@
             <span>{{ scope.row.grossMargin }}</span>
           </template>
         </el-table-column>
-        <el-table-column width="50px">
+      <el-table-column width="50px" v-if="!readonly">
           <template v-slot="scope">
             <el-row :gutter="20">
               <el-col :span="24">
                 <el-button circle size="small" icon="el-icon-plus" type="primary" @click="addRow"
-                           v-if="scope.$index === 0"></el-button>
+                         v-if="scope.$index === 0 && !readonly"></el-button>
               </el-col>
             </el-row>
             <el-row :gutter="20" style="margin-top: 10px">
               <el-col :span="24">
                 <el-button circle size="small" icon="el-icon-minus" type="danger" @click="deleteRow(scope.$index)"
-                           v-if="formData.orderDetailList.length > 1"></el-button>
+                         v-if="formData.orderDetailList.length > 1 && !readonly"></el-button>
               </el-col>
             </el-row>
           </template>
@@ -329,13 +333,44 @@ export default {
         recipientDepartId: '',
         recipientDepartName: '',
         receiptUrl: '',
+        receiptName: '',
         invoiceNum: '',
         paymentUrl: '',
         invoiceUrl: '',
         consigneeName: '',
         consigneePhone: '',
         consigneeAddress: '',
-        orderDetailList: [],
+        orderDetailList: [{
+          "orderDetailId": "",
+          "pmsOrderId": "",
+          "goodsId": "",
+          "goodsType": '',
+          "goodsCode": "",
+          "goodsName": "",
+          "supplierId": "",
+          "supplierName": "",
+          "unitPrice": '',
+          "taxRate": "",
+          "amount": '',
+          "totalPrice": '',
+          "taxBid": '',
+          "nonTaxBid": '',
+          "totalTaxBid": '',
+          "nonTotalTaxBid": '',
+          "deleteFlag": '',
+          "actualReceiptAmount": '',
+          "actualReceiptPrice": '',
+          "receiptRemark": "",
+          "validityFlag": "",
+          "validityDate": "",
+          "grossMargin": "",
+          availableNum: '',
+          stockNum: ''
+        }],
+        // 按钮权限标识
+        examineButton: 0,// 审核：判断是否有审核权限，0否1是
+        returnButton: 0,// 撤回：判断是否有撤回权限，0否1是
+        receiptButton: 0,// 签收：判断是否有收货权限，0否1是
       },
       rules: {
         applyName: [{required: true, message: '请选择申请人', trigger: 'blur'}],
@@ -353,9 +388,11 @@ export default {
         // {value: 3, label: '服务'},
         // {value: 4, label: '销售品'},
       ],
-      goodsListOption: {
-        'supplierId': []
+      // { supplierId:goodsList}
+      goodsListOptions: {
+        '': []
       },
+      goodsMap: {},
       orderBizTypes: [
         {label: '销售出库', value: '2-0'},
         {label: '退货出库', value: '2-1'},
@@ -374,17 +411,16 @@ export default {
         // {label: '6%', value: 0.06},
         // {label: '12%', value: 0.12},
         // {label: '15%', value: 0.15},
-      ],
-      goodsMap: {}
+      ]
     }
   },
   methods: {
-    getGoodsTypes(){
+    getGoodsTypes() {
       return getDicts('goods_types').then((res) => {
         this.goodsTypes = res.data
       })
     },
-    getTaxRateList(){
+    getTaxRateList() {
       return getDicts('tax_rate').then((res) => {
         this.taxRateList = res.data
       })
@@ -419,7 +455,9 @@ export default {
         "receiptRemark": "",
         "validityFlag": "",
         "validityDate": "",
-        "grossMargin": ""
+        "grossMargin": "",
+        availableNum: '',
+        stockNum: ''
       });
     },
     deleteRow(index) {
@@ -434,9 +472,9 @@ export default {
     calculatePrice(row) {
       let {taxPrice, sellingTaxRateId, taxBid} = row
       if (taxPrice) {
-        let taxRate = this.taxRateList.find(one => one.value === sellingTaxRateId).dictLabel
+        let taxRate = this.taxRateList.find(one => one.dictCode === sellingTaxRateId)?.dictLabel
         if (taxRate) {
-          taxRate = Number.parseFloat(taxRate)/100
+          taxRate = Number.parseFloat(taxRate) / 100
           // 不含税售价：系统自动计算,不含税售价=含税售价÷（1+税率）
           row.nonTaxPrice = (taxPrice / (1 + taxRate)).toFixed(2);
         }
@@ -488,7 +526,7 @@ export default {
       }
 
       this.formData.goodsTypeName = this.goodsTypes.find(item => item.dictCode === params.goodsType)?.dictLabel;
-      lparams.sellingTaxRate = this.taxRateList.find(one => one.value === params.sellingTaxRateId).dictLabel
+      params.sellingTaxRate = this.taxRateList.find(one => one.value === params.sellingTaxRateId).dictLabel
       addPmsOrder(params).then((res) => {
         this.$message({
           type: 'success',
@@ -503,13 +541,13 @@ export default {
       })
     },
     getSupplierList(keyword = '') {
-      request.post('/pms/supplier/queryOverview', {
+      let params = {
         codeNameKey: keyword,
-        pageNum: 1,
         supplierStatus: 3,
-        pageSize: 1000
-      }).then((res) => {
-        this.supplierOptions = res.data.rows
+      }
+      // 查询供应商下拉列表
+      request.post('pms/supplier/getSupplierList', params).then((res) => {
+        this.supplierOptions = res.data
         this.supplierOptions.forEach(one => {
           this.supplierMap[one.supplierId] = one.supplierName
         })
@@ -524,37 +562,45 @@ export default {
         this.budgetTypes = data;
       })
     },
-    getGoodsList(supplierId, index) {
+    setGoodsList(index) {
       this.formData.orderDetailList[index].goodsId = ''
-      this.formData.orderDetailList[index].goodsList = []
-      this.formData.orderDetailList[index].supplierId = supplierId
-      this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId]
+      let supplierId = this.formData.orderDetailList[index].supplierId
+      if (!supplierId) {
+        return
+      }
 
-      let goodsList = this.goodsListOption[supplierId]
+      this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId]
+      let goodsType = this.formData.orderDetailList[index].goodsType
+      if (!goodsType) {
+        return
+      }
+
+      let key = supplierId +'_'+ goodsType
+      let goodsList = this.goodsListOptions[key]
       if (!goodsList) {
         request.get('/pms/goods/queryAllList', {
           params: {
-            supplierId: supplierId
+            supplierId, goodsType,
+            goodsStatus: 3,
           }
         }).then(res => {
-          this.goodsListOption[supplierId] = res.data
-          this.formData.orderDetailList[index].goodsList = res.data
-          res.data.forEach(one => {
-            this.goodsMap[one.goodsId] = one.goodsName
+          goodsList = res.data
+          this.$set(this.goodsListOptions, key, goodsList)
+          goodsList.forEach(goods => {
+            this.goodsMap[goods.goodsId] = goods
           })
         })
       } else {
-        this.goodsListOption[supplierId] = goodsList
-        this.formData.orderDetailList[index].goodsList = goodsList
+        this.$set(this.goodsListOptions, key, goodsList)
       }
     },
     goodsChangeHandler(goodsId, index) {
-      let goodsInfo = this.getGoodsInfo(goodsId)
+      let goodsInfo = this.goodsMap[goodsId]
       let goodsCode = goodsInfo.goodsCode
       let goodsName = goodsInfo.goodsName
       let taxBid = goodsInfo.taxBid
       let nonTaxBid = goodsInfo.nonTaxBid
-      let taxRate = Number(goodsInfo.taxRate)
+      let taxRate = goodsInfo.taxRate
 
       this.formData.orderDetailList[index].goodsId = goodsId
       this.formData.orderDetailList[index].goodsCode = goodsCode
@@ -564,22 +610,22 @@ export default {
       this.formData.orderDetailList[index].taxRate = taxRate
 
       if (taxRate) {
-        this.formData.orderDetailList[index].taxRateName = (taxRate * 100) + '%'
-        this.formData.orderDetailList[index].totalTaxBid = taxBid * taxRate
-        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * taxRate
+        this.formData.orderDetailList[index].totalTaxBid = taxBid * parseFloat(taxRate)/100
+        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * parseFloat(taxRate)/100
       }
 
       this.queryStockCount(goodsId, index)
     },
-    getGoodsInfo(goodsId) {
-      return this.goodsMap[goodsId]
-    },
     // 查询库存的数量以及可用库存
     queryStockCount(goodsId, index = 0) {
+      this.formData.orderDetailList[index].stockId = ''
+      this.formData.orderDetailList[index].stockNum = ''
+      this.formData.orderDetailList[index].availableNum = ''
+
       // 当选择货品以后，需要查询货品的库存，按供应商id、部门id、货品id查询，返回库存数量
+      let departId = this.formData.applyDepart
       let supplierId = this.formData.orderDetailList[index].supplierId
-      let deptId = this.formData.applyDepart
-      request.post('/pms/order/queryStockAmount', {goodsId, supplierId, deptId}).then(res => {
+      request.post('/pms/order/queryStockAmount', {goodsId, supplierId, departId}).then(res => {
         let {stockId, stockNum, availableNum} = res.data
         this.formData.orderDetailList[index].stockId = stockId
         this.formData.orderDetailList[index].stockNum = stockNum
@@ -643,49 +689,21 @@ export default {
     dialogAdd(val) {
       if (val) {
         this.formTitle = "新增出库单"
-        this.formData = {
-          // 都是取当前用户的
-          applyDepart: this.currUser.deptId,
-          applyDepartName: this.currUser.deptName,
-          applyName: this.currUser.nickName,
-          applyUserId: this.currUser.userId,
-          orderType: '1',
-          pmsOrderStatus: '',
-          applyDate: this.monent().format('YYYY-MM-DD'),
-          // 预算类型
-          budgetType: '',
-          applyReason: '',
-          orderBizType: '',
-          recipientId: '',
-          recipientName: '',
-          // 领用部门id
-          recipientDepartId: '',
-          recipientDepartName: '',
-          receiptUrl: '',
-          invoiceNum: '',
-          paymentUrl: '',
-          invoiceUrl: '',
-          consigneeName: '',
-          consigneePhone: '',
-          consigneeAddress: '',
-          orderDetailList: [],
-        }
+        this.formData.orderType = '1'
+        this.formData.applyUserId = this.currUser.userId
+        this.formData.applyName = this.currUser.nickName
+        this.formData.applyDepart = this.currUser.deptId
+        this.formData.applyDepartName = this.currUser.deptName
+        this.formData.applyDate = this.monent().format('YYYY-MM-DD')
 
-        if (this.$refs.form) {
-          this.$refs.form.clearValidate()
-        }
-
-        // 默认有一条数据
-        this.addRow()
         this.getBudgetTypeList()
         this.getSupplierList()
         this.getUserList(this.formData.applyDepart)
         this.getDeptList('')
+      } else {
+        this.$refs.form.resetFields()
       }
     },
-    recipientDepartmentId(val) {
-      this.formData.recipientDepartId = val
-    }
   }
 }
 </script>

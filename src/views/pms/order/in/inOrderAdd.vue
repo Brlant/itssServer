@@ -9,7 +9,7 @@
       <div class="jiBenXinXi">
         基本信息
       </div>
-      <!-- 第一行 -->
+      <!-- 第一行：订单类型 -->
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="订单类型" prop="orderBizType" :rules="rules.orderBizType">
@@ -26,7 +26,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <!-- 第二行 -->
+      <!-- 第二行：申请人、申请部门、申请日期 -->
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="发起人" prop="applyName" :rules="rules.applyName">
@@ -61,7 +61,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <!-- 第三行 -->
+      <!-- 预算类型&申请原由 -->
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="预算类型" prop="budgetTypes" :rules="rules.budgetTypes">
@@ -70,7 +70,7 @@
               placeholder="请选择预算类型"
               :options="budgetTypes"
               :props="{ label: 'budgetName', value: 'budgetId',children: 'childList'}"
-              filterable :disabled="readonly"></el-cascader>
+              filterable></el-cascader>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -91,7 +91,7 @@
                           :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
               <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                          filterable :disabled="readonly"
-                         @change="getGoodsList(scope.row.supplierId,scope.$index)">
+                         @change="setGoodsList(scope.$index)">
                 <el-option v-for="(option,index) in supplierOptions" :key="option.supplierId"
                            :label="option.supplierName"
                            :value="option.supplierId"
@@ -112,7 +112,8 @@
             <el-form-item :prop="`orderDetailList.${scope.$index}.goodsType`" label-width="0"
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
-              <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly">
+              <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly"
+                         @change="setGoodsList(scope.$index)">
                 <el-option
                   v-for="(item,index) in goodsTypes"
                   :key="index"
@@ -132,7 +133,7 @@
               <el-select v-model="scope.row.goodsId" placeholder="请选择物品编号" style="width: 100%"
                          filterable :disabled="readonly"
                          @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
-                <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
+                <el-option v-for="option in goodsListOptions[scope.row.supplierId + '_' + scope.row.goodsType]"
                            :key="option.goodsId"
                            :label="option.goodsCode"
                            :value="option.goodsId"
@@ -150,7 +151,7 @@
               <el-select v-model="scope.row.goodsId" placeholder="请选择物品名称" style="width: 100%"
                          filterable :disabled="readonly"
                          @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
-                <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
+                <el-option v-for="option in goodsListOptions[scope.row.supplierId + '_' + scope.row.goodsType]"
                            :key="option.goodsId"
                            :label="option.goodsName"
                            :value="option.goodsId"
@@ -167,7 +168,7 @@
         </el-table-column>
         <el-table-column prop="taxRate" label="税率">
           <template v-slot="scope">
-            <span>{{ scope.row.taxRate}}</span>
+            <span>{{ scope.row.taxRate }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="priceWithoutTax" label="不含税进价">
@@ -257,14 +258,37 @@ export default {
         // 领用部门id
         recipientDepartId: '',
         recipientDepartName: '',
-        receiptUrl: '',
         invoiceNum: '',
-        paymentUrl: '',
+        invoiceName: '',
         invoiceUrl: '',
         consigneeName: '',
         consigneePhone: '',
         consigneeAddress: '',
-        orderDetailList: [],
+        orderDetailList: [{
+          "orderDetailId": "",
+          "pmsOrderId": "",
+          "goodsId": "",
+          "goodsType": '',
+          "goodsCode": "",
+          "goodsName": "",
+          "supplierId": "",
+          "supplierName": "",
+          "unitPrice": '',
+          "taxRate": "",
+          "amount": '',
+          "totalPrice": '',
+          "taxBid": '',
+          "nonTaxBid": '',
+          "totalTaxBid": '',
+          "nonTotalTaxBid": '',
+          "deleteFlag": '',
+          "actualReceiptAmount": '',
+          "actualReceiptPrice": '',
+          "receiptRemark": "",
+          "validityFlag": "",
+          "validityDate": "",
+          "grossMargin": ""
+        }],
         // 按钮权限标识
         examineButton: 0,// 审核：判断是否有审核权限，0否1是
         returnButton: 0,// 撤回：判断是否有撤回权限，0否1是
@@ -286,8 +310,9 @@ export default {
         // {value: 3, label: '服务'},
         // {value: 4, label: '销售品'},
       ],
-      goodsListOption: {
-        'supplierId': []
+      // { supplierId:goodsList}
+      goodsListOptions: {
+        '': []
       },
       goodsMap: {},
       orderBizTypes: [
@@ -422,39 +447,45 @@ export default {
         this.budgetTypes = data;
       })
     },
-    getGoodsList(supplierId, index) {
+    setGoodsList(index) {
       this.formData.orderDetailList[index].goodsId = ''
-      this.formData.orderDetailList[index].goodsList = []
-      this.formData.orderDetailList[index].supplierId = supplierId
-      this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId]
+      let supplierId = this.formData.orderDetailList[index].supplierId
+      if (!supplierId) {
+        return
+      }
 
-      let goodsList = this.goodsListOption[supplierId]
+      this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId].supplierName
+      let goodsType = this.formData.orderDetailList[index].goodsType
+      if (!goodsType) {
+        return
+      }
+
+      let key = supplierId +'_'+ goodsType
+      let goodsList = this.goodsListOptions[key]
       if (!goodsList) {
         request.get('/pms/goods/queryAllList', {
           params: {
-            supplierId: supplierId
+            supplierId, goodsType,
+            goodsStatus: 3,
           }
         }).then(res => {
-          this.goodsListOption[supplierId] = res.data
-          this.formData.orderDetailList[index].goodsList = res.data
-          res.data.forEach(one => {
-            this.goodsMap[one.goodsId] = one
+          goodsList = res.data
+          this.$set(this.goodsListOptions, key, goodsList)
+          goodsList.forEach(goods => {
+            this.goodsMap[goods.goodsId] = goods
           })
         })
       } else {
-        this.goodsListOption[supplierId] = goodsList
-        this.formData.orderDetailList[index].goodsList = goodsList
+        this.$set(this.goodsListOptions, key, goodsList)
       }
-
-
     },
     goodsChangeHandler(goodsId, index) {
-      let goodsInfo = this.getGoodsInfo(goodsId)
+      let goodsInfo = this.goodsMap[goodsId]
       let goodsCode = goodsInfo.goodsCode
       let goodsName = goodsInfo.goodsName
       let taxBid = goodsInfo.taxBid
       let nonTaxBid = goodsInfo.nonTaxBid
-      let taxRate =goodsInfo.taxRate
+      let taxRate = goodsInfo.taxRate
 
       this.formData.orderDetailList[index].goodsId = goodsId
       this.formData.orderDetailList[index].goodsCode = goodsCode
@@ -462,17 +493,11 @@ export default {
       this.formData.orderDetailList[index].taxBid = taxBid
       this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
       this.formData.orderDetailList[index].taxRate = taxRate
+
       if (taxRate) {
-        this.formData.orderDetailList[index].totalTaxBid = taxBid * ParseFloat(taxRate)
-        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * ParseFloat(taxRate)
-
-
-
-
+        this.formData.orderDetailList[index].totalTaxBid = taxBid * parseFloat(taxRate)/100
+        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * parseFloat(taxRate)/100
       }
-    },
-    getGoodsInfo(goodsId) {
-      return this.goodsMap[goodsId]
     },
     goBack() {
       this.$emit('closeOrderDetail')
@@ -497,42 +522,17 @@ export default {
     dialogAddEntry(val) {
       if (val) {
         this.formTitle = "新增入库单"
-        this.formData = {
-          // 都是取当前用户的
-          applyDepart: this.currUser.deptId,
-          applyDepartName: this.currUser.deptName,
-          applyName: this.currUser.nickName,
-          applyUserId: this.currUser.userId,
-          orderType: '0',
-          pmsOrderStatus: '',
-          applyDate: this.monent().format('YYYY-MM-DD'),
-          // 预算类型
-          budgetType: '',
-          applyReason: '',
-          orderBizType: '',
-          recipientId: '',
-          recipientName: '',
-          // 领用部门id
-          recipientDepartId: '',
-          recipientDepartName: '',
-          receiptUrl: '',
-          invoiceNum: '',
-          paymentUrl: '',
-          invoiceUrl: '',
-          consigneeName: '',
-          consigneePhone: '',
-          consigneeAddress: '',
-          orderDetailList: [],
-        }
+        this.formData.orderType = '0'
+        this.formData.applyUserId = this.currUser.userId
+        this.formData.applyName = this.currUser.nickName
+        this.formData.applyDepart = this.currUser.deptId
+        this.formData.applyDepartName = this.currUser.deptName
+        this.formData.applyDate=this.monent().format('YYYY-MM-DD')
 
-        if (this.$refs.form) {
-          this.$refs.form.clearValidate()
-        }
-
-        // 默认有一条数据
-        this.addRow()
         this.getBudgetTypeList()
         this.getSupplierList()
+      } else {
+        this.$refs.form.resetFields()
       }
     },
   }

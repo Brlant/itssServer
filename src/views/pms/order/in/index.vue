@@ -102,6 +102,7 @@
             >新建
             </el-button>
             <el-button
+              v-has-permi="['pms:order:import']"
               type="primary"
               icon="el-icon-upload2"
               @click="importOrder"
@@ -110,6 +111,7 @@
             </el-button>
             <!--        导出-->
             <el-button
+              v-has-permi="['pms:order:export']"
               type="primary"
               icon="el-icon-download"
               @click="exportOrder"
