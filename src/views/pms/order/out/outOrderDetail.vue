@@ -75,36 +75,8 @@
         </el-form-item>
       </el-col>
     </el-row>
-    <!--收货信息收货信息-->
+    <!-- 申请原由 -->
     <el-row :gutter="20">
-      <el-col :span="6">
-        <el-form-item label="收货人" prop="consigneeName">
-          <el-input v-model="formData.consigneeName" :readonly="readonly"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="6">
-        <el-form-item label="收货人电话" prop="consigneePhone">
-          <el-input v-model="formData.consigneePhone" :readonly="readonly"></el-input>
-        </el-form-item>
-      </el-col>
-      <el-col :span="6">
-        <el-form-item label="收货人地址" prop="consigneeAddress">
-          <el-input v-model="formData.consigneeAddress" :readonly="readonly"></el-input>
-        </el-form-item>
-      </el-col>
-    </el-row>
-    <!-- 预算类型&申请原由 -->
-    <el-row :gutter="20">
-      <el-col :span="6">
-        <el-form-item label="预算类型" prop="budgetTypes" :rules="rules.budgetTypes">
-          <el-cascader
-            v-model="formData.budgetTypes"
-            placeholder="请选择预算类型"
-            :options="budgetTypes"
-            :props="{ label: 'budgetName', value: 'budgetId',children: 'childList'}"
-            filterable :disabled="readonly"></el-cascader>
-        </el-form-item>
-      </el-col>
       <el-col :span="12">
         <el-form-item label="申请原由">
           <el-input v-model="formData.applyReason" :readonly="readonly"></el-input>
@@ -308,7 +280,7 @@
         class="pull-right"
         type="danger"
         v-has-permi="['pms:order:cancel']"
-        v-show="formData.pmsOrderStatus !== 3 && formData.pmsOrderStatus !== 5"
+        v-show="formData.cancelButton && formData.pmsOrderStatus !== 3 && formData.pmsOrderStatus !== 5"
         @click="cancelOrder"
       >取消订单
       </el-button>
@@ -574,8 +546,6 @@ export default {
     },
     // 编辑订单
     editOrder() {
-      // console.log('oldStr：', this.oldStr)
-      // console.log('newStr：', this.newStr)
       this.formData.changeFlag = this.needAudit
 
       let params = this.formData
@@ -840,7 +810,7 @@ export default {
     },
     getUserList(keyword) {
       let params = {
-        deptId: this.queryParams.applyDepart,
+        deptId: this.formData.applyDepart,
         nickName: keyword,
         // 用户状态（0正常 1停用）
         status: 0
@@ -849,12 +819,7 @@ export default {
       request.get('system/user/selectUserList', {
         params
       }).then(res => {
-        this.userList = res.rows.map(item => {
-          return {
-            label: item.nickName,
-            value: item.userId
-          }
-        })
+        this.recipientUserList = res.rows
       })
     },
     // 通过递归的方式对当前的部门进行过滤，找到领用人所在的部门

@@ -50,7 +50,7 @@
           <el-form-item label="领用人" prop="applyName" :rules="rules.applyName"
                         v-show="formData.orderBizType === '2-3'">
             <el-select v-model="formData.recipientId" placeholder="请选择领用人" clearable filterable
-                       @change="recipientChange">
+                       remote :remote-method="getRecipientUserList" @change="recipientChange">
               <el-option
                 v-for="item in recipientUserList"
                 :key="item.userId"
@@ -73,36 +73,8 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <!--收货信息收货信息-->
+      <!-- 申请原由 -->
       <el-row :gutter="20">
-        <el-col :span="6">
-          <el-form-item label="收货人" prop="consigneeName">
-            <el-input v-model="formData.consigneeName"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="收货人电话" prop="consigneePhone">
-            <el-input v-model="formData.consigneePhone"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="收货人地址" prop="consigneeAddress">
-            <el-input v-model="formData.consigneeAddress"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <!-- 预算类型&申请原由 -->
-      <el-row :gutter="20">
-        <el-col :span="6">
-          <el-form-item label="预算类型" prop="budgetTypes" :rules="rules.budgetTypes">
-            <el-cascader
-              v-model="formData.budgetTypes"
-              placeholder="请选择预算类型"
-              :options="budgetTypes"
-              :props="{ label: 'budgetName', value: 'budgetId',children: 'childList'}"
-              filterable></el-cascader>
-          </el-form-item>
-        </el-col>
         <el-col :span="12">
           <el-form-item label="申请原由">
             <el-input v-model="formData.applyReason"></el-input>
@@ -351,6 +323,9 @@ export default {
           "supplierName": "",
           "unitPrice": '',
           "taxRate": "",
+          "taxRateId": "",
+          sellingTaxRate:'',
+          sellingTaxRateId:'',
           "amount": '',
           "totalPrice": '',
           "taxBid": '',
@@ -495,30 +470,6 @@ export default {
     },
     addOrder() {
       let params = this.formData
-      params.budgetType = params.budgetTypes.join("-")
-      let budgetTypeNames = []
-      this.budgetTypes.forEach(one => {
-        if (params.budgetTypes[0] === one.budgetId) {
-          budgetTypeNames.push(one.budgetName)
-          if (one.childList) {
-            one.childList.forEach(two => {
-              if (params.budgetTypes[0] === one.budgetId) {
-                budgetTypeNames.push(two.budgetName)
-                if (two.childList) {
-                  two.childList.forEach(three => {
-                    if (params.budgetTypes[0] === one.budgetId) {
-                      budgetTypeNames.push(three.budgetName)
-                    }
-                  })
-                }
-              }
-            })
-          }
-        }
-      })
-
-      params.budgetTypeName = budgetTypeNames.join("-")
-
       let recipientId = params.recipientId
       let user = this.recipientUserList.find(one => one.userId === recipientId)
       if (user) {
@@ -527,6 +478,7 @@ export default {
 
       this.formData.goodsTypeName = this.goodsTypes.find(item => item.dictCode === params.goodsType)?.dictLabel;
       params.sellingTaxRate = this.taxRateList.find(one => one.value === params.sellingTaxRateId).dictLabel
+
       addPmsOrder(params).then((res) => {
         this.$message({
           type: 'success',
@@ -641,9 +593,16 @@ export default {
         this.recipientDeptList = res.data
       })
     },
-    getUserList(keyword) {
+    recipientChange(val) {
+      // 当领用人变化的时候，自动获取到部门
+      if (val) {
+        let deptId = this.recipientUserList.find(one => one.userId === val)?.deptId
+        this.formData.recipientDepartId = deptId
+      }
+    },
+    getRecipientUserList(keyword) {
       let params = {
-        deptId: this.queryParams.applyDepart,
+        deptId: this.formData.recipientDepartId,
         nickName: keyword,
         // 用户状态（0正常 1停用）
         status: 0
@@ -652,38 +611,13 @@ export default {
       request.get('system/user/selectUserList', {
         params
       }).then(res => {
-        this.userList = res.rows.map(item => {
-          return {
-            label: item.nickName,
-            value: item.userId
-          }
-        })
+        this.recipientUserList = res.rows
       })
-    },
-    // 通过递归的方式对当前的部门进行过滤，找到领用人所在的部门
-    deptFilter(dept, deptId) {
-      if (dept.id === deptId) {
-        return true
-      }
-
-      if (dept.children && dept.children.length > 0) {
-        dept.children = dept.children.filter(item => this.deptFilter(item, deptId))
-        return dept.children && dept.children.length > 0
-      }
-
-      return false
     },
     recipientDepartmentChange(deptId) {
       this.formData.recipientId = ''
-      this.getUserList(deptId)
+      this.getRecipientUserList('')
     },
-    recipientChange(recipientId) {
-      if (recipientId) {
-        this.formData.recipientDepartId = this.recipientUserList
-          .find(item => item.userId === this.formData.recipientId)
-          .deptId
-      }
-    }
   },
   computed: {
     // 当前登录用户
@@ -711,7 +645,7 @@ export default {
 
         this.getBudgetTypeList()
         this.getSupplierList()
-        this.getUserList(this.formData.applyDepart)
+        this.getRecipientUserList('')
         this.getDeptList('')
       } else {
         this.$refs.form.resetFields()

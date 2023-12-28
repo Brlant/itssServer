@@ -322,10 +322,9 @@ export default {
         {label: '领用入库', value: '1-4'},
       ],
       budgetTypes: [],
-      // 无需效期，无效期，有效期
+      // 无需效期，有效期
       validityFlagOptions: [
-        {label: '无需效期', value: '0'},
-        {label: '无效期', value: '1'},
+        {label: '无需效期', value: '1'},
         {label: '有效期', value: '2'},
       ]
     }
@@ -455,7 +454,7 @@ export default {
         return
       }
 
-      debugger
+      // debugger
       this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId].supplierName
       let goodsType = this.formData.orderDetailList[index].goodsType
       if (!goodsType) {
