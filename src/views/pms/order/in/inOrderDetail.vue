@@ -93,7 +93,8 @@
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.supplierId`" label-width="0"
                         style="margin-top: 22px"
-                        :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
+                        :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'},
+                         {validator: supplierValidator, trigger: 'change'}]">
             <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                        filterable :disabled="readonly"
                        @change="supplierChangeHandler(scope.$index)">
@@ -221,7 +222,8 @@
           <el-form-item :prop="`orderDetailList.${scope.$index}.actualReceiptAmount`" label-width="0"
                         style="margin-top: 22px"
                         :rules="[{ required: true, message: '数量不能为空', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
-            <el-input v-model.number="scope.row.actualReceiptAmount" placeholder="请输入收货数量"></el-input>
+            <el-input v-model.number="scope.row.actualReceiptAmount" placeholder="请输入收货数量"
+                      :readonly="formData.pmsOrderStatus !== 3"></el-input>
           </el-form-item>
         </template>
       </el-table-column>
@@ -1081,6 +1083,20 @@ export default {
         return false
       }
       return this.goodsListOptions[row.supplierId + '_' + row.goodsType].some(goods => goods.goodsId === row.goodsId)
+    },
+    supplierValidator(rule, value, callback) {
+      let supplierId = value
+      if (value === '') {
+        callback(new Error('请选择供应商'))
+      } else {
+        let supplier = this.supplierOptions.find(one => one.supplierId === supplierId)
+        let validityDate = supplier.validityDate
+        if (this.isOverDate(validityDate)) {
+          callback(new Error('供应商已到期'))
+        } else {
+          callback()
+        }
+      }
     }
   },
   mounted() {

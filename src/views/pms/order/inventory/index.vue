@@ -44,8 +44,7 @@
               placeholder="发起部门"
               :options="deptList"
               :props="{ checkStrictly: true,emitPath:false, value: 'id' }"
-              clearable filterable
-              @change="getUserList"></el-cascader>
+              clearable filterable ></el-cascader>
           </el-form-item>
           <!--搜索重置-->
           <el-form-item>

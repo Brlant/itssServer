@@ -88,7 +88,8 @@
           <template v-slot="scope">
             <el-form-item :prop="`orderDetailList.${scope.$index}.supplierId`" label-width="0"
                           style="margin-top: 22px"
-                          :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
+                          :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'},
+                          {validator: supplierValidator, trigger: 'change'}]">
               <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                          filterable :disabled="readonly"
                          @change="setGoodsList(scope.$index)">
@@ -504,6 +505,20 @@ export default {
     },
     isOverDate(dateStr) {
       return this.monent(dateStr).isBefore(this.monent()) ? '已到期' : ''
+    },
+    supplierValidator(rule, value, callback){
+      let supplierId = value
+      if (value === '') {
+        callback(new Error('请选择供应商'))
+      } else {
+        let supplier = this.supplierOptions.find(one => one.supplierId === supplierId)
+        let validityDate = supplier.validityDate
+        if (this.isOverDate(validityDate)){
+          callback(new Error('供应商已到期'))
+        }else {
+          callback()
+        }
+      }
     }
   },
   computed: {

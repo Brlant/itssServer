@@ -311,6 +311,7 @@ import entryAuditInfo from "@/common/order/audit/orderAuditInfo";
 import boundInfo from '@/views/pms/order/out/outOrderDetail';
 import boundOperationLog from "@/common/order/log/orderLog";
 import boundAuditInfo from "@/common/order/audit/orderAuditInfo";
+import request from '@/utils/request'
 
 export default {
   name: 'index',
@@ -472,17 +473,21 @@ export default {
     this.getDealtWithList()
   },
   methods: {
-    getUserList(query){
+    getUserList(keyword) {
       let params = {
-        pageNum: 1,
-        pageSize: 10,
-        nickName:query,
+        deptId: this.queryParams.applyDepart,
+        nickName: keyword,
+        // 用户状态（0正常 1停用）
+        status: 0
       }
-      getUserList(params).then((res) => {
-        this.createList = res.rows.map(item => {
+
+      request.get('system/user/selectUserList', {
+        params
+      }).then(res => {
+        this.userList = res.rows.map(item => {
           return {
-            value: item.userId,
-            label: item.nickName
+            label: item.nickName,
+            value: item.userId
           }
         })
       })

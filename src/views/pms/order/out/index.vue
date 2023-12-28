@@ -43,12 +43,12 @@
               placeholder="发起部门"
               :options="deptList"
               :props="{ checkStrictly: true,emitPath:false, value: 'id' }"
-              clearable filterable
-              @change="getUserList"></el-cascader>
+              clearable filterable @change="deptChangeHandler"></el-cascader>
           </el-form-item>
           <!-- 申请人-->
           <el-form-item prop="applyUserId">
-            <el-select v-model="queryParams.applyUserId" placeholder="发起人" clearable filterable>
+            <el-select v-model="queryParams.applyUserId" placeholder="发起人" clearable filterable remote
+                       :remote-method="getUserList">
               <el-option
                 v-for="item in userList"
                 :key="item.value"
@@ -418,9 +418,22 @@ export default {
         this.deptList = res.data
       })
     },
-    getUserList(deptId) {
-      queryUserlist({deptId}).then(res => {
-        this.userList = res.data.map(item => {
+    deptChangeHandler(value) {
+      this.queryParams.applyUserId = ''
+      this.getUserList('')
+    },
+    getUserList(keyword) {
+      let params = {
+        deptId: this.queryParams.applyDepart,
+        nickName: keyword,
+        // 用户状态（0正常 1停用）
+        status: 0
+      }
+
+      request.get('system/user/selectUserList', {
+        params
+      }).then(res => {
+        this.userList = res.rows.map(item => {
           return {
             label: item.nickName,
             value: item.userId

@@ -70,14 +70,14 @@
               placeholder="发起部门"
               :options="deptList"
               :props="{ checkStrictly: true,emitPath:false, value: 'id' }"
-              clearable filterable
-              @change="getUserList"></el-cascader>
+              clearable filterable @change="deptChangeHandler"></el-cascader>
           </el-form-item>
         </el-col>
         <el-col :span="3">
           <!-- 申请人-->
           <el-form-item prop="applyUserId">
-            <el-select v-model="queryParams.applyUserId" placeholder="发起人" clearable filterable>
+            <el-select v-model="queryParams.applyUserId" placeholder="发起人" clearable filterable remote
+                       :remote-method="getUserList">
               <el-option
                 v-for="item in userList"
                 :key="item.value"
@@ -191,7 +191,8 @@
     />
 
     <!--    详情弹框-->
-    <el-dialog :visible="dialogEntryDetailsProcessDialog" :title="detailsEntryTitle" width="80%" @close="closeEntryDialog">
+    <el-dialog :visible="dialogEntryDetailsProcessDialog" :title="detailsEntryTitle" width="80%"
+               @close="closeEntryDialog">
       <template v-slot:title>
         <div style="font-weight: bold;font-size: 15px">{{ detailsEntryTitle }}</div>
       </template>
@@ -264,7 +265,8 @@ import OrderAuditInfo from "@/common/order/audit/orderAuditInfo";
 import {getOrderList, importInOrderInfo, exportInOrder, downloadOrderTemplate} from "@/api/pms/order";
 import {queryUserlist} from "@/api/system/user";
 import {treeselect} from "@/api/system/dept";
-import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
+import {getDealtWithList} from '@/api/auditCenter/dealtWith/dealtWith'
+import request from '@/utils/request'
 
 export default {
   name: "InOrderList",
@@ -343,8 +345,8 @@ export default {
       // 发起人，按部门筛选
       userList: [],
       //状态
-      activeEntryStatus:'',
-      reviewedId:'',
+      activeEntryStatus: '',
+      reviewedId: '',
     }
   },
   created() {
@@ -402,7 +404,7 @@ export default {
     /*查询列表内容*/
     getList() {
       let params = this.queryParams;
-      if (params.rangeDate && params.rangeDate.length === 2){
+      if (params.rangeDate && params.rangeDate.length === 2) {
         params.startDate = params.rangeDate[0]
         params.endDate = params.rangeDate[1]
       }
@@ -483,9 +485,22 @@ export default {
         this.deptList = res.data
       })
     },
-    getUserList(deptId) {
-      queryUserlist({deptId}).then(res => {
-        this.userList = res.data.map(item => {
+    deptChangeHandler(value) {
+      this.queryParams.applyUserId = ''
+      this.getUserList('')
+    },
+    getUserList(keyword) {
+      let params = {
+        deptId: this.queryParams.applyDepart,
+        nickName: keyword,
+        // 用户状态（0正常 1停用）
+        status: 0
+      }
+
+      request.get('system/user/selectUserList', {
+        params
+      }).then(res => {
+        this.userList = res.rows.map(item => {
           return {
             label: item.nickName,
             value: item.userId

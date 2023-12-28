@@ -338,9 +338,9 @@
 </template>
 
 <script>
-import {examineOrderInfo, getOrderDetail, editOrderInfo, confirmReceipt, cancelOrderInfo} from '@/api/pms/order'
+import {cancelOrderInfo, editOrderInfo, examineOrderInfo, getOrderDetail} from '@/api/pms/order'
 import request from '@/utils/request'
-import { queryUserlist } from '@/api/system/user'
+import {queryUserlist} from '@/api/system/user'
 import {getDicts} from '@/api/system/dict/data'
 
 export default {
@@ -837,10 +837,23 @@ export default {
         this.recipientDeptList = res.data
       })
     },
-    getUserList(deptId) {
-      this.recipientUserList = []
-      queryUserlist({deptId}).then(res => {
-        this.recipientUserList = res.data
+    getUserList(keyword) {
+      let params = {
+        deptId: this.queryParams.applyDepart,
+        nickName: keyword,
+        // 用户状态（0正常 1停用）
+        status: 0
+      }
+
+      request.get('system/user/selectUserList', {
+        params
+      }).then(res => {
+        this.userList = res.rows.map(item => {
+          return {
+            label: item.nickName,
+            value: item.userId
+          }
+        })
       })
     },
     // 通过递归的方式对当前的部门进行过滤，找到领用人所在的部门
@@ -862,9 +875,7 @@ export default {
     },
     recipientChange(recipientId) {
       if (recipientId) {
-        this.formData.recipientDepartId = this.recipientUserList
-          .find(item => item.userId === this.formData.recipientId)
-          .deptId
+        this.formData.recipientDepartId = this.recipientUserList.find(item => item.userId === this.formData.recipientId).deptId
       }
     },
     hasGoods(row) {
