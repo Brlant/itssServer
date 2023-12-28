@@ -47,17 +47,17 @@
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="收货人" prop="consigneeName">
-          <el-input v-model="formData.consigneeName" :readonly="readonly"></el-input>
+            <el-input v-model="formData.consigneeName" :readonly="readonly"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="收货人电话" prop="consigneePhone">
-          <el-input v-model="formData.consigneePhone" :readonly="readonly"></el-input>
+            <el-input v-model="formData.consigneePhone" :readonly="readonly"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item label="收货人地址" prop="consigneeAddress">
-          <el-input v-model="formData.consigneeAddress" :readonly="readonly"></el-input>
+            <el-input v-model="formData.consigneeAddress" :readonly="readonly"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -70,12 +70,12 @@
               placeholder="请选择预算类型"
               :options="budgetTypes"
               :props="{ label: 'budgetName', value: 'budgetId',children: 'childList'}"
-            filterable :disabled="readonly"></el-cascader>
+              filterable :disabled="readonly"></el-cascader>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="申请原由">
-          <el-input v-model="formData.applyReason" :readonly="readonly"></el-input>
+            <el-input v-model="formData.applyReason" :readonly="readonly"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -84,23 +84,23 @@
       </div>
       <el-table :data="formData.orderDetailList" border>
         <el-table-column type="index" width="60"></el-table-column>
-      <el-table-column prop="supplier" label="供应商名称" min-width="100px">
+        <el-table-column prop="supplier" label="供应商名称" min-width="100px">
           <template v-slot="scope">
             <el-form-item :prop="`orderDetailList.${scope.$index}.supplierId`" label-width="0"
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
-            <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
-                       filterable :disabled="readonly"
-                       @change="getGoodsList(scope.row.supplierId,scope.$index)">
+              <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
+                         filterable :disabled="readonly"
+                         @change="getGoodsList(scope.row.supplierId,scope.$index)">
                 <el-option v-for="(option,index) in supplierOptions" :key="option.supplierId"
                            :label="option.supplierName"
-                         :value="option.supplierId"
-                         :disabled="option.disabaled"
-                         :title="isOverDate(option.validityDate)">
+                           :value="option.supplierId"
+                           :disabled="option.disabaled"
+                           :title="isOverDate(option.validityDate)">
                 <span style="float: left;color: red" v-if="isOverDate(option.validityDate)">{{
                     option.supplierName
                   }}</span>
-                <span style="float: left" v-else>{{ option.supplierName }}</span>
+                  <span style="float: left" v-else>{{ option.supplierName }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ option.supplierCode }}</span>
                 </el-option>
               </el-select>
@@ -112,14 +112,14 @@
             <el-form-item :prop="`orderDetailList.${scope.$index}.goodsType`" label-width="0"
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
-            <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly">
-              <el-option
-                v-for="(item,index) in goodsTypes"
-                :key="index"
-                :label="item.dictLabel"
-                :value="item.dictCode"
-                :disabled="item.status !== '0'"
-              />
+              <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly">
+                <el-option
+                  v-for="(item,index) in goodsTypes"
+                  :key="index"
+                  :label="item.dictLabel"
+                  :value="item.dictCode"
+                  :disabled="item.status !== '0'"
+                />
               </el-select>
             </el-form-item>
           </template>
@@ -129,15 +129,15 @@
             <el-form-item :prop="`orderDetailList.${scope.$index}.goodsCode`" label-width="0"
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品编号'}]">
-            <el-select v-model="scope.row.goodsId" placeholder="请选择物品编号" style="width: 100%"
-                       filterable :disabled="readonly"
-                       @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
+              <el-select v-model="scope.row.goodsId" placeholder="请选择物品编号" style="width: 100%"
+                         filterable :disabled="readonly"
+                         @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
                 <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
                            :key="option.goodsId"
                            :label="option.goodsCode"
-                :value="option.goodsId"
-                :disabled="option.disabled"
-              ></el-option>
+                           :value="option.goodsId"
+                           :disabled="option.disabled"
+                ></el-option>
               </el-select>
             </el-form-item>
           </template>
@@ -147,15 +147,15 @@
             <el-form-item :prop="`orderDetailList.${scope.$index}.goodsName`" label-width="0"
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品名称'}]">
-            <el-select v-model="scope.row.goodsId" placeholder="请选择物品名称" style="width: 100%"
-                       filterable :disabled="readonly"
-                       @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
+              <el-select v-model="scope.row.goodsId" placeholder="请选择物品名称" style="width: 100%"
+                         filterable :disabled="readonly"
+                         @change="goodsChangeHandler(scope.row.goodsId,scope.$index)">
                 <el-option v-for="option in formData.orderDetailList[scope.$index].goodsList"
                            :key="option.goodsId"
                            :label="option.goodsName"
-                :value="option.goodsId"
-                :disabled="option.disabled"
-              ></el-option>
+                           :value="option.goodsId"
+                           :disabled="option.disabled"
+                ></el-option>
               </el-select>
             </el-form-item>
           </template>
@@ -167,7 +167,7 @@
         </el-table-column>
         <el-table-column prop="taxRate" label="税率">
           <template v-slot="scope">
-            <span>{{ scope.row.taxRateName }}</span>
+            <span>{{ scope.row.taxRate}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="priceWithoutTax" label="不含税进价">
@@ -181,7 +181,7 @@
                           style="margin-top: 22px"
                           :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
               <el-input @input="calculateTotal(scope.row)"
-                      v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
+                        v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
             </el-form-item>
           </template>
         </el-table-column>
@@ -305,7 +305,7 @@ export default {
     }
   },
   methods: {
-    getGoodsTypes(){
+    getGoodsTypes() {
       return getDicts('goods_types').then((res) => {
         this.goodsTypes = res.data
       })
@@ -401,13 +401,13 @@ export default {
       })
     },
     getSupplierList(keyword = '') {
-      request.post('/pms/supplier/queryOverview', {
+      let params = {
         codeNameKey: keyword,
-        supplierStatus: 3,// 只查询启用的
-        pageNum: 1,
-        pageSize: 1000
-      }).then((res) => {
-        this.supplierOptions = res.data.rows
+        supplierStatus: 3,
+      }
+      // 查询供应商下拉列表
+      request.post('pms/supplier/getSupplierList', params).then((res) => {
+        this.supplierOptions = res.data
         this.supplierOptions.forEach(one => {
           this.supplierMap[one.supplierId] = one.supplierName
         })
@@ -454,18 +454,21 @@ export default {
       let goodsName = goodsInfo.goodsName
       let taxBid = goodsInfo.taxBid
       let nonTaxBid = goodsInfo.nonTaxBid
-      let taxRate = Number(goodsInfo.taxRate)
+      let taxRate =goodsInfo.taxRate
 
-        this.formData.orderDetailList[index].goodsId = goodsId
-        this.formData.orderDetailList[index].goodsCode = goodsCode
-        this.formData.orderDetailList[index].goodsName = goodsName
-        this.formData.orderDetailList[index].taxBid = taxBid
-        this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
-        this.formData.orderDetailList[index].taxRate = taxRate
-        if (taxRate) {
-          this.formData.orderDetailList[index].taxRateName = (taxRate * 100) + '%'
-        this.formData.orderDetailList[index].totalTaxBid = taxBid * taxRate
-        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * taxRate
+      this.formData.orderDetailList[index].goodsId = goodsId
+      this.formData.orderDetailList[index].goodsCode = goodsCode
+      this.formData.orderDetailList[index].goodsName = goodsName
+      this.formData.orderDetailList[index].taxBid = taxBid
+      this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
+      this.formData.orderDetailList[index].taxRate = taxRate
+      if (taxRate) {
+        this.formData.orderDetailList[index].totalTaxBid = taxBid * ParseFloat(taxRate)
+        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * ParseFloat(taxRate)
+
+
+
+
       }
     },
     getGoodsInfo(goodsId) {
