@@ -66,12 +66,12 @@
       <el-table-column label="流程名称" align="center" prop="modelName"/>
       <el-table-column label="档案/单据编号" align="center" prop="relationCode"/>
       <el-table-column label="档案/单据名称" align="center" prop="relationName"/>
-      <el-table-column label="发起人" align="center" prop="promoterId">
-        <template slot-scope="scope">
-          <div v-if="scope.row.promoterId === queryParams.promoterId">
-            {{ queryParams.remark }}
-          </div>
-        </template>
+      <el-table-column label="发起人" align="center" prop="promoterName">
+<!--        <template slot-scope="scope">-->
+<!--          <div v-if="scope.row.promoterId === queryParams.promoterId">-->
+<!--            {{ queryParams.remark }}-->
+<!--          </div>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column label="申请时间" align="center" prop="applyTime"/>
       <el-table-column label="状态" align="center" prop="examineStatus">
