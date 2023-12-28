@@ -436,7 +436,7 @@ export default {
     // 新增供应商
     addSupplier() {
       supplierApi.addSupplier(this.formData).then(res => {
-        if (res.data.code === 200) {
+        if (res.code === 200) {
           this.$message.success('新增成功')
           this.closeHandler()
         } else {
