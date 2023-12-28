@@ -86,7 +86,13 @@
       <el-table-column label="库存数量" align="center" prop="amount"/>
       <el-table-column label="含税总进价" align="center" prop="totalTaxBid"/>
       <el-table-column label="不含税总进价" align="center" prop="nonTotalTaxBid"/>
-      <el-table-column label="有效期" align="center" prop="validityDate"/>
+      <el-table-column label="有效期" align="center" prop="validityDate" >
+        <template v-slot="{ row }">
+          <span v-if="row.validityDate" :style="{ color: isPast(row.validityDate) ? 'red' : 'black' }">
+            {{row.validityDate}}
+          </span>
+        </template>
+      </el-table-column>
     </el-table>
 
     <!--    翻页-->
@@ -154,6 +160,11 @@ export default {
     this.getGoodsTypes()
   },
   methods: {
+    isPast(date) {
+      const now = new Date();
+      const past = new Date(date);
+      return past.getTime() < now.getTime();
+    },
     /* 导出 */
     exportExcel(){
       inventoryApi.exportInventoryLog(this.queryParams).then()
@@ -231,7 +242,7 @@ export default {
     },
     getGoodsTypes(){
       return getDicts('goods_types').then((res) => {
-        this.goodsTypes = res.data
+        this.goodsTypes = res.data.filter(item => item.dictLabel !== '服务');
       })
     }
   }
