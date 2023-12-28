@@ -215,7 +215,6 @@
           <el-form-item :label="'联系人' + (index + 1)" :prop="'contactsInfoList.' + index +'.contactsName'"
                         :rules="[
                           { required: true, message: '请输入手机号', trigger: 'blur' },
-                          { pattern: /^[0-9]*$/, message: '请输入正整数0-9', trigger: 'blur' },
                         ]">
             <el-input v-model="contact.contactsName" placeholder="请输入联系人姓名" :readonly="readonly" maxlength="30" show-word-limit></el-input>
           </el-form-item>
@@ -227,7 +226,8 @@
         </el-col>
         <el-col :span="5">
           <el-form-item label="手机号" :prop="'contactsInfoList.' + index +'.contactsPhone'"
-                        :rules="[{ required: true, message: '请输入手机号', trigger: 'blur' }]">
+                        :rules="[{ required: true, message: '请输入手机号', trigger: 'blur' },
+                        { pattern: /^[0-9]*$/, message: '请输入正整数0-9', trigger: 'blur' },]">
             <el-input v-model="contact.contactsPhone" placeholder="请输入手机号" :readonly="readonly" maxlength="11" show-word-limit></el-input>
           </el-form-item>
         </el-col>
