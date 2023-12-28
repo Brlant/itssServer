@@ -361,10 +361,12 @@ export default {
     // 打开新增/编辑弹框
     showSupplierForm() {
       this.supplierFormData.showFlag = true
+      this.getSupplierList()
     },
     // 关闭新增/编辑弹框
     closeSupplierForm() {
       this.supplierFormData.showFlag = false
+      this.getSupplierList()
     },
     /**供应商列表查询*/
     getSupplierList() {
