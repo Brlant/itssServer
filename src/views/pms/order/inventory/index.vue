@@ -69,10 +69,9 @@
       <el-table-column label="物品名称" align="center" prop="goodsName"/>
       <el-table-column label="物品类型" align="center" prop="goodsType">
         <template v-slot="{ row }">
-          <span v-if="row.goodsType === 1">固定资产</span>
-          <span v-if="row.goodsType === 2">易耗品</span>
-          <span v-if="row.goodsType === 3">服务</span>
-          <span v-if="row.goodsType === 4">销售品</span>
+          <div v-for="(item,index) in goodsTypes">
+            <span v-if="row.goodsType  === item.dictCode">{{item.dictLabel}}</span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="物品类目" align="center" prop="goodsClassifyName"/>
@@ -81,13 +80,9 @@
       <el-table-column label="单位" align="center" prop="goodsUnit"/>
       <el-table-column label="供应商" align="center" prop="supplierName"/>
       <el-table-column label="含税进价" align="center" prop="taxBid"/>
-      <el-table-column label="税率" align="center" prop="taxRate">
-        <template v-slot="{ row }">
-          <span>{{row.taxRate * 100}}%</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="税率" align="center" prop="taxRate" />
       <el-table-column label="不含税进价" align="center" prop="nonTaxBid"/>
-      <el-table-column label="库存数量" align="center" prop="availableNum"/>
+      <el-table-column label="库存数量" align="center" prop="amount"/>
       <el-table-column label="含税总进价" align="center" prop="totalTaxBid"/>
       <el-table-column label="不含税总进价" align="center" prop="nonTotalTaxBid"/>
       <el-table-column label="有效期" align="center" prop="validityDate"/>
@@ -205,6 +200,7 @@ export default {
 
       inventoryApi.queryInventory(params).then((res) => {
         this.handleList = res.data.rows;
+        console.log(res.data.rows)
         this.queryParams.total = res.data.total;
         this.loading = false;
       })

@@ -28,12 +28,13 @@
           <el-col :span="8">
             <el-form-item prop="supplierId" label="供应商">
               <el-select v-model="formData.supplierId" filterable :filter-method="getSupplierList" placeholder="供应商"
+                         @change="handleGetSupplier"
                          clearable>
                 <el-option
                   v-for="(item,index) in supplierList"
                   :key="index"
-                  :label="item.label"
-                  :value="item.value"
+                  :label="item.supplierName"
+                  :value="item.supplierId"
                 />
               </el-select>
             </el-form-item>
@@ -245,6 +246,7 @@ export default {
         goodsType: '',
         goodsName: '',
         supplierId: '',
+        supplierCode:'',
         goodsUnitId: '',
         taxBid: '',
         taxRate: '',
@@ -340,27 +342,30 @@ export default {
     },
     /* 获取上级类目列表 */
     getCategoryList() {
-      categoryApi.getCategoryList().then(res => {
+      const params = {
+        categoryStatus: 1,
+      }
+      categoryApi.getCategoryList(params).then(res => {
         this.categoryList = res.rows;
       })
     },
     handleChange(query) {
       this.formData.goodsClassify = query;
     },
-
+    handleGetSupplier(query){
+      const queryName = this.supplierList.find(res => res.supplierId === query)?.supplierCode
+      this.formData.supplierCode = queryName
+    },
     getSupplierList(query) {
+      // this.formData.supplierCode = query;
+      // console.log(this.formData.supplierCode)
       let params = {
         codeNameKey: query,
         supplierStatus: 3,
       }
       // 查询供应商下拉列表
       request.post('pms/supplier/getSupplierList',params).then((res) => {
-        this.supplierList = res.data.map(item => {
-          return {
-            value: item.supplierId,
-            label: item.supplierName
-          }
-        })
+        this.supplierList = res.data
       })
     },
     /*关闭新建弹框*/

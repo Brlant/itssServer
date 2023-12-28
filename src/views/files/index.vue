@@ -93,11 +93,14 @@
       <el-table-column prop="goodsCode" label="物品编号"></el-table-column>
       <el-table-column prop="goodsName" label="物品名称"></el-table-column>
       <el-table-column prop="goodsType" label="物品类型">
-        <template slot-scope="scope">
-          <span v-if="scope.row.goodsType === 1">固定资产</span>
-          <span v-if="scope.row.goodsType === 2">消耗品</span>
-          <span v-if="scope.row.goodsType === 3">服务</span>
-          <span v-if="scope.row.goodsType === 4">销售品</span>
+        <template slot-scope="scope" >
+          <div v-for="(item,index) in goodsTypes">
+            <span v-if="scope.row.goodsType  === item.dictCode">{{item.dictLabel}}</span>
+          </div>
+<!--          <span v-if="scope.row.goodsType === 1">固定资产</span>-->
+<!--          <span v-if="scope.row.goodsType === 2">消耗品</span>-->
+<!--          <span v-if="scope.row.goodsType === 3">服务</span>-->
+<!--          <span v-if="scope.row.goodsType === 4">销售品</span>-->
         </template>
       </el-table-column>
       <el-table-column prop="goodsModel" label="型号"></el-table-column>
@@ -444,6 +447,7 @@ export default {
     },
     getGoodsTypes(){
       return getDicts('goods_types').then((res) => {
+        console.log(res.data)
         this.goodsTypes = res.data
       })
     }

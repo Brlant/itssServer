@@ -31,6 +31,7 @@
           <el-form-item prop="supplierId" label="供应商">
             <el-select v-model="formData.supplierId" filterable :filter-method="getSupplierList" placeholder="供应商"
                        :disabled="readonly" clearable
+                       @change="handleGetSupplier"
                        :title='formData.supplierName'
             >
               <el-option
@@ -272,6 +273,8 @@ export default {
       handler(newVal, oldVal) {
         if (newVal && newVal.goodsId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
+          this.backData = newVal
+          console.log(this.backData,'旧数据')
         }
       },
       immediate: true,
@@ -280,11 +283,13 @@ export default {
   },
   data() {
     return {
+      backData: '',
       formData: {
         goodsCode: '',
         goodsType: '',
         goodsName: '',
         supplierId: '',
+        supplierName:'',
         goodsUnit: '',
         goodsUnitId: '',
         taxBid: '',
@@ -336,11 +341,10 @@ export default {
   },
   computed: {
     nonTaxBid(){
-      let taxRate = this.taxRateList.find(item => item.dictCode === this.formData.taxRateId)?.label;
+      let taxRate = this.taxRateList.find(item => item.dictCode === this.formData.taxRateId)?.dictLabel;
       if (taxRate){
         return this.formData.taxBid / (1 + Number.parseFloat(taxRate)/100);
       }
-
       return ''
     },
     readonly() {
@@ -594,6 +598,10 @@ export default {
         this.categoryList = res.rows
       })
     },
+    handleGetSupplier(query){
+      const queryName = this.supplierList.find(res => res.supplierId === query)?.supplierCode
+      this.formData.supplierCode = queryName
+    },
     getSupplierList(query) {
       let params = {
         codeNameKey: query,
@@ -611,6 +619,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.formData.nonTaxBid = this.nonTaxBid;
+        let changes = Object.keys(this.formData).some(key => this.formData[key] !== this.backData[key]);
         this.$refs.formData.validate((valid) => {
           if (valid) {
             // 在这里可以进行表单提交操作，比如调用接口提交数据
@@ -627,6 +636,9 @@ export default {
       })
     },
     updateSupplier(){
+      if(this.needAudit === false){
+        return this.$message.error('内容未做任何修改，无需提交')
+      }
       this.formData.changeFlag = this.needAudit
       this.formData.goodsTypeName = this.goodsTypes.find(item => item.dictCode === this.formData.goodsType)?.dictLabel
       this.formData.goodsUnit = this.goodsTypes.find(item => item.dictCode === this.formData.goodsUnitId)?.dictLabel
