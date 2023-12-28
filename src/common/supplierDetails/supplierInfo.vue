@@ -249,18 +249,21 @@
         v-show="formData.supplierStatus === 5"
         icon="el-icon-delete"
         @click="enableSupplier(formData.supplierId, 3)"
+        v-has-permi="['pms:supplier:enable']"
       >启用
       </el-button>
       <el-button
         v-show="formData.supplierStatus === 3"
         icon="el-icon-delete"
         @click="enableSupplier(formData.supplierId, 5)"
+        v-has-permi="['pms:supplier:enable']"
       >停用
       </el-button>
       <el-button
         v-show="formData.supplierStatus === 5 || formData.supplierStatus === 3"
         icon="el-icon-delete"
         @click="enableSupplier(formData.supplierId, 6)"
+        v-has-permi="['pms:supplier:enable']"
       >淘汰
       </el-button>
       <el-button

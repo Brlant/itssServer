@@ -211,6 +211,7 @@
           v-show="formData.goodsStatus === 5"
           icon="el-icon-delete"
           @click="enableFiles(formData.goodsId, 3)"
+          v-has-permi="['pms:goods:enable']"
         >启用
         </el-button>
 
@@ -218,6 +219,7 @@
           v-show="formData.goodsStatus === 3"
           icon="el-icon-delete"
           @click="stopFiles(formData.goodsId, 5)"
+          v-has-permi="['pms:goods:enable']"
         >停用
         </el-button>
         <el-button
@@ -248,6 +250,7 @@
                    icon="el-icon-edit"
                    v-show="formData.goodsStatus === 2 || formData.goodsStatus === 3 || formData.goodsStatus === 4"
                    @click="submitForm"
+                   v-has-permi="['pms:goods:edit']"
         >重新提交
         </el-button>
       </el-form-item>

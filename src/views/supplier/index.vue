@@ -71,6 +71,7 @@
           type="primary"
           @click="supplierAdd"
           icon="el-icon-plus"
+          v-has-permi="['pms:supplier:add']"
         >
           新建
         </el-button>
@@ -79,6 +80,7 @@
           type="primary"
           icon="el-icon-upload2"
           @click="supplierImport"
+          v-has-permi="['pms:supplier:import']"
         >
           导入新建/修改
         </el-button>
@@ -87,6 +89,7 @@
           type="primary"
           icon="el-icon-download"
           @click="exportSupplier"
+          v-has-permi="['pms:supplier:export']"
         >
           导出
         </el-button>

@@ -291,19 +291,23 @@
         <el-button
           type="primary"
           v-if="btnEnable"
+          v-has-permi="['pms:contract:enable']"
           @click="editContractStatus(3)">启用
         </el-button>
         <el-button
           type="danger"
           v-if="btnUnable"
+          v-has-permi="['pms:contract:enable']"
           @click="editContractStatus(5)">停用
         </el-button>
         <el-button type="primary"
                    v-if="btnSumbit"
+                   v-has-permi="['pms:contract:export']"
                    @click="modifyContract">重新提交
         </el-button>
         <el-button type="danger"
                    v-if="btnDelete"
+                   v-has-permi="['pms:contract:delete']"
                    @click="removeContract">删除
         </el-button>
         <el-button @click="() => $emit('closeDetail')">返回</el-button>

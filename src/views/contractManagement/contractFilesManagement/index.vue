@@ -94,6 +94,7 @@
             type="primary"
             icon="el-icon-plus"
             @click="addFiles"
+            v-hasPermi="['pms:contract:add']"
           >新建
           </el-button>
           <!--        导出-->
@@ -101,6 +102,7 @@
             type="primary"
             icon="el-icon-download"
             @click="exportContract"
+            v-hasPermi="['pms:contract:export']"
           >导出
           </el-button>
         </el-form>
