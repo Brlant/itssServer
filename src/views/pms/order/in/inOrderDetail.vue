@@ -26,7 +26,8 @@
         </el-form-item>
       </el-col>
       <el-col :span="6">
-        <el-form-item  label="出库单号" prop="outOrderNo" required v-if=" formData.orderBizType==='1-4' && formData.outOrderNo ">
+        <el-form-item label="出库单号" prop="outOrderNo" required
+                      v-if=" formData.orderBizType==='1-4' && formData.outOrderNo ">
           <el-input v-model="formData.outOrderNo" disabled></el-input>
         </el-form-item>
       </el-col>
@@ -671,7 +672,7 @@ export default {
           return {
             ...item,
             // 默认收货数量是申请数量
-            actualReceiptAmount: item.actualReceiptAmount || item.amount
+            actualReceiptAmount: item.pmsOrderStatus === 3 ? item.amount : item.actualReceiptAmount
           }
         })
 

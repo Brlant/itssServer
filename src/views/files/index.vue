@@ -184,7 +184,7 @@
         </el-button>
       </div>
       <div>
-        <el-upload drag :action="importSupplierAction"
+        <el-upload drag action="#"
                    :on-change="importSuccessHandler"
                    :auto-upload="false"
                    :on-error="importErrorHandler"
@@ -449,7 +449,6 @@ export default {
     },
     getGoodsTypes(){
       return getDicts('goods_types').then((res) => {
-        console.log(res.data)
         this.goodsTypes = res.data
       })
     }
