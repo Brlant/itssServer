@@ -202,7 +202,7 @@
         <el-row :gutter="20">
           <!-- 提交按钮 -->
           <el-col>
-            <el-button type="primary" @click="submitForm">提交</el-button>
+            <el-button type="primary" @click="submitForm" :disabled="doing">提交</el-button>
             <el-button @click="closeAddFiles">返回</el-button>
           </el-col>
         </el-row>
@@ -240,6 +240,7 @@ export default {
 
   data() {
     return {
+      doing:false,
       formTitle: "基本信息",
       formData: {
         taxRateId: '',
@@ -377,6 +378,8 @@ export default {
       this.$emit('closeAddFiles');
     },
     submitForm() {
+      if (this.doing) return;
+      this.doing = true;
       this.$refs.formRef.validate((valid) => {
         if (valid) {
           this.formData.goodsUnit = this.unitList.find(item => item.dictCode === this.formData.goodsUnitId)?.dictLabel;
@@ -384,11 +387,15 @@ export default {
           this.formData.goodsTypeName = this.goodsTypes.find(item => item.dictCode === this.formData.goodsType)?.dictLabel;
           filesApi.addFiles(this.formData).then(res => {
             if (res.code === 200) {
+              this.doing = false;
               this.$notify.success('新增成功')
               this.closeAddFiles();
             }
+          }).catch(error=>{
+            this.doing = false;
           })
         } else {
+          this.doing = false;
           // 表单验证失败
           return false;
         }

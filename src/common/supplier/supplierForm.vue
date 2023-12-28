@@ -244,7 +244,7 @@
       </div>
 
       <el-form-item>
-        <el-button type="primary" @click="submitForm">提交</el-button>
+        <el-button type="primary" @click="submitForm" :disabled="doing">提交</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -275,6 +275,7 @@ export default {
   },
   data() {
     return {
+      doing:false,
       formData: {
         //基本信息
         supplierName: '',
@@ -421,11 +422,14 @@ export default {
     },
     /*表单校验提交*/
     submitForm() {
+      if (this.doing) return;
+      this.doing = true;
       this.$refs.form.validate(valid => {
         if (valid) {
           // 表单验证通过，可以在这里进行提交操作
           this.saveSupplier()
         } else {
+          this.doing = false;
           return false;
         }
       });
@@ -443,9 +447,11 @@ export default {
       supplierApi.addSupplier(this.formData).then(res => {
         if (res.code === 200) {
           this.$message.success('新增成功')
+          this.doing = false;
           this.closeHandler()
         } else {
           this.$message.error(res.data.message)
+          this.doing = false;
         }
       })
     },
@@ -454,10 +460,13 @@ export default {
       supplierApi.updateSupplier(this.formData).then(res => {
         if (res.data.code === 200) {
           this.$message.success('编辑成功')
+          this.doing = false;
           this.closeHandler()
         } else {
           this.$message.error(res.data.message)
         }
+      }).catch(err => {
+        this.doing = false;
       })
     },
     attachmentUploadBeforeHandler(file) {

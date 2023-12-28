@@ -216,7 +216,7 @@
       </el-table>
       <!-- 提交按钮 -->
       <el-form-item style="margin-top: 22px">
-        <el-button type="primary" @click="submitForm">提交</el-button>
+        <el-button type="primary" @click="submitForm" :disabled="doing">提交</el-button>
         <el-button @click="handleEntryClose">返回</el-button>
       </el-form-item>
 
@@ -239,6 +239,7 @@ export default {
   },
   data() {
     return {
+      doing:false,
       formTitle: "基本信息",
       formData: {
         applyDepart: '',
@@ -378,10 +379,14 @@ export default {
       row.nonTotalTaxBid = row.nonTaxBid * row.amount;
     },
     submitForm() {
+      if (this.doing) return;
+      this.doing = true;
       this.$refs.form.validate((valid) => {
         if (valid) {
           // 在这里处理表单提交逻辑
           this.addOrder()
+        }else{
+          this.doing = false;
         }
       });
     },
@@ -417,8 +422,10 @@ export default {
           type: 'success',
           message: '提交成功'
         });
+        this.doing = false;
         this.handleEntryClose()
       }).catch(err => {
+        this.doing = false;
         this.$message({
           type: 'error',
           message: err.message
