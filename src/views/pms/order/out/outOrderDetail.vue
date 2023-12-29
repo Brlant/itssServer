@@ -209,8 +209,11 @@
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
                         style="margin-top: 22px"
-                        :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
-            <el-input @input="calculateTotal(scope.row)"
+                        :rules="[
+                          {required: true, message: '请输入数量', trigger: 'blur'},
+                          {type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'},
+                          ]">
+            <el-input @input="calculateTotal(scope.row,scope.$index)"
                       v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
           </el-form-item>
         </template>
@@ -683,7 +686,12 @@ export default {
     deleteRow(index) {
       this.formData.orderDetailList.splice(index, 1);
     },
-    calculateTotal(row) {
+    calculateTotal(row,index) {
+      const regex = /^\d+$/;
+      if (!regex.test(row.amount)) {
+        this.formData.orderDetailList[index].amount = '';
+        return this.$notify.error('只能输入整数')
+      }
       // row.totalTaxBid = row.taxBid * row.taxRate * row.amount;
       row.totalTaxBid = row.taxBid * row.amount;
       // row.nonTotalTaxBid = row.nonTaxBid * row.taxRate * row.amount;
