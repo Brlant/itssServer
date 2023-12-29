@@ -88,7 +88,7 @@
     </div>
     <el-table :data="formData.orderDetailList" border>
       <el-table-column type="index" width="60"></el-table-column>
-      <el-table-column prop="supplier" label="供应商名称" min-width="100px">
+      <el-table-column prop="supplier" label="供应商名称" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.supplierId`" label-width="0"
                         style="margin-top: 22px"
@@ -112,7 +112,7 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="type" label="物品类型">
+      <el-table-column prop="type" label="物品类型" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsType`" label-width="0"
                         style="margin-top: 22px"
@@ -130,7 +130,7 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="code" label="物品编号">
+      <el-table-column prop="code" label="物品编号" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsCode`" label-width="0"
                         style="margin-top: 22px"
@@ -155,7 +155,7 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="物品名称">
+      <el-table-column prop="name" label="物品名称" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsName`" label-width="0"
                         style="margin-top: 22px"
@@ -180,32 +180,32 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="price" label="含税进价">
+      <el-table-column prop="price" label="含税进价" min-width="150px">
         <template v-slot="scope">
           <span>{{ scope.row.taxBid }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="taxRate" label="税率">
+      <el-table-column prop="taxRate" label="税率" min-width="150px">
         <template v-slot="scope">
           <span>{{ scope.row.taxRate }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="priceWithoutTax" label="不含税进价">
+      <el-table-column prop="priceWithoutTax" label="不含税进价" min-width="150px">
         <template v-slot="scope">
           <span>{{ scope.row.nonTaxBid }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="stockNum" label="库存数量">
+      <el-table-column prop="stockNum" label="库存数量" min-width="150px">
         <template v-slot="scope">
           <span>{{ scope.row.stockNum }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="availableNum" label="可用数量">
+      <el-table-column prop="availableNum" label="可用数量" min-width="150px">
         <template v-slot="scope">
           <span>{{ scope.row.availableNum }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="amount" label="数量">
+      <el-table-column prop="amount" label="数量" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
                         style="margin-top: 22px"
@@ -218,17 +218,17 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="totalPrice" label="含税总进价">
+      <el-table-column prop="totalPrice" label="含税总进价" min-width="150px">
         <template v-slot="scope">
           <span>{{ scope.row.totalTaxBid }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="totalPriceWithoutTax" label="不含税总进价">
+      <el-table-column prop="totalPriceWithoutTax" label="不含税总进价" min-width="150px">
         <template v-slot="scope">
           <span>{{ scope.row.nonTotalTaxBid }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="totalPrice" label="含税售价"
+      <el-table-column prop="totalPrice" label="含税售价" min-width="150px"
                        v-if="formData.orderBizType === '2-0'">
         <template v-slot="scope">
           <el-input v-model.number="scope.row.taxPrice" placeholder="请输入含税售价"
@@ -236,7 +236,7 @@
                     @input="calculatePrice(scope.row)"></el-input>
         </template>
       </el-table-column>
-      <el-table-column prop="taxRate" label="税率" v-if="formData.orderBizType === '2-0'">
+      <el-table-column prop="taxRate" label="税率" v-if="formData.orderBizType === '2-0'" min-width="150px">
         <template v-slot="scope">
           <el-select v-model.number="scope.row.sellingTaxRateId" placeholder="请选择税率" clearable
                      @change="calculatePrice(scope.row)">
@@ -250,17 +250,17 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column prop="totalPriceWithoutTax" label="不含税售价" v-if="formData.orderBizType === '2-0'">
+      <el-table-column prop="totalPriceWithoutTax" label="不含税售价" v-if="formData.orderBizType === '2-0'" min-width="150px">
         <template v-slot="scope">
           <span>{{ scope.row.nonTaxPrice }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="totalPriceWithoutTax" label="毛利率" v-if="formData.orderBizType === '2-0'">
+      <el-table-column prop="totalPriceWithoutTax" label="毛利率" v-if="formData.orderBizType === '2-0'" min-width="150px">
         <template v-slot="scope">
           <span>{{ scope.row.grossMargin }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="50px" v-if="!readonly">
+      <el-table-column width="50px" v-if="!readonly" min-width="150px">
         <template v-slot="scope">
           <el-row :gutter="20">
             <el-col :span="24">
