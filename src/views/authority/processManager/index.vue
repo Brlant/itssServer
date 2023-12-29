@@ -22,6 +22,7 @@
           <el-button
             size="mini"
             type="text"
+            v-hasPermi="['pms:examine:edit']"
             icon="el-icon-edit"
             @click="showEditProcessDialog(scope.row,scope.row.activeModelId)"
           >编辑

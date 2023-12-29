@@ -163,7 +163,7 @@
       <!-- 表单按钮 -->
       <el-form-item>
         <el-button type="primary"
-                   @click="submitForm">提交
+                   @click="submitForm" :disabled="doing">提交
         </el-button>
         <el-button @click="closeAddFiles">返回</el-button>
       </el-form-item>
@@ -187,6 +187,7 @@ export default {
   },
   data() {
     return {
+      doing:false,
       uploadUrl: uploadUrl,
       formTitle: "合同档案信息",
       supplierList: [],
@@ -267,6 +268,8 @@ export default {
       this.formData.scanningCopyUrl = null;
     },
     submitForm() {
+      if (this.doing) return;
+      this.doing = true;
       this.$refs.contractForm.validate(valid => {
         if (valid) {
           // 表单验证通过
@@ -278,9 +281,11 @@ export default {
             // console.log(res);
             if (res.code === 200) {
               this.$message.success(res.msg);
+              this.doing = false;
               this.$emit('closeAddFiles', true);
             }
           }).catch(err => {
+            this.doing = false;
             console.error(err);
           });
           //
@@ -289,6 +294,8 @@ export default {
           //   // 表单验证失败
           //   console.log('error submit');
           //   return false;
+        }else{
+          this.doing = false;
         }
       });
     },
@@ -300,11 +307,13 @@ export default {
     //   console.log(file, fileList);
     // },
     handleSuccess(res, file) {
+      console.log(file.raw.type)
       const isPNG = file.raw.type === 'image/png';
       const isJPG = file.raw.type === 'image/jpg';
+      const isJPEG = file.raw.type === 'image/jpeg';
       const isPDF = file.raw.type === 'application/pdf';
 
-      if (!isPNG && !isJPG && !isPDF) {
+      if (!isPNG && !isJPG && !isJPEG && !isPDF) {
         this.$message.error('只能上传PNG、JPG图片或PDF文件');
         return false;
       }

@@ -66,12 +66,12 @@
       <el-table-column label="流程名称" align="center" prop="modelName"/>
       <el-table-column label="档案/单据编号" align="center" prop="relationCode"/>
       <el-table-column label="档案/单据名称" align="center" prop="relationName"/>
-      <el-table-column label="发起人" align="center" prop="promoterId">
-        <template slot-scope="scope">
-          <div v-if="scope.row.promoterId === queryParams.promoterId">
-            {{ queryParams.remark }}
-          </div>
-        </template>
+      <el-table-column label="发起人" align="center" prop="promoterName">
+<!--        <template slot-scope="scope">-->
+<!--          <div v-if="scope.row.promoterId === queryParams.promoterId">-->
+<!--            {{ queryParams.remark }}-->
+<!--          </div>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column label="申请时间" align="center" prop="applyTime"/>
       <el-table-column label="状态" align="center" prop="examineStatus">
@@ -85,13 +85,11 @@
           <span v-if="scope.row.examineStatus === 2" style="color: black">
             审核不通过
           </span>
-          <span v-if="scope.row.examineStatus === 3 && scope.row.modelType === 'inOrder'" style="color: #F79B22">待收货</span>
-          <span v-if="scope.row.examineStatus === 3 && scope.row.modelType === 'outOrder'" style="color: green">已完成</span>
-          <span v-if="scope.row.examineStatus === 4" style="color: black">
-            已撤回
-          </span>
+          <!--          <span v-if="scope.row.examineStatus === 3 && scope.row.modelType === 'inOrder'" style="color: #F79B22">待收货</span>-->
+          <span v-if="scope.row.examineStatus === 3"  style="color: green">已完成</span>
+          <span v-if="scope.row.examineStatus === 4" style="color: black">已撤回</span>
           <span v-if="scope.row.examineStatus === 5" style="color: black">已取消</span>
-          <span v-if="scope.row.examineStatus === 7" style="color: green">已完成</span>
+          <!--          <span v-if="scope.row.examineStatus === 7" style="color: green">已完成</span>-->
         </template>
       </el-table-column>
       >

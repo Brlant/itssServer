@@ -19,6 +19,10 @@
                 :value="item.dictCode"
                 :disabled="item.status !== '0'"
               />
+              <el-option v-if="!goodsTypes.some(list=> list.dictCode === formData.goodsType)"
+                         :label="formData.goodsTypeName"
+                         :value="formData.goodsType"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -42,7 +46,9 @@
               />
               <el-option v-if="!supplierList.some(list=> list.supplierId === formData.supplierId)"
                          :label="formData.supplierName"
-                         v-model="formData.supplierId"/>
+                         :value="formData.supplierId"
+                         :disabled="true"
+                       />
             </el-select>
           </el-form-item>
         </el-col>
@@ -66,7 +72,7 @@
                 v-for="(item,index) in unitList"
                 :key="index"
                 :label="item.dictLabel"
-                :value="item.dictValue"
+                :value="item.dictCode"
                 :disabled="item.status!=='0'"
               />
             </el-select>
@@ -210,6 +216,7 @@
           v-show="formData.goodsStatus === 5"
           icon="el-icon-delete"
           @click="enableFiles(formData.goodsId, 3)"
+          v-has-permi="['pms:goods:enable']"
         >启用
         </el-button>
 
@@ -217,6 +224,7 @@
           v-show="formData.goodsStatus === 3"
           icon="el-icon-delete"
           @click="stopFiles(formData.goodsId, 5)"
+          v-has-permi="['pms:goods:enable']"
         >停用
         </el-button>
         <el-button
@@ -247,6 +255,7 @@
                    icon="el-icon-edit"
                    v-show="formData.goodsStatus === 2 || formData.goodsStatus === 3 || formData.goodsStatus === 4"
                    @click="submitForm"
+                   v-has-permi="['pms:goods:edit']"
         >重新提交
         </el-button>
       </el-form-item>
@@ -274,7 +283,7 @@ export default {
         if (newVal && newVal.goodsId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
           this.backData = newVal
-          console.log(this.backData,'旧数据')
+          console.log(this.formData,'旧数据')
         }
       },
       immediate: true,
@@ -610,6 +619,7 @@ export default {
       // 查询供应商下拉列表
       request.post('pms/supplier/getSupplierList',params).then((res) => {
         this.supplierList = res.data
+        console.log(this.supplierList,'供应商')
       })
     },
     submitForm() {
@@ -671,6 +681,7 @@ export default {
     getGoodsUnits(){
       return getDicts('goods_unit').then((res) => {
         this.unitList = res.data
+        console.log(this.unitList,'货品单位')
       })
     }
   },

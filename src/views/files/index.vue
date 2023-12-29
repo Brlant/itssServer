@@ -62,6 +62,7 @@
             type="primary"
             icon="el-icon-upload2"
             @click="supplierImport"
+            v-hasPermi="['pms:goods:import']"
           >导入新建/修改
           </el-button>
           <!--        导出-->
@@ -69,6 +70,7 @@
             type="primary"
             icon="el-icon-download"
             @click="exportFiles"
+            v-hasPermi="['pms:goods:export']"
           >导出
           </el-button>
         </el-form>
@@ -182,7 +184,7 @@
         </el-button>
       </div>
       <div>
-        <el-upload drag :action="importSupplierAction"
+        <el-upload drag action="#"
                    :on-change="importSuccessHandler"
                    :auto-upload="false"
                    :on-error="importErrorHandler"
@@ -447,8 +449,7 @@ export default {
     },
     getGoodsTypes(){
       return getDicts('goods_types').then((res) => {
-        console.log(res.data)
-        this.goodsTypes = res.data
+        this.goodsTypes = res.data.filter(item => item.dictLabel !== '服务');
       })
     }
   }

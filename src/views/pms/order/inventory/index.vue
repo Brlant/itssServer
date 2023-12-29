@@ -16,7 +16,7 @@
 
           <!--     物品类型 -->
           <el-form-item prop="goodsType">
-            <el-select v-model="queryParams.goodsType" placeholder="物品类型" clearable>
+            <el-select v-model="queryParams.goodsType" placeholder="物品类型" clearable  >
               <el-option
                 v-for="(item,index) in goodsTypes"
                 :key="index"
@@ -28,12 +28,12 @@
           </el-form-item>
           <!--      供应商-->
           <el-form-item prop="supplierId">
-            <el-select v-model="queryParams.supplierId" filterable :filter-method="getSupplierList" placeholder="供应商" clearable>
+            <el-select v-model="queryParams.supplierId" @clear="removeTag" filterable :filter-method="getSupplierList" placeholder="供应商" clearable>
               <el-option
                 v-for="(item,index) in supplierList"
                 :key="index"
-                :label="item.label"
-                :value="item.value"
+                :label="item.supplierName"
+                :value="item.supplierId"
               />
             </el-select>
           </el-form-item>
@@ -54,7 +54,9 @@
         </el-form>
       </el-col>
       <el-col :span="4">
-        <el-button type="primary" icon="el-icon-download" @click="exportExcel">
+        <el-button type="primary" icon="el-icon-download"
+                   v-has-permi="['pms:stock:export']"
+                   @click="exportExcel">
           导出
         </el-button>
       </el-col>
@@ -84,7 +86,13 @@
       <el-table-column label="库存数量" align="center" prop="amount"/>
       <el-table-column label="含税总进价" align="center" prop="totalTaxBid"/>
       <el-table-column label="不含税总进价" align="center" prop="nonTotalTaxBid"/>
-      <el-table-column label="有效期" align="center" prop="validityDate"/>
+      <el-table-column label="有效期" align="center" prop="validityDate" >
+        <template v-slot="{ row }">
+          <span v-if="row.validityDate" :style="{ color: isPast(row.validityDate) ? 'red' : 'black' }">
+            {{row.validityDate}}
+          </span>
+        </template>
+      </el-table-column>
     </el-table>
 
     <!--    翻页-->
@@ -152,6 +160,11 @@ export default {
     this.getGoodsTypes()
   },
   methods: {
+    isPast(date) {
+      const now = new Date();
+      const past = new Date(date);
+      return past.getTime() < now.getTime();
+    },
     /* 导出 */
     exportExcel(){
       inventoryApi.exportInventoryLog(this.queryParams).then()
@@ -187,12 +200,7 @@ export default {
         pageSize: 1000,
       }
       supplierApi.getSupplierList(params).then((res) => {
-        this.supplierList = res.data.rows.map(item => {
-          return {
-            value: item.supplierId,
-            label: item.supplierName
-          }
-        })
+        this.supplierList = res.data.rows;
       })
     },
     /** 获取库存管理列表数据 */
@@ -226,10 +234,15 @@ export default {
     resetQuery() {
       this.$refs.queryForm.resetFields();
       this.getInventoryList();
+      this.getSupplierList();
+    },
+    removeTag(){
+      this.getInventoryList();
+      this.getSupplierList();
     },
     getGoodsTypes(){
       return getDicts('goods_types').then((res) => {
-        this.goodsTypes = res.data
+        this.goodsTypes = res.data.filter(item => item.dictLabel !== '服务');
       })
     }
   }

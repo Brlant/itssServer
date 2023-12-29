@@ -56,7 +56,7 @@
 
       <!--搜索重置-->
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search"  @click="getHandleList">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search"  @click="querySearch">搜索</el-button>
         <el-button icon="el-icon-refresh"  @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -85,13 +85,11 @@
           <span v-if="scope.row.examineStatus === 2" style="color: black">
             审核不通过
           </span>
-          <span v-if="scope.row.examineStatus === 3 && scope.row.modelType === 'inOrder'" style="color: #F79B22">待收货</span>
-          <span v-if="scope.row.examineStatus === 3 && scope.row.modelType === 'outOrder'" style="color: green">已完成</span>
-          <span v-if="scope.row.examineStatus === 4" style="color: black">
-            已撤回
-          </span>
+<!--          <span v-if="scope.row.examineStatus === 3 && scope.row.modelType === 'inOrder'" style="color: #F79B22">待收货</span>-->
+          <span v-if="scope.row.examineStatus === 3"  style="color: green">已完成</span>
+          <span v-if="scope.row.examineStatus === 4" style="color: black">已撤回</span>
           <span v-if="scope.row.examineStatus === 5" style="color: black">已取消</span>
-          <span v-if="scope.row.examineStatus === 7" style="color: green">已完成</span>
+<!--          <span v-if="scope.row.examineStatus === 7" style="color: green">已完成</span>-->
         </template>
       </el-table-column>>
       <el-table-column label="审核节点" align="center" prop="modelNode"/>
@@ -548,6 +546,10 @@ export default {
     /*处理标签页信息*/
     handleTabClick(tab, event) {
 
+    },
+    querySearch(){
+      this.queryParams.pageNum = 1;
+      this.getHandleList();
     },
     /** 查询我的发起记录列表 */
     getHandleList(){

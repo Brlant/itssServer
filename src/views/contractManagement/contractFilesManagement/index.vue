@@ -94,6 +94,7 @@
             type="primary"
             icon="el-icon-plus"
             @click="addFiles"
+            v-hasPermi="['pms:contract:add']"
           >新建
           </el-button>
           <!--        导出-->
@@ -101,6 +102,7 @@
             type="primary"
             icon="el-icon-download"
             @click="exportContract"
+            v-hasPermi="['pms:contract:export']"
           >导出
           </el-button>
         </el-form>
@@ -327,17 +329,21 @@ export default {
         this.supplierList = res.data
       })
     },
-    getUserList(query){
+    getUserList(keyword) {
       let params = {
-        pageNum: 1,
-        pageSize: 10,
-        nickName:query,
+        deptId: this.queryParams.applyDepart,
+        nickName: keyword,
+        // 用户状态（0正常 1停用）
+        status: 0
       }
-      getUserList(params).then((res) => {
+
+      request.get('system/user/selectUserList', {
+        params
+      }).then(res => {
         this.userList = res.rows.map(item => {
           return {
-            value: item.userId,
-            label: item.nickName
+            label: item.nickName,
+            value: item.userId
           }
         })
       })

@@ -11,12 +11,26 @@
           <span v-if="row.orderBizType === '1-0'">采购入库</span>
           <span v-if="row.orderBizType === '1-2'">盘盈入库</span>
           <span v-if="row.orderBizType === '1-4'">领用入库</span>
+
+          <span v-if="row.orderBizType === '2-0'">销售出库</span>
+          <span v-if="row.orderBizType === '2-1'">退货出库</span>
+          <span v-if="row.orderBizType === '2-3'">领用出库</span>
+          <span v-if="row.orderBizType === '2-2'">盘亏出库</span>
         </template>
       </el-table-column>
       <el-table-column label="发起人" align="center" prop="promoterName"/>
       <el-table-column label="发起部门" align="center" prop="promoterDepartName"/>
       <el-table-column label="发起日期" align="center" prop="promoterDate"/>
-      <el-table-column label="库存变化" align="center" prop="stockChangeNum"/>
+      <el-table-column label="库存变化" align="center" prop="stockChangeNum">
+        <template v-slot="{ row }">
+          <span v-if="row.orderBizType === '1-0' || row.orderBizType === '1-2' || row.orderBizType === '1-4'">
+            +{{ row.stockChangeNum }}
+          </span>
+          <span v-if="row.orderBizType === '2-0' || row.orderBizType === '2-2' || row.orderBizType === '2-3' || row.orderBizType === '2-1'">
+            -{{ row.stockChangeNum }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="库存余量" align="center" prop="stockAmount"/>
     </el-table>
 

@@ -64,8 +64,8 @@
         </el-col>
         <el-col :span="4">
           <el-form-item class="pull-right">
-            <el-button type="primary" icon="el-icon-plus" @click="addForm">新建</el-button>
-            <el-button type="primary" icon="el-icon-download" @click="exportOrder">导出</el-button>
+            <el-button v-has-permi="['pms:out-order:add']" type="primary" icon="el-icon-plus" @click="addForm">新建</el-button>
+            <el-button v-has-permi="['pms:out-order:export']" type="primary" icon="el-icon-download" @click="exportOrder">导出</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -126,10 +126,10 @@
     </el-table>
 
     <!--    翻页-->
-    <pagination v-show="pageParams.total > 0"
-                :total="pageParams.total"
-                :page.sync="pageParams.page"
-                :limit.sync="pageParams.limit"
+    <pagination v-show="queryParams.total > 0"
+                :total="queryParams.total"
+                :page.sync="queryParams.pageNum"
+                :limit.sync="queryParams.pageSize"
                 @pagination="pageHandler"
     />
 
@@ -156,8 +156,8 @@
             :label="tab.label"
             :name="tab.name">
             <!-- 使用组件作为标签页内容 -->
-            <component :is="tab.component" :tabName="tabName" :orderId="currOutOrderId"
-                       @closeOrderDetail="closeOutOrderDetailHandler"></component>
+            <component :is="tab.component" :tabName="tabName" :orderId="currOutOrderId" :orderType="1"
+                       @close="closeOutOrderDetailHandler"></component>
           </el-tab-pane>
         </el-tabs>
       </template>
@@ -199,9 +199,11 @@ import OrderInfo from "@/views/pms/order/out/outOrderDetail";
 import OrderLog from "@/common/order/log/orderLog";
 import OrderAuditInfo from "@/common/order/audit/orderAuditInfo";
 
+
 import {downloadOrderTemplate, exportOutOrder, getOrderList, importInOrderInfo} from "@/api/pms/order";
 import {treeselect} from "@/api/system/dept";
 import {getDealtWithList} from '@/api/auditCenter/dealtWith/dealtWith'
+import request  from '@/utils/request'
 
 export default {
   name: "out-order",
@@ -232,6 +234,7 @@ export default {
       showSearch: true,
       // 查询参数
       queryParams: {
+        total: 0,
         pmsOrderNo: '',
         startDate: "",
         endDate: "",
@@ -240,7 +243,7 @@ export default {
         pmsOrderStatus: '',
         orderBizType: "",
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 10,
         // 订单类型(0-入库；1-出库)
         orderType: '1',
         rangeDate: []
@@ -346,7 +349,7 @@ export default {
       this.loading = true;
       getOrderList(params).then(res => {
         this.tableData = res.data.rows;
-        this.pageParams.total = res.data.total;
+        this.queryParams.total = res.data.total;
         this.getDealtWithListCount();
       }).catch(err => {
         console.log("查询出库单列表接口报错：", err)
@@ -368,20 +371,14 @@ export default {
     },
     /*重置*/
     resetQuery() {
-      this.queryParams = {
-        pmsOrderNo: '',
-        startDate: "",
-        endDate: "",
-        applyDepart: '',
-        applyUserId: '',
-        pmsOrderStatus: '',
-        orderBizType: "",
-        pageNum: 1,
-        pageSize: 20,
-        // 订单类型(0-入库；1-出库)
-        orderType: '1',
-        rangeDate: []
-      }
+      this.$refs.queryForm.resetFields()
+      this.activeFilterIndex = 0
+      // 订单类型(0-入库；1-出库)
+      this.queryParams.orderType = '1'
+      this.queryParams.pmsOrderStatus = ''
+      this.queryParams.pageNum = 1
+
+      this.activeFilterIndex = 0
 
       this.getList()
     },

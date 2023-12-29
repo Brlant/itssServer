@@ -181,7 +181,11 @@
           <template v-slot="scope">
             <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
                           style="margin-top: 22px"
-                          :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
+                          :rules="[
+                            { required: true, message: '请输入数量', trigger: 'blur'},
+                           {type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'},
+                           {validator: checkAmount, trigger: 'blur'}
+                           ]">
               <el-input @input="calculateTotal(scope.row)"
                         v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
             </el-form-item>
@@ -216,7 +220,7 @@
       </el-table>
       <!-- 提交按钮 -->
       <el-form-item style="margin-top: 22px">
-        <el-button type="primary" @click="submitForm">提交</el-button>
+        <el-button type="primary" @click="submitForm" :disabled="doing">提交</el-button>
         <el-button @click="handleEntryClose">返回</el-button>
       </el-form-item>
 
@@ -239,6 +243,7 @@ export default {
   },
   data() {
     return {
+      doing: false,
       formTitle: "基本信息",
       formData: {
         applyDepart: '',
@@ -322,10 +327,9 @@ export default {
         {label: '领用入库', value: '1-4'},
       ],
       budgetTypes: [],
-      // 无需效期，无效期，有效期
+      // 无需效期，有效期
       validityFlagOptions: [
-        {label: '无需效期', value: '0'},
-        {label: '无效期', value: '1'},
+        {label: '无需效期', value: '1'},
         {label: '有效期', value: '2'},
       ]
     }
@@ -379,10 +383,14 @@ export default {
       row.nonTotalTaxBid = row.nonTaxBid * row.amount;
     },
     submitForm() {
+      if (this.doing) return;
+      this.doing = true;
       this.$refs.form.validate((valid) => {
         if (valid) {
           // 在这里处理表单提交逻辑
           this.addOrder()
+        } else {
+          this.doing = false;
         }
       });
     },
@@ -418,8 +426,10 @@ export default {
           type: 'success',
           message: '提交成功'
         });
+        this.doing = false;
         this.handleEntryClose()
       }).catch(err => {
+        this.doing = false;
         this.$message({
           type: 'error',
           message: err.message
@@ -455,13 +465,14 @@ export default {
         return
       }
 
+      // debugger
       this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId].supplierName
       let goodsType = this.formData.orderDetailList[index].goodsType
       if (!goodsType) {
         return
       }
 
-      let key = supplierId +'_'+ goodsType
+      let key = supplierId + '_' + goodsType
       let goodsList = this.goodsListOptions[key]
       if (!goodsList) {
         request.get('/pms/goods/queryAllList', {
@@ -496,8 +507,8 @@ export default {
       this.formData.orderDetailList[index].taxRate = taxRate
 
       if (taxRate) {
-        this.formData.orderDetailList[index].totalTaxBid = taxBid * parseFloat(taxRate)/100
-        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * parseFloat(taxRate)/100
+        this.formData.orderDetailList[index].totalTaxBid = taxBid * parseFloat(taxRate) / 100
+        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * parseFloat(taxRate) / 100
       }
     },
     goBack() {
@@ -506,19 +517,27 @@ export default {
     isOverDate(dateStr) {
       return this.monent(dateStr).isBefore(this.monent()) ? '已到期' : ''
     },
-    supplierValidator(rule, value, callback){
+    supplierValidator(rule, value, callback) {
       let supplierId = value
       if (value === '') {
         callback(new Error('请选择供应商'))
       } else {
         let supplier = this.supplierOptions.find(one => one.supplierId === supplierId)
         let validityDate = supplier.validityDate
-        if (this.isOverDate(validityDate)){
+        if (this.isOverDate(validityDate)) {
           callback(new Error('供应商已到期'))
-        }else {
+        } else {
           callback()
         }
       }
+    },
+    checkAmount(rule, value, callback) {
+      const regex = /^\d+$/;
+      if (!regex.test(value)) {
+        return callback(new Error('请输入正整数'))
+      }
+
+      return callback()
     }
   },
   computed: {
@@ -542,7 +561,7 @@ export default {
         this.formData.applyName = this.currUser.nickName
         this.formData.applyDepart = this.currUser.deptId
         this.formData.applyDepartName = this.currUser.deptName
-        this.formData.applyDate=this.monent().format('YYYY-MM-DD')
+        this.formData.applyDate = this.monent().format('YYYY-MM-DD')
 
         this.getBudgetTypeList()
         this.getSupplierList()
