@@ -179,13 +179,10 @@
         </el-table-column>
         <el-table-column prop="amount" label="数量" min-width="150px">
           <template v-slot="scope">
-            <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
+            <el-form-item :prop="`orderDetailList.${scope.$index}.amount`"
+                          label-width="0"
                           style="margin-top: 22px"
-                          :rules="[
-                            { required: true, message: '请输入数量', trigger: 'blur'},
-                           {type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'},
-                           {validator: checkAmount, trigger: 'blur'}
-                           ]">
+                          :rules="rules.amount">
               <el-input @input="calculateTotal(scope.row)"
                         v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
             </el-form-item>
@@ -285,8 +282,8 @@ export default {
           "totalPrice": '',
           "taxBid": '',
           "nonTaxBid": '',
-          "totalTaxBid": '',
-          "nonTotalTaxBid": '',
+          "totalTaxBid": '0.00',
+          "nonTotalTaxBid": '0.00',
           "deleteFlag": '',
           "actualReceiptAmount": '',
           "actualReceiptPrice": '',
@@ -306,6 +303,9 @@ export default {
         applyDate: [{required: true, message: '请选择发起日期', trigger: 'blur'}],
         orderBizType: [{required: true, message: '请选择订单类型', trigger: 'blur'}],
         budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'blur'}],
+        amount: [
+          {validator: this.checkAmount, trigger: 'blur'}
+        ]
       },
       supplierMap: {},
       supplierOptions: [],
@@ -362,8 +362,8 @@ export default {
         "totalPrice": '',
         "taxBid": '',
         "nonTaxBid": '',
-        "totalTaxBid": '',
-        "nonTotalTaxBid": '',
+        "totalTaxBid": '0.00',
+        "nonTotalTaxBid": '0.00',
         "deleteFlag": '',
         "actualReceiptAmount": '',
         "actualReceiptPrice": '',
@@ -377,10 +377,8 @@ export default {
       this.formData.orderDetailList.splice(index, 1);
     },
     calculateTotal(row) {
-      // row.totalTaxBid = row.taxBid * row.taxRate * row.amount;
-      row.totalTaxBid = row.taxBid * row.amount;
-      // row.nonTotalTaxBid = row.nonTaxBid * row.taxRate * row.amount;
-      row.nonTotalTaxBid = row.nonTaxBid * row.amount;
+      row.totalTaxBid = (row.taxBid * row.amount).toFixed(2)
+      row.nonTotalTaxBid = (row.nonTaxBid * row.amount).toFixed(2)
     },
     submitForm() {
       if (this.doing) return;
@@ -506,9 +504,10 @@ export default {
       this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
       this.formData.orderDetailList[index].taxRate = taxRate
 
-      if (taxRate) {
-        this.formData.orderDetailList[index].totalTaxBid = taxBid * parseFloat(taxRate) / 100
-        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * parseFloat(taxRate) / 100
+      let amount = this.formData.orderDetailList[index].amount
+      if (amount) {
+        this.formData.orderDetailList[index].totalTaxBid = (taxBid * amount).toFixed(2)
+        this.formData.orderDetailList[index].nonTotalTaxBid = (nonTaxBid * amount).toFixed(2)
       }
     },
     goBack() {
@@ -532,9 +531,16 @@ export default {
       }
     },
     checkAmount(rule, value, callback) {
-      const regex = /^\d+$/;
-      if (!regex.test(value)) {
-        return callback(new Error('请输入正整数'))
+      if (!value) {
+        return callback(new Error('请输入数量'))
+      }
+
+      if (value < 0) {
+        return callback(new Error('数量不能小于0'))
+      }
+
+      if (value > 99999) {
+        return callback(new Error('数量不能超过99999'))
       }
 
       return callback()

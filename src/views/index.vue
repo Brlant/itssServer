@@ -814,6 +814,8 @@ export default {
         else{
           this.promptInfoForm = false;
         }
+      }).catch(err=>{
+
       })
     },
     goTarget(href) {
@@ -894,4 +896,3 @@ export default {
   }
 }
 </style>
-

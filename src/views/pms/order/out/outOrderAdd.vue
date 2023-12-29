@@ -50,7 +50,8 @@
           <el-form-item label="领用人" prop="applyName" :rules="rules.applyName"
                         v-show="formData.orderBizType === '2-3'">
             <el-select v-model="formData.recipientId" placeholder="请选择领用人" clearable filterable
-                       remote :remote-method="getRecipientUserList" @change="recipientChange">
+                     remote :remote-method="getRecipientUserList" @change="recipientChange"
+                     :disabled="readonly">
               <el-option
                 v-for="item in recipientUserList"
                 :key="item.userId"
@@ -69,6 +70,7 @@
                          placeholder="请选择领用部门"
                          :options="recipientDeptList"
                          :props="{ checkStrictly: true,emitPath:false, value: 'id' }"
+                       :disabled="readonly"
                          clearable filterable></el-cascader>
           </el-form-item>
         </el-col>
@@ -76,8 +78,8 @@
       <!-- 申请原由 -->
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="申请原由">
-            <el-input v-model="formData.applyReason"></el-input>
+        <el-form-item label="申请原由" prop="applyReason">
+          <el-input v-model="formData.applyReason" :readonly="readonly"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -93,7 +95,7 @@
                           :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
               <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                          filterable :disabled="readonly"
-                         @change="setGoodsList(scope.$index)">
+                         @change="supplierChangeHandler(scope.$index)">
                 <el-option v-for="(option,index) in supplierOptions"
                            :key="option.supplierId"
                            :label="option.supplierName"
@@ -116,7 +118,7 @@
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
               <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly"
-                         @change="setGoodsList(scope.$index)">
+                         @change="supplierChangeHandler(scope.$index)">
                 <el-option
                   v-for="(item,index) in goodsTypes"
                   :key="index"
@@ -193,11 +195,9 @@
           <template v-slot="scope">
             <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
                           style="margin-top: 22px"
-                          :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},
-                          {type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'},
-                          {validator: checkAmount, trigger: 'blur'}]">
+                          :rules="rules.amount">
               <el-input @input="calculateTotal(scope.row,scope.$index)"
-                        v-model.number="scope.row.amount" placeholder="请输入数量"></el-input>
+                      v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
             </el-form-item>
           </template>
         </el-table-column>
@@ -214,15 +214,11 @@
         <el-table-column prop="totalPrice" label="含税售价" min-width="150px"
                          v-if="formData.orderBizType === '2-0'">
           <template v-slot="scope">
-
-
             <el-form-item :prop="`orderDetailList.${scope.$index}.taxPrice`" label-width="0"
                           style="margin-top: 22px"
-                          :rules="[
-                        { required: true, message: '金额不能为空', trigger: 'blur'},
-                        { pattern: /^(([1-9]{1}\d{0,9})|(0{1}))(\.\d{1,3})?$/,message:'金额不合法，最多3位小数', trigger: 'blur' }
-                      ]">
+                          :rules="rules.price">
               <el-input v-model.number="scope.row.taxPrice" placeholder="请输入含税售价"
+                      :readonly="readonly"
                         @input="calculatePrice(scope.row)"></el-input>
             </el-form-item>
           </template>
@@ -282,7 +278,6 @@
 import request from '@/utils/request'
 import {addPmsOrder} from '@/api/pms/order'
 import {treeselect} from '@/api/system/dept'
-import {queryUserlist} from '@/api/system/user'
 import {getDicts} from '@/api/system/dict/data'
 
 export default {
@@ -342,8 +337,8 @@ export default {
           "totalPrice": '',
           "taxBid": '',
           "nonTaxBid": '',
-          "totalTaxBid": 0,
-          "nonTotalTaxBid": 0,
+          "totalTaxBid": 0.00,
+          "nonTotalTaxBid": 0.00,
           "deleteFlag": '',
           "actualReceiptAmount": '',
           "actualReceiptPrice": '',
@@ -359,26 +354,28 @@ export default {
         returnButton: 0,// 撤回：判断是否有撤回权限，0否1是
         receiptButton: 0,// 签收：判断是否有收货权限，0否1是
       },
+      orderDetail: {},
       rules: {
         applyName: [{required: true, message: '请选择申请人', trigger: 'blur'}],
         applyDepartName: [{required: true, message: '请选择申请人部门', trigger: 'blur'}],
         applyDate: [{required: true, message: '请选择申请日期', trigger: 'blur'}],
         orderBizType: [{required: true, message: '请选择订单类型', trigger: 'blur'}],
         budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'blur'}],
+        amount: [
+          {validator: this.checkAmount, trigger: 'blur'}
+        ],
+        price: [
+          {required: true, message: '金额不能为空', trigger: 'blur'},
+          {pattern: /^(([1-9]{1}\d{0,9})|(0{1}))(\.\d{1,2})?$/, message: '金额不合法，最多2位小数', trigger: 'blur'}
+        ]
       },
       supplierMap: {},
       supplierOptions: [],
       // 物品类型:固定资产、消耗品、服务、销售品
       goodsTypes: [
-        // {value: 1, label: '固定资产'},
-        // {value: 2, label: '消耗品'},
-        // {value: 3, label: '服务'},
-        // {value: 4, label: '销售品'},
       ],
       // { supplierId:goodsList}
-      goodsListOptions: {
-        '': []
-      },
+      goodsListOptions: {},
       goodsMap: {},
       orderBizTypes: [
         {label: '销售出库', value: '2-0'},
@@ -392,13 +389,7 @@ export default {
       // 发起人，按部门筛选
       recipientUserList: [],
       //税率
-      taxRateList: [
-        // {label: '1%', value: 0.01},
-        // {label: '3%', value: 0.03},
-        // {label: '6%', value: 0.06},
-        // {label: '12%', value: 0.12},
-        // {label: '15%', value: 0.15},
-      ]
+      taxRateList: []
     }
   },
   methods: {
@@ -460,8 +451,8 @@ export default {
           "totalPrice": '',
           "taxBid": '',
           "nonTaxBid": '',
-          "totalTaxBid": 0,
-          "nonTotalTaxBid": 0,
+          "totalTaxBid": 0.00,
+          "nonTotalTaxBid": 0.00,
           "deleteFlag": '',
           "actualReceiptAmount": '',
           "actualReceiptPrice": '',
@@ -497,8 +488,8 @@ export default {
         "totalPrice": '',
         "taxBid": '',
         "nonTaxBid": '',
-        "totalTaxBid": 0,
-        "nonTotalTaxBid": 0,
+        "totalTaxBid": 0.00,
+        "nonTotalTaxBid": 0.00,
         "deleteFlag": '',
         "actualReceiptAmount": '',
         "actualReceiptPrice": '',
@@ -514,8 +505,8 @@ export default {
       this.formData.orderDetailList.splice(index, 1);
     },
     calculateTotal(row,index) {
-      row.totalTaxBid = row.taxBid * row.amount;
-      row.nonTotalTaxBid = row.nonTaxBid * row.amount;
+      row.totalTaxBid = (row.taxBid * row.amount).toFixed(2);
+      row.nonTotalTaxBid = (row.nonTaxBid * row.amount).toFixed(2);
     },
     calculatePrice(row) {
       let {taxPrice, sellingTaxRateId, taxBid} = row
@@ -531,7 +522,6 @@ export default {
           row.grossMargin = ((taxPrice - Number(taxBid)) / taxPrice * 100).toFixed(2) + '%';
         }
       }
-
     },
     submitForm() {
       if (this.doing) return;
@@ -584,17 +574,12 @@ export default {
         })
       })
     },
-    getBudgetTypeList(keyword = '') {
-      request.get('/system/budget/getList', {
-        params: {
-          budgetName: keyword
-        }
-      }).then(({data}) => {
-        this.budgetTypes = data;
-      })
+
+    supplierChangeHandler(index) {
+      this.formData.orderDetailList[index].goodsId = ''
+      this.setGoodsList(index)
     },
     setGoodsList(index) {
-      this.formData.orderDetailList[index].goodsId = ''
       let supplierId = this.formData.orderDetailList[index].supplierId
       if (!supplierId) {
         return
@@ -640,6 +625,12 @@ export default {
       this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
       this.formData.orderDetailList[index].taxRate = taxRate
 
+      let amount = this.formData.orderDetailList[index].amount
+      if (amount) {
+        this.formData.orderDetailList[index].totalTaxBid = (taxBid * amount).toFixed(2)
+        this.formData.orderDetailList[index].nonTotalTaxBid = (nonTaxBid * amount).toFixed(2)
+      }
+
       this.queryStockCount(goodsId, index)
     },
     // 查询库存的数量以及可用库存
@@ -670,8 +661,7 @@ export default {
     recipientChange(val) {
       // 当领用人变化的时候，自动获取到部门
       if (val) {
-        let deptId = this.recipientUserList.find(one => one.userId === val)?.deptId
-        this.formData.recipientDepartId = deptId
+        this.formData.recipientDepartId = this.recipientUserList.find(one => one.userId === val)?.deptId
       }
     },
     getRecipientUserList(keyword) {
@@ -693,9 +683,16 @@ export default {
       this.getRecipientUserList('')
     },
     checkAmount(rule,value,callback){
-      const regex = /^\d+$/;
-      if (!regex.test(value)) {
-        return callback(new Error('请输入正整数'))
+      if (!value) {
+        return callback(new Error('请输入数量'))
+      }
+
+      if (value < 0) {
+        return callback(new Error('数量不能小于0'))
+      }
+
+      if (value > 99999) {
+        return callback(new Error('数量不能超过99999'))
       }
 
       return callback()
@@ -710,10 +707,6 @@ export default {
       return false
     },
   },
-  mounted() {
-    this.getGoodsTypes()
-    this.getTaxRateList()
-  },
   watch: {
     dialogAdd(val) {
       if (val) {
@@ -725,7 +718,6 @@ export default {
         this.formData.applyDepartName = this.currUser.deptName
         this.formData.applyDate = this.monent().format('YYYY-MM-DD')
 
-        this.getBudgetTypeList()
         this.getSupplierList()
         this.getRecipientUserList('')
         this.getDeptList('')
@@ -733,6 +725,10 @@ export default {
         this.$refs.form.resetFields()
       }
     },
+  },
+  mounted() {
+    this.getGoodsTypes()
+    this.getTaxRateList()
   }
 }
 </script>
@@ -743,7 +739,7 @@ export default {
   font-size: 14px;
   width: 100%;
   border-bottom: 1px solid #F2F2F2;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   padding-bottom: 10px;
   box-sizing: content-box;
 }

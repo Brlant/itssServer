@@ -114,7 +114,7 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="type" label="物品类型"  min-width="150px">
+      <el-table-column prop="type" label="物品类型" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsType`" label-width="0"
                         style="margin-top: 22px"
@@ -132,7 +132,7 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="code" label="物品编号"  min-width="200px">
+      <el-table-column prop="code" label="物品编号" min-width="200px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsCode`" label-width="0"
                         style="margin-top: 22px"
@@ -157,7 +157,7 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="物品名称"  min-width="150px">
+      <el-table-column prop="name" label="物品名称" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsName`" label-width="0"
                         style="margin-top: 22px"
@@ -201,7 +201,7 @@
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
                         style="margin-top: 22px"
-                        :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
+                        :rules="rules.amount">
             <el-input @input="calculateTotal(scope.row)"
                       v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
           </el-form-item>
@@ -222,13 +222,13 @@
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.actualReceiptAmount`" label-width="0"
                         style="margin-top: 22px"
-                        :rules="[{ required: true, message: '请输入实际收货数量', trigger: 'blur'},
-                        {type: 'number',min:0,message: '请输入正整数', trigger: 'blur'},
-                        {type: 'number',max:formData.orderDetailList[scope.$index].amount,  message: '不能大于订单数量', trigger: 'blur'},
+                        :rules="[
+                          { required: true, message: '请输入实际收货数量', trigger: 'blur'},
+                         {type: 'number',min:0,message: '请输入正整数', trigger: 'blur'},
+                         {type: 'number',max:formData.orderDetailList[scope.$index].amount,  message: '不能大于订单数量', trigger: 'blur'},
                         ]">
             <el-input v-model.number="scope.row.actualReceiptAmount" placeholder="请输入收货数量"
-                      :readonly="formData.pmsOrderStatus !== 3"
-                      :max="`orderDetailList.${scope.$index}.amount`"></el-input>
+                      :readonly="formData.pmsOrderStatus !== 3"></el-input>
           </el-form-item>
         </template>
       </el-table-column>
@@ -367,7 +367,7 @@
         </el-col>
         <el-col :span="9" v-if="paymentAttachment">
           <div style="border: 1px lightgrey solid; padding: 0 10px;height: 36px">
-            <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width:auto;
+            <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width:550px;
                   display: inline-block;" :title="paymentAttachment.attachmentFileName">
               {{ paymentAttachment.attachmentFileName }}
             </div>
@@ -400,8 +400,8 @@
           </el-upload>
         </el-col>
         <el-col :span="9" v-if="invoiceAttachment">
-          <div style="border: 1px lightgrey solid; padding: 0 10px;height: 36px">
-            <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width:auto;
+          <div style="border: 1px lightgrey solid; padding: 0 10px;height: 36px;">
+            <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width:550px;
                   display: inline-block;" :title="invoiceAttachment.attachmentFileName">
               {{ invoiceAttachment.attachmentFileName }}
             </div>
@@ -456,14 +456,13 @@
                  @click="auditNoPass"
       >审核不通过
       </el-button>
-      <el-button v-has-permi="['pms:in-order:confirm']"
-                 v-show="formData.returnButton && (formData.pmsOrderStatus === 0 || formData.pmsOrderStatus === 1)"
+      <el-button v-show="formData.returnButton && (formData.pmsOrderStatus === 0 || formData.pmsOrderStatus === 1)"
                  type="primary"
                  @click="revocation"
       >撤回
       </el-button>
 
-      <el-button v-has-permi="['pms:in-order:confirm']"
+      <el-button v-has-permi="['pms:order:confirm']"
                  v-show="formData.receiptButton && (formData.pmsOrderStatus === 3)"
                  type="primary"
                  @click="confirmReceipt"
@@ -599,8 +598,8 @@ export default {
           "totalPrice": '',
           "taxBid": '',
           "nonTaxBid": '',
-          "totalTaxBid": '',
-          "nonTotalTaxBid": '',
+          "totalTaxBid": '0.00',
+          "nonTotalTaxBid": '0.00',
           "deleteFlag": '',
           "actualReceiptAmount": '',
           "actualReceiptPrice": '',
@@ -622,6 +621,10 @@ export default {
         applyDate: [{required: true, message: '请选择发起日期', trigger: 'blur'}],
         orderBizType: [{required: true, message: '请选择订单类型', trigger: 'blur'}],
         budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'blur'}],
+        amount: [
+          {required: true, message: '请输入数量', trigger: 'blur'},
+          {validator: this.checkAmount, trigger: 'blur'}
+        ],
       },
       supplierMap: {},
       supplierOptions: [],
@@ -840,8 +843,8 @@ export default {
         "totalPrice": '',
         "taxBid": '',
         "nonTaxBid": '',
-        "totalTaxBid": '',
-        "nonTotalTaxBid": '',
+        "totalTaxBid": '0.00',
+        "nonTotalTaxBid": '0.00',
         "deleteFlag": '',
         "actualReceiptAmount": '',
         "actualReceiptPrice": '',
@@ -854,10 +857,18 @@ export default {
     deleteRow(index) {
       this.formData.orderDetailList.splice(index, 1);
     },
+    checkAmount(rule, value, callback) {
+      const regex = /^\d+$/;
+      if (!regex.test(value)) {
+        return callback(new Error('请输入正整数'))
+      }
+
+      return callback()
+    },
     calculateTotal(row) {
       let taxRate = parseFloat(row.taxRate) / 100
-      row.totalTaxBid = row.taxBid * taxRate * row.amount
-      row.nonTotalTaxBid = row.nonTaxBid * taxRate * row.amount
+      row.totalTaxBid = (row.taxBid * row.amount).toFixed(2)
+      row.nonTotalTaxBid = (row.nonTaxBid * row.amount).toFixed(2)
     },
     getSupplierList(keyword = '') {
       let params = {
@@ -935,9 +946,10 @@ export default {
       this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
       this.formData.orderDetailList[index].taxRate = taxRate
 
-      if (taxRate) {
-        this.formData.orderDetailList[index].totalTaxBid = taxBid * parseFloat(taxRate) / 100
-        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * parseFloat(taxRate) / 100
+      let amount = this.formData.orderDetailList[index].amount
+      if (amount) {
+        this.formData.orderDetailList[index].totalTaxBid = (taxBid * amount).toFixed(2)
+        this.formData.orderDetailList[index].nonTotalTaxBid = (nonTaxBid * amount).toFixed(2)
       }
     },
     goBack() {

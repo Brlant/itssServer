@@ -14,7 +14,7 @@
       <el-col :span="6">
         <el-form-item label="订单类型" prop="orderBizType" :rules="rules.orderBizType">
 
-          <el-select v-model="formData.orderBizType" placeholder="请选择入库单类型" :disabled="readonly">
+          <el-select v-model="formData.orderBizType" placeholder="请选择出库单类型" :disabled="readonly">
             <el-option
               v-for="item in orderBizTypes"
               :key="item.value"
@@ -26,20 +26,20 @@
         </el-form-item>
       </el-col>
     </el-row>
-    <!-- 第二行 -->
+      <!-- 第二行：申请人、申请部门、申请日期 -->
     <el-row :gutter="20">
       <el-col :span="6">
-        <el-form-item label="发起人" prop="applyName" :rules="rules.applyName">
+          <el-form-item label="申请人" prop="applyName" :rules="rules.applyName">
           <el-input v-model="formData.applyName" disabled></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="6">
-        <el-form-item label="发起部门" prop="applyDepartName" :rules="rules.applyDepartName">
+          <el-form-item label="申请部门" prop="applyDepartName" :rules="rules.applyDepartName">
           <el-input v-model="formData.applyDepartName" disabled></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="6">
-        <el-form-item label="发起日期" prop="applyDate" :rules="rules.applyDate">
+          <el-form-item label="申请日期" prop="applyDate" :rules="rules.applyDate">
           <el-input v-model="formData.applyDate" placeholder="选择日期" disabled></el-input>
         </el-form-item>
       </el-col>
@@ -78,7 +78,7 @@
     <!-- 申请原由 -->
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-form-item label="申请原由">
+        <el-form-item label="申请原由" prop="applyReason">
           <el-input v-model="formData.applyReason" :readonly="readonly"></el-input>
         </el-form-item>
       </el-col>
@@ -95,7 +95,7 @@
                         :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
             <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                        filterable :disabled="readonly"
-                       @change="supplierChangeHandler(scope.$index)">
+                         @change="supplierChangeHandler(scope.$index)">
               <el-option v-for="(option,index) in supplierOptions"
                          :key="option.supplierId"
                          :label="option.supplierName"
@@ -118,7 +118,7 @@
                         style="margin-top: 22px"
                         :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
             <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly"
-                       @change="supplierChangeHandler(scope.$index)">
+                         @change="supplierChangeHandler(scope.$index)">
               <el-option
                 v-for="(item,index) in goodsTypes"
                 :key="index"
@@ -209,10 +209,7 @@
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
                         style="margin-top: 22px"
-                        :rules="[
-                          {required: true, message: '请输入数量', trigger: 'blur'},
-                          {type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'},
-                           {validator: checkAmount, trigger: 'blur'}]">
+                        :rules="rules.amount">
             <el-input @input="calculateTotal(scope.row,scope.$index)"
                       v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
           </el-form-item>
@@ -231,9 +228,13 @@
       <el-table-column prop="totalPrice" label="含税售价" min-width="150px"
                        v-if="formData.orderBizType === '2-0'">
         <template v-slot="scope">
-          <el-input v-model.number="scope.row.taxPrice" placeholder="请输入含税售价"
-                    :readonly="readonly"
-                    @input="calculatePrice(scope.row)"></el-input>
+          <el-form-item :prop="`orderDetailList.${scope.$index}.taxPrice`" label-width="0"
+                        style="margin-top: 22px"
+                        :rules="rules.price">
+            <el-input v-model.number="scope.row.taxPrice" placeholder="请输入含税售价"
+                      :readonly="readonly"
+                      @input="calculatePrice(scope.row)"></el-input>
+          </el-form-item>
         </template>
       </el-table-column>
       <el-table-column prop="taxRate" label="税率" v-if="formData.orderBizType === '2-0'" min-width="150px">
@@ -250,7 +251,8 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column prop="totalPriceWithoutTax" label="不含税售价" v-if="formData.orderBizType === '2-0'" min-width="150px">
+      <el-table-column prop="totalPriceWithoutTax" label="不含税售价" v-if="formData.orderBizType === '2-0'"
+                       min-width="150px">
         <template v-slot="scope">
           <span>{{ scope.row.nonTaxPrice }}</span>
         </template>
@@ -331,57 +333,9 @@ export default {
       default: '',
     }
   },
-  computed: {
-    // 当前登录用户
-    currUser() {
-      return this.$store.state.user.user
-    },
-    readonly() {
-      return !(this.formData.pmsOrderStatus === 2
-        || this.formData.pmsOrderStatus === 4)
-    },
-    oldStr() {
-      let {orderBizType, budgetType, orderDetailList} = this.orderDetail
-      let details = orderDetailList.map(item => {
-        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
-      }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details
-    },
-    newStr() {
-      let {orderBizType, budgetType, orderDetailList} = this.formData
-      let details = orderDetailList.map(item => {
-        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
-      }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details
-    },
-    needAudit() {
-      return this.oldStr != this.newStr
-    }
-  },
-  watch: {
-    orderId: {
-      handler(newVal) {
-        if (newVal) {
-          console.log('订单详情', newVal);
-          // 每次重新进入订单详情后需要重新清空表单校验
-          if (this.$refs.form) {
-            this.$refs.form.clearValidate()
-          }
-
-          this.getSupplierList()
-          this.getBudgetTypeList()
-
-          this.getOrderDetail(newVal)
-        }
-      },
-      immediate: true,
-    },
-    recipientDepartmentId(val) {
-      this.formData.recipientDepartId = val
-    }
-  },
   data() {
     return {
+      doing: false,
       formTitle: "基本信息",
       formData: {
         applyDepart: '',
@@ -421,12 +375,15 @@ export default {
           "supplierName": "",
           "unitPrice": '',
           "taxRate": "",
+          "taxRateId": "",
+          sellingTaxRate: '',
+          sellingTaxRateId: '',
           "amount": '',
           "totalPrice": '',
           "taxBid": '',
           "nonTaxBid": '',
-          "totalTaxBid": '',
-          "nonTotalTaxBid": '',
+          "totalTaxBid": 0.00,
+          "nonTotalTaxBid": 0.00,
           "deleteFlag": '',
           "actualReceiptAmount": '',
           "actualReceiptPrice": '',
@@ -444,20 +401,23 @@ export default {
       },
       orderDetail: {},
       rules: {
-        applyName: [{required: true, message: '请选择发起人', trigger: 'blur'}],
-        applyDepartName: [{required: true, message: '请选择发起人部门', trigger: 'blur'}],
-        applyDate: [{required: true, message: '请选择发起日期', trigger: 'blur'}],
+        applyName: [{required: true, message: '请选择申请人', trigger: 'blur'}],
+        applyDepartName: [{required: true, message: '请选择申请人部门', trigger: 'blur'}],
+        applyDate: [{required: true, message: '请选择申请日期', trigger: 'blur'}],
         orderBizType: [{required: true, message: '请选择订单类型', trigger: 'blur'}],
         budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'blur'}],
+        amount: [
+          {validator: this.checkAmount, trigger: 'blur'}
+        ],
+        price: [
+          {required: true, message: '金额不能为空', trigger: 'blur'},
+          {pattern: /^(([1-9]{1}\d{0,9})|(0{1}))(\.\d{1,2})?$/, message: '金额不合法，最多2位小数', trigger: 'blur'}
+        ]
       },
       supplierMap: {},
       supplierOptions: [],
       // 物品类型:固定资产、消耗品、服务、销售品
       goodsTypes: [
-        // {value: 1, label: '固定资产'},
-        // {value: 2, label: '消耗品'},
-        // {value: 3, label: '服务'},
-        // {value: 4, label: '销售品'},
       ],
       // { supplierId:goodsList}
       goodsListOptions: {},
@@ -474,13 +434,7 @@ export default {
       // 发起人，按部门筛选
       recipientUserList: [],
       //税率
-      taxRateList: [
-        // {label: '1%', value: 0.01},
-        // {label: '3%', value: 0.03},
-        // {label: '6%', value: 0.06},
-        // {label: '12%', value: 0.12},
-        // {label: '15%', value: 0.15},
-      ]
+      taxRateList: []
     }
   },
   methods: {
@@ -497,11 +451,74 @@ export default {
     /*关闭弹框*/
     handleEntryClose() {
       this.$refs.form.resetFields()
+      this.formData = {
+        applyDepart: '',
+        applyDepartName: '',
+        applyName: '',
+        applyUserId: '',
+        orderType: '1',
+        pmsOrderStatus: '',
+        applyDate: '',
+        // 预算类型
+        budgetType: '',
+        budgetTypeName: '',
+        applyReason: '',
+        paymentFlag: '',
+        orderBizType: '',
+        recipientId: '',
+        recipientName: '',
+        // 领用部门id
+        recipientDepartId: '',
+        recipientDepartName: '',
+        receiptUrl: '',
+        receiptName: '',
+        invoiceNum: '',
+        paymentUrl: '',
+        invoiceUrl: '',
+        consigneeName: '',
+        consigneePhone: '',
+        consigneeAddress: '',
+        orderDetailList: [{
+          "orderDetailId": "",
+          "pmsOrderId": "",
+          "goodsId": "",
+          "goodsType": '',
+          "goodsCode": "",
+          "goodsName": "",
+          "supplierId": "",
+          "supplierName": "",
+          "unitPrice": '',
+          "taxRate": "",
+          "taxRateId": "",
+          sellingTaxRate: '',
+          sellingTaxRateId: '',
+          "amount": '',
+          "totalPrice": '',
+          "taxBid": '',
+          "nonTaxBid": '',
+          "totalTaxBid": 0.00,
+          "nonTotalTaxBid": 0.00,
+          "deleteFlag": '',
+          "actualReceiptAmount": '',
+          "actualReceiptPrice": '',
+          "receiptRemark": "",
+          "validityFlag": "",
+          "validityDate": "",
+          "grossMargin": "",
+          availableNum: '',
+          stockNum: ''
+        }],
+        // 按钮权限标识
+        examineButton: 0,// 审核：判断是否有审核权限，0否1是
+        returnButton: 0,// 撤回：判断是否有撤回权限，0否1是
+        receiptButton: 0,// 签收：判断是否有收货权限，0否1是
+      }
+
       this.$emit('close', {refresh: true})
     },
     getOrderDetail(orderId) {
       getOrderDetail(orderId).then(res => {
-        this.getRecipientUserList(res.data.recipientName)
+        this.getRecipientUserList(res.data.recipientName,res.data.recipientDepartId)
         this.getDeptList({deptId: res.data.recipientDepartId})
         res.data.orderDetailList = res.data.orderDetailList.map((item, index) => {
           if (!this.supplierOptions.some(supplier => supplier.supplierId === item.supplierId)) {
@@ -518,19 +535,12 @@ export default {
           }
         })
 
-        if (res.data.budgetType) {
-          let budgetType = res.data.budgetType.split("-")
-          let budgetTypes = []
-          for (let i = 0; i < budgetType.length; i++) {
-            budgetTypes.push(Number.parseInt(budgetType[i]))
-          }
-          res.data.budgetTypes = budgetTypes
-        }
-
         this.orderDetail = JSON.parse(JSON.stringify(res.data))
         this.formData = res.data
+
         for (let index = 0; index < this.formData.orderDetailList.length; index++) {
           this.setGoodsList(index)
+          this.queryStockCount()
         }
       })
     },
@@ -672,8 +682,8 @@ export default {
         "totalPrice": '',
         "taxBid": '',
         "nonTaxBid": '',
-        "totalTaxBid": '',
-        "nonTotalTaxBid": '',
+        "totalTaxBid": 0.00,
+        "nonTotalTaxBid": 0.00,
         "deleteFlag": '',
         "actualReceiptAmount": '',
         "actualReceiptPrice": '',
@@ -689,15 +699,8 @@ export default {
       this.formData.orderDetailList.splice(index, 1);
     },
     calculateTotal(row, index) {
-      const regex = /^\d+$/;
-      if (!regex.test(row.amount)) {
-        this.formData.orderDetailList[index].amount = '';
-        return this.$notify.error('只能输入整数')
-      }
-      // row.totalTaxBid = row.taxBid * row.taxRate * row.amount;
-      row.totalTaxBid = row.taxBid * row.amount;
-      // row.nonTotalTaxBid = row.nonTaxBid * row.taxRate * row.amount;
-      row.nonTotalTaxBid = row.nonTaxBid * row.amount;
+      row.totalTaxBid = (row.taxBid * row.amount).toFixed(2);
+      row.nonTotalTaxBid = (row.nonTaxBid * row.amount).toFixed(2);
     },
     calculatePrice(row) {
       let {taxPrice, sellingTaxRateId, taxBid} = row
@@ -728,15 +731,7 @@ export default {
         })
       })
     },
-    getBudgetTypeList(keyword = '') {
-      request.get('/system/budget/getList', {
-        params: {
-          budgetName: keyword
-        }
-      }).then(({data}) => {
-        this.budgetTypes = data;
-      })
-    },
+
     supplierChangeHandler(index) {
       this.formData.orderDetailList[index].goodsId = ''
       this.setGoodsList(index)
@@ -786,9 +781,11 @@ export default {
       this.formData.orderDetailList[index].taxBid = taxBid
       this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
       this.formData.orderDetailList[index].taxRate = taxRate
-      if (taxRate) {
-        this.formData.orderDetailList[index].totalTaxBid = taxBid * parseFloat(taxRate) / 100
-        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * parseFloat(taxRate) / 100
+
+      let amount = this.formData.orderDetailList[index].amount
+      if (amount) {
+        this.formData.orderDetailList[index].totalTaxBid = (taxBid * amount).toFixed(2)
+        this.formData.orderDetailList[index].nonTotalTaxBid = (nonTaxBid * amount).toFixed(2)
       }
 
       this.queryStockCount(goodsId, index)
@@ -824,14 +821,15 @@ export default {
         this.formData.recipientDepartId = this.recipientUserList.find(one => one.userId === val)?.deptId
       }
     },
-    getRecipientUserList(keyword) {
+    getRecipientUserList(keyword,deptId='') {
       let params = {
-        deptId: this.formData.recipientDepartId,
+        deptId: deptId || this.formData.recipientDepartId,
         nickName: keyword,
         // 用户状态（0正常 1停用）
         status: 0
       }
 
+      this.recipientUserList = []
       request.get('system/user/selectUserList', {
         params
       }).then(res => {
@@ -843,9 +841,16 @@ export default {
       this.getRecipientUserList('')
     },
     checkAmount(rule, value, callback) {
-      const regex = /^\d+$/;
-      if (!regex.test(value)) {
-        return callback(new Error('请输入正整数'))
+      if (!value) {
+        return callback(new Error('请输入数量'))
+      }
+
+      if (value < 0) {
+        return callback(new Error('数量不能小于0'))
+      }
+
+      if (value > 99999) {
+        return callback(new Error('数量不能超过99999'))
       }
 
       return callback()
@@ -858,6 +863,50 @@ export default {
 
       return this.goodsListOptions[row.supplierId + '_' + row.goodsType].some(goods => goods.goodsId === row.goodsId)
     },
+  },
+  computed: {
+    // 当前登录用户
+    currUser() {
+      return this.$store.state.user.user
+    },
+    readonly() {
+      return !(this.formData.pmsOrderStatus === 2
+        || this.formData.pmsOrderStatus === 4)
+    },
+    oldStr() {
+      let {orderBizType, budgetType, orderDetailList} = this.orderDetail
+      let details = orderDetailList.map(item => {
+        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
+      }).join(',')
+      return orderBizType + '__' + budgetType + '__' + details
+    },
+    newStr() {
+      let {orderBizType, budgetType, orderDetailList} = this.formData
+      let details = orderDetailList.map(item => {
+        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
+      }).join(',')
+      return orderBizType + '__' + budgetType + '__' + details
+    },
+    needAudit() {
+      return this.oldStr != this.newStr
+    }
+  },
+  watch: {
+    orderId: {
+      handler(newVal) {
+        if (newVal) {
+          console.log('订单详情', newVal);
+          // 每次重新进入订单详情后需要重新清空表单校验
+          if (this.$refs.form) {
+            this.$refs.form.clearValidate()
+          }
+
+          this.getSupplierList()
+          this.getOrderDetail(newVal)
+        }
+      },
+      immediate: true,
+    }
   },
   mounted() {
     this.getGoodsTypes()
