@@ -222,9 +222,13 @@
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.actualReceiptAmount`" label-width="0"
                         style="margin-top: 22px"
-                        :rules="[{ required: true, message: '数量不能为空', trigger: 'blur'},{type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'}]">
+                        :rules="[{ required: true, message: '请输入实际收货数量', trigger: 'blur'},
+                        {type: 'number',min:0,message: '请输入正整数', trigger: 'blur'},
+                        {type: 'number',max:formData.orderDetailList[scope.$index].amount,  message: '不能大于订单数量', trigger: 'blur'},
+                        ]">
             <el-input v-model.number="scope.row.actualReceiptAmount" placeholder="请输入收货数量"
-                      :readonly="formData.pmsOrderStatus !== 3"></el-input>
+                      :readonly="formData.pmsOrderStatus !== 3"
+                      :max="`orderDetailList.${scope.$index}.amount`"></el-input>
           </el-form-item>
         </template>
       </el-table-column>
