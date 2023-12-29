@@ -69,7 +69,7 @@
     </el-row>
     <!-- 预算类型&申请原由 -->
     <el-row :gutter="20">
-      <el-col :span="6">
+      <el-col :span="6" v-if="!formData.outOrderNo">
         <el-form-item label="预算类型" prop="budgetTypes" :rules="rules.budgetTypes">
           <el-cascader
             v-model="formData.budgetTypes"
@@ -431,14 +431,14 @@
       <el-button
         class="pull-right"
         type="danger"
-        v-has-permi="['pms:order:cancel']"
+        v-has-permi="['pms:in-order:cancel']"
         v-show="formData.cancelButton && formData.pmsOrderStatus !== 5 && formData.pmsOrderStatus !== 7"
         @click="cancelOrder"
       >取消订单
       </el-button>
       <el-button icon="el-icon-edit"
                  v-show="!readonly"
-                 v-has-permi="['pms:order:edit']"
+                 v-has-permi="['pms:in-order:edit']"
                  @click="submitForm"
       >重新提交
       </el-button>
@@ -452,14 +452,14 @@
                  @click="auditNoPass"
       >审核不通过
       </el-button>
-      <el-button v-has-permi="['pms:order:confirm']"
+      <el-button v-has-permi="['pms:in-order:confirm']"
                  v-show="formData.returnButton && (formData.pmsOrderStatus === 0 || formData.pmsOrderStatus === 1)"
                  type="primary"
                  @click="revocation"
       >撤回
       </el-button>
 
-      <el-button v-has-permi="['pms:order:confirm']"
+      <el-button v-has-permi="['pms:in-order:confirm']"
                  v-show="formData.receiptButton && (formData.pmsOrderStatus === 3)"
                  type="primary"
                  @click="confirmReceipt"
@@ -1012,7 +1012,7 @@ export default {
       }]
 
       // 附件上传成功后更新订单的发票
-      this.editOrderInvoice()
+      this.editOrderInvoice(true)
     },
     confirmReceipt() {
       this.$refs.form.validate(valid => {

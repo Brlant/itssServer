@@ -14,7 +14,7 @@
         <el-col :span="6">
           <el-form-item label="订单类型" prop="orderBizType" :rules="rules.orderBizType">
 
-            <el-select v-model="formData.orderBizType" placeholder="请选择入库单类型">
+            <el-select v-model="formData.orderBizType" placeholder="请选择出库单类型">
               <el-option
                 v-for="item in orderBizTypes"
                 :key="item.value"
@@ -194,7 +194,8 @@
             <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
                           style="margin-top: 22px"
                           :rules="[{ required: true, message: '请输入数量', trigger: 'blur'},
-                          {type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'},]">
+                          {type: 'number',min:1,max:999999999,  message: '数量必须介于 1 到 999999999 之间', trigger: 'blur'},
+                          {validator: checkAmount, trigger: 'blur'}]">
               <el-input @input="calculateTotal(scope.row,scope.$index)"
                         v-model.number="scope.row.amount" placeholder="请输入数量"></el-input>
             </el-form-item>
@@ -213,8 +214,17 @@
         <el-table-column prop="totalPrice" label="含税售价"
                          v-if="formData.orderBizType === '2-0'">
           <template v-slot="scope">
-            <el-input v-model.number="scope.row.taxPrice" placeholder="请输入含税售价"
-                      @input="calculatePrice(scope.row)"></el-input>
+
+
+            <el-form-item :prop="`orderDetailList.${scope.$index}.taxPrice`" label-width="0"
+                          style="margin-top: 22px"
+                          :rules="[
+                        { required: true, message: '金额不能为空', trigger: 'blur'},
+                        { pattern: /^(([1-9]{1}\d{0,9})|(0{1}))(\.\d{1,3})?$/,message:'金额不合法，最多3位小数', trigger: 'blur' }
+                      ]">
+              <el-input v-model.number="scope.row.taxPrice" placeholder="请输入含税售价"
+                        @input="calculatePrice(scope.row)"></el-input>
+            </el-form-item>
           </template>
         </el-table-column>
         <el-table-column prop="taxRate" label="税率" v-if="formData.orderBizType === '2-0'">
@@ -241,18 +251,18 @@
             <span>{{ scope.row.grossMargin }}</span>
           </template>
         </el-table-column>
-      <el-table-column width="50px" v-if="!readonly">
+        <el-table-column width="50px" v-if="!readonly">
           <template v-slot="scope">
             <el-row :gutter="20">
               <el-col :span="24">
                 <el-button circle size="small" icon="el-icon-plus" type="primary" @click="addRow"
-                         v-if="scope.$index === 0 && !readonly"></el-button>
+                           v-if="scope.$index === 0 && !readonly"></el-button>
               </el-col>
             </el-row>
             <el-row :gutter="20" style="margin-top: 10px">
               <el-col :span="24">
                 <el-button circle size="small" icon="el-icon-minus" type="danger" @click="deleteRow(scope.$index)"
-                         v-if="formData.orderDetailList.length > 1 && !readonly"></el-button>
+                           v-if="formData.orderDetailList.length > 1 && !readonly"></el-button>
               </el-col>
             </el-row>
           </template>
@@ -285,7 +295,7 @@ export default {
   },
   data() {
     return {
-      doing:false,
+      doing: false,
       formTitle: "基本信息",
       formData: {
         applyDepart: '',
@@ -326,14 +336,14 @@ export default {
           "unitPrice": '',
           "taxRate": "",
           "taxRateId": "",
-          sellingTaxRate:'',
-          sellingTaxRateId:'',
+          sellingTaxRate: '',
+          sellingTaxRateId: '',
           "amount": '',
           "totalPrice": '',
           "taxBid": '',
           "nonTaxBid": '',
-          "totalTaxBid": '',
-          "nonTotalTaxBid": '',
+          "totalTaxBid": 0,
+          "nonTotalTaxBid": 0,
           "deleteFlag": '',
           "actualReceiptAmount": '',
           "actualReceiptPrice": '',
@@ -405,6 +415,69 @@ export default {
     /*关闭弹框*/
     handleEntryClose() {
       this.$refs.form.resetFields()
+      this.formData = {
+        applyDepart: '',
+        applyDepartName: '',
+        applyName: '',
+        applyUserId: '',
+        orderType: '1',
+        pmsOrderStatus: '',
+        applyDate: '',
+        // 预算类型
+        budgetType: '',
+        budgetTypeName: '',
+        applyReason: '',
+        paymentFlag: '',
+        orderBizType: '',
+        recipientId: '',
+        recipientName: '',
+        // 领用部门id
+        recipientDepartId: '',
+        recipientDepartName: '',
+        receiptUrl: '',
+        receiptName: '',
+        invoiceNum: '',
+        paymentUrl: '',
+        invoiceUrl: '',
+        consigneeName: '',
+        consigneePhone: '',
+        consigneeAddress: '',
+        orderDetailList: [{
+          "orderDetailId": "",
+          "pmsOrderId": "",
+          "goodsId": "",
+          "goodsType": '',
+          "goodsCode": "",
+          "goodsName": "",
+          "supplierId": "",
+          "supplierName": "",
+          "unitPrice": '',
+          "taxRate": "",
+          "taxRateId": "",
+          sellingTaxRate: '',
+          sellingTaxRateId: '',
+          "amount": '',
+          "totalPrice": '',
+          "taxBid": '',
+          "nonTaxBid": '',
+          "totalTaxBid": 0,
+          "nonTotalTaxBid": 0,
+          "deleteFlag": '',
+          "actualReceiptAmount": '',
+          "actualReceiptPrice": '',
+          "receiptRemark": "",
+          "validityFlag": "",
+          "validityDate": "",
+          "grossMargin": "",
+          availableNum: '',
+          stockNum: ''
+        }],
+        // 按钮权限标识
+        examineButton: 0,// 审核：判断是否有审核权限，0否1是
+        returnButton: 0,// 撤回：判断是否有撤回权限，0否1是
+        receiptButton: 0,// 签收：判断是否有收货权限，0否1是
+      }
+
       this.$emit('close', {refresh: true})
     },
     /*订单明细表格函数*/
@@ -424,8 +497,8 @@ export default {
         "totalPrice": '',
         "taxBid": '',
         "nonTaxBid": '',
-        "totalTaxBid": '',
-        "nonTotalTaxBid": '',
+        "totalTaxBid": 0,
+        "nonTotalTaxBid": 0,
         "deleteFlag": '',
         "actualReceiptAmount": '',
         "actualReceiptPrice": '',
@@ -441,15 +514,7 @@ export default {
       this.formData.orderDetailList.splice(index, 1);
     },
     calculateTotal(row,index) {
-      const regex = /^\d+$/;
-      if (!regex.test(row.amount)) {
-        this.formData.orderDetailList[index].amount = '';
-        return this.$notify.error('只能输入整数')
-      }
-
-      // row.totalTaxBid = row.taxBid * row.taxRate * row.amount;
       row.totalTaxBid = row.taxBid * row.amount;
-      // row.nonTotalTaxBid = row.nonTaxBid * row.taxRate * row.amount;
       row.nonTotalTaxBid = row.nonTaxBid * row.amount;
     },
     calculatePrice(row) {
@@ -475,7 +540,7 @@ export default {
         if (valid) {
           // 在这里处理表单提交逻辑
           this.addOrder()
-        }else{
+        } else {
           this.doing = false;
         }
       });
@@ -488,8 +553,8 @@ export default {
         params.recipientName = user.nickName
       }
 
-      this.formData.goodsTypeName = this.goodsTypes.find(item => item.dictCode === params.goodsType)?.dictLabel;
-      params.sellingTaxRate = this.taxRateList.find(one => one.value === params.sellingTaxRateId).dictLabel
+      params.goodsTypeName = this.goodsTypes.find(item => item.dictCode == params.goodsType)?.dictLabel;
+      params.sellingTaxRate = this.taxRateList.find(one => one.dictCode == params.sellingTaxRateId)?.dictLabel
 
       addPmsOrder(params).then((res) => {
         this.$message({
@@ -541,7 +606,7 @@ export default {
         return
       }
 
-      let key = supplierId +'_'+ goodsType
+      let key = supplierId + '_' + goodsType
       let goodsList = this.goodsListOptions[key]
       if (!goodsList) {
         request.get('/pms/goods/queryAllList', {
@@ -574,11 +639,6 @@ export default {
       this.formData.orderDetailList[index].taxBid = taxBid
       this.formData.orderDetailList[index].nonTaxBid = nonTaxBid
       this.formData.orderDetailList[index].taxRate = taxRate
-
-      if (taxRate) {
-        this.formData.orderDetailList[index].totalTaxBid = taxBid * parseFloat(taxRate)/100
-        this.formData.orderDetailList[index].nonTotalTaxBid = nonTaxBid * parseFloat(taxRate)/100
-      }
 
       this.queryStockCount(goodsId, index)
     },
@@ -632,6 +692,14 @@ export default {
       this.formData.recipientId = ''
       this.getRecipientUserList('')
     },
+    checkAmount(rule,value,callback){
+      const regex = /^\d+$/;
+      if (!regex.test(value)) {
+        return callback(new Error('请输入正整数'))
+      }
+
+      return callback()
+    }
   },
   computed: {
     // 当前登录用户

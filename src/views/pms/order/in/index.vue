@@ -99,7 +99,7 @@
               type="primary"
               icon="el-icon-plus"
               @click="addEntryForm"
-              v-has-permi="['pms:order:add']"
+              v-has-permi="['pms:in-order:add']"
             >新建
             </el-button>
             <el-button
@@ -112,7 +112,7 @@
             </el-button>
             <!--        导出-->
             <el-button
-              v-has-permi="['pms:order:export']"
+              v-has-permi="['pms:in-order:export']"
               type="primary"
               icon="el-icon-download"
               @click="exportOrder"

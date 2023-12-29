@@ -64,8 +64,8 @@
         </el-col>
         <el-col :span="4">
           <el-form-item class="pull-right">
-            <el-button v-has-permi="['pms:order:add']" type="primary" icon="el-icon-plus" @click="addForm">新建</el-button>
-            <el-button v-has-permi="['pms:order:export']" type="primary" icon="el-icon-download" @click="exportOrder">导出</el-button>
+            <el-button v-has-permi="['pms:out-order:add']" type="primary" icon="el-icon-plus" @click="addForm">新建</el-button>
+            <el-button v-has-permi="['pms:out-order:export']" type="primary" icon="el-icon-download" @click="exportOrder">导出</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -371,21 +371,10 @@ export default {
     },
     /*重置*/
     resetQuery() {
-      this.queryParams = {
-        pmsOrderNo: '',
-        startDate: "",
-        endDate: "",
-        applyDepart: '',
-        applyUserId: '',
-        pmsOrderStatus: '',
-        orderBizType: "",
-        pageNum: 1,
-        pageSize: 20,
-        // 订单类型(0-入库；1-出库)
-        orderType: '1',
-        rangeDate: []
-      }
-
+      this.$refs.queryForm.resetFields()
+      this.activeFilterIndex = 0
+      this.queryParams.pmsOrderStatus = ''
+      this.queryParams.pageNum = 1
       this.getList()
     },
     /*切换按钮查询列表*/
