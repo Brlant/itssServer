@@ -19,6 +19,10 @@
                 :value="item.dictCode"
                 :disabled="item.status !== '0'"
               />
+              <el-option v-if="!goodsTypes.some(list=> list.dictCode === formData.goodsType)"
+                         :label="formData.goodsTypeName"
+                         :value="formData.goodsType"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -40,10 +44,11 @@
                 :label="item.supplierName"
                 :value="item.supplierId"
               />
-              <el-option v-if="supplierList.some(list=> list.supplierId === formData.supplierId)"
+              <el-option v-if="!supplierList.some(list=> list.supplierId === formData.supplierId)"
                          :label="formData.supplierName"
+                         :value="formData.supplierId"
                          :disabled="true"
-                         v-model="formData.supplierId"/>
+                       />
             </el-select>
           </el-form-item>
         </el-col>
@@ -67,7 +72,7 @@
                 v-for="(item,index) in unitList"
                 :key="index"
                 :label="item.dictLabel"
-                :value="item.dictValue"
+                :value="item.dictCode"
                 :disabled="item.status!=='0'"
               />
             </el-select>
@@ -676,6 +681,7 @@ export default {
     getGoodsUnits(){
       return getDicts('goods_unit').then((res) => {
         this.unitList = res.data
+        console.log(this.unitList,'货品单位')
       })
     }
   },

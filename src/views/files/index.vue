@@ -449,7 +449,7 @@ export default {
     },
     getGoodsTypes(){
       return getDicts('goods_types').then((res) => {
-        this.goodsTypes = res.data
+        this.goodsTypes = res.data.filter(item => item.dictLabel !== '服务');
       })
     }
   }

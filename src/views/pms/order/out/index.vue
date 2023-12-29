@@ -126,10 +126,10 @@
     </el-table>
 
     <!--    翻页-->
-    <pagination v-show="pageParams.total > 0"
-                :total="pageParams.total"
-                :page.sync="pageParams.page"
-                :limit.sync="pageParams.limit"
+    <pagination v-show="queryParams.total > 0"
+                :total="queryParams.total"
+                :page.sync="queryParams.pageNum"
+                :limit.sync="queryParams.pageSize"
                 @pagination="pageHandler"
     />
 
@@ -156,8 +156,8 @@
             :label="tab.label"
             :name="tab.name">
             <!-- 使用组件作为标签页内容 -->
-            <component :is="tab.component" :tabName="tabName" :orderId="currOutOrderId"
-                       @closeOrderDetail="closeOutOrderDetailHandler"></component>
+            <component :is="tab.component" :tabName="tabName" :orderId="currOutOrderId" :orderType="1"
+                       @close="closeOutOrderDetailHandler"></component>
           </el-tab-pane>
         </el-tabs>
       </template>
@@ -234,6 +234,7 @@ export default {
       showSearch: true,
       // 查询参数
       queryParams: {
+        total: 0,
         pmsOrderNo: '',
         startDate: "",
         endDate: "",
@@ -242,7 +243,7 @@ export default {
         pmsOrderStatus: '',
         orderBizType: "",
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 10,
         // 订单类型(0-入库；1-出库)
         orderType: '1',
         rangeDate: []
@@ -348,7 +349,7 @@ export default {
       this.loading = true;
       getOrderList(params).then(res => {
         this.tableData = res.data.rows;
-        this.pageParams.total = res.data.total;
+        this.queryParams.total = res.data.total;
         this.getDealtWithListCount();
       }).catch(err => {
         console.log("查询出库单列表接口报错：", err)

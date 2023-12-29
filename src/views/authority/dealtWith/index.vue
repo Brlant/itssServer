@@ -270,7 +270,7 @@
             <!-- 使用组件作为标签页内容 -->
             <component :is="tab.component" :tabName="tabName" :orderId="currOutOrderId"
                        :orderType="1"
-                       @closeOrderDetail="closeOutOrderDetailHandler"></component>
+                       @close="closeOutOrderDetailHandler"></component>
           </el-tab-pane>
         </el-tabs>
       </template>

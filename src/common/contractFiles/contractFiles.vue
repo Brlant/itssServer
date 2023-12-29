@@ -307,11 +307,13 @@ export default {
     //   console.log(file, fileList);
     // },
     handleSuccess(res, file) {
+      console.log(file.raw.type)
       const isPNG = file.raw.type === 'image/png';
       const isJPG = file.raw.type === 'image/jpg';
+      const isJPEG = file.raw.type === 'image/jpeg';
       const isPDF = file.raw.type === 'application/pdf';
 
-      if (!isPNG && !isJPG && !isPDF) {
+      if (!isPNG && !isJPG && !isJPEG && !isPDF) {
         this.$message.error('只能上传PNG、JPG图片或PDF文件');
         return false;
       }

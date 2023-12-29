@@ -24,8 +24,8 @@
               placeholder="供应商">
               <el-option v-for="supplier in supplierList"
                 :key="supplier.value"
-                :value="supplier.value"
-                :label="supplier.label"></el-option>
+                :value="supplier.supplierId"
+                :label="supplier.supplierName"></el-option>
             </el-select>
           </el-form-item>
           <!--搜索重置-->

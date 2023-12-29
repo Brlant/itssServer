@@ -347,7 +347,8 @@ export default {
         categoryStatus: 1,
       }
       categoryApi.getCategoryList(params).then(res => {
-        this.categoryList = res.rows;
+        this.categoryList = res.rows
+        console.log(this.categoryList)
       })
     },
     handleChange(query) {
