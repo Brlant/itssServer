@@ -564,7 +564,7 @@ export default {
         promoterId:this.queryParams.promoterId,
         queryType:3,
       }
-      getHandleList(params).then((res)=>{
+      request.get('/pms/examine/my-handled',{params}).then((res) => {
         this.loading = false;
         this.queryParams.total = res.data.total;
         this.handleList = res.data.rows;

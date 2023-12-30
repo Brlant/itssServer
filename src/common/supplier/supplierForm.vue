@@ -453,6 +453,8 @@ export default {
           this.$message.error(res.data.message)
           this.doing = false;
         }
+      }).catch(err => {
+        this.doing = false;
       })
     },
     // 编辑供应商
@@ -463,6 +465,7 @@ export default {
           this.doing = false;
           this.closeHandler()
         } else {
+          this.doing = false;
           this.$message.error(res.data.message)
         }
       }).catch(err => {

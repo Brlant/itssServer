@@ -26,20 +26,20 @@
         </el-form-item>
       </el-col>
     </el-row>
-      <!-- 第二行：申请人、申请部门、申请日期 -->
+    <!-- 第二行：申请人、申请部门、申请日期 -->
     <el-row :gutter="20">
       <el-col :span="6">
-          <el-form-item label="申请人" prop="applyName" :rules="rules.applyName">
+        <el-form-item label="申请人" prop="applyName" :rules="rules.applyName">
           <el-input v-model="formData.applyName" disabled></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="6">
-          <el-form-item label="申请部门" prop="applyDepartName" :rules="rules.applyDepartName">
+        <el-form-item label="申请部门" prop="applyDepartName" :rules="rules.applyDepartName">
           <el-input v-model="formData.applyDepartName" disabled></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="6">
-          <el-form-item label="申请日期" prop="applyDate" :rules="rules.applyDate">
+        <el-form-item label="申请日期" prop="applyDate" :rules="rules.applyDate">
           <el-input v-model="formData.applyDate" placeholder="选择日期" disabled></el-input>
         </el-form-item>
       </el-col>
@@ -95,7 +95,7 @@
                         :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
             <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                        filterable :disabled="readonly"
-                         @change="supplierChangeHandler(scope.$index)">
+                       @change="supplierChangeHandler(scope.$index)">
               <el-option v-for="(option,index) in supplierOptions"
                          :key="option.supplierId"
                          :label="option.supplierName"
@@ -118,7 +118,7 @@
                         style="margin-top: 22px"
                         :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
             <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly"
-                         @change="supplierChangeHandler(scope.$index)">
+                       @change="supplierChangeHandler(scope.$index)">
               <el-option
                 v-for="(item,index) in goodsTypes"
                 :key="index"
@@ -417,8 +417,7 @@ export default {
       supplierMap: {},
       supplierOptions: [],
       // 物品类型:固定资产、消耗品、服务、销售品
-      goodsTypes: [
-      ],
+      goodsTypes: [],
       // { supplierId:goodsList}
       goodsListOptions: {},
       goodsMap: {},
@@ -518,9 +517,15 @@ export default {
     },
     getOrderDetail(orderId) {
       getOrderDetail(orderId).then(res => {
-        this.getRecipientUserList(res.data.recipientName,res.data.recipientDepartId)
+        this.orderDetail = JSON.parse(JSON.stringify(res.data))
+
+        this.formData = res.data
+        this.getRecipientUserList(res.data.recipientName, res.data.recipientDepartId)
         this.getDeptList({deptId: res.data.recipientDepartId})
-        res.data.orderDetailList = res.data.orderDetailList.map((item, index) => {
+        this.formData.orderDetailList.forEach((item, index) => {
+          this.setGoodsList(index, item.supplierId)
+          this.queryStockCount(item.goodsId)
+
           if (!this.supplierOptions.some(supplier => supplier.supplierId === item.supplierId)) {
             this.supplierOptions.push({
               supplierId: item.supplierId,
@@ -530,18 +535,8 @@ export default {
             })
           }
 
-          return {
-            ...item,
-          }
         })
 
-        this.orderDetail = JSON.parse(JSON.stringify(res.data))
-        this.formData = res.data
-
-        for (let index = 0; index < this.formData.orderDetailList.length; index++) {
-          this.setGoodsList(index)
-          this.queryStockCount()
-        }
       })
     },
     /*表单校验提交*/
@@ -736,10 +731,12 @@ export default {
       this.formData.orderDetailList[index].goodsId = ''
       this.setGoodsList(index)
     },
-    setGoodsList(index) {
-      let supplierId = this.formData.orderDetailList[index].supplierId
+    setGoodsList(index, supplierId = '') {
       if (!supplierId) {
-        return
+        supplierId = this.formData.orderDetailList[index].supplierId
+        if (!supplierId) {
+          return
+        }
       }
 
       this.formData.orderDetailList[index].supplierName = this.supplierMap[supplierId]
@@ -821,7 +818,7 @@ export default {
         this.formData.recipientDepartId = this.recipientUserList.find(one => one.userId === val)?.deptId
       }
     },
-    getRecipientUserList(keyword,deptId='') {
+    getRecipientUserList(keyword, deptId = '') {
       let params = {
         deptId: deptId || this.formData.recipientDepartId,
         nickName: keyword,

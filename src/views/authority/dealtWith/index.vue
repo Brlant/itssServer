@@ -569,7 +569,7 @@ export default {
         promoterId:this.queryParams.promoterId,
         queryType: 2
       }
-      getDealtWithList(params).then((res) => {
+      request.get('/pms/examine/my-initiated',{params}).then((res) => {
         this.loading = false
         this.queryParams.total = res.data.total
         this.dealtWithList = res.data.rows

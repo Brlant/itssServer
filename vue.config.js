@@ -12,15 +12,17 @@ const name = process.env.VUE_APP_TITLE || '新ITSS平台' // 网页标题
 const port = process.env.port || process.env.npm_config_port || 8090 // 端口
 
 const targets = {
-  dev:'http://192.168.1.113/tdp',
-  yj:'http://192.168.5.13:8081',
-  lxr:'http://192.168.5.10:8080',
-  xwc:'http://192.168.5.213:8080',
-  cjg:'http://192.168.5.26:8081',
-  wp:'http://192.168.2.122:8080',
-  cs:'http://192.168.1.101:8699',
-  wp_test :'http://192.168.5.28:8080',
+  dev: process.env.npm_config_url,
+  yj: 'http://192.168.5.13:8081',
+  lxr: 'http://192.168.5.10:8080',
+  xwc: 'http://192.168.5.213:8080',
+  cjg: 'http://192.168.5.26:8081',
+  wp: 'http://192.168.2.122:8080',
+  test: 'http://192.168.1.101:8699',
+  wp_test: 'http://192.168.5.28:8080',
 }
+
+console.log('process.env.npm_config_url:', process.env.npm_config_url)
 
 // vue.config.js 配置说明
 //官方vue.config.js 参考文档 https://cli.vuejs.org/zh/config/#css-loaderoptions
@@ -50,11 +52,10 @@ module.exports = {
     port: port,
     open: true,
     proxy: {
-      // detail: https://cli.vuejs.org/config/#devserver-proxy
-     '/itss': {
-        target: targets.cjg,
+      '/itss': {
+        target: process.env.npm_config_url || targets.test,
         changeOrigin: true,
-        logLevel:"debug",
+        logLevel: "debug",
         pathRewrite: {
           // '^/itss': ''
           ['^' + process.env.VUE_APP_BASE_API]: ''
@@ -63,7 +64,7 @@ module.exports = {
       '^/hengshi': {
         target: 'http://172.20.8.31:8080',
         changeOrigin: true,
-        logLevel:"debug",
+        logLevel: "debug",
       }
     },
     disableHostCheck: true
@@ -71,7 +72,7 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        sassOptions: { outputStyle: "expanded" }
+        sassOptions: {outputStyle: "expanded"}
       }
     }
   },
@@ -121,39 +122,39 @@ module.exports = {
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
+              // `runtime` must same as runtimeChunk name. default is `runtime`
               inline: /runtime\..*\.js$/
             }])
             .end()
           config
             .optimization.splitChunks({
-              chunks: 'all',
-              cacheGroups: {
-                libs: {
-                  name: 'chunk-libs',
-                  test: /[\\/]node_modules[\\/]/,
-                  priority: 10,
-                  chunks: 'initial' // only package third parties that are initially dependent
-                },
-                elementUI: {
-                  name: 'chunk-elementUI', // split elementUI into a single package
-                  priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
-                  test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
-                },
-                commons: {
-                  name: 'chunk-commons',
-                  test: resolve('src/components'), // can customize your rules
-                  minChunks: 3, //  minimum common number
-                  priority: 5,
-                  reuseExistingChunk: true
-                }
+            chunks: 'all',
+            cacheGroups: {
+              libs: {
+                name: 'chunk-libs',
+                test: /[\\/]node_modules[\\/]/,
+                priority: 10,
+                chunks: 'initial' // only package third parties that are initially dependent
+              },
+              elementUI: {
+                name: 'chunk-elementUI', // split elementUI into a single package
+                priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+                test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
+              },
+              commons: {
+                name: 'chunk-commons',
+                test: resolve('src/components'), // can customize your rules
+                minChunks: 3, //  minimum common number
+                priority: 5,
+                reuseExistingChunk: true
               }
-            })
+            }
+          })
           config.optimization.runtimeChunk('single'),
-          {
-             from: path.resolve(__dirname, './public/robots.txt'), //防爬虫文件
-             to: './' //到根目录下
-          }
+            {
+              from: path.resolve(__dirname, './public/robots.txt'), //防爬虫文件
+              to: './' //到根目录下
+            }
         }
       )
   }

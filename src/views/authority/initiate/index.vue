@@ -317,6 +317,7 @@ import entryAuditInfo from "@/common/order/audit/orderAuditInfo";
 import boundInfo from '@/views/pms/order/out/outOrderDetail';
 import boundOperationLog from "@/common/order/log/orderLog";
 import boundAuditInfo from "@/common/order/audit/orderAuditInfo";
+import request from '@/utils/request'
 
 export default {
   name: 'index',
@@ -528,7 +529,7 @@ export default {
         pageSize: this.queryParams.pageSize,
         queryType: 1
       }
-      getInitiatedList(params).then((res) => {
+      request.get('/pms/examine/my-handled',{params}).then((res) => {
         this.loading = false
         this.initiateList = res.data.rows
         this.queryParams.total = res.data.total

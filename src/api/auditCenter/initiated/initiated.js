@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 // 我发起的查询列表
-export function getInitiatedList(data) {
+export function getInitiatedList(params) {
   return request({
-    url: `/pms/examine/queryExamineOverview`,
-    method: 'post',
-    data:data,
+    url: `/pms/examine/my-todo`,
+    method: 'get',
+    params:params,
   })
 }
 
@@ -35,4 +35,3 @@ export function getExamineLog(data) {
     params:data,
   })
 }
-
