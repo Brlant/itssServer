@@ -650,7 +650,7 @@ export default {
       })
     },
     isOverDate(dateStr) {
-      return this.monent(dateStr).isBefore(this.monent()) ? '已到期' : ''
+      return this.moment(dateStr).isBefore(this.moment().format('YYYY-MM-DD')) ? '已到期' : ''
     },
     getDeptList(query) {
       this.recipientDeptList = []
@@ -716,7 +716,7 @@ export default {
         this.formData.applyName = this.currUser.nickName
         this.formData.applyDepart = this.currUser.deptId
         this.formData.applyDepartName = this.currUser.deptName
-        this.formData.applyDate = this.monent().format('YYYY-MM-DD')
+        this.formData.applyDate = this.moment().format('YYYY-MM-DD')
 
         this.getSupplierList()
         this.getRecipientUserList('')

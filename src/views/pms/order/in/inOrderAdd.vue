@@ -92,7 +92,7 @@
                           {validator: supplierValidator, trigger: 'change'}]">
               <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                          filterable :disabled="readonly"
-                         @change="setGoodsList(scope.$index)">
+                       @change="supplierChangeHandler(scope.$index)">
                 <el-option v-for="(option,index) in supplierOptions" :key="option.supplierId"
                            :label="option.supplierName"
                            :value="option.supplierId"
@@ -114,7 +114,7 @@
                           style="margin-top: 22px"
                           :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
               <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly"
-                         @change="setGoodsList(scope.$index)">
+                       @change="goodsTypeChangeHandler(scope.$index)">
                 <el-option
                   v-for="(item,index) in goodsTypes"
                   :key="index"
@@ -456,8 +456,23 @@ export default {
         this.budgetTypes = data;
       })
     },
-    setGoodsList(index) {
+    supplierChangeHandler(index) {
+      this.formData.orderDetailList[index].goodsType = ''
+
       this.formData.orderDetailList[index].goodsId = ''
+      this.formData.orderDetailList[index].goodsCode = ''
+      this.formData.orderDetailList[index].goodsName = ''
+
+      this.setGoodsList(index)
+    },
+    goodsTypeChangeHandler(index) {
+      this.formData.orderDetailList[index].goodsId = ''
+      this.formData.orderDetailList[index].goodsCode = ''
+      this.formData.orderDetailList[index].goodsName = ''
+
+      this.setGoodsList(index)
+    },
+    setGoodsList(index) {
       let supplierId = this.formData.orderDetailList[index].supplierId
       if (!supplierId) {
         return
@@ -514,7 +529,7 @@ export default {
       this.$emit('closeOrderDetail')
     },
     isOverDate(dateStr) {
-      return this.monent(dateStr).isBefore(this.monent()) ? '已到期' : ''
+      return this.moment(dateStr).isBefore(this.moment().format('YYYY-MM-DD')) ? '已到期' : ''
     },
     supplierValidator(rule, value, callback) {
       let supplierId = value
@@ -567,7 +582,7 @@ export default {
         this.formData.applyName = this.currUser.nickName
         this.formData.applyDepart = this.currUser.deptId
         this.formData.applyDepartName = this.currUser.deptName
-        this.formData.applyDate = this.monent().format('YYYY-MM-DD')
+        this.formData.applyDate = this.moment().format('YYYY-MM-DD')
 
         this.getBudgetTypeList()
         this.getSupplierList()

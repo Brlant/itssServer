@@ -919,12 +919,19 @@ export default {
       })
     },
     supplierChangeHandler(index) {
-      // this.formData.orderDetailList[index].goodsId = ''
-      this.$set(this.formData.orderDetailList[index], 'goodsId', '')
+      this.formData.orderDetailList[index].goodsType = ''
+
+      this.formData.orderDetailList[index].goodsId = ''
+      this.formData.orderDetailList[index].goodsCode = ''
+      this.formData.orderDetailList[index].goodsName = ''
+
       this.setGoodsList(index)
     },
     goodsTypeChangeHandler(index) {
       this.formData.orderDetailList[index].goodsId = ''
+      this.formData.orderDetailList[index].goodsCode = ''
+      this.formData.orderDetailList[index].goodsName = ''
+
       this.setGoodsList(index)
     },
     setGoodsList(index) {
@@ -987,7 +994,7 @@ export default {
       this.$emit('closeOrderDetail')
     },
     isOverDate(dateStr) {
-      return this.monent(dateStr).isBefore(this.monent()) ? '已到期' : ''
+      return this.moment(dateStr).isBefore(this.moment().format('YYYY-MM-DD')) ? '已到期' : ''
     },
     downloadReceipt() {
       downloadReceiptTemplate()

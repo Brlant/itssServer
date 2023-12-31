@@ -41,7 +41,7 @@ import VueMeta from 'vue-meta'
 // 字典数据组件
 import DictData from '@/components/DictData'
 
-// 文件导入组件 
+// 文件导入组件
 import BaseUpload from '@/components/BaseUpload'
 
 import '@/assets/css/component.css'
@@ -74,9 +74,9 @@ Vue.prototype.selectDictLabel = selectDictLabel
 Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
-Vue.prototype.handleTree2 = handleTree2 
-Vue.prototype.class2color = class2color 
-Vue.prototype.monent = Moment
+Vue.prototype.handleTree2 = handleTree2
+Vue.prototype.class2color = class2color
+Vue.prototype.moment = Moment
 
 // 全局组件挂载
 Vue.component('DictTag', DictTag)
@@ -116,10 +116,10 @@ Vue.use(Element, {
 })
 
 Vue.config.productionTip = false
-// 路由守卫 
+// 路由守卫
 // var flag; // 首先定义一个开关
 // router.beforeEach((to, from, next) => {
-  
+
 //     if (to.path == '/projectManager/proDetails/') { // 当进入这个页面进行记录  || to.path == 'projectManager/projectTeam'
 //         flag = true; // 改变信号
 //         next();
@@ -150,4 +150,3 @@ new Vue({
   store,
   render: h => h(App)
 })
-

@@ -16,7 +16,7 @@
 
           <!--     物品类型 -->
           <el-form-item prop="goodsType">
-            <el-select v-model="queryParams.goodsType" placeholder="物品类型" clearable  >
+            <el-select v-model="queryParams.goodsType" placeholder="物品类型" clearable>
               <el-option
                 v-for="(item,index) in goodsTypes"
                 :key="index"
@@ -28,7 +28,8 @@
           </el-form-item>
           <!--      供应商-->
           <el-form-item prop="supplierId">
-            <el-select v-model="queryParams.supplierId" @clear="removeTag" filterable :filter-method="getSupplierList" placeholder="供应商" clearable>
+            <el-select v-model="queryParams.supplierId" @clear="removeTag" filterable :filter-method="getSupplierList"
+                       placeholder="供应商" clearable>
               <el-option
                 v-for="(item,index) in supplierList"
                 :key="index"
@@ -44,7 +45,7 @@
               placeholder="发起部门"
               :options="deptList"
               :props="{ checkStrictly: true,emitPath:false, value: 'id' }"
-              clearable filterable ></el-cascader>
+              clearable filterable></el-cascader>
           </el-form-item>
           <!--搜索重置-->
           <el-form-item>
@@ -71,7 +72,7 @@
       <el-table-column label="物品类型" align="center" prop="goodsType">
         <template v-slot="{ row }">
           <div v-for="(item,index) in goodsTypes">
-            <span v-if="row.goodsType  === item.dictCode">{{item.dictLabel}}</span>
+            <span v-if="row.goodsType  === item.dictCode">{{ item.dictLabel }}</span>
           </div>
         </template>
       </el-table-column>
@@ -81,15 +82,15 @@
       <el-table-column label="单位" align="center" prop="goodsUnit"/>
       <el-table-column label="供应商" align="center" prop="supplierName"/>
       <el-table-column label="含税进价" align="center" prop="taxBid"/>
-      <el-table-column label="税率" align="center" prop="taxRate" />
+      <el-table-column label="税率" align="center" prop="taxRate"/>
       <el-table-column label="不含税进价" align="center" prop="nonTaxBid"/>
       <el-table-column label="库存数量" align="center" prop="amount"/>
       <el-table-column label="含税总进价" align="center" prop="totalTaxBid"/>
       <el-table-column label="不含税总进价" align="center" prop="nonTotalTaxBid"/>
-      <el-table-column label="有效期" align="center" prop="validityDate" >
+      <el-table-column label="有效期" align="center" prop="validityDate">
         <template v-slot="{ row }">
-          <span v-if="row.validityDate" :style="{ color: isPast(row.validityDate) ? 'red' : 'black' }">
-            {{row.validityDate}}
+          <span :style="{ color: isPast(row.validityDate) ? 'red' : 'black' }">
+            {{ row.validityDate ? row.validityDate : '-' }}
           </span>
         </template>
       </el-table-column>
@@ -104,17 +105,19 @@
       @pagination="getInventoryList"
     />
 
-    <inventory-form :dialogAddForm="dialogAddForm" :formTitle="formTitle" :stockId="stockId" @closeAddForm="closeAddForm"></inventory-form>
+    <inventory-form :dialogAddForm="dialogAddForm" :formTitle="formTitle" :stockId="stockId"
+                    @closeAddForm="closeAddForm"></inventory-form>
   </div>
 </template>
 
 <script>
 import supplierApi from '@/api/supplier/supplier'
 import inventoryApi from '@/api/inventory/inventory'
-import { treeselect } from '@/api/system/dept'
+import {treeselect} from '@/api/system/dept'
 import inventoryForm from '@/views/pms/order/inventory/inventoryLog'
 import {getDicts} from '@/api/system/dict/data'
 import request from '@/utils/request'
+
 export default {
   name: "index",
   components: {
@@ -122,13 +125,13 @@ export default {
   },
   data() {
     return {
-      stockId:0,
+      stockId: 0,
       // 遮罩层
       loading: true,
-      dialogAddForm:false,
+      dialogAddForm: false,
       // 显示搜索条件
       showSearch: true,
-      formTitle:'库存流水',
+      formTitle: '库存流水',
       // 查询参数
       queryParams: {
         //分页
@@ -139,13 +142,13 @@ export default {
       //查询列表数据
       handleList: [],
       //物品类型列表
-      goodsTypes:[
+      goodsTypes: [
         // {label:"固定资产",value:1},
         // {label:"易耗品",value:2},
         // {label:"服务",value:3},
         // {label:"销售品",value:4},
       ],
-      supplierList:[],
+      supplierList: [],
       // 发起部门（多层级）
       deptList: [],
       // 发起人，按部门筛选
@@ -161,12 +164,10 @@ export default {
   },
   methods: {
     isPast(date) {
-      const now = new Date();
-      const past = new Date(date);
-      return past.getTime() < now.getTime();
+      return this.moment(date).isBefore(this.moment().format('YYYY-MM-DD'))
     },
     /* 导出 */
-    exportExcel(){
+    exportExcel() {
       inventoryApi.exportInventoryLog(this.queryParams).then()
     },
     getDeptList(query) {
@@ -193,7 +194,7 @@ export default {
         })
       })
     },
-    getSupplierList(query){
+    getSupplierList(query) {
       let params = {
         codeNameKey: query,
         pageNum: 1,
@@ -225,7 +226,7 @@ export default {
       this.stockId = row.stockId;
       this.dialogAddForm = true
     },
-    closeAddForm(){
+    closeAddForm() {
       this.stockId = 0;
       this.dialogAddForm = false;
     },
@@ -236,11 +237,11 @@ export default {
       this.getInventoryList();
       this.getSupplierList();
     },
-    removeTag(){
+    removeTag() {
       this.getInventoryList();
       this.getSupplierList();
     },
-    getGoodsTypes(){
+    getGoodsTypes() {
       return getDicts('goods_types').then((res) => {
         this.goodsTypes = res.data.filter(item => item.dictLabel !== '服务');
       })
