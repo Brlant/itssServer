@@ -529,7 +529,7 @@ export default {
         pageSize: this.queryParams.pageSize,
         queryType: 1
       }
-      request.get('/pms/examine/my-handled',{params}).then((res) => {
+      request.get('/pms/examine/my-initiated',{params}).then((res) => {
         this.loading = false
         this.initiateList = res.rows
         this.queryParams.total = res.total
