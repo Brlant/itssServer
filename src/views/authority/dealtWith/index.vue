@@ -571,9 +571,9 @@ export default {
       }
       request.get('/pms/examine/my-initiated',{params}).then((res) => {
         this.loading = false
-        this.queryParams.total = res.data.total
-        this.dealtWithList = res.data.rows
-        this.$store.dispatch('updateItem', res.data.total);
+        this.queryParams.total = res.total
+        this.dealtWithList = res.rows
+        this.$store.dispatch('updateItem', res.total);
         // window.sessionStorage.setItem('total', res.data.total)
       })
     },

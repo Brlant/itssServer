@@ -566,8 +566,8 @@ export default {
       }
       request.get('/pms/examine/my-handled',{params}).then((res) => {
         this.loading = false;
-        this.queryParams.total = res.data.total;
-        this.handleList = res.data.rows;
+        this.queryParams.total = res.total;
+        this.handleList = res.rows;
       })
     },
     /** 重置按钮操作 */

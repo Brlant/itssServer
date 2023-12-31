@@ -531,8 +531,8 @@ export default {
       }
       request.get('/pms/examine/my-handled',{params}).then((res) => {
         this.loading = false
-        this.initiateList = res.data.rows
-        this.queryParams.total = res.data.total
+        this.initiateList = res.rows
+        this.queryParams.total = res.total
       })
     },
     getQuery(){
