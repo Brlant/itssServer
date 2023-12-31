@@ -730,6 +730,32 @@ export default {
       params.applyName = this.currUser.nickName
       params.applyUserId = this.currUser.userId
 
+      params.budgetType = params.budgetTypes.join("-")
+      let budgetTypeNames = []
+      this.budgetTypes.forEach(one => {
+        if (params.budgetTypes[0] === one.budgetId) {
+          budgetTypeNames.push(one.budgetName)
+          if (one.childList) {
+            one.childList.forEach(two => {
+              if (params.budgetTypes[0] === one.budgetId) {
+                budgetTypeNames.push(two.budgetName)
+                if (two.childList) {
+                  two.childList.forEach(three => {
+                    if (params.budgetTypes[0] === one.budgetId) {
+                      budgetTypeNames.push(three.budgetName)
+                    }
+                  })
+                }
+              }
+            })
+          }
+        }
+      })
+
+      params.budgetTypeName = budgetTypeNames.join("-")
+
+      params.goodsTypeName = this.goodsTypes.find(one => one.dictCode === params.goodsType)?.dictLabel
+
       editOrderInfo(params).then(res => {
         if (res.code === 200) {
           this.$message.success('编辑成功')
@@ -893,7 +919,8 @@ export default {
       })
     },
     supplierChangeHandler(index) {
-      this.formData.orderDetailList[index].goodsId = ''
+      // this.formData.orderDetailList[index].goodsId = ''
+      this.$set(this.formData.orderDetailList[index], 'goodsId', '')
       this.setGoodsList(index)
     },
     goodsTypeChangeHandler(index) {
@@ -932,6 +959,10 @@ export default {
       }
     },
     goodsChangeHandler(goodsId, index) {
+      if (!goodsId){
+        return
+      }
+
       let goodsInfo = this.goodsMap[goodsId]
       let goodsCode = goodsInfo.goodsCode
       let goodsName = goodsInfo.goodsName

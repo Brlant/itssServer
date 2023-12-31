@@ -402,7 +402,7 @@ export default {
             queryType: 2
           }
         getDealtWithList(updateParams).then((res) => {
-          this.$store.dispatch('updateItem', res.data.total);
+          this.$store.dispatch('updateItem', res.total);
         })
 
       })

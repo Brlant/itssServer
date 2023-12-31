@@ -234,7 +234,7 @@ import supplierForm from '@/common/supplier/supplierForm'
 import supplierAuditInfo from '@/common/supplierDetails/supplierAuditInfo'
 import supplierInfo from '@/common/supplierDetails/supplierInfo'
 import supplierOperationLog from '@/common/supplierDetails/supplierOperationLog'
-import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
+import {getDealtWithList} from '@/api/auditCenter/dealtWith/dealtWith'
 import {getDicts} from '@/api/system/dict/data'
 
 export default {
@@ -401,7 +401,7 @@ export default {
             queryType: 2
           }
         getDealtWithList(updateParams).then((res) => {
-          this.$store.dispatch('updateItem', res.data.total);
+          this.$store.dispatch('updateItem', res.total);
         })
 
       })

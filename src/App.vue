@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import {getDealtWithList} from '@/api/auditCenter/dealtWith/dealtWith'
 import request from '@/utils/request'
 
 export default {

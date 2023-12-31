@@ -224,10 +224,9 @@ import managerAuditInfo from "@/common/contractManager/managerAuditInfo";
 import managerInfo from "@/common/contractManager/managerInfo";
 import managerOperationLog from "@/common/contractManager/managerOperationLog";
 
-import { getContractFileList,getUserList } from '@/api/contractFilesManagement/contractFilesManagement'
-import supplierApi from '@/api/supplier/supplier'
-import request, { download } from '@/utils/request'
-import { getDealtWithList } from '@/api/auditCenter/dealtWith/dealtWith'
+import {getContractFileList} from '@/api/contractFilesManagement/contractFilesManagement'
+import request, {download} from '@/utils/request'
+import {getDealtWithList} from '@/api/auditCenter/dealtWith/dealtWith'
 
 export default {
   name: "index",
@@ -399,7 +398,7 @@ export default {
             queryType: 2
           }
         getDealtWithList(updateParams).then((res) => {
-          this.$store.dispatch('updateItem', res.data.total);
+          this.$store.dispatch('updateItem', res.total);
         })
 
       })

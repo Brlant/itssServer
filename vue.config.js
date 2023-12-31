@@ -16,13 +16,11 @@ const targets = {
   yj: 'http://192.168.5.13:8081',
   lxr: 'http://192.168.5.10:8080',
   xwc: 'http://192.168.5.213:8080',
-  cjg: 'http://192.168.5.26:8081',
+  cjg: 'http://192.168.5.11:8081',
   wp: 'http://192.168.2.122:8080',
   test: 'http://192.168.1.101:8699',
   wp_test: 'http://192.168.5.28:8080',
 }
-
-console.log('process.env.npm_config_url:', process.env.npm_config_url)
 
 // vue.config.js 配置说明
 //官方vue.config.js 参考文档 https://cli.vuejs.org/zh/config/#css-loaderoptions

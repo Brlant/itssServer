@@ -399,7 +399,7 @@ export default {
           queryType: 2
         }
       getDealtWithList(params).then((res) => {
-        this.$store.dispatch('updateItem', res.data.total);
+        this.$store.dispatch('updateItem', res.total);
       })
     },
     /*查询列表内容*/

@@ -282,7 +282,6 @@
 </template>
 
 <script>
-import {getDealtWithList} from '@/api/auditCenter/dealtWith/dealtWith'
 //我的待办页面
 // import fileInfo from '@/common/details/fileInfo'
 // import auditInfo from '@/common/details/auditInfo'
