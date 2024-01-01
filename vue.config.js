@@ -51,7 +51,7 @@ module.exports = {
     open: true,
     proxy: {
       '/itss': {
-        target: process.env.npm_config_url || targets.test,
+        target: process.env.npm_config_url || targets.yj,
         changeOrigin: true,
         logLevel: "debug",
         pathRewrite: {

@@ -487,4 +487,8 @@ export default {
   text-align: center;
   color: #F79B22;
 }
+>>>.el-tabs__content{
+  height:450px;
+  overflow-y: auto;
+}
 </style>

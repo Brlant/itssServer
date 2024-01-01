@@ -27,6 +27,11 @@
               :value="item.dictCode"
               :disabled="item.status!=='0'"
             />
+            <el-option v-if="!supplierTypes.some(list=> list.dictCode === formData.supplierType)"
+                       :label="formData.supplierTypeName"
+                       :value="formData.supplierType"
+                       :disabled="true"
+            />
           </el-select>
         </el-form-item>
       </el-col>
@@ -708,6 +713,7 @@ export default {
     },
     getSupplierTypes() {
       return getDicts('supplier_type').then((res) => {
+        console.log(res.data)
         this.supplierTypes = res.data
       })
     },

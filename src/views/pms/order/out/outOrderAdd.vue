@@ -468,7 +468,7 @@ export default {
         returnButton: 0,// 撤回：判断是否有撤回权限，0否1是
         receiptButton: 0,// 签收：判断是否有收货权限，0否1是
       }
-
+      this.doing = false;
       this.$emit('close', {refresh: true})
     },
     /*订单明细表格函数*/

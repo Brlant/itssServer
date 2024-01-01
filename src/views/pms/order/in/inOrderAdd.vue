@@ -343,6 +343,7 @@ export default {
     /*关闭弹框*/
     handleEntryClose() {
       this.$refs.form.resetFields()
+      this.doing = false;
       this.$emit('close', {refresh: true})
     },
     /*订单明细表格函数*/

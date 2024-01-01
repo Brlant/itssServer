@@ -252,6 +252,7 @@ export default {
     /*关闭弹框*/
     closeAddFiles() {
       this.formData.scanningCopyUrl = '';
+      this.doing = false;
       this.$emit('closeAddFiles')
     },
     getSupplierList(query) {

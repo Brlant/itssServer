@@ -558,4 +558,8 @@ export default {
   height: 20px;
   text-align: center;
 }
+>>>.el-tabs__content{
+  height:450px;
+  overflow-y: auto;
+}
 </style>

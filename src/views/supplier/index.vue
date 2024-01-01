@@ -541,4 +541,9 @@ export default {
 .CentralSearch {
   display: flex
 }
+
+>>>.el-tabs__content{
+  height:450px;
+  overflow-y: auto;
+}
 </style>

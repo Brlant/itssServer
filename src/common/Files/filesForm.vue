@@ -375,6 +375,7 @@ export default {
       // this.formData = {}
       this.$refs.formRef.resetFields();
       this.formData.attachmentInfos = [];
+      this.doing = false;
       // this.$refs['formRef'].resetFields();
       this.$emit('closeAddFiles');
     },

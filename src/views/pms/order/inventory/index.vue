@@ -251,5 +251,8 @@ export default {
 </script>
 
 <style scoped>
-
+>>>.el-tabs__content{
+  height:450px;
+  overflow-y: auto;
+}
 </style>

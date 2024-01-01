@@ -418,6 +418,7 @@ export default {
         ],
       }
       this.$refs.form.resetFields();
+      this.doing = false;
       this.$emit('close')
     },
     /*表单校验提交*/

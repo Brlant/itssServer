@@ -125,6 +125,16 @@ export default {
     },
     getEmailCode() {
       const that = this
+      const regExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+      if(!regExp.test(that.form.identify)){
+        this.$message({
+          message: '请输入正确的邮箱',
+          type:'error'
+        })
+        return false
+      }
+
       let formData = new FormData()
       formData.append('validType','2')
       formData.append('identify',that.form.identify)
