@@ -18,7 +18,7 @@
 
     <el-table :data="tableData"
               style="width: 100%"
-              row-key="budgetId"
+              :row-key="getRowKeys"
               :tree-props="{children: 'childList'}"
     >
       <el-table-column label="类目名称" prop="budgetName"></el-table-column>
@@ -104,6 +104,9 @@ export default {
     this.budgetList();
   },
   methods: {
+    getRowKeys(row){
+      return row.budgetId;
+    },
     /* 修改状态值 */
     handleStatusChange(query){
       let params = {
@@ -141,6 +144,7 @@ export default {
       this.addForm= '提交';
     },
     resetForm(){
+      this.formData.pageNum = 1;
       this.$refs.formData.resetFields();
       this.budgetList();
     },

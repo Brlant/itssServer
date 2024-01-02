@@ -18,7 +18,7 @@
 
     <el-table :data="tableData"
               style="width: 100%"
-              row-key="categoryId"
+              :row-key="getRowKeys"
               :tree-props="{children: 'childList'}"
     >
       <el-table-column label="类目名称" prop="categoryName"></el-table-column>
@@ -104,6 +104,9 @@ export default {
     this.categoryList();
   },
   methods: {
+    getRowKeys(row){
+      return row.categoryId;
+    },
     /* 修改状态值 */
     handleStatusChange(query){
       let params = {
@@ -136,6 +139,7 @@ export default {
       })
     },
     resetForm(){
+      this.formData.pageNum = 1;
       this.$refs.formData.resetFields();
       this.categoryList();
     },
