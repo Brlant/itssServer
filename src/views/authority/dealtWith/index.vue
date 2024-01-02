@@ -239,7 +239,7 @@
             <!-- 使用组件作为标签页内容 -->
             <component :is="tab.component" :tabName="tabName" :orderId="currOrderId"
                        :orderType="0"
-                       @closeOrderDetail="closeOrderDetailHandler"></component>
+                       @close="closeHandler"></component>
           </el-tab-pane>
         </el-tabs>
       </template>
@@ -621,7 +621,7 @@ export default {
     },
 
     // 关闭订单详情对话框并刷新订单列表
-    closeOrderDetailHandler() {
+    closeHandler() {
       this.closeEntryDialog()
       this.getDealtWithList()
     },

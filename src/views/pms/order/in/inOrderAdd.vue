@@ -527,7 +527,7 @@ export default {
       }
     },
     goBack() {
-      this.$emit('closeOrderDetail')
+      this.$emit('close')
     },
     isOverDate(dateStr) {
       return this.moment(dateStr).isBefore(this.moment().format('YYYY-MM-DD')) ? '已到期' : ''

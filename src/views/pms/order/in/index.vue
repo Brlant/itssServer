@@ -220,7 +220,7 @@
                        :tabName="tabName"
                        :orderId="currOrderId"
                        :orderType="0"
-                       @closeOrderDetail="closeOrderDetailHandler"
+                       @close="closeHandler"
             ></component>
           </el-tab-pane>
         </el-tabs>
@@ -382,7 +382,7 @@ export default {
       this.dialogEntryDetailsProcessDialog = false;
     },
     // 关闭订单详情对话框并刷新订单列表
-    closeOrderDetailHandler() {
+    closeHandler() {
       this.closeEntryDialog()
       this.getList()
     },

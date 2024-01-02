@@ -567,7 +567,7 @@ export default {
       editOrderInfo(params).then(res => {
         if (res.code === 200) {
           this.$message.success('编辑成功')
-          this.$emit('closeOrderDetail')
+          this.$emit('close')
         } else {
           this.$message.error(res.msg)
         }
@@ -585,7 +585,7 @@ export default {
             type: 'success',
             message: '取消订单成功'
           })
-          this.$emit('closeOrderDetail')
+          this.$emit('close')
         })
       })
     },
@@ -606,7 +606,7 @@ export default {
             type: 'success',
             message: '操作成功'
           })
-          this.$emit('closeOrderDetail')
+          this.$emit('close')
         })
       })
     },
@@ -632,7 +632,7 @@ export default {
             message: '操作成功'
           })
 
-          this.$emit('closeOrderDetail')
+          this.$emit('close')
         })
       }).catch(() => {
       });
@@ -656,7 +656,7 @@ export default {
             message: '操作成功'
           })
 
-          this.$emit('closeOrderDetail')
+          this.$emit('close')
         })
       })
     },
