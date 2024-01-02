@@ -1091,12 +1091,12 @@ export default {
       }
     },
     // 编辑付款凭证
-    editOrderPayment() {
+    editOrderPayment(uploadFlag=true) {
       let pmsOrderId = this.formData.pmsOrderId
       let attachmentInfos = this.paymentAttachmentInfos
       request.post('/pms/order/editOrderPayment', {pmsOrderId, attachmentInfos}).then(res => {
         if (res.code === 200) {
-          this.$message.success('付款凭证上传成功')
+          this.$message.success(uploadFlag?'付款凭证上传成功':'付款凭证删除成功')
         } else {
           this.$message.error(res.msg)
         }
@@ -1125,7 +1125,11 @@ export default {
           supplierApi.deleteAttachment(attachmentId).then(res => {
             if (res.code === 200) {
               this.localDelAttachment(paymentFlag)
-              this.$message.success('附件删除成功')
+              if (paymentFlag){
+                this.editOrderPayment(false)
+              }else {
+                this.$message.success('发票删除成功')
+              }
             } else {
               this.$message.error(res.msg)
             }

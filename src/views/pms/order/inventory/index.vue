@@ -216,9 +216,8 @@ export default {
       }
 
       inventoryApi.queryInventory(params).then((res) => {
-        this.handleList = res.data.rows;
-        console.log(res.data.rows)
-        this.queryParams.total = res.data.total;
+        this.handleList = res.rows;
+        this.queryParams.total = res.total;
         this.loading = false;
       })
     },
