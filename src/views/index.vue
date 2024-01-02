@@ -797,7 +797,7 @@ export default {
           queryType: 2
         }
       getDealtWithList(params).then((res) => {
-        this.$store.dispatch('updateItem', res.data.total);
+        this.$store.dispatch('updateItem', res.total);
       })
     },
     /* 关闭消息提醒 */

@@ -36,7 +36,7 @@ export default {
       }
 
       request.get('pms/examine/my-todo', {params}).then((res) => {
-        this.$store.dispatch('updateItem', res.data.total);
+        this.$store.dispatch('updateItem', res.total);
       })
     }
   },
