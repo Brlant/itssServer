@@ -16,7 +16,7 @@
         />
       </el-form-item>
       <el-form-item label="类目名称" prop="categoryName">
-        <el-input v-model="formData.categoryName" ></el-input>
+        <el-input v-model="formData.categoryName"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -25,11 +25,6 @@
           @click="submitForm">
           提交
         </el-button>
-<!--        <el-button-->
-<!--          @click="editRow"-->
-<!--          v-show="formData.categoryId"-->
-<!--        >编辑-->
-<!--        </el-button>-->
         <el-button
           @click="closeAddEditForm"
         >取消
@@ -61,6 +56,7 @@ export default {
       handler(val){
         if(val.categoryId){
           this.formData = val
+          this.parentId = val.categoryId
           this.getCategoryList();
         }else{
           this.formData={}
@@ -72,7 +68,7 @@ export default {
     dialogCategoryFrom:{
       handler(val){
         if(val){
-          this.getCategoryList();
+
         }
       },
     }
@@ -88,13 +84,43 @@ export default {
         categoryName: [{ required: true, message: '请输入类目名称', trigger: 'blur' }]
       },
       cascaderLength:'',
+      parentId:''
     }
   },
   methods: {
     /* 获取上级类目列表 */
     getCategoryList(){
       categoryApi.getCategoryList().then(res=>{
-        this.categoryList = res.rows;
+        this.categoryList = res.rows.map(item=>{
+          return {
+            categoryId: item.categoryId,
+            categoryName: item.categoryName,
+            disabled: item.categoryId === this.parentId,
+            childList: item.childList?.map(childItem=>{
+              return {
+                categoryId: childItem.categoryId,
+                categoryName: childItem.categoryName,
+                disabled: childItem.categoryId === this.parentId,
+              }
+            })
+          }
+        });
+
+        // if(val){
+        //   for(let i = 0;i<this.categoryList.length;i++){
+        //     if(this.categoryList[i].categoryId === this.formData.parentId){
+        //       this.categoryList[i].disabled = true
+        //     }
+        //     if(this.categoryList[i].childList){
+        //       for(let j = 0;j<this.categoryList[i].childList.length;j++){
+        //         if(this.categoryList[i].childList[j].categoryId === this.formData.parentId){
+        //           this.categoryList[i].childList[j].disabled = true
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
+
       })
     },
 
@@ -154,6 +180,7 @@ export default {
       this.cascaderLength = ''
       this.formData.parentId = ''
       this.formData.categoryName = ''
+      this.formData.categoryId = ''
       // this.formData = {}
     },
     handleChange(query){
@@ -163,10 +190,10 @@ export default {
     }
   },
   created() {
-    this.getCategoryList()
+
   },
   mounted() {
-    this.getCategoryList()
+
   }
 }
 </script>

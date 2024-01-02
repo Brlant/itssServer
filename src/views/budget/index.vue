@@ -135,7 +135,12 @@ export default {
 
     },
     budgetList(){
-      budgetApi.queryBudget(this.formData).then(res=>{
+      const params = {
+        budgetName:this.formData.budgetName,
+        pageNum: this.formData.pageNum,
+        pageSize: this.formData.pageSize,
+      }
+      budgetApi.queryBudget(params).then(res=>{
         this.loading = false;
         this.tableData = res.rows;
         this.total= res.total;

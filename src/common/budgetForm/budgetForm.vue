@@ -25,11 +25,6 @@
         @click="submitForm">
         提交
       </el-button>
-<!--      <el-button-->
-<!--        @click="editRow"-->
-<!--        v-show="formData.budgetId"-->
-<!--      >编辑-->
-<!--      </el-button>-->
       <el-button
         @click="closeAddEditForm"
       >取消
@@ -61,6 +56,7 @@ export default {
       handler(val){
         if(val.budgetId){
           this.formData = val
+          this.parentId = val.budgetId
           this.getbudgetList();
         }else{
           this.formData={}
@@ -72,7 +68,7 @@ export default {
     dialogbudgetFrom:{
       handler(val){
         if(val){
-          this.getbudgetList();
+
         }
       },
     }
@@ -88,13 +84,27 @@ export default {
         budgetName: [{ required: true, message: '请输入类目名称', trigger: 'blur' }]
       },
       cascaderLength:'',
+      parentId:''
     }
   },
   methods: {
     /* 获取上级类目列表 */
     getbudgetList(){
       budgetApi.queryBudget().then(res=>{
-        this.budgetList = res.rows;
+        this.budgetList = res.rows.map(item=>{
+          return {
+            budgetId: item.budgetId,
+            budgetName: item.budgetName,
+            disabled: item.budgetId === this.parentId,
+            childList: item.childList?.map(childItem=>{
+              return {
+                budgetId: childItem.budgetId,
+                budgetName: childItem.budgetName,
+                disabled: childItem.budgetId === this.parentId,
+              }
+            })
+          }
+        });
       })
     },
 
@@ -151,6 +161,7 @@ export default {
       this.cascaderLength = ''
       this.formData.parentId = ''
       this.formData.budgetName = ''
+      this.formData.budgetId = ''
       this.$emit('closeAddEditForm')
     },
     handleChange(query){
@@ -160,10 +171,10 @@ export default {
     }
   },
   created() {
-    this.getbudgetList()
+
   },
   mounted() {
-    this.getbudgetList()
+
   }
 }
 </script>

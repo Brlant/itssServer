@@ -94,16 +94,16 @@
       <el-table-column type="index" label="序号"></el-table-column>
       <el-table-column prop="goodsCode" label="物品编号"></el-table-column>
       <el-table-column prop="goodsName" label="物品名称"></el-table-column>
-      <el-table-column prop="goodsType" label="物品类型">
-        <template slot-scope="scope" >
-          <div v-for="(item,index) in goodsTypes">
-            <span v-if="scope.row.goodsType  === item.dictCode">{{item.dictLabel}}</span>
-          </div>
+      <el-table-column prop="goodsTypeName" label="物品类型">
+<!--        <template slot-scope="scope" >-->
+<!--          <div v-for="(item,index) in goodsTypes">-->
+<!--            <span v-if="scope.row.goodsType  === item.dictCode">{{item.dictLabel}}</span>-->
+<!--          </div>-->
 <!--          <span v-if="scope.row.goodsType === 1">固定资产</span>-->
 <!--          <span v-if="scope.row.goodsType === 2">消耗品</span>-->
 <!--          <span v-if="scope.row.goodsType === 3">服务</span>-->
 <!--          <span v-if="scope.row.goodsType === 4">销售品</span>-->
-        </template>
+<!--        </template>-->
       </el-table-column>
       <el-table-column prop="goodsModel" label="型号"></el-table-column>
       <el-table-column prop="goodsSpecifications" label="规格"></el-table-column>

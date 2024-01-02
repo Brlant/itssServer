@@ -136,7 +136,12 @@ export default {
 
     },
     categoryList(){
-      categoryApi.getCategoryList(this.formData).then(res=>{
+      const params = {
+        categoryName:this.formData.categoryName,
+        pageNum: this.formData.pageNum,
+        pageSize: this.formData.pageSize,
+      }
+      categoryApi.getCategoryList(params).then(res=>{
         this.loading = false;
         this.tableData = res.rows;
         this.total = res.total;
