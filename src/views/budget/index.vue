@@ -19,6 +19,7 @@
     <el-table :data="tableData"
               style="width: 100%"
               :row-key="getRowKeys"
+              v-loading="loading"
               :tree-props="{children: 'childList'}"
     >
       <el-table-column label="类目名称" prop="budgetName"></el-table-column>
@@ -60,8 +61,8 @@
 
     <!--    翻页-->
     <pagination
-      v-show="formData.total>0"
-      :total="formData.total"
+      v-show="total>0"
+      :total="total"
       :page.sync="formData.pageNum"
       :limit.sync="formData.pageSize"
       @pagination="budgetList"
@@ -78,14 +79,15 @@ export default {
   name: 'index',
   data() {
     return {
+      loading:true,
       //查询参数
       formData:{
         budgetName:'',
         //翻页
-        total: 10,
         pageNum: 1,
         pageSize: 10,
       },
+      total: 0,
       showSearch:true,
       //新建编辑弹框
       dialogbudgetFrom:false,
@@ -134,8 +136,9 @@ export default {
     },
     budgetList(){
       budgetApi.queryBudget(this.formData).then(res=>{
+        this.loading = false;
         this.tableData = res.rows;
-        this.formData.total = res.total;
+        this.total= res.total;
       })
     },
     addbudgetForm(){
