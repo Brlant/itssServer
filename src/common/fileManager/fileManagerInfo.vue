@@ -216,7 +216,7 @@
           v-show="formData.goodsStatus === 5"
           icon="el-icon-delete"
           @click="enableFiles(formData.goodsId, 3)"
-          v-has-permi="['pms:goods:enable']"
+          v-hasPermi="['pms:goods:enable']"
         >启用
         </el-button>
 
@@ -224,7 +224,7 @@
           v-show="formData.goodsStatus === 3"
           icon="el-icon-delete"
           @click="stopFiles(formData.goodsId, 5)"
-          v-has-permi="['pms:goods:enable']"
+          v-hasPermi="['pms:goods:enable']"
         >停用
         </el-button>
         <el-button
@@ -255,7 +255,7 @@
                    icon="el-icon-edit"
                    v-show="formData.goodsStatus === 2 || formData.goodsStatus === 3 || formData.goodsStatus === 4"
                    @click="submitForm"
-                   v-has-permi="['pms:goods:edit']"
+                   v-hasPermi="['pms:goods:edit']"
         >重新提交
         </el-button>
       </el-form-item>
@@ -283,7 +283,7 @@ export default {
         if (newVal && newVal.goodsId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
           this.backData = newVal
-          console.log(this.formData,'旧数据')
+
         }
       },
       immediate: true,
@@ -292,12 +292,16 @@ export default {
   },
   data() {
     return {
-      backData: '',
+      backData: {},
       formData: {
         goodsCode: '',
         goodsType: '',
         goodsName: '',
         supplierId: '',
+        goodsModel:'',//型号
+        goodsSpecifications:'',//规格
+        brand:'',//品牌
+        remark:'',//备注
         supplierName:'',
         goodsUnit: '',
         goodsUnitId: '',
@@ -367,6 +371,10 @@ export default {
       return supplierApi.uploadUrl
     },
 
+    oldFlag(){
+
+    },
+
     oldStr() {
       let {
         goodsType,
@@ -377,12 +385,17 @@ export default {
         taxRateId,
         boxGauge,
         goodsClassify,
+
+        goodsModel,
+        goodsSpecifications,
+        brand,
+        remark,
       } = this.detailsGoodsData
       let attachmentFileNames = this.attachmentInfos.map(item => {
         return item.attachmentFileName
       }).join(',')
 
-      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify;
+      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify + goodsModel + goodsSpecifications + brand + remark;
       str += + attachmentFileNames
       return str;
     },
@@ -397,12 +410,17 @@ export default {
         taxRateId,
         boxGauge,
         goodsClassify,
+
+        goodsModel,
+        goodsSpecifications,
+        brand,
+        remark,
       } = this.formData
       let attachmentFileNames = this.attachmentInfos.map(item => {
         return item.attachmentFileName
       }).join(',')
 
-      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify;
+      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify + goodsModel + goodsSpecifications + brand + remark;
       str += + attachmentFileNames
       return str;
     },
@@ -629,15 +647,22 @@ export default {
         type: 'warning'
       }).then(() => {
         this.formData.nonTaxBid = this.nonTaxBid;
-        let changes = Object.keys(this.formData).some(key => this.formData[key] !== this.backData[key]);
         this.$refs.formData.validate((valid) => {
           if (valid) {
-            // 在这里可以进行表单提交操作，比如调用接口提交数据
-            this.$message({
-              message: '表单提交成功',
-              type: 'success'
-            })
-            this.updateSupplier()
+            // this.updateSupplier()
+            // // 在这里可以进行表单提交操作，比如调用接口提交数据
+            // this.$message({
+            //   message: '表单提交成功',
+            //   type: 'success'
+            // })
+            // 表单验证通过，可以在这里进行提交操作
+
+            if (this.needAudit === false) {
+              return this.$message.error('内容未做任何修改，无需提交')
+            } else {
+              this.updateSupplier()
+            }
+
           } else {
             this.$message.error('表单验证失败，请检查输入内容')
             return false
@@ -646,9 +671,11 @@ export default {
       })
     },
     updateSupplier(){
-      if(this.needAudit === false){
-        return this.$message.error('内容未做任何修改，无需提交')
-      }
+
+      // if(this.needAudit === false){
+      //   return this.$message.error('内容未做任何修改，无需提交')
+      // }
+
       this.formData.changeFlag = this.needAudit
       this.formData.goodsTypeName = this.goodsTypes.find(item => item.dictCode === this.formData.goodsType)?.dictLabel
       this.formData.goodsUnit = this.goodsTypes.find(item => item.dictCode === this.formData.goodsUnitId)?.dictLabel

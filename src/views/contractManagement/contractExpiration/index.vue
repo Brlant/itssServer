@@ -58,7 +58,7 @@
           type="primary"
           icon="el-icon-download"
           @click="exportContract"
-          v-has-permi="['pms:contract-expire:export']"
+          v-hasPermi="['pms:contract-expire:export']"
         >导出
         </el-button>
       </el-col>

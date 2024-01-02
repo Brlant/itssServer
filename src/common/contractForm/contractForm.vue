@@ -107,7 +107,7 @@
         <!--        第六行-->
         <el-row>
           <el-col :span="8">
-            <el-form-item v-has-permi="['pms:contract:renewal']" label="合同续签"
+            <el-form-item v-hasPermi="['pms:contract:renewal']" label="合同续签"
               prop="renewalFlag">
               <el-select v-model="formData.renewalFlag">
                 <el-option :value="1" label="续签"></el-option>

@@ -435,14 +435,14 @@
       <el-button
         class="pull-right"
         type="danger"
-        v-has-permi="['pms:in-order:cancel']"
+        v-hasPermi="['pms:in-order:cancel']"
         v-show="formData.cancelButton && formData.pmsOrderStatus !== 5 && formData.pmsOrderStatus !== 7"
         @click="cancelOrder"
       >取消订单
       </el-button>
       <el-button icon="el-icon-edit"
                  v-show="!readonly"
-                 v-has-permi="['pms:in-order:edit']"
+                 v-hasPermi="['pms:in-order:edit']"
                  @click="submitForm"
       >重新提交
       </el-button>
@@ -462,7 +462,7 @@
       >撤回
       </el-button>
 
-      <el-button v-has-permi="['pms:order:confirm']"
+      <el-button v-hasPermi="['pms:order:confirm']"
                  v-show="formData.receiptButton && (formData.pmsOrderStatus === 3)"
                  type="primary"
                  @click="confirmReceipt"
@@ -725,10 +725,10 @@ export default {
       this.formData.changeFlag = this.needAudit
 
       let params = this.formData
-      params.applyDepart = this.currUser.deptId
-      params.applyDepartName = this.currUser.deptName
-      params.applyName = this.currUser.nickName
-      params.applyUserId = this.currUser.userId
+      // params.applyDepart = this.currUser.deptId
+      // params.applyDepartName = this.currUser.deptName
+      // params.applyName = this.currUser.nickName
+      // params.applyUserId = this.currUser.userId
 
       params.budgetType = params.budgetTypes.join("-")
       let budgetTypeNames = []

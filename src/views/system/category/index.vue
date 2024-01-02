@@ -12,7 +12,7 @@
         </el-form>
       </el-col>
       <el-col :span="4">
-        <el-button type="primary"   icon="el-icon-plus" @click="addCategoryForm">添加</el-button>
+        <el-button type="primary"   icon="el-icon-plus" @click="addCategoryForm" v-hasPermi="['system:category:add']">添加</el-button>
       </el-col>
     </el-row>
 
@@ -41,6 +41,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
+            v-hasPermi="['system:category:edit']"
             @click="editCategoryForm(scope.row)"
           >修改
           </el-button>
@@ -49,6 +50,7 @@
             type="text"
             v-if="!scope.row.childList || scope.row.childList.length === 0"
             icon="el-icon-delete"
+            v-hasPermi="['system:category:delete']"
             @click="deleteCategoryForm(scope.row)"
           >删除
           </el-button>

@@ -64,8 +64,8 @@
         </el-col>
         <el-col :span="4">
           <el-form-item class="pull-right">
-            <el-button v-has-permi="['pms:out-order:add']" type="primary" icon="el-icon-plus" @click="addForm">新建</el-button>
-            <el-button v-has-permi="['pms:out-order:export']" type="primary" icon="el-icon-download" @click="exportOrder">导出</el-button>
+            <el-button v-hasPermi="['pms:out-order:add']" type="primary" icon="el-icon-plus" @click="addForm">新建</el-button>
+            <el-button v-hasPermi="['pms:out-order:export']" type="primary" icon="el-icon-download" @click="exportOrder">导出</el-button>
           </el-form-item>
         </el-col>
       </el-row>

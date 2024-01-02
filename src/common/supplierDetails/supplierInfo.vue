@@ -257,21 +257,21 @@
         v-show="formData.supplierStatus === 5"
         icon="el-icon-delete"
         @click="enableSupplier(formData.supplierId, 3)"
-        v-has-permi="['pms:supplier:enable']"
+        v-hasPermi="['pms:supplier:enable']"
       >启用
       </el-button>
       <el-button
         v-show="formData.supplierStatus === 3"
         icon="el-icon-delete"
         @click="enableSupplier(formData.supplierId, 5)"
-        v-has-permi="['pms:supplier:enable']"
+        v-hasPermi="['pms:supplier:enable']"
       >停用
       </el-button>
       <el-button
         v-show="formData.supplierStatus === 5 || formData.supplierStatus === 3"
         icon="el-icon-delete"
         @click="enableSupplier(formData.supplierId, 6)"
-        v-has-permi="['pms:supplier:enable']"
+        v-hasPermi="['pms:supplier:enable']"
       >淘汰
       </el-button>
       <el-button
@@ -280,19 +280,19 @@
         @click="handleDelete"
       >删除
       </el-button>
-      <el-button v-has-permi="['pms:supplier:edit']"
+      <el-button v-hasPermi="['pms:supplier:edit']"
                  icon="el-icon-edit"
                  v-show="!readonly"
                  @click="submitForm"
       >重新提交
       </el-button>
-      <el-button v-has-permi="['pms:supplier:edit']"
+      <el-button v-hasPermi="['pms:supplier:edit']"
                  type="success"
                  v-show="formData.examineButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
                  @click="auditPass"
       >审核通过
       </el-button>
-      <el-button v-has-permi="['pms:supplier:edit']"
+      <el-button v-hasPermi="['pms:supplier:edit']"
                  type="danger"
                  v-show="formData.examineButton && (formData.supplierStatus === 0 || formData.supplierStatus === 1)"
                  @click="auditNoPass"

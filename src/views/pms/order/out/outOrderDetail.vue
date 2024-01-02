@@ -284,13 +284,13 @@
       <el-button
         class="pull-right"
         type="danger"
-        v-has-permi="['pms:out-order:cancel']"
+        v-hasPermi="['pms:out-order:cancel']"
         v-show="formData.cancelButton && formData.pmsOrderStatus !== 3 && formData.pmsOrderStatus !== 5"
         @click="cancelOrder"
       >取消订单
       </el-button>
       <el-button icon="el-icon-edit"
-                 v-has-permi="['pms:out-order:edit']"
+                 v-hasPermi="['pms:out-order:edit']"
                  v-show="!readonly"
                  @click="submitForm"
       >重新提交
@@ -559,10 +559,10 @@ export default {
       this.formData.changeFlag = this.needAudit
 
       let params = this.formData
-      params.applyDepart = this.currUser.deptId
-      params.applyDepartName = this.currUser.deptName
-      params.applyName = this.currUser.nickName
-      params.applyUserId = this.currUser.userId
+      // params.applyDepart = this.currUser.deptId
+      // params.applyDepartName = this.currUser.deptName
+      // params.applyName = this.currUser.nickName
+      // params.applyUserId = this.currUser.userId
 
       editOrderInfo(params).then(res => {
         if (res.code === 200) {

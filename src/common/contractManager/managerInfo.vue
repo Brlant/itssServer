@@ -161,7 +161,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="供应商名称"
-                        prop="supplierId">
+                        prop="formData.supplierId">
             <el-select v-model="selectSupplier"
                        remote
                        filterable
@@ -171,7 +171,7 @@
                        placeholder="请选择供应商">
               <el-option v-for="supplier in supplierList"
                          :key="supplier.supplierId"
-                         :value="supplier"
+                         :value="supplier.supplierId"
                          :label="supplier.supplierName"></el-option>
             </el-select>
           </el-form-item>
@@ -291,23 +291,23 @@
         <el-button
           type="primary"
           v-if="btnEnable"
-          v-has-permi="['pms:contract:enable']"
+          v-hasPermi="['pms:contract:enable']"
           @click="editContractStatus(3)">启用
         </el-button>
         <el-button
           type="danger"
           v-if="btnUnable"
-          v-has-permi="['pms:contract:enable']"
+          v-hasPermi="['pms:contract:enable']"
           @click="editContractStatus(5)">停用
         </el-button>
         <el-button type="primary"
                    v-if="btnSumbit"
-                   v-has-permi="['pms:contract:export']"
+                   v-hasPermi="['pms:contract:export']"
                    @click="modifyContract">重新提交
         </el-button>
         <el-button type="danger"
                    v-if="btnDelete"
-                   v-has-permi="['pms:contract:delete']"
+                   v-hasPermi="['pms:contract:delete']"
                    @click="removeContract">删除
         </el-button>
         <el-button @click="() => $emit('closeDetail')">返回</el-button>
@@ -481,6 +481,7 @@ export default {
       }
       // 查询供应商下拉列表
       request.post('pms/supplier/getSupplierList',params).then((res) => {
+        console.log( res.data)
         this.supplierList = res.data
       })
     },
