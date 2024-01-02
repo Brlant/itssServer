@@ -482,7 +482,7 @@ export default {
       this.dialogEntryDetailsProcessDialog = true;
     },
     getDeptList(query) {
-      treeselect(query).then(res => {
+      request.get('system/dept_manage/treeselectNew',query).then(res => {
         this.deptList = res.data
       })
     },
@@ -498,7 +498,7 @@ export default {
         status: 0
       }
 
-      request.get('system/user/selectUserList', {
+      request.get('system/user/selectUserListNew', {
         params
       }).then(res => {
         this.userList = res.rows.map(item => {

@@ -301,8 +301,8 @@ export default {
         applyName: [{required: true, message: '请选择发起人', trigger: 'blur'}],
         applyDepartName: [{required: true, message: '请选择发起人部门', trigger: 'blur'}],
         applyDate: [{required: true, message: '请选择发起日期', trigger: 'blur'}],
-        orderBizType: [{required: true, message: '请选择订单类型', trigger: 'blur'}],
-        budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'blur'}],
+        orderBizType: [{required: true, message: '请选择订单类型', trigger: 'change'}],
+        budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'change'}],
         amount: [
           {validator: this.checkAmount, trigger: 'blur'}
         ]
