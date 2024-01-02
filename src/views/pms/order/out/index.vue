@@ -342,10 +342,12 @@ export default {
     /*查询列表内容*/
     getList() {
       let params = this.queryParams;
-      if (params.rangeDate && params.rangeDate.length === 2) {
-        params.startDate = params.rangeDate[0]
-        params.endDate = params.rangeDate[1]
-      }
+      params.startDate = params.rangeDate[0]
+      params.endDate = params.rangeDate[1]
+      // if (params.rangeDate && params.rangeDate.length === 2) {
+      //   params.startDate = params.rangeDate[0]
+      //   params.endDate = params.rangeDate[1]
+      // }
 
       this.loading = true;
       getOrderList(params).then(res => {
@@ -374,6 +376,8 @@ export default {
     resetQuery() {
       this.$refs.queryForm.resetFields()
       this.activeFilterIndex = 0
+      this.queryParams.rangeDate = [];
+      this.getList()
       // 订单类型(0-入库；1-出库)
       this.queryParams.orderType = '1'
       this.queryParams.pmsOrderStatus = ''
@@ -381,7 +385,7 @@ export default {
 
       this.activeFilterIndex = 0
 
-      this.getList()
+      // this.getList()
     },
     /*切换按钮查询列表*/
     setActiveFilter(item, index) {

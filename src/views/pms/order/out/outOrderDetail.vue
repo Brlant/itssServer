@@ -338,6 +338,7 @@ export default {
       doing: false,
       formTitle: "基本信息",
       formData: {
+        queryDetail:null,
         applyDepart: '',
         applyDepartName: '',
         applyName: '',
@@ -518,14 +519,13 @@ export default {
     getOrderDetail(orderId) {
       getOrderDetail(orderId).then(res => {
         this.orderDetail = JSON.parse(JSON.stringify(res.data))
-
         this.formData = res.data
+
         this.getRecipientUserList(res.data.recipientName, res.data.recipientDepartId)
         this.getDeptList({deptId: res.data.recipientDepartId})
         this.formData.orderDetailList.forEach((item, index) => {
           this.setGoodsList(index, item.supplierId)
-          this.queryStockCount(item.goodsId,index)
-
+          this.queryStockCount(item.goodsId)
           if (!this.supplierOptions.some(supplier => supplier.supplierId === item.supplierId)) {
             this.supplierOptions.push({
               supplierId: item.supplierId,
@@ -536,7 +536,7 @@ export default {
           }
 
         })
-
+        this.queryDetail ={...res.data};
       })
     },
     /*表单校验提交*/
@@ -549,7 +549,16 @@ export default {
         this.$refs.form.validate(valid => {
           if (valid) {
             // 表单验证通过，可以在这里进行提交操作
-            this.editOrder()
+            // this.editOrder()
+            // let stringParams = this.queryDetail !== JSON.stringify(this.formData)
+            // console.log(stringParams)
+            let changes = Object.keys(this.formData).filter(key => this.formData[key] !== this.queryDetail[key]);
+            if (changes.length > 0) {
+              this.editOrder()
+            } else {
+              return this.$message.error('内容未做任何修改，无需提交')
+            }
+
           }
         });
       })

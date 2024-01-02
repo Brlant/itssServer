@@ -343,6 +343,62 @@ export default {
     /*关闭弹框*/
     handleEntryClose() {
       this.$refs.form.resetFields()
+      this.formData = {
+        applyDepart: '',
+          applyDepartName: '',
+          applyName: '',
+          applyUserId: '',
+          orderType: '0',
+          pmsOrderStatus: '',
+          applyDate: '',
+          // 预算类型
+          budgetType: '',
+          budgetTypeName: '',
+          applyReason: '',
+          paymentFlag: '',
+          orderBizType: '',
+          recipientId: '',
+          recipientName: '',
+          // 领用部门id
+          recipientDepartId: '',
+          recipientDepartName: '',
+          invoiceNum: '',
+          invoiceName: '',
+          invoiceUrl: '',
+          consigneeName: '',
+          consigneePhone: '',
+          consigneeAddress: '',
+          orderDetailList: [{
+          "orderDetailId": "",
+          "pmsOrderId": "",
+          "goodsId": "",
+          "goodsType": '',
+          "goodsCode": "",
+          "goodsName": "",
+          "supplierId": "",
+          "supplierName": "",
+          "unitPrice": '',
+          "taxRate": "",
+          "amount": '',
+          "totalPrice": '',
+          "taxBid": '',
+          "nonTaxBid": '',
+          "totalTaxBid": '0.00',
+          "nonTotalTaxBid": '0.00',
+          "deleteFlag": '',
+          "actualReceiptAmount": '',
+          "actualReceiptPrice": '',
+          "receiptRemark": "",
+          "validityFlag": "",
+          "validityDate": "",
+          "grossMargin": ""
+        }],
+          // 按钮权限标识
+          examineButton: 0,// 审核：判断是否有审核权限，0否1是
+          returnButton: 0,// 撤回：判断是否有撤回权限，0否1是
+          receiptButton: 0,// 签收：判断是否有收货权限，0否1是
+      }
+
       this.doing = false;
       this.$emit('close', {refresh: true})
     },

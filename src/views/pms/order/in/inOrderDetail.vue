@@ -555,6 +555,7 @@ export default {
   },
   data() {
     return {
+      queryDetail:null,
       uploadUrl: uploadUrl,
       formTitle: "基本信息",
       formData: {
@@ -693,7 +694,8 @@ export default {
         }
 
         this.orderDetail = JSON.parse(JSON.stringify(res.data))
-        this.formData = res.data
+        this.formData = JSON.parse(JSON.stringify(res.data))
+
         let attachmentInfos = res.data.attachmentInfos || []
         this.invoiceAttachmentInfos = attachmentInfos.filter(item => item.attachmentObjectType === 'orderInvoice')
         this.paymentAttachmentInfos = attachmentInfos.filter(item => item.attachmentObjectType === 'orderPayment')
@@ -701,6 +703,7 @@ export default {
         for (let index = 0; index < this.formData.orderDetailList.length; index++) {
           this.setGoodsList(index)
         }
+        this.queryDetail = JSON.stringify(this.formData)
       })
     },
     /*表单校验提交*/
@@ -712,8 +715,15 @@ export default {
       }).then(() => {
         this.$refs.form.validate(valid => {
           if (valid) {
+            let stringParams = this.queryDetail !== JSON.stringify(this.formData)
+            console.log(stringParams)
+            if (stringParams === false) {
+              return this.$message.error('内容未做任何修改，无需提交')
+            } else {
+              this.editOrder()
+            }
             // 表单验证通过，可以在这里进行提交操作
-            this.editOrder()
+            // this.editOrder()
           }
         });
       })

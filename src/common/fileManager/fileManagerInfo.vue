@@ -75,6 +75,11 @@
                 :value="item.dictCode"
                 :disabled="item.status!=='0'"
               />
+              <el-option v-if="!unitList.some(list=> list.dictCode === formData.goodsUnitId)"
+                         :label="formData.goodsUnit"
+                         :value="formData.goodsUnitId"
+                         :disabled="true"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -284,6 +289,14 @@ export default {
           this.formData = JSON.parse(JSON.stringify(newVal))
           this.backData = newVal
 
+          if(this.formData.goodsClassifyName){
+            if(!this.categoryList.some(list=>list.categoryId===newVal.goodsClassify)){
+              this.$nextTick(()=>{
+                this.$set(this.categoryList,0,{categoryId:newVal.goodsClassify,categoryName:newVal.goodsClassifyName})
+              })
+            }
+          }
+
         }
       },
       immediate: true,
@@ -435,6 +448,7 @@ export default {
   },
   created() {
     this.getSupplierList()
+
     this.getCategoryList()
   },
   methods: {
@@ -623,11 +637,16 @@ export default {
     getCategoryList() {
       categoryApi.getCategoryList().then(res => {
         this.categoryList = res.rows
+        if(this.formData.goodsClassifyName){
+          if(!this.categoryList.some(list=>list.categoryId===this.formData.goodsClassify)){
+              this.$set(this.categoryList,0,{categoryId:this.formData.goodsClassify,categoryName:this.formData.goodsClassifyName,disabled:true})
+          }
+        }
       })
     },
     handleGetSupplier(query){
-      const queryName = this.supplierList.find(res => res.supplierId === query)?.supplierCode
-      this.formData.supplierCode = queryName
+      const queryName = this.supplierList.find(res => res.supplierId === query)?.supplierName
+      this.formData.supplierName = queryName
     },
     getSupplierList(query) {
       let params = {
