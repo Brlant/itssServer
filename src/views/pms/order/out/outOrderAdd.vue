@@ -555,10 +555,6 @@ export default {
         this.handleEntryClose()
       }).catch(err => {
         this.doing = false;
-        this.$message({
-          type: 'error',
-          message: err.message
-        });
       })
     },
     getSupplierList(keyword = '') {
