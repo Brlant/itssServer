@@ -525,7 +525,7 @@ export default {
         this.formData = res.data;
         this.formData.orderDetailList.forEach((item, index) => {
           this.setGoodsList(index, item.supplierId)
-          this.queryStockCount(item.goodsId)
+          this.queryStockCount(item.goodsId,index)
           if (!this.supplierOptions.some(supplier => supplier.supplierId === item.supplierId)) {
             this.supplierOptions.push({
               supplierId: item.supplierId,
