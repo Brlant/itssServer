@@ -91,6 +91,8 @@ const user = {
           // JSON.parse(window.localStorage.getItem("user"))
           window.localStorage.setItem("permissions",JSON.stringify(res.permissions))
           window.localStorage.setItem("roles",JSON.stringify(res.roles))
+
+           //权限重点
           // 存值 是否修改密码
           if(res && res.updatePassFlag){
             commit('update_PassFlag', res.updatePassFlag)

@@ -779,12 +779,22 @@ export default {
     let userInfoParse = JSON.parse(userInfo);
     this.reviewedId = userInfoParse.userId
     this.getDealtWith();
-    this.getQueryByContractId();
+    this.getQueryPermissions();//是否包含权限
   },
   mounted() {
 
   },
   methods: {
+    getQueryPermissions(){
+      const permissions = JSON.parse(window.localStorage.getItem("permissions"));
+      const targetPermissions = 'pms:contract-expire:list';
+      const target2Permissions = 'system:user:selfInfo';
+      const isIncludedPermissions = permissions.includes(targetPermissions);
+      const isIncluded2Permissions = permissions.includes(target2Permissions);
+      if(isIncludedPermissions || isIncluded2Permissions){
+        this.getQueryByContractId();
+      }
+    },
     getDealtWith() {
       const params =
         {
