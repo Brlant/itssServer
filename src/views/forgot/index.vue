@@ -105,13 +105,14 @@ export default {
   },
   methods: {
     submitUserName(query){
-      console.log(query)
       let formData = new FormData()
       formData.append('username',query)
       forgotApi.getEmailByName(formData).then(res=>{
         if(res.code === 200){
           this.form.identify = res.email;
         }
+      }).catch(err=>{
+        this.form.identify ='';
       })
     },
     getCodeImg(){
