@@ -68,7 +68,7 @@
       @pagination="budgetList"
     />
 
-    <budget-form :dialogbudgetFrom="dialogbudgetFrom" :editRowContent="editRowContent" :addForm="addForm" @closeAddEditForm="closeAddEditForm"></budget-form>
+    <budget-form :dialogbudgetFrom="dialogbudgetFrom" :editRowContent="editRowContent"  @closeAddEditForm="closeAddEditForm" :formTitle="formTitle"></budget-form>
   </div>
 </template>
 
@@ -92,10 +92,10 @@ export default {
       //新建编辑弹框
       dialogbudgetFrom:false,
       //弹框标题
-      formTitle:'',
+      formTitle:'预算类型',
       tableData:[],
       editRowContent:{},
-      addForm:'',
+
     }
   },
   components: {
@@ -148,8 +148,6 @@ export default {
     },
     addbudgetForm(){
       this.dialogbudgetFrom = true;
-      this.formTitle = '添加类目'
-      this.addForm= '提交';
     },
     resetForm(){
       this.formData.pageNum = 1;
@@ -159,9 +157,7 @@ export default {
     //关闭弹框
     closeAddEditForm(){
       this.dialogbudgetFrom = false;
-      this.formTitle = '';
       this.budgetList();
-      this.addForm = ''
     }
   }
 }

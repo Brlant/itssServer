@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="dialogCategoryFrom" :title="formTitle" width="50%" @close="closeAddEditForm">
+  <el-dialog :visible="dialogCategoryFrom" :title="formTitle" width="50%" @close="closeCategoryEditForm">
     <template v-slot:title>
       <div style="font-size: 16px;text-align: center">{{ formTitle }}</div>
     </template>
@@ -16,7 +16,7 @@
         />
       </el-form-item>
       <el-form-item label="类目名称" prop="categoryName">
-        <el-input v-model="formData.categoryName"></el-input>
+        <el-input v-model="formData.categoryName" placeholder="请输入类目名称"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -26,7 +26,7 @@
           提交
         </el-button>
         <el-button
-          @click="closeAddEditForm"
+          @click="closeCategoryEditForm"
         >取消
         </el-button>
     </div>
@@ -47,9 +47,6 @@ export default {
     editRowContent:{
       type:Object
     },
-    addForm:{
-      type:String
-    }
   },
   watch:{
     editRowContent:{
@@ -58,8 +55,6 @@ export default {
           this.formData = val
           this.parentId = val.categoryId
           this.getCategoryList();
-        }else{
-          this.formData={}
         }
       },
       immediate:true,
@@ -80,6 +75,7 @@ export default {
     return {
       categoryList: [],
       formData: {
+        parentId:'',
         categoryName:'',
       },
       formDataRef: {
@@ -107,22 +103,6 @@ export default {
             })
           }
         });
-
-        // if(val){
-        //   for(let i = 0;i<this.categoryList.length;i++){
-        //     if(this.categoryList[i].categoryId === this.formData.parentId){
-        //       this.categoryList[i].disabled = true
-        //     }
-        //     if(this.categoryList[i].childList){
-        //       for(let j = 0;j<this.categoryList[i].childList.length;j++){
-        //         if(this.categoryList[i].childList[j].categoryId === this.formData.parentId){
-        //           this.categoryList[i].childList[j].disabled = true
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
-
       })
     },
 
@@ -136,7 +116,7 @@ export default {
             }
             categoryApi.updateCategory(this.formData).then(res=>{
               this.$notify.success('编辑成功')
-              this.closeAddEditForm();
+              this.closeCategoryEditForm();
             })
           } else {
             return false
@@ -150,7 +130,7 @@ export default {
             }
             categoryApi.addCategory(this.formData).then(res=>{
               this.$notify.success('添加成功')
-              this.closeAddEditForm();
+              this.closeCategoryEditForm();
             })
           } else {
             return false
@@ -169,21 +149,19 @@ export default {
           }
           categoryApi.updateCategory(this.formData).then(res=>{
             this.$notify.success('编辑成功')
-            this.closeAddEditForm();
+            this.closeCategoryEditForm();
           })
         } else {
           return false
         }
       })
     },
-    closeAddEditForm() {
-      this.$emit('closeAddEditForm');
+    closeCategoryEditForm() {
+      this.$emit('closeCategoryEditForm');
       this.$refs.formData.resetFields();
       this.cascaderLength = ''
       this.formData.parentId = ''
-      this.formData.categoryName = ''
       this.formData.categoryId = ''
-      // this.formData = {}
     },
     handleChange(query){
       const queryLength = query.length;

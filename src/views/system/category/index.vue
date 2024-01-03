@@ -67,7 +67,7 @@
       :limit.sync="formData.pageSize"
       @pagination="categoryList"
     />
-    <category-form :dialogCategoryFrom="dialogCategoryFrom" :addForm="addForm" :editRowContent="editRowContent" @closeAddEditForm="closeAddEditForm" :formTitle="formTitle"></category-form>
+    <category-form :dialogCategoryFrom="dialogCategoryFrom" :editRowContent="editRowContent" @closeCategoryEditForm="closeCategoryEditForm" :formTitle="formTitle"></category-form>
 
   </div>
 </template>
@@ -93,10 +93,9 @@ export default {
       //新建编辑弹框
       dialogCategoryFrom:false,
       //弹框标题
-      formTitle:'',
+      formTitle:'类目',
       tableData:[],
       editRowContent:{},
-      addForm:'',
     }
   },
   components: {
@@ -154,15 +153,11 @@ export default {
     },
     addCategoryForm(){
       this.dialogCategoryFrom = true;
-      this.formTitle = '添加类目'
-      this.addForm= '提交';
     },
     //关闭弹框
-    closeAddEditForm(){
+    closeCategoryEditForm(){
       this.dialogCategoryFrom = false;
-      this.formTitle = '';
       this.categoryList();
-      this.addForm = ''
     }
 
   }

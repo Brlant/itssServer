@@ -3,7 +3,7 @@
     <template v-slot:title>
       <div style="font-size: 16px;text-align: center">{{ formTitle }}</div>
     </template>
-    <el-form :model="formData" ref="form" :rules="formDataRef" label-width="120px">
+    <el-form :model="formData" ref="formData" :rules="formDataRef" label-width="120px">
       <el-form-item label="上级类目">
         <el-cascader
           v-model="formData.parentId"
@@ -16,7 +16,7 @@
         />
       </el-form-item>
       <el-form-item label="类目名称" prop="budgetName">
-        <el-input v-model="formData.budgetName" ></el-input>
+        <el-input v-model="formData.budgetName" placeholder="请输入类目名称"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -47,9 +47,6 @@ export default {
     editRowContent:{
       type:Object
     },
-    addForm:{
-      type:String
-    }
   },
   watch:{
     editRowContent:{
@@ -58,8 +55,6 @@ export default {
           this.formData = val
           this.parentId = val.budgetId
           this.getbudgetList();
-        }else{
-          this.formData={}
         }
       },
       immediate:true,
@@ -80,6 +75,7 @@ export default {
     return {
       budgetList: [],
       formData: {
+        parentId:'',
         budgetName:'',
       },
       formDataRef: {
@@ -161,11 +157,11 @@ export default {
     },
     closeAddEditForm() {
       this.$emit('closeAddEditForm')
-      this.$refs.form.resetFields();
+      this.$refs.formData.resetFields();
       this.cascaderLength = ''
       this.formData.parentId = ''
-      this.formData.budgetName = ''
       this.formData.budgetId = ''
+
     },
     handleChange(query){
       const queryLength = query.length;
