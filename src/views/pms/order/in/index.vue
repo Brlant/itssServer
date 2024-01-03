@@ -108,7 +108,7 @@
               icon="el-icon-upload2"
               @click="importOrder"
             >
-              导入新建/修改
+              导入新建
             </el-button>
             <!--        导出-->
             <el-button

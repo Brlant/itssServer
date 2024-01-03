@@ -348,7 +348,6 @@ export default {
       }
       categoryApi.getCategoryList(params).then(res => {
         this.categoryList = res.rows
-        console.log(this.categoryList)
       })
     },
     handleChange(query) {

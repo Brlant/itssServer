@@ -69,10 +69,10 @@
       <el-table-column type="index" label="序号"></el-table-column>
       <el-table-column prop="contractRecordCode" label="合同档案编号"></el-table-column>
       <el-table-column prop="contractCode" label="合同编号"></el-table-column>
-      <el-table-column prop="contractType" label="合同类型">
-        <template slot-scope="scope">
-          <span>{{ scope.row.contractType === 1? '销售合同' : '采购合同' }}</span>
-        </template>
+      <el-table-column prop="contractTypeName" label="合同类型">
+<!--        <template slot-scope="scope">-->
+<!--          <span>{{ scope.row.contractType === 1? '销售合同' : '采购合同' }}</span>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column prop="contractName" label="合同名称"></el-table-column>
       <el-table-column prop="supplierName" label="供应商"></el-table-column>

@@ -79,7 +79,9 @@ export default {
   data() {
     return {
       categoryList: [],
-      formData: {},
+      formData: {
+        categoryName:'',
+      },
       formDataRef: {
         categoryName: [{ required: true, message: '请输入类目名称', trigger: 'blur' }]
       },

@@ -5,8 +5,8 @@ const inventoryApi = {
   queryInventory(data) {
     return request({
       url: '/pms/order/queryStockOverview',
-      method: 'post',
-      data:data,
+      method: 'get',
+      params:data,
     })
   },
   //流水列表

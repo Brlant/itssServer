@@ -131,11 +131,10 @@
         label="合同系统编号"></el-table-column>
       <el-table-column prop="contractCode"
         label="合同编号"></el-table-column>
-      <el-table-column prop="contractType"
-        label="合同类型">
-        <template slot-scope="scope">
-          <span>{{ scope.row.contractType === 1? '采购合同' : '框架合同' }}</span>
-        </template>
+      <el-table-column prop="contractTypeName" label="合同类型">
+<!--        <template slot-scope="scope">-->
+<!--          <span>{{ scope.row.contractType === 1? '采购合同' : '框架合同' }}</span>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column prop="contractName"
         label="合同名称"></el-table-column>
@@ -228,6 +227,8 @@ import {getContractFileList} from '@/api/contractFilesManagement/contractFilesMa
 import request, {download} from '@/utils/request'
 import {getDealtWithList} from '@/api/auditCenter/dealtWith/dealtWith'
 
+import { dictData } from '@/api/dataDict'
+
 export default {
   name: "index",
   components: {
@@ -299,6 +300,8 @@ export default {
     this.getContractFiles();
     this.getSupplierList();
     this.getUserList();
+    //合同类型
+    this.getDictData();
   },
   computed: {
     filteredData() {
@@ -318,6 +321,18 @@ export default {
     },
   },
   methods: {
+    //合同类型
+    getDictData(){
+      let params = {
+        pageNum: 1,
+        pageSize: 10,
+        dictType: 'contract_type',
+        status: 0
+      }
+      dictData(params).then(res => {
+        this.contractTypeList = res.rows
+      })
+    },
     getSupplierList(query) {
       let params = {
         codeNameKey: query,

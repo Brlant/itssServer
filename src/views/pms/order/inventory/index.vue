@@ -69,12 +69,12 @@
       <el-table-column label="所属部门" align="center" prop="departName"/>
       <el-table-column label="物品编号" align="center" prop="goodsCode"/>
       <el-table-column label="物品名称" align="center" prop="goodsName"/>
-      <el-table-column label="物品类型" align="center" prop="goodsType">
-        <template v-slot="{ row }">
-          <div v-for="(item,index) in goodsTypes">
-            <span v-if="row.goodsType  === item.dictCode">{{ item.dictLabel }}</span>
-          </div>
-        </template>
+      <el-table-column label="物品类型" align="center" prop="goodsTypeName">
+<!--        <template v-slot="{ row }">-->
+<!--          <div v-for="(item,index) in goodsTypes">-->
+<!--            <span v-if="row.goodsType  === item.dictCode">{{ item.dictLabel }}</span>-->
+<!--          </div>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column label="物品类目" align="center" prop="goodsClassifyName"/>
       <el-table-column label="型号" align="center" prop="goodsModel"/>

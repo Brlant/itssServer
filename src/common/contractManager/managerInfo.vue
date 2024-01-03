@@ -162,10 +162,8 @@
         <el-col :span="8">
           <el-form-item label="供应商名称"
                         prop="formData.supplierId">
-            <el-select v-model="selectSupplier"
-                       remote
+            <el-select v-model="formData.supplierId"
                        filterable
-                       value-key="val"
                        :loading="loadSupplier"
                        :remote-method="getSupplierList"
                        placeholder="请选择供应商">
@@ -173,6 +171,12 @@
                          :key="supplier.supplierId"
                          :value="supplier.supplierId"
                          :label="supplier.supplierName"></el-option>
+
+              <el-option v-if="!supplierList.some(list=> list.supplierId === formData.supplierId)"
+                         :label="formData.supplierName"
+                         :value="formData.supplierId"
+                         :disabled="true"
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -481,7 +485,7 @@ export default {
       }
       // 查询供应商下拉列表
       request.post('pms/supplier/getSupplierList',params).then((res) => {
-        console.log( res.data)
+        console.log( res.data,'供应商名称')
         this.supplierList = res.data
       })
     },

@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="form" :model="formData" :rules="rules" label-width="100px">
+  <el-form ref="formRef" :model="formData" :rules="rules" label-width="100px">
     <!--    联系人-->
     <div class="jiBenXinXi">
       基本信息
@@ -72,7 +72,7 @@
       <el-col :span="6" v-if="!formData.outOrderNo">
         <el-form-item label="预算类型" prop="budgetTypes" :rules="rules.budgetTypes">
           <el-cascader
-            v-model="formData.budgetTypes"
+            v-model="formData.budgetType"
             placeholder="请选择预算类型"
             :options="budgetTypes"
             :props="{ label: 'budgetName', value: 'budgetId',children: 'childList'}"
@@ -548,6 +548,7 @@ export default {
           this.getBudgetTypeList()
 
           this.getOrderDetail(newVal)
+
         }
       },
       immediate: true,
@@ -696,6 +697,13 @@ export default {
         this.orderDetail = JSON.parse(JSON.stringify(res.data))
         this.formData = JSON.parse(JSON.stringify(res.data))
 
+        console.log(this.formData.budgetTypeName,'==============')
+        if(this.formData.budgetTypeName){
+          if(!this.budgetTypes.some(list=>list.budgetId===this.formData.budgetType)){
+            this.$set(this.budgetTypes,0,{budgetName:this.formData.budgetTypeName,budgetId:this.formData.budgetType,disabled:true})
+          }
+        }
+
         let attachmentInfos = res.data.attachmentInfos || []
         this.invoiceAttachmentInfos = attachmentInfos.filter(item => item.attachmentObjectType === 'orderInvoice')
         this.paymentAttachmentInfos = attachmentInfos.filter(item => item.attachmentObjectType === 'orderPayment')
@@ -713,15 +721,14 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$refs.form.validate(valid => {
+        this.$refs.formRef.validate(valid => {
           if (valid) {
-            let stringParams = this.queryDetail !== JSON.stringify(this.formData)
-            console.log(stringParams)
-            if (stringParams === false) {
-              return this.$message.error('内容未做任何修改，无需提交')
-            } else {
-              this.editOrder()
-            }
+            // let stringParams = this.queryDetail !== JSON.stringify(this.formData)
+            // if (stringParams === false) {
+            //   return this.$message.error('内容未做任何修改，无需提交')
+            // } else {
+            //   this.editOrder()
+            // }
             // 表单验证通过，可以在这里进行提交操作
             // this.editOrder()
           }
@@ -925,7 +932,13 @@ export default {
           budgetName: keyword
         }
       }).then(({data}) => {
+
         this.budgetTypes = data;
+        if(this.formData.budgetTypeName){
+          if(!this.budgetTypes.some(list=>list.budgetId===this.formData.budgetType)){
+            this.$set(this.budgetTypes,0,{budgetName:this.formData.budgetTypeName,budgetId:this.formData.budgetType,disabled:true})
+          }
+        }
       })
     },
     supplierChangeHandler(index) {

@@ -79,7 +79,9 @@ export default {
   data() {
     return {
       budgetList: [],
-      formData: {},
+      formData: {
+        budgetName:'',
+      },
       formDataRef: {
         budgetName: [{ required: true, message: '请输入类目名称', trigger: 'blur' }]
       },

@@ -337,8 +337,8 @@ export default {
     return {
       doing: false,
       formTitle: "基本信息",
+      queryDetail:{},
       formData: {
-        queryDetail:null,
         applyDepart: '',
         applyDepartName: '',
         applyName: '',
@@ -366,32 +366,32 @@ export default {
         consigneePhone: '',
         consigneeAddress: '',
         orderDetailList: [{
-          "orderDetailId": "",
-          "pmsOrderId": "",
-          "goodsId": "",
-          "goodsType": '',
-          "goodsCode": "",
-          "goodsName": "",
-          "supplierId": "",
-          "supplierName": "",
-          "unitPrice": '',
-          "taxRate": "",
-          "taxRateId": "",
+          orderDetailId: "",
+          pmsOrderId: "",
+          goodsId: "",
+          goodsType: '',
+          goodsCode: "",
+          goodsName: "",
+          supplierId: "",
+          supplierName: "",
+          unitPrice: '',
+          taxRate: "",
+          taxRateId: "",
           sellingTaxRate: '',
           sellingTaxRateId: '',
-          "amount": '',
-          "totalPrice": '',
-          "taxBid": '',
-          "nonTaxBid": '',
-          "totalTaxBid": 0.00,
-          "nonTotalTaxBid": 0.00,
-          "deleteFlag": '',
-          "actualReceiptAmount": '',
-          "actualReceiptPrice": '',
-          "receiptRemark": "",
-          "validityFlag": "",
-          "validityDate": "",
-          "grossMargin": "",
+          amount: '',
+          totalPrice: '',
+          taxBid: '',
+          nonTaxBid: '',
+          totalTaxBid: 0.00,
+          nonTotalTaxBid: 0.00,
+          deleteFlag: '',
+          actualReceiptAmount: '',
+          actualReceiptPrice: '',
+          receiptRemark: "",
+          validityFlag: "",
+          validityDate: "",
+          grossMargin: "",
           availableNum: '',
           stockNum: ''
         }],
@@ -479,32 +479,32 @@ export default {
         consigneePhone: '',
         consigneeAddress: '',
         orderDetailList: [{
-          "orderDetailId": "",
-          "pmsOrderId": "",
-          "goodsId": "",
-          "goodsType": '',
-          "goodsCode": "",
-          "goodsName": "",
-          "supplierId": "",
-          "supplierName": "",
-          "unitPrice": '',
-          "taxRate": "",
-          "taxRateId": "",
+          orderDetailId: "",
+          pmsOrderId: "",
+          goodsId: "",
+          goodsType: '',
+          goodsCode: "",
+          goodsName: "",
+          supplierId: "",
+          supplierName: "",
+          unitPrice: '',
+          taxRate: "",
+          taxRateId: "",
           sellingTaxRate: '',
           sellingTaxRateId: '',
-          "amount": '',
-          "totalPrice": '',
-          "taxBid": '',
-          "nonTaxBid": '',
-          "totalTaxBid": 0.00,
-          "nonTotalTaxBid": 0.00,
-          "deleteFlag": '',
-          "actualReceiptAmount": '',
-          "actualReceiptPrice": '',
-          "receiptRemark": "",
-          "validityFlag": "",
-          "validityDate": "",
-          "grossMargin": "",
+          amount: '',
+          totalPrice: '',
+          taxBid: '',
+          nonTaxBid: '',
+          totalTaxBid: 0.00,
+          nonTotalTaxBid: 0.00,
+          deleteFlag: '',
+          actualReceiptAmount: '',
+          actualReceiptPrice: '',
+          receiptRemark: "",
+          validityFlag: "",
+          validityDate: "",
+          grossMargin: "",
           availableNum: '',
           stockNum: ''
         }],
@@ -518,11 +518,11 @@ export default {
     },
     getOrderDetail(orderId) {
       getOrderDetail(orderId).then(res => {
-        this.orderDetail = JSON.parse(JSON.stringify(res.data))
-        this.formData = res.data
 
+        this.orderDetail = JSON.parse(JSON.stringify(res.data))
         this.getRecipientUserList(res.data.recipientName, res.data.recipientDepartId)
         this.getDeptList({deptId: res.data.recipientDepartId})
+        this.formData = res.data;
         this.formData.orderDetailList.forEach((item, index) => {
           this.setGoodsList(index, item.supplierId)
           this.queryStockCount(item.goodsId)
@@ -534,9 +534,9 @@ export default {
               disabled: true
             })
           }
-
         })
-        this.queryDetail ={...res.data};
+
+        // this.queryDetail ={...res.data};
       })
     },
     /*表单校验提交*/
@@ -548,15 +548,14 @@ export default {
       }).then(() => {
         this.$refs.form.validate(valid => {
           if (valid) {
+            console.log(this.needParamsAudit,'重新提交')
             // 表单验证通过，可以在这里进行提交操作
-            // this.editOrder()
-            // let stringParams = this.queryDetail !== JSON.stringify(this.formData)
-            // console.log(stringParams)
-            let changes = Object.keys(this.formData).filter(key => this.formData[key] !== this.queryDetail[key]);
-            if (changes.length > 0) {
-              this.editOrder()
-            } else {
+            // let changes = Object.keys(this.formData).filter(key => this.formData[key] !== this.queryDetail[key]);
+            // console.log(changes)
+            if (this.needParamsAudit === false) {
               return this.$message.error('内容未做任何修改，无需提交')
+            } else {
+              this.editOrder()
             }
 
           }
@@ -895,6 +894,24 @@ export default {
     },
     needAudit() {
       return this.oldStr != this.newStr
+    },
+
+    oldParamsStr() {
+      let {orderBizType, budgetType, orderDetailList,applyReason} = this.orderDetail
+      let details = orderDetailList.map(item => {
+        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
+      }).join(',')
+      return orderBizType + '__' + budgetType + '__' + details
+    },
+    newParamsStr() {
+      let {orderBizType, budgetType, orderDetailList,applyReason} = this.formData
+      let details = orderDetailList.map(item => {
+        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
+      }).join(',')
+      return orderBizType + '__' + budgetType + '__' + details
+    },
+    needParamsAudit() {
+      return this.oldParamsStr != this.newParamsStr
     }
   },
   watch: {

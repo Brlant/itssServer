@@ -288,6 +288,7 @@ export default {
         if (newVal && newVal.goodsId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
           this.backData = newVal
+          this.queryDetail ={...newVal};
 
           if(this.formData.goodsClassifyName){
             if(!this.categoryList.some(list=>list.categoryId===newVal.goodsClassify)){
@@ -306,6 +307,7 @@ export default {
   data() {
     return {
       backData: {},
+      queryDetail:null,
       formData: {
         goodsCode: '',
         goodsType: '',
@@ -399,6 +401,64 @@ export default {
         boxGauge,
         goodsClassify,
 
+        // goodsModel,
+        // goodsSpecifications,
+        // brand,
+        // remark,
+      } = this.detailsGoodsData
+      let attachmentFileNames = this.attachmentInfos.map(item => {
+        return item.attachmentFileName
+      }).join(',')
+
+      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify;
+      str += + attachmentFileNames
+      return str;
+    },
+
+    newStr() {
+      let {
+        goodsType,
+        goodsName,
+        supplierId,
+        goodsUnitId,
+        taxBid,
+        taxRateId,
+        boxGauge,
+        goodsClassify,
+
+        // goodsModel,
+        // goodsSpecifications,
+        // brand,
+        // remark,
+      } = this.formData
+      let attachmentFileNames = this.attachmentInfos.map(item => {
+        return item.attachmentFileName
+      }).join(',')
+
+      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify;
+      str += + attachmentFileNames
+      return str;
+    },
+
+
+    needAudit() {
+      // 找出必填字段，拼成字符串，来比较是否有变化，必填字段修改后，需要重新审核
+      // console.log(this.oldStr)
+      // console.log(this.newStr)
+      return this.oldStr !== this.newStr
+    },
+
+    paramsOldStr() {
+      let {
+        goodsType,
+        goodsName,
+        supplierId,
+        goodsUnitId,
+        taxBid,
+        taxRateId,
+        boxGauge,
+        goodsClassify,
+
         goodsModel,
         goodsSpecifications,
         brand,
@@ -413,7 +473,7 @@ export default {
       return str;
     },
 
-    newStr() {
+    paramsNewStr() {
       let {
         goodsType,
         goodsName,
@@ -438,13 +498,14 @@ export default {
       return str;
     },
 
-
-    needAudit() {
+    needParamsAudit() {
       // 找出必填字段，拼成字符串，来比较是否有变化，必填字段修改后，需要重新审核
       // console.log(this.oldStr)
       // console.log(this.newStr)
-      return this.oldStr !== this.newStr
+      return this.paramsOldStr !== this.paramsNewStr
     },
+
+
   },
   created() {
     this.getSupplierList()
@@ -668,6 +729,8 @@ export default {
         this.formData.nonTaxBid = this.nonTaxBid;
         this.$refs.formData.validate((valid) => {
           if (valid) {
+            // let changes = Object.keys(this.formData).filter(key => this.formData[key] !== this.queryDetail[key]);
+            // console.log(changes,'修改的字段')
             // this.updateSupplier()
             // // 在这里可以进行表单提交操作，比如调用接口提交数据
             // this.$message({
@@ -675,12 +738,16 @@ export default {
             //   type: 'success'
             // })
             // 表单验证通过，可以在这里进行提交操作
+            //
+            // console.log(this.needParamsAudit,'参数值')
 
-            if (this.needAudit === false) {
+            if (this.needParamsAudit === false) {
               return this.$message.error('内容未做任何修改，无需提交')
             } else {
               this.updateSupplier()
             }
+
+
 
           } else {
             this.$message.error('表单验证失败，请检查输入内容')
