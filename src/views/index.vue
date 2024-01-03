@@ -788,11 +788,16 @@ export default {
     getQueryPermissions(){
       const permissions = JSON.parse(window.localStorage.getItem("permissions"));
       const targetPermissions = 'pms:contract-expire:list';
-      const target2Permissions = 'system:user:selfInfo';
+      const target2Permissions = '*:*:*';
+      // console.log(permissions,'权限')
       const isIncludedPermissions = permissions.includes(targetPermissions);
       const isIncluded2Permissions = permissions.includes(target2Permissions);
-      if(isIncludedPermissions || isIncluded2Permissions){
+      if(isIncludedPermissions){
         this.getQueryByContractId();
+      }else if(isIncluded2Permissions){
+        this.getQueryByContractId();
+      }else{
+        this.promptInfoForm = false;
       }
     },
     getDealtWith() {
