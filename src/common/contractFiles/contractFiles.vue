@@ -244,6 +244,11 @@ export default {
       if (!reg.test(value)) {
         this.formData.contractAmount = value.replace(/[^\d]/g, '');
       }
+      //如果长度大于10位，提示长度超长
+      if (value.length > 10) {
+        this.$notify.warning('合同金额最多10位');
+        this.formData.contractAmount = ''
+      }
     },
     open() {
       this.resetForm('contractForm');

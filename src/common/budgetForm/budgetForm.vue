@@ -170,7 +170,7 @@ export default {
     }
   },
   created() {
-
+    this.getbudgetList()
   },
   mounted() {
 

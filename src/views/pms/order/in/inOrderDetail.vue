@@ -522,7 +522,7 @@ export default {
       return orderBizType + '__' + budgetType + '__' + details
     },
     needAudit() {
-      return this.oldStr != this.newStr
+      return this.oldStr !== this.newStr
     },
 
 
@@ -531,17 +531,17 @@ export default {
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
       }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details
+      return orderBizType + '__' + budgetType + '__' + details + '__' + consigneeName + '__' + consigneePhone + '__' + consigneeAddress + '__' + applyReason
     },
     newFlagStr() {
       let {orderBizType, budgetType,consigneeName,consigneePhone,consigneeAddress, applyReason,orderDetailList} = this.formData
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
       }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details
+      return orderBizType + '__' + budgetType + '__' + details + '__' + consigneeName + '__' + consigneePhone + '__' + consigneeAddress + '__' + applyReason
     },
     needFlagAudit() {
-      return this.oldFlagStr != this.newFlagStr
+      return this.oldFlagStr !== this.newFlagStr
     },
 
 
@@ -746,8 +746,6 @@ export default {
       }).then(() => {
         this.$refs.form.validate(valid => {
           if (valid) {
-            // let stringParams = this.queryDetail !== JSON.stringify(this.formData)
-
             if (this.needFlagAudit === false) {
               return this.$message.error('内容未做任何修改，无需提交')
             } else {

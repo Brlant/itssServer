@@ -42,7 +42,7 @@
         <el-col :span="8">
           <el-form-item label="合同类型"
                         prop="contractType">
-            {{ formData.contractType === 1 ? '采购合同' : '框架合同' }}
+            {{ formData.contractTypeName}}
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -385,18 +385,18 @@ export default {
   computed: {
     ...mapState(['user']),
     ...mapGetters(['permissions']),
-    selectSupplier: {
-      get() {
-        return {
-          supplierId: this.formData.supplierId,
-          supplierName: this.formData.supplierName
-        };
-      },
-      set(supplier) {
-        this.formData.supplierId = supplier.supplierId;
-        this.formData.supplierName = supplier.supplierName;
-      }
-    },
+    // selectSupplier: {
+    //   get() {
+    //     return {
+    //       supplierId: this.formData.supplierId,
+    //       supplierName: this.formData.supplierName
+    //     };
+    //   },
+    //   set(supplier) {
+    //     this.formData.supplierId = supplier.supplierId;
+    //     this.formData.supplierName = supplier.supplierName;
+    //   }
+    // },
     fileName() {
       let start = this.formData.scanningCopyUrl?.lastIndexOf('/');
       if (start > -1) {
@@ -485,7 +485,6 @@ export default {
       }
       // 查询供应商下拉列表
       request.post('pms/supplier/getSupplierList',params).then((res) => {
-        console.log( res.data,'供应商名称')
         this.supplierList = res.data
       })
     },

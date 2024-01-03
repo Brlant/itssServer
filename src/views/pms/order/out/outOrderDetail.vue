@@ -550,8 +550,6 @@ export default {
           if (valid) {
             console.log(this.needParamsAudit,'重新提交')
             // 表单验证通过，可以在这里进行提交操作
-            // let changes = Object.keys(this.formData).filter(key => this.formData[key] !== this.queryDetail[key]);
-            // console.log(changes)
             if (this.needParamsAudit === false) {
               return this.$message.error('内容未做任何修改，无需提交')
             } else {
@@ -901,14 +899,14 @@ export default {
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
       }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details
+      return orderBizType + '__' + budgetType + '__' + details  + orderDetailList + '__' + applyReason
     },
     newParamsStr() {
       let {orderBizType, budgetType, orderDetailList,applyReason} = this.formData
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
       }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details
+      return orderBizType + '__' + budgetType + '__' + details  + orderDetailList + '__' + applyReason
     },
     needParamsAudit() {
       return this.oldParamsStr != this.newParamsStr

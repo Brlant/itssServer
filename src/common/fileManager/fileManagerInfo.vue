@@ -138,8 +138,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="品牌" prop="brand">
-            <el-input v-model="formData.brand" placeholder="品牌" :readonly="readonly"></el-input>
+          <el-form-item label="品牌" prop="goodsBrand">
+            <el-input v-model="formData.goodsBrand" placeholder="品牌" :readonly="readonly"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -315,7 +315,7 @@ export default {
         supplierId: '',
         goodsModel:'',//型号
         goodsSpecifications:'',//规格
-        brand:'',//品牌
+        goodsBrand:'',//品牌
         remark:'',//备注
         supplierName:'',
         goodsUnit: '',
@@ -403,7 +403,7 @@ export default {
 
         // goodsModel,
         // goodsSpecifications,
-        // brand,
+        // goodsBrand,
         // remark,
       } = this.detailsGoodsData
       let attachmentFileNames = this.attachmentInfos.map(item => {
@@ -428,7 +428,7 @@ export default {
 
         // goodsModel,
         // goodsSpecifications,
-        // brand,
+        // goodsBrand,
         // remark,
       } = this.formData
       let attachmentFileNames = this.attachmentInfos.map(item => {
@@ -461,14 +461,14 @@ export default {
 
         goodsModel,
         goodsSpecifications,
-        brand,
+        goodsBrand,
         remark,
       } = this.detailsGoodsData
       let attachmentFileNames = this.attachmentInfos.map(item => {
         return item.attachmentFileName
       }).join(',')
 
-      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify + goodsModel + goodsSpecifications + brand + remark;
+      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify + goodsModel + goodsSpecifications + goodsBrand + remark;
       str += + attachmentFileNames
       return str;
     },
@@ -486,14 +486,14 @@ export default {
 
         goodsModel,
         goodsSpecifications,
-        brand,
+        goodsBrand,
         remark,
       } = this.formData
       let attachmentFileNames = this.attachmentInfos.map(item => {
         return item.attachmentFileName
       }).join(',')
 
-      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify + goodsModel + goodsSpecifications + brand + remark;
+      let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify + goodsModel + goodsSpecifications + goodsBrand + remark;
       str += + attachmentFileNames
       return str;
     },
