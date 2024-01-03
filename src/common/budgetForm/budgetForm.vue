@@ -3,7 +3,7 @@
     <template v-slot:title>
       <div style="font-size: 16px;text-align: center">{{ formTitle }}</div>
     </template>
-    <el-form :model="formData" ref="formData" :rules="formDataRef" label-width="120px">
+    <el-form :model="formData" ref="form" :rules="formDataRef" label-width="120px">
       <el-form-item label="上级类目">
         <el-cascader
           v-model="formData.parentId"
@@ -160,12 +160,12 @@ export default {
       })
     },
     closeAddEditForm() {
+      this.$emit('closeAddEditForm')
+      this.$refs.form.resetFields();
       this.cascaderLength = ''
       this.formData.parentId = ''
       this.formData.budgetName = ''
       this.formData.budgetId = ''
-      this.$refs.formData.resetFields();
-      this.$emit('closeAddEditForm')
     },
     handleChange(query){
       const queryLength = query.length;
