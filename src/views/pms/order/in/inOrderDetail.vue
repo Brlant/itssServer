@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="formRef" :model="formData" :rules="rules" label-width="100px">
+  <el-form ref="form" :model="formData" :rules="rules" label-width="100px">
     <!--    联系人-->
     <div class="jiBenXinXi">
       基本信息
@@ -524,6 +524,29 @@ export default {
     needAudit() {
       return this.oldStr != this.newStr
     },
+
+
+    oldFlagStr() {
+      let {orderBizType, budgetType,consigneeName,consigneePhone,consigneeAddress, applyReason,orderDetailList} = this.orderDetail
+      let details = orderDetailList.map(item => {
+        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
+      }).join(',')
+      return orderBizType + '__' + budgetType + '__' + details
+    },
+    newFlagStr() {
+      let {orderBizType, budgetType,consigneeName,consigneePhone,consigneeAddress, applyReason,orderDetailList} = this.formData
+      let details = orderDetailList.map(item => {
+        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
+      }).join(',')
+      return orderBizType + '__' + budgetType + '__' + details
+    },
+    needFlagAudit() {
+      return this.oldFlagStr != this.newFlagStr
+    },
+
+
+
+
     paymentAttachment() {
       return this.paymentAttachmentInfos && this.paymentAttachmentInfos.length > 0 ? this.paymentAttachmentInfos[0] : null
     },
@@ -721,14 +744,15 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$refs.formRef.validate(valid => {
+        this.$refs.form.validate(valid => {
           if (valid) {
             // let stringParams = this.queryDetail !== JSON.stringify(this.formData)
-            // if (stringParams === false) {
-            //   return this.$message.error('内容未做任何修改，无需提交')
-            // } else {
-            //   this.editOrder()
-            // }
+
+            if (this.needFlagAudit === false) {
+              return this.$message.error('内容未做任何修改，无需提交')
+            } else {
+              this.editOrder()
+            }
             // 表单验证通过，可以在这里进行提交操作
             // this.editOrder()
           }
