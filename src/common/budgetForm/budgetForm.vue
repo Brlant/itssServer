@@ -164,6 +164,7 @@ export default {
       this.formData.parentId = ''
       this.formData.budgetName = ''
       this.formData.budgetId = ''
+      this.$refs.formData.resetFields();
       this.$emit('closeAddEditForm')
     },
     handleChange(query){
