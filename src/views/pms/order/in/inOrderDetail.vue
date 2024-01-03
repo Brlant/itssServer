@@ -128,6 +128,10 @@
                 :value="item.dictCode"
                 :disabled="item.status !== '0'"
               />
+              <el-option v-if="!goodsTypes.some(list=> list.dictCode === scope.row.goodsType)"
+                         :label="scope.row.goodsTypeName"
+                         :value="scope.row.goodsType"
+              />
             </el-select>
           </el-form-item>
         </template>

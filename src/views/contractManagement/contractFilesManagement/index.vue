@@ -138,8 +138,7 @@
       </el-table-column>
       <el-table-column prop="contractName"
         label="合同名称"></el-table-column>
-      <el-table-column prop="supplierName"
-        label="供应商"></el-table-column>
+      <el-table-column prop="supplierName" label="供应商"></el-table-column>
       <el-table-column prop="contractAmount"
         label="合同金额"></el-table-column>
       <el-table-column prop="signingDate"
