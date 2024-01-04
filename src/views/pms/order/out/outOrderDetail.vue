@@ -91,7 +91,7 @@
       <el-table-column prop="supplier" label="供应商名称" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.supplierId`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'}]">
             <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
                        filterable :disabled="readonly"
@@ -115,7 +115,7 @@
       <el-table-column prop="type" label="物品类型" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsType`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
             <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly"
                        @change="supplierChangeHandler(scope.$index)">
@@ -133,7 +133,7 @@
       <el-table-column prop="code" label="物品编号" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsCode`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="[{required: true, message: '请选择物品编号'}]">
             <el-select v-model="scope.row.goodsId" placeholder="请选择物品编号" style="width: 100%"
                        filterable :disabled="readonly"
@@ -158,7 +158,7 @@
       <el-table-column prop="name" label="物品名称" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsName`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="[{required: true, message: '请选择物品名称'}]">
             <el-select v-model="scope.row.goodsId" placeholder="请选择物品名称" style="width: 100%"
                        filterable :disabled="readonly"
@@ -208,7 +208,7 @@
       <el-table-column prop="amount" label="数量" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="rules.amount">
             <el-input @input="calculateTotal(scope.row,scope.$index)"
                       v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
@@ -229,7 +229,7 @@
                        v-if="formData.orderBizType === '2-0'">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.taxPrice`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="rules.price">
             <el-input v-model.number="scope.row.taxPrice" placeholder="请输入含税售价"
                       :readonly="readonly"
@@ -564,7 +564,7 @@ export default {
     editOrder() {
       this.formData.changeFlag = this.needAudit
 
-      let params = this.formData
+      let params = this.formData || this.formData.pmsOrderStatus === 2 || this.formData.pmsOrderStatus === 4
       // params.applyDepart = this.currUser.deptId
       // params.applyDepartName = this.currUser.deptName
       // params.applyName = this.currUser.nickName

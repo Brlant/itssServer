@@ -573,7 +573,7 @@ export default {
           }
           let requireChange = changes.filter(key => this.formRules[key]?.some(item => item.required));
           let params = this.formData
-          params.changeFlag = requireChange.length > 0
+          params.changeFlag = requireChange.length > 0 || this.formData.contractStatus === 2 || this.formData.contractStatus === 4
           params.contractTypeName = this.contractTypes.find(item => item.dictCode === this.formData.contractType)?.dictLabel
           // console.log(requireChange)
           edit(params).then(res => {

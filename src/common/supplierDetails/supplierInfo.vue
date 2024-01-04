@@ -336,7 +336,9 @@ export default {
     supplierData: {
       handler(newVal, oldVal) {
         if (newVal && newVal.supplierId) {
+          // this.$refs.form.resetFields();
           this.formData = JSON.parse(JSON.stringify(newVal))
+          console.log(newVal,'参数')
           this.backData = JSON.stringify(this.formData)
         }
       },
@@ -509,6 +511,41 @@ export default {
     },
     // 关闭弹框
     closeHandlerInfo() {
+      this.formData = {
+        //基本信息
+        supplierName: '',
+        supplierType: '',
+        supplierDate: '',
+        supplierAddress: '',
+        warehouseAddress: '',
+        //工商信息
+        businessInfo: {
+          legalPerson: '',
+          legalPersonID: '',
+          foundingDate: '',
+          creditCode: '',
+          openingBank: '',
+          accountNumber: '',
+          businessScope: '',
+          //工商信息的文件上传
+          businessLicenseUrl: '',
+          attachmentInfos: [],
+          // "attachmentId": "",
+          // {
+          //   "attachmentId": "",
+        },
+        contactsInfoList: [
+          {
+            id: Date.now(),
+            supplierId: '',
+            contactsName: '',
+            positions: '',
+            contactsPhone: '',
+            contactsMailbox: ''
+          }
+        ],
+      }
+      this.$refs.form.resetFields();
       this.$emit('closeHandlerInfo')
     },
     /*表单校验提交*/
@@ -533,7 +570,7 @@ export default {
     },
     // 编辑供应商
     updateSupplier() {
-      this.formData.changeFlag = this.needAudit
+      this.formData.changeFlag = this.needAudit || this.formData.supplierStatus === 2 || this.formData.supplierStatus === 4
       this.formData.supplierTypeName = this.supplierTypes.find(item => item.dictCode === this.formData.supplierType)?.dictLabel
       supplierApi.updateSupplier(this.formData).then(res => {
         if (res.code === 200) {
