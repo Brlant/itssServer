@@ -89,8 +89,8 @@
       订单明细
     </div>
     <el-table :data="formData.orderDetailList" border :row-style="{height:'0px'}">
-      <el-table-column type="index" width="60"></el-table-column>
-      <el-table-column prop="supplier" label="供应商名称" min-width="150px" >
+      <el-table-column type="index" width="60" fixed="left" label="序号"></el-table-column>
+      <el-table-column prop="supplier" label="供应商名称" min-width="150px" fixed="left">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.supplierId`" label-width="0"
                         style="margin: 0;padding: 0"
@@ -114,7 +114,7 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="type" label="物品类型" min-width="150px">
+      <el-table-column prop="type" label="物品类型" min-width="150px" fixed="left">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsType`" label-width="0"
                         style="margin: 0;padding: 0"
@@ -136,7 +136,7 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="code" label="物品编号" min-width="200px">
+      <el-table-column prop="code" label="物品编号" min-width="120px" fixed="left">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsCode`" label-width="0"
                         style="margin: 0;padding: 0"
@@ -161,7 +161,7 @@
           </el-form-item>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="物品名称" min-width="150px">
+      <el-table-column prop="name" label="物品名称" min-width="150px" fixed="left">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsName`" label-width="0"
                         style="margin: 0;padding: 0"
