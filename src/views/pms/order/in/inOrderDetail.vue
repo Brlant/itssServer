@@ -355,7 +355,7 @@
       </el-form-item>
     </el-form-item>
 
-    <div class="jiBenXinXi">
+    <div class="jiBenXinXi" v-show="formData.pmsOrderStatus === 7">
       财务信息
     </div>
     <el-form-item label="付款凭证" v-show="formData.pmsOrderStatus === 7">
