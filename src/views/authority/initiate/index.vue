@@ -183,6 +183,15 @@
         <div style="font-weight: bold;font-size: 15px">{{ detailsContractTitle }}</div>
       </template>
       <template class="templateDialogStyle">
+        <div style="position: relative;">
+          <div class="contractStatusStyle">
+            <span v-if="contractStatus === 0" style="color: #f59b22; font-weight: bold;">待审核</span>
+            <span v-if="contractStatus === 1" style="color: #f59b22; font-weight: bold;">审核中</span>
+            <span v-if="contractStatus === 2" style="color: #000000; font-weight: bold;">审核不通过</span>
+            <span v-if="contractStatus === 3" style="color: #70b503; font-weight: bold;">启用</span>
+            <span v-if="contractStatus === 5" style="color: #d8001b; font-weight: bold;">停用</span>
+          </div>
+        </div>
         <el-tabs v-model="activeContractTab"
                  @tab-click="handleContractTabClick"
         >
@@ -199,13 +208,6 @@
             ></component>
           </el-tab-pane>
         </el-tabs>
-        <div class="contractStatusStyle">
-          <span v-if="contractStatus === 0" style="color: #f59b22; font-weight: bold;">待审核</span>
-          <span v-if="contractStatus === 1" style="color: #f59b22; font-weight: bold;">审核中</span>
-          <span v-if="contractStatus === 2" style="color: #000000; font-weight: bold;">审核不通过</span>
-          <span v-if="contractStatus === 3" style="color: #70b503; font-weight: bold;">启用</span>
-          <span v-if="contractStatus === 5" style="color: #d8001b; font-weight: bold;">停用</span>
-        </div>
       </template>
     </el-dialog>
 
@@ -670,7 +672,7 @@ export default {
 
 .contractStatusStyle{
   position: absolute;
-  top: 90px;
+  top: 10px;
   left: 300px;
   width: 80px;
   height: 20px;
@@ -705,5 +707,9 @@ export default {
   height: 20px;
   text-align: center;
   color: #F79B22;
+}
+>>>.el-tabs__content{
+  height:450px;
+  overflow-y: auto;
 }
 </style>
