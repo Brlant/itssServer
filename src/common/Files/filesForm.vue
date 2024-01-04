@@ -191,6 +191,7 @@
                   <el-date-picker
                     v-model="attachment.attachmentValidityDate"
                     type="date"
+                    value-format="yyyy-MM-dd"
                     placeholder="请选择有效期"
                   ></el-date-picker>
                 </el-form-item>
@@ -373,6 +374,7 @@ export default {
     closeAddFiles() {
       // this.formData = {}
       this.$refs.formRef.resetFields();
+      this.formData.remark = '';
       this.formData.attachmentInfos = [];
       this.doing = false;
       // this.$refs['formRef'].resetFields();

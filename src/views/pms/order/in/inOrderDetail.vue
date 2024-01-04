@@ -88,12 +88,12 @@
     <div class="jiBenXinXi">
       订单明细
     </div>
-    <el-table :data="formData.orderDetailList" border>
+    <el-table :data="formData.orderDetailList" border :row-style="{height:'0px'}">
       <el-table-column type="index" width="60"></el-table-column>
-      <el-table-column prop="supplier" label="供应商名称" min-width="150px">
+      <el-table-column prop="supplier" label="供应商名称" min-width="150px" >
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.supplierId`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="[{required: true, message: '请选择供应商名称', trigger: 'change'},
                          {validator: supplierValidator, trigger: 'change'}]">
             <el-select v-model="scope.row.supplierId" placeholder="请选择供应商名称"
@@ -117,7 +117,7 @@
       <el-table-column prop="type" label="物品类型" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsType`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="[{required: true, message: '请选择物品类型', trigger: 'change'}]">
             <el-select v-model="scope.row.goodsType" placeholder="请选择物品类型" style="width: 100%" :disabled="readonly"
                        @change="goodsTypeChangeHandler(scope.$index)">
@@ -139,7 +139,7 @@
       <el-table-column prop="code" label="物品编号" min-width="200px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsCode`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="[{required: true, message: '请选择物品编号'}]">
             <el-select v-model="scope.row.goodsId" placeholder="请选择物品编号" style="width: 100%"
                        filterable :disabled="readonly"
@@ -164,7 +164,7 @@
       <el-table-column prop="name" label="物品名称" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.goodsName`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="[{required: true, message: '请选择物品名称'}]">
             <el-select v-model="scope.row.goodsId" placeholder="请选择物品名称" style="width: 100%"
                        filterable :disabled="readonly"
@@ -204,7 +204,7 @@
       <el-table-column prop="amount" label="数量" min-width="150px">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.amount`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="rules.amount">
             <el-input @input="calculateTotal(scope.row)"
                       v-model.number="scope.row.amount" placeholder="请输入数量" :readonly="readonly"></el-input>
@@ -225,7 +225,7 @@
                        v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.actualReceiptAmount`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="[
                           { required: true, message: '请输入实际收货数量', trigger: 'blur'},
                          {type: 'number',min:0,message: '请输入正整数', trigger: 'blur'},
@@ -240,7 +240,7 @@
                        v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.actualReceiptPrice`" label-width="0"
-                        style="margin-top: 22px"
+                        style="margin: 0;padding: 0"
                         :rules="[
                         { required: true, message: '金额不能为空', trigger: 'blur'},
                         { pattern: /^(([1-9]{1}\d{0,9})|(0{1}))(\.\d{1,3})?$/,message:'金额不合法，最多3位小数', trigger: 'blur' }
@@ -254,7 +254,8 @@
                        v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.receiptRemark`" label-width="0"
-                        style="margin-top: 22px">
+                        style="margin: 0;padding: 0"
+                        >
             <el-input type="textarea" v-model="scope.row.receiptRemark" placeholder="请输入数量"
                       :readonly="formData.pmsOrderStatus !== 3"></el-input>
           </el-form-item>
@@ -266,7 +267,7 @@
           <el-row :gutter="10">
             <el-col :span="10">
               <el-form-item :prop="`orderDetailList.${scope.$index}.validityFlag`" label-width="0"
-                            style="margin-top: 22px"
+                            style="margin: 0;padding: 0"
                             :rules="[{ required: true, message: '请选择有效期类型', trigger: 'blur'}]">
                 <el-select v-model="scope.row.validityFlag" placeholder="请选择" :disabled="formData.pmsOrderStatus !== 3">
                   <el-option v-for="option in validityFlagOptions"
@@ -279,7 +280,7 @@
             </el-col>
             <el-col :span="14" v-show="scope.row.validityFlag === '2'">
               <el-form-item :prop="`orderDetailList.${scope.$index}.validityDate`" label-width="0"
-                            style="margin-top: 22px;"
+                            style="margin: 0;padding: 0"
                             :rules="[{ validator: checkValidityDate,trigger: 'blur'}]">
                 <el-date-picker style="width: 100%" :disabled="formData.pmsOrderStatus !== 3"
                                 v-model="scope.row.validityDate"
@@ -470,6 +471,7 @@
                  v-show="formData.receiptButton && (formData.pmsOrderStatus === 3)"
                  type="primary"
                  @click="confirmReceipt"
+                 :disabled="doing"
       >确认收货
       </el-button>
       <el-button @click="goBack">返回</el-button>
@@ -583,6 +585,7 @@ export default {
   },
   data() {
     return {
+      doing: false,
       queryDetail:null,
       uploadUrl: uploadUrl,
       formTitle: "基本信息",
@@ -693,6 +696,11 @@ export default {
       this.$refs.form.resetFields()
       this.$emit('close', {refresh: true})
     },
+    close(){
+      this.doing = false;
+      this.$refs.form.resetFields()
+      this.$emit('close')
+    },
     getOrderDetail(orderId) {
       getOrderDetail(orderId).then(res => {
         res.data.orderDetailList = res.data.orderDetailList.map((item, index) => {
@@ -724,7 +732,6 @@ export default {
         this.orderDetail = JSON.parse(JSON.stringify(res.data))
         this.formData = JSON.parse(JSON.stringify(res.data))
 
-        console.log(this.formData.budgetTypeName,'==============')
         if(this.formData.budgetTypeName){
           if(!this.budgetTypes.some(list=>list.budgetId===this.formData.budgetType)){
             this.$set(this.budgetTypes,0,{budgetName:this.formData.budgetTypeName,budgetId:this.formData.budgetType,disabled:true})
@@ -765,7 +772,7 @@ export default {
     editOrder() {
       // console.log('oldStr：', this.oldStr)
       // console.log('newStr：', this.newStr)
-      this.formData.changeFlag = this.needAudit
+      this.formData.changeFlag = this.needAudit || this.formData.pmsOrderStatus === 2 || this.formData.pmsOrderStatus === 4
 
       let params = this.formData
       // params.applyDepart = this.currUser.deptId
@@ -802,7 +809,8 @@ export default {
       editOrderInfo(params).then(res => {
         if (res.code === 200) {
           this.$message.success('编辑成功')
-          this.$emit('close')
+          // this.$emit('close')
+          this.close();
         } else {
           this.$message.error(res.msg)
         }
@@ -820,8 +828,10 @@ export default {
             type: 'success',
             message: '取消订单成功'
           })
-          this.$emit('close')
+          // this.$emit('close')
+          this.close();
         })
+
       })
     },
     /*审核通过*/
@@ -841,8 +851,10 @@ export default {
             type: 'success',
             message: '操作成功'
           })
-          this.$emit('close')
+          // this.$emit('close')
+          this.close();
         })
+
       })
     },
     /*审核不通过*/
@@ -867,7 +879,8 @@ export default {
             message: '操作成功'
           })
 
-          this.$emit('close')
+          // this.$emit('close')
+          this.close();
         })
       }).catch(() => {
       });
@@ -891,7 +904,8 @@ export default {
             message: '操作成功'
           })
 
-          this.$emit('close')
+          // this.$emit('close')
+          this.close();
         })
       })
     },
@@ -1040,7 +1054,9 @@ export default {
       }
     },
     goBack() {
-      this.$emit('close')
+      this.doing = false;
+      // this.$emit('close')
+      this.close();
     },
     isOverDate(dateStr) {
       return this.moment(dateStr).isBefore(this.moment().format('YYYY-MM-DD')) ? '已到期' : ''
@@ -1118,17 +1134,26 @@ export default {
       this.editOrderInvoice(true)
     },
     confirmReceipt() {
+      debugger
+      if (this.doing) return;
+      this.doing = true;
       this.$refs.form.validate(valid => {
         if (valid) {
           // 表单验证通过，可以在这里进行提交操作
           confirmReceipt(this.formData).then(res => {
             if (res.code === 200) {
               this.$message.success(res.msg)
-              this.$emit('close')
+              // this.$emit('close')
+              this.close();
             } else {
               this.$message.error(res.msg)
+              this.doing = false;
             }
+          }).catch(err=>{
+            this.doing = false;
           })
+        }else{
+          this.doing = false;
         }
       });
     },

@@ -14,7 +14,7 @@
             <el-input
               prefix-icon="el-icon-search"
               v-model="queryParams.key"
-              placeholder="合同编号/合同搜索"
+              placeholder="合同编号/名称搜索"
               clearable
               @keyup.enter.native="getContractFiles"
             />
@@ -143,6 +143,17 @@
         label="合同金额"></el-table-column>
       <el-table-column prop="signingDate"
         label="签订日期"></el-table-column>
+      <el-table-column prop="createBy"
+                       label="创建人"></el-table-column>
+      <el-table-column prop="createTime"
+                       label="创建时间">
+        <template v-slot="{row}">
+          <span>{{ new Date(row.createTime).toLocaleString('zh-CN', {
+            hour12: false,
+            timeZone: 'Asia/Shanghai'
+          }) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="contractStatus"
         label="状态">
         <template slot-scope="scope">
@@ -185,6 +196,16 @@
         <div style="font-weight: bold;font-size: 15px">{{ detailsContractTitle }}</div>
       </template>
       <template class="templateDialogStyle">
+        <div style="position: relative">
+          <div class="tabStatus">
+            <span v-if="contractStatus === 0" style="color: #f59b22; font-weight: bold;">待审核</span>
+            <span v-if="contractStatus === 1" style="color: #f59b22; font-weight: bold;">审核中</span>
+            <span v-if="contractStatus === 2" style="color: #000000; font-weight: bold;">审核不通过</span>
+            <span v-if="contractStatus === 3" style="color: #70b503; font-weight: bold;">启用</span>
+            <span v-if="contractStatus === 4" style="color: black; font-weight: bold;">已撤回</span>
+            <span v-if="contractStatus === 5" style="color: #d8001b; font-weight: bold;">停用</span>
+          </div>
+        </div>
         <el-tabs v-model="activeContractTab"
           @tab-click="handleContractTabClick">
           <el-tab-pane
@@ -198,14 +219,6 @@
               @closeDetail="closeContractDialog"></component>
           </el-tab-pane>
         </el-tabs>
-        <div class="tabStatus">
-          <span v-if="contractStatus === 0" style="color: #f59b22; font-weight: bold;">待审核</span>
-          <span v-if="contractStatus === 1" style="color: #f59b22; font-weight: bold;">审核中</span>
-          <span v-if="contractStatus === 2" style="color: #000000; font-weight: bold;">审核不通过</span>
-          <span v-if="contractStatus === 3" style="color: #70b503; font-weight: bold;">启用</span>
-          <span v-if="contractStatus === 4" style="color: black; font-weight: bold;">已撤回</span>
-          <span v-if="contractStatus === 5" style="color: #d8001b; font-weight: bold;">停用</span>
-        </div>
       </template>
     </el-dialog>
 
@@ -471,7 +484,7 @@ export default {
 
 .tabStatus {
   position: absolute;
-  top: 90px;
+  top: 10px;
   left: 300px;
   width: 80px;
   height: 20px;

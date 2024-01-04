@@ -287,6 +287,7 @@ export default {
       handler(newVal, oldVal) {
         if (newVal && newVal.goodsId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
+          console.log(this.formData,'参数')
           this.backData = newVal
           this.queryDetail ={...newVal};
 
@@ -499,9 +500,6 @@ export default {
     },
 
     needParamsAudit() {
-      // 找出必填字段，拼成字符串，来比较是否有变化，必填字段修改后，需要重新审核
-      // console.log(this.oldStr)
-      // console.log(this.newStr)
       return this.paramsOldStr !== this.paramsNewStr
     },
 
@@ -762,7 +760,7 @@ export default {
       //   return this.$message.error('内容未做任何修改，无需提交')
       // }
 
-      this.formData.changeFlag = this.needAudit
+      this.formData.changeFlag = this.needAudit || this.formData.goodsStatus === 2 || this.formData.goodsStatus === 4
       this.formData.goodsTypeName = this.goodsTypes.find(item => item.dictCode === this.formData.goodsType)?.dictLabel
       this.formData.goodsUnit = this.goodsTypes.find(item => item.dictCode === this.formData.goodsUnitId)?.dictLabel
       this.formData.taxRate = this.taxRateList.find(item => item.dictCode === this.formData.taxRateId)?.dictLabel
