@@ -244,6 +244,11 @@ export default {
     },
     /*文件提交*/
     submitForm() {
+      this.$confirm('是否提交文件?', '二次确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
       this.$refs.formData.validate((valid) => {
         if (valid) {
           renewal(this.formData).then(res => {
@@ -256,6 +261,7 @@ export default {
           this.$message.error('表单验证失败，请检查输入内容');
         }
       });
+      })
     }
   }
 }

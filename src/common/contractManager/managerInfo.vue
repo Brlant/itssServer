@@ -526,7 +526,26 @@ export default {
           this.examineContract(examineType, value);
         });
       } else {
-        this.examineContract(examineType);
+        //二次审核 是否确定通过 或者撤回的判断
+        if (examineType === 3) {
+          this.$confirm('是否确定撤回?', '二次确认', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.examineContract(examineType);
+          })
+        }
+        //二次审核，是否通过
+        if (examineType === 1) {
+          this.$confirm('是否确定通过?', '二次确认', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.examineContract(examineType);
+          })
+        }
       }
     },
     examineContract(examineType, remark) {
