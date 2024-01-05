@@ -239,16 +239,20 @@
       </el-table-column>
       <el-table-column prop="taxRate" label="税率" v-if="formData.orderBizType === '2-0'" min-width="150px">
         <template v-slot="scope">
-          <el-select v-model.number="scope.row.sellingTaxRateId" placeholder="请选择税率" clearable
-                     @change="calculatePrice(scope.row)">
-            <el-option
-              v-for="(item,index) in taxRateList"
-              :key="index"
-              :label="item.dictLabel"
-              :value="item.dictCode"
-              :disabled="item.status !== '0'"
-            />
-          </el-select>
+          <el-form-item :prop="`orderDetailList.${scope.$index}.sellingTaxRateId`" label-width="0"
+                        style="margin: 0;padding: 0"
+                        :rules="rules.sellingTaxRateId">
+            <el-select v-model.number="scope.row.sellingTaxRateId" placeholder="请选择税率" clearable
+                       @change="calculatePrice(scope.row)">
+              <el-option
+                v-for="(item,index) in taxRateList"
+                :key="index"
+                :label="item.dictLabel"
+                :value="item.dictCode"
+                :disabled="item.status !== '0'"
+              />
+            </el-select>
+          </el-form-item>
         </template>
       </el-table-column>
       <el-table-column prop="totalPriceWithoutTax" label="不含税售价" v-if="formData.orderBizType === '2-0'"
@@ -415,6 +419,9 @@ export default {
         price: [
           {required: true, message: '金额不能为空', trigger: 'blur'},
           {pattern: /^(([1-9]{1}\d{0,9})|(0{1}))(\.\d{1,2})?$/, message: '金额不合法，最多2位小数', trigger: 'blur'}
+        ],
+        sellingTaxRateId:[
+          {required: true, message: '请选择销售税率', trigger: 'blur'}
         ]
       },
       supplierMap: {},
