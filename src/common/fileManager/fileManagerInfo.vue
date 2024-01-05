@@ -409,7 +409,7 @@ export default {
       }).join(',')
 
       let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify;
-      str += + attachmentFileNames
+      str +=  attachmentFileNames
       return str;
     },
 
@@ -430,7 +430,7 @@ export default {
       }).join(',')
 
       let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify;
-      str += + attachmentFileNames
+      str +=  attachmentFileNames
       return str;
     },
 
