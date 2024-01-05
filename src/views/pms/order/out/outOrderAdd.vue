@@ -48,7 +48,7 @@
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item label="领用人" prop="applyName" :rules="rules.applyName"
-                        v-show="formData.orderBizType === '2-3'">
+                        v-if="formData.orderBizType === '2-3'">
             <el-select v-model="formData.recipientId" placeholder="请选择领用人" clearable filterable
                      remote :remote-method="getRecipientUserList" @change="recipientChange"
                      :disabled="readonly">
@@ -64,7 +64,7 @@
         </el-col>
         <el-col :span="6">
           <el-form-item label="领用部门" prop="applyDepartName" :rules="rules.applyDepartName"
-                        v-show="formData.orderBizType === '2-3'">
+                        v-if="formData.orderBizType === '2-3'">
             <el-cascader @change="recipientDepartmentChange"
                          v-model="formData.recipientDepartId"
                          placeholder="请选择领用部门"
@@ -357,10 +357,12 @@ export default {
       orderDetail: {},
       rules: {
         applyName: [{required: true, message: '请选择申请人', trigger: 'blur'}],
-        applyDepartName: [{required: true, message: '请选择申请人部门', trigger: 'blur'}],
-        applyDate: [{required: true, message: '请选择申请日期', trigger: 'blur'}],
+        applyDepartName: [{required: true, message: '请选择申请部门', trigger: 'blur'}],
+        applyDate: [{required: true, message: '请选择申请日期', trigger: 'change'}],
+        recipientId: [{required: true, message: '请选择领用人', trigger: 'change'}],
+        recipientDepartId: [{required: true, message: '请选择领用部门', trigger: 'change'}],
         orderBizType: [{required: true, message: '请选择订单类型', trigger: 'change'}],
-        budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'blur'}],
+        budgetTypes: [{required: true, message: '请选择预算类型', trigger: 'change'}],
         amount: [
           {validator: this.checkAmount, trigger: 'blur'}
         ],

@@ -47,8 +47,8 @@
     <!-- 领用出库时，展示领用人和领用部门，可以下拉选择且有联动效果：选了领用人自动带出领用部门，选了领用部门自动带出部门下的人员信息 -->
     <el-row :gutter="20">
       <el-col :span="6">
-        <el-form-item label="领用人" prop="applyName" :rules="rules.applyName"
-                      v-show="formData.orderBizType === '2-3'">
+        <el-form-item label="领用人" prop="recipientId" :rules="rules.recipientId"
+                      v-if="formData.orderBizType === '2-3'">
           <el-select v-model="formData.recipientId" placeholder="请选择领用人" clearable filterable
                      remote :remote-method="getRecipientUserList" @change="recipientChange"
                      :disabled="readonly">
@@ -63,8 +63,8 @@
         </el-form-item>
       </el-col>
       <el-col :span="6">
-        <el-form-item label="领用部门" prop="applyDepartName" :rules="rules.applyDepartName"
-                      v-show="formData.orderBizType === '2-3'">
+        <el-form-item label="领用部门" prop="recipientDepartId" :rules="rules.recipientDepartId"
+                      v-if="formData.orderBizType === '2-3'">
           <el-cascader @change="recipientDepartmentChange"
                        v-model="formData.recipientDepartId"
                        placeholder="请选择领用部门"
@@ -403,7 +403,9 @@ export default {
       orderDetail: {},
       rules: {
         applyName: [{required: true, message: '请选择申请人', trigger: 'blur'}],
-        applyDepartName: [{required: true, message: '请选择申请人部门', trigger: 'blur'}],
+        applyDepartName: [{required: true, message: '请选择申请部门', trigger: 'blur'}],
+        recipientId: [{required: true, message: '请选择领用人', trigger: 'change'}],
+        recipientDepartId: [{required: true, message: '请选择领用部门', trigger: 'change'}],
         applyDate: [{required: true, message: '请选择申请日期', trigger: 'blur'}],
         orderBizType: [{required: true, message: '请选择订单类型', trigger: 'blur'}],
         budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'blur'}],
@@ -549,7 +551,6 @@ export default {
       }).then(() => {
         this.$refs.form.validate(valid => {
           if (valid) {
-            console.log(this.needParamsAudit, '重新提交')
             // 表单验证通过，可以在这里进行提交操作
             if (this.needParamsAudit === false) {
               return this.$message.error('内容未做任何修改，无需提交')
@@ -827,7 +828,7 @@ export default {
     },
     getRecipientUserList(keyword = '') {
       let params = {
-        deptId: this.readonly ? this.formData.recipientDepartId : '',
+        deptId: this.formData.recipientDepartId,
         nickName: keyword,
         // 用户状态（0正常 1停用）
         status: 0,
