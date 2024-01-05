@@ -849,6 +849,7 @@ export default {
       // 当领用人变化的时候，自动获取到部门
       if (val) {
         this.formData.recipientDepartId = this.recipientUserList.find(one => one.userId === val)?.deptId
+        this.$refs.form.clearValidate(['recipientDepartId'])
       }
     },
     getRecipientUserList(keyword = '') {
