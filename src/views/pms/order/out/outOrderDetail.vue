@@ -520,8 +520,7 @@ export default {
       getOrderDetail(orderId).then(res => {
 
         this.orderDetail = JSON.parse(JSON.stringify(res.data))
-        this.getRecipientUserList()
-        this.getDeptList()
+
         this.formData = res.data;
         this.formData.orderDetailList.forEach((item, index) => {
           this.setGoodsList(index, item.supplierId)
@@ -536,7 +535,9 @@ export default {
           }
         })
 
-        // this.queryDetail ={...res.data};
+
+        this.getRecipientUserList()
+        this.getDeptList()
       })
     },
     /*表单校验提交*/
@@ -826,10 +827,12 @@ export default {
     },
     getRecipientUserList(keyword = '') {
       let params = {
-        deptId: this.formData.recipientDepartId,
+        deptId: this.readonly ? this.formData.recipientDepartId : '',
         nickName: keyword,
         // 用户状态（0正常 1停用）
-        status: 0
+        status: 0,
+        pageNum: 1,
+        pageSize: 200
       }
 
       this.recipientUserList = []

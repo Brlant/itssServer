@@ -255,7 +255,7 @@
         <template v-slot="scope">
           <el-form-item :prop="`orderDetailList.${scope.$index}.receiptRemark`" label-width="0"
                         style="margin: 0;padding: 0"
-                        >
+          >
             <el-input type="textarea" v-model="scope.row.receiptRemark" placeholder="请输入数量"
                       :readonly="formData.pmsOrderStatus !== 3"></el-input>
           </el-form-item>
@@ -533,14 +533,30 @@ export default {
 
 
     oldFlagStr() {
-      let {orderBizType, budgetType,consigneeName,consigneePhone,consigneeAddress, applyReason,orderDetailList} = this.orderDetail
+      let {
+        orderBizType,
+        budgetType,
+        consigneeName,
+        consigneePhone,
+        consigneeAddress,
+        applyReason,
+        orderDetailList
+      } = this.orderDetail
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
       }).join(',')
       return orderBizType + '__' + budgetType + '__' + details + '__' + consigneeName + '__' + consigneePhone + '__' + consigneeAddress + '__' + applyReason
     },
     newFlagStr() {
-      let {orderBizType, budgetType,consigneeName,consigneePhone,consigneeAddress, applyReason,orderDetailList} = this.formData
+      let {
+        orderBizType,
+        budgetType,
+        consigneeName,
+        consigneePhone,
+        consigneeAddress,
+        applyReason,
+        orderDetailList
+      } = this.formData
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
       }).join(',')
@@ -549,8 +565,6 @@ export default {
     needFlagAudit() {
       return this.oldFlagStr !== this.newFlagStr
     },
-
-
 
 
     paymentAttachment() {
@@ -586,7 +600,7 @@ export default {
   data() {
     return {
       doing: false,
-      queryDetail:null,
+      queryDetail: null,
       uploadUrl: uploadUrl,
       formTitle: "基本信息",
       formData: {
@@ -601,6 +615,7 @@ export default {
         // 预算类型
         budgetType: '',
         budgetTypeName: '',
+        budgetTypes: [],
         applyReason: '',
         paymentFlag: '',
         orderBizType: '',
@@ -696,7 +711,7 @@ export default {
       this.$refs.form.resetFields()
       this.$emit('close', {refresh: true})
     },
-    close(){
+    close() {
       this.doing = false;
       this.$refs.form.resetFields()
       this.$emit('close')
@@ -732,9 +747,13 @@ export default {
         this.orderDetail = JSON.parse(JSON.stringify(res.data))
         this.formData = JSON.parse(JSON.stringify(res.data))
 
-        if(this.formData.budgetTypeName){
-          if(!this.budgetTypes.some(list=>list.budgetId===this.formData.budgetType)){
-            this.$set(this.budgetTypes,0,{budgetName:this.formData.budgetTypeName,budgetId:this.formData.budgetType,disabled:true})
+        if (this.formData.budgetTypeName) {
+          if (!this.budgetTypes.some(list => list.budgetId === this.formData.budgetType)) {
+            this.$set(this.budgetTypes, 0, {
+              budgetName: this.formData.budgetTypeName,
+              budgetId: this.formData.budgetType,
+              disabled: true
+            })
           }
         }
 
@@ -768,8 +787,7 @@ export default {
         });
       })
     },
-    // 编辑订单
-    editOrder() {
+    paramsHandler() {
       // console.log('oldStr：', this.oldStr)
       // console.log('newStr：', this.newStr)
       this.formData.changeFlag = this.needAudit || this.formData.pmsOrderStatus === 2 || this.formData.pmsOrderStatus === 4
@@ -780,32 +798,39 @@ export default {
       // params.applyName = this.currUser.nickName
       // params.applyUserId = this.currUser.userId
 
-      params.budgetType = params.budgetTypes.join("-")
-      let budgetTypeNames = []
-      this.budgetTypes.forEach(one => {
-        if (params.budgetTypes[0] === one.budgetId) {
-          budgetTypeNames.push(one.budgetName)
-          if (one.childList) {
-            one.childList.forEach(two => {
-              if (params.budgetTypes[0] === one.budgetId) {
-                budgetTypeNames.push(two.budgetName)
-                if (two.childList) {
-                  two.childList.forEach(three => {
-                    if (params.budgetTypes[0] === one.budgetId) {
-                      budgetTypeNames.push(three.budgetName)
-                    }
-                  })
+      if (!params.outOrderNo) {
+        params.budgetType = params.budgetTypes?.join("-")
+        let budgetTypeNames = []
+        this.budgetTypes.forEach(one => {
+          if (params.budgetTypes[0] === one.budgetId) {
+            budgetTypeNames.push(one.budgetName)
+            if (one.childList) {
+              one.childList.forEach(two => {
+                if (params.budgetTypes[0] === one.budgetId) {
+                  budgetTypeNames.push(two.budgetName)
+                  if (two.childList) {
+                    two.childList.forEach(three => {
+                      if (params.budgetTypes[0] === one.budgetId) {
+                        budgetTypeNames.push(three.budgetName)
+                      }
+                    })
+                  }
                 }
-              }
-            })
+              })
+            }
           }
-        }
-      })
+        })
 
-      params.budgetTypeName = budgetTypeNames.join("-")
+        params.budgetTypeName = budgetTypeNames.join("-")
+      }
 
       params.goodsTypeName = this.goodsTypes.find(one => one.dictCode === params.goodsType)?.dictLabel
 
+      return params
+    },
+    // 编辑订单
+    editOrder() {
+      let params = this.paramsHandler()
       editOrderInfo(params).then(res => {
         if (res.code === 200) {
           this.$message.success('编辑成功')
@@ -974,9 +999,13 @@ export default {
       }).then(({data}) => {
 
         this.budgetTypes = data;
-        if(this.formData.budgetTypeName){
-          if(!this.budgetTypes.some(list=>list.budgetId===this.formData.budgetType)){
-            this.$set(this.budgetTypes,0,{budgetName:this.formData.budgetTypeName,budgetId:this.formData.budgetType,disabled:true})
+        if (this.formData.budgetTypeName) {
+          if (!this.budgetTypes.some(list => list.budgetId === this.formData.budgetType)) {
+            this.$set(this.budgetTypes, 0, {
+              budgetName: this.formData.budgetTypeName,
+              budgetId: this.formData.budgetType,
+              disabled: true
+            })
           }
         }
       })
@@ -1029,7 +1058,7 @@ export default {
       }
     },
     goodsChangeHandler(goodsId, index) {
-      if (!goodsId){
+      if (!goodsId) {
         return
       }
 
@@ -1149,10 +1178,10 @@ export default {
               this.$message.error(res.msg)
               this.doing = false;
             }
-          }).catch(err=>{
+          }).catch(err => {
             this.doing = false;
           })
-        }else{
+        } else {
           this.doing = false;
         }
       });
@@ -1165,12 +1194,12 @@ export default {
       }
     },
     // 编辑付款凭证
-    editOrderPayment(uploadFlag=true) {
+    editOrderPayment(uploadFlag = true) {
       let pmsOrderId = this.formData.pmsOrderId
       let attachmentInfos = this.paymentAttachmentInfos
       request.post('/pms/order/editOrderPayment', {pmsOrderId, attachmentInfos}).then(res => {
         if (res.code === 200) {
-          this.$message.success(uploadFlag?'付款凭证上传成功':'付款凭证删除成功')
+          this.$message.success(uploadFlag ? '付款凭证上传成功' : '付款凭证删除成功')
         } else {
           this.$message.error(res.msg)
         }
@@ -1199,9 +1228,9 @@ export default {
           supplierApi.deleteAttachment(attachmentId).then(res => {
             if (res.code === 200) {
               this.localDelAttachment(paymentFlag)
-              if (paymentFlag){
+              if (paymentFlag) {
                 this.editOrderPayment(false)
-              }else {
+              } else {
                 this.$message.success('发票删除成功')
               }
             } else {
