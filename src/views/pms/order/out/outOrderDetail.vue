@@ -66,6 +66,7 @@
         <el-form-item label="领用部门" prop="recipientDepartId" :rules="rules.recipientDepartId"
                       v-if="formData.orderBizType === '2-3'">
           <el-cascader @change="recipientDepartmentChange"
+                       :key="recipientDepartKey"
                        v-model="formData.recipientDepartId"
                        placeholder="请选择领用部门"
                        :options="recipientDeptList"
@@ -243,6 +244,7 @@
                         style="margin: 0;padding: 0"
                         :rules="rules.sellingTaxRateId">
             <el-select v-model.number="scope.row.sellingTaxRateId" placeholder="请选择税率" clearable
+                       :disabled="readonly"
                        @change="calculatePrice(scope.row)">
               <el-option
                 v-for="(item,index) in taxRateList"
@@ -342,6 +344,7 @@ export default {
       doing: false,
       formTitle: "基本信息",
       queryDetail: {},
+      recipientDepartKey: 0,
       formData: {
         applyDepart: '',
         applyDepartName: '',
@@ -420,7 +423,7 @@ export default {
           {required: true, message: '金额不能为空', trigger: 'blur'},
           {pattern: /^(([1-9]{1}\d{0,9})|(0{1}))(\.\d{1,2})?$/, message: '金额不合法，最多2位小数', trigger: 'blur'}
         ],
-        sellingTaxRateId:[
+        sellingTaxRateId: [
           {required: true, message: '请选择销售税率', trigger: 'change'}
         ]
       },
@@ -572,12 +575,10 @@ export default {
     // 编辑订单
     editOrder() {
       this.formData.changeFlag = this.needAudit || this.formData.pmsOrderStatus === 2 || this.formData.pmsOrderStatus === 4
-
       let params = this.formData
-      // params.applyDepart = this.currUser.deptId
-      // params.applyDepartName = this.currUser.deptName
-      // params.applyName = this.currUser.nickName
-      // params.applyUserId = this.currUser.userId
+      params.orderDetailList.forEach((detail, index) => {
+        detail.sellingTaxRate = this.taxRateList.find(item => item.dictCode === detail.sellingTaxRateId).dictLabel
+      })
 
       editOrderInfo(params).then(res => {
         if (res.code === 200) {
@@ -825,6 +826,7 @@ export default {
       this.recipientDeptList = []
       treeselect(query).then(res => {
         this.recipientDeptList = res.data
+        this.recipientDepartKey++
       })
     },
     recipientChange(val) {
@@ -932,6 +934,9 @@ export default {
           if (this.$refs.form) {
             this.$refs.form.clearValidate()
           }
+
+          this.recipientDepartKey = 0
+          this.recipientDeptList = []
 
           this.getSupplierList()
           this.getOrderDetail(newVal)
