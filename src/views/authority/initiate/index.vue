@@ -162,7 +162,7 @@
       <!--      标签页-->
       <el-tabs v-model="activeGoodsTab" @tab-click="handleTabClick">
         <el-tab-pane label="档案信息" name="fileManagerInfo">
-          <file-manager-info :detailsGoodsData="detailsGoodsData" @closeHandler="closeHandler"></file-manager-info>
+          <file-manager-info :detailsGoodsData="detailsGoodsData" @closeHandler="closeGoodHandler"></file-manager-info>
         </el-tab-pane>
         <el-tab-pane label="审核信息" name="fileAuditInfo">
           <file-audit-info :goodsId="goodsId"></file-audit-info>
@@ -593,7 +593,7 @@ export default {
       this.dialogDetailsProcessGoodsDialog = false
       this.getInitiateList()
     },
-    closeHandler() {
+    closeGoodHandler() {
       this.tabName = null
       this.activeGoodsTab = 'fileManagerInfo'
       this.dialogDetailsProcessGoodsDialog = false
