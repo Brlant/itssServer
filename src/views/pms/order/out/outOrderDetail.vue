@@ -901,14 +901,14 @@ export default {
     oldParamsStr() {
       let {orderBizType, budgetType, orderDetailList, applyReason} = this.orderDetail
       let details = orderDetailList.map(item => {
-        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
+        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount + '__' + item.taxPrice + '__' + item.sellingTaxRateId
       }).join(',')
       return orderBizType + '__' + budgetType + '__' + details + orderDetailList + '__' + applyReason
     },
     newParamsStr() {
       let {orderBizType, budgetType, orderDetailList, applyReason} = this.formData
       let details = orderDetailList.map(item => {
-        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
+        return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount + '__' + item.taxPrice + '__' + item.sellingTaxRateId
       }).join(',')
       return orderBizType + '__' + budgetType + '__' + details + orderDetailList + '__' + applyReason
     },
