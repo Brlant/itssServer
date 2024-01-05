@@ -912,14 +912,14 @@ export default {
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount + '__' + item.taxPrice + '__' + item.sellingTaxRateId
       }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details  + '__' + applyReason + recipientId  + '__' + recipientDepartId
+      return orderBizType + '__' + budgetType + '__' + details  + '__' + applyReason + '__' + recipientId  + '__' + recipientDepartId
     },
     newParamsStr() {
       let {orderBizType, budgetType, orderDetailList, applyReason,recipientId,recipientDepartId} = this.formData
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount + '__' + item.taxPrice + '__' + item.sellingTaxRateId
       }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details  + '__' + applyReason + recipientId  + '__' + recipientDepartId
+      return orderBizType + '__' + budgetType + '__' + details  + '__' + applyReason + '__' + recipientId  + '__' + recipientDepartId
     },
     needParamsAudit() {
       return this.oldParamsStr != this.newParamsStr
