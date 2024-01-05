@@ -402,13 +402,9 @@ export default {
         taxRateId,
         boxGauge,
         goodsClassify,
-
-        // goodsModel,
-        // goodsSpecifications,
-        // goodsBrand,
-        // remark,
+        attachmentInfos,
       } = this.detailsGoodsData
-      let attachmentFileNames = this.attachmentInfos.map(item => {
+      let attachmentFileNames = attachmentInfos.map(item => {
         return item.attachmentFileName
       }).join(',')
 
@@ -427,13 +423,9 @@ export default {
         taxRateId,
         boxGauge,
         goodsClassify,
-
-        // goodsModel,
-        // goodsSpecifications,
-        // goodsBrand,
-        // remark,
+        attachmentInfos,
       } = this.formData
-      let attachmentFileNames = this.attachmentInfos.map(item => {
+      let attachmentFileNames = attachmentInfos.map(item => {
         return item.attachmentFileName
       }).join(',')
 
@@ -444,9 +436,6 @@ export default {
 
 
     needAudit() {
-      // 找出必填字段，拼成字符串，来比较是否有变化，必填字段修改后，需要重新审核
-      // console.log(this.oldStr)
-      // console.log(this.newStr)
       return this.oldStr !== this.newStr
     },
 
@@ -460,18 +449,19 @@ export default {
         taxRateId,
         boxGauge,
         goodsClassify,
+        attachmentInfos,
 
         goodsModel,
         goodsSpecifications,
         goodsBrand,
         remark,
       } = this.detailsGoodsData
-      let attachmentFileNames = this.attachmentInfos.map(item => {
-        return item.attachmentFileName
+      let attachmentFileNames = attachmentInfos.map(item => {
+        return item.attachmentFileName + item.attachmentValidityDate
       }).join(',')
 
       let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify + goodsModel + goodsSpecifications + goodsBrand + remark;
-      str += + attachmentFileNames
+      str += attachmentFileNames
       return str;
     },
 
@@ -485,18 +475,19 @@ export default {
         taxRateId,
         boxGauge,
         goodsClassify,
+        attachmentInfos,
 
         goodsModel,
         goodsSpecifications,
         goodsBrand,
         remark,
       } = this.formData
-      let attachmentFileNames = this.attachmentInfos.map(item => {
-        return item.attachmentFileName
+      let attachmentFileNames = attachmentInfos.map(item => {
+        return item.attachmentFileName + item.attachmentValidityDate
       }).join(',')
 
       let str = goodsType + goodsName + supplierId + goodsUnitId + taxBid + taxRateId + boxGauge + goodsClassify + goodsModel + goodsSpecifications + goodsBrand + remark;
-      str += + attachmentFileNames
+      str += attachmentFileNames
       return str;
     },
 
@@ -739,6 +730,8 @@ export default {
             // 表单验证通过，可以在这里进行提交操作
             //
             // console.log(this.needParamsAudit,'参数值')
+            // console.log(this.paramsOldStr)
+            // console.log(this.paramsNewStr)
 
             if (this.needParamsAudit === false) {
               return this.$message.error('内容未做任何修改，无需提交')
