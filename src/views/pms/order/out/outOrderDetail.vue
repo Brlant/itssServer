@@ -520,8 +520,8 @@ export default {
       getOrderDetail(orderId).then(res => {
 
         this.orderDetail = JSON.parse(JSON.stringify(res.data))
-        this.getRecipientUserList(res.data.recipientName, res.data.recipientDepartId)
-        this.getDeptList({deptId: res.data.recipientDepartId})
+        this.getRecipientUserList()
+        this.getDeptList()
         this.formData = res.data;
         this.formData.orderDetailList.forEach((item, index) => {
           this.setGoodsList(index, item.supplierId)
@@ -824,9 +824,9 @@ export default {
         this.formData.recipientDepartId = this.recipientUserList.find(one => one.userId === val)?.deptId
       }
     },
-    getRecipientUserList(keyword, deptId = '') {
+    getRecipientUserList(keyword = '') {
       let params = {
-        deptId: deptId || this.formData.recipientDepartId,
+        deptId: this.formData.recipientDepartId,
         nickName: keyword,
         // 用户状态（0正常 1停用）
         status: 0
