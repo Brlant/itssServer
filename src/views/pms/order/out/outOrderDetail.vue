@@ -337,7 +337,7 @@ export default {
     return {
       doing: false,
       formTitle: "基本信息",
-      queryDetail:{},
+      queryDetail: {},
       formData: {
         applyDepart: '',
         applyDepartName: '',
@@ -525,7 +525,7 @@ export default {
         this.formData = res.data;
         this.formData.orderDetailList.forEach((item, index) => {
           this.setGoodsList(index, item.supplierId)
-          this.queryStockCount(item.goodsId,index)
+          this.queryStockCount(item.goodsId, index)
           if (!this.supplierOptions.some(supplier => supplier.supplierId === item.supplierId)) {
             this.supplierOptions.push({
               supplierId: item.supplierId,
@@ -548,7 +548,7 @@ export default {
       }).then(() => {
         this.$refs.form.validate(valid => {
           if (valid) {
-            console.log(this.needParamsAudit,'重新提交')
+            console.log(this.needParamsAudit, '重新提交')
             // 表单验证通过，可以在这里进行提交操作
             if (this.needParamsAudit === false) {
               return this.$message.error('内容未做任何修改，无需提交')
@@ -562,9 +562,9 @@ export default {
     },
     // 编辑订单
     editOrder() {
-      this.formData.changeFlag = this.needAudit
+      this.formData.changeFlag = this.needAudit || this.formData.pmsOrderStatus === 2 || this.formData.pmsOrderStatus === 4
 
-      let params = this.formData || this.formData.pmsOrderStatus === 2 || this.formData.pmsOrderStatus === 4
+      let params = this.formData
       // params.applyDepart = this.currUser.deptId
       // params.applyDepartName = this.currUser.deptName
       // params.applyName = this.currUser.nickName
@@ -895,18 +895,18 @@ export default {
     },
 
     oldParamsStr() {
-      let {orderBizType, budgetType, orderDetailList,applyReason} = this.orderDetail
+      let {orderBizType, budgetType, orderDetailList, applyReason} = this.orderDetail
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
       }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details  + orderDetailList + '__' + applyReason
+      return orderBizType + '__' + budgetType + '__' + details + orderDetailList + '__' + applyReason
     },
     newParamsStr() {
-      let {orderBizType, budgetType, orderDetailList,applyReason} = this.formData
+      let {orderBizType, budgetType, orderDetailList, applyReason} = this.formData
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
       }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details  + orderDetailList + '__' + applyReason
+      return orderBizType + '__' + budgetType + '__' + details + orderDetailList + '__' + applyReason
     },
     needParamsAudit() {
       return this.oldParamsStr != this.newParamsStr
