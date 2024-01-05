@@ -406,12 +406,12 @@ export default {
       },
       orderDetail: {},
       rules: {
-        applyName: [{required: true, message: '请选择申请人', trigger: 'blur'}],
-        applyDepartName: [{required: true, message: '请选择申请部门', trigger: 'blur'}],
-        recipientId: [{required: true, message: '请选择领用人', trigger: 'change'}],
+        applyName: [{required: true, message: '请选择申请人', trigger: 'change'}],
+        applyDepartName: [{required: true, message: '请选择申请部门', trigger: 'change'}],
+        recipientId: [{required: true, message: '请选择领用人', trigger: 'blur'}],
         recipientDepartId: [{required: true, message: '请选择领用部门', trigger: 'change'}],
         applyDate: [{required: true, message: '请选择申请日期', trigger: 'blur'}],
-        orderBizType: [{required: true, message: '请选择订单类型', trigger: 'blur'}],
+        orderBizType: [{required: true, message: '请选择订单类型', trigger: 'change'}],
         budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'blur'}],
         amount: [
           {validator: this.checkAmount, trigger: 'blur'}
@@ -421,7 +421,7 @@ export default {
           {pattern: /^(([1-9]{1}\d{0,9})|(0{1}))(\.\d{1,2})?$/, message: '金额不合法，最多2位小数', trigger: 'blur'}
         ],
         sellingTaxRateId:[
-          {required: true, message: '请选择销售税率', trigger: 'blur'}
+          {required: true, message: '请选择销售税率', trigger: 'change'}
         ]
       },
       supplierMap: {},
