@@ -493,7 +493,7 @@ export default {
       })
     },
     changeHandleTime(row) {
-      console.log(row)
+      // console.log(row)
       if (this.queryParams.applyTime === '') {
         this.queryParams.pageSize = 1  //将页码设置为第一页
       }

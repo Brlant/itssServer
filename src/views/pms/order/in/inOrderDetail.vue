@@ -578,7 +578,6 @@ export default {
     orderId: {
       handler(newVal) {
         if (newVal) {
-          console.log('订单详情', newVal);
           // 每次重新进入订单详情后需要重新清空表单校验
           if (this.$refs.form) {
             this.$refs.form.resetFields()

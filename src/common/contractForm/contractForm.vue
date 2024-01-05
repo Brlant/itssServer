@@ -234,7 +234,6 @@ export default {
         if (res.code === 200) {
           this.formData = res.data;
           this.expireDays = res.data.expireDays;
-          console.log(this.formData)
         }
       });
     },

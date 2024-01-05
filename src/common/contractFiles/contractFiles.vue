@@ -313,7 +313,6 @@ export default {
     //   console.log(file, fileList);
     // },
     handleSuccess(res, file) {
-      console.log(file.raw.type)
       const isPNG = file.raw.type === 'image/png';
       const isJPG = file.raw.type === 'image/jpg';
       const isJPEG = file.raw.type === 'image/jpeg';

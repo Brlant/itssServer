@@ -338,7 +338,6 @@ export default {
         if (newVal && newVal.supplierId) {
           // this.$refs.form.resetFields();
           this.formData = JSON.parse(JSON.stringify(newVal))
-          console.log(newVal,'参数')
           this.backData = JSON.stringify(this.formData)
         }
       },
@@ -750,7 +749,6 @@ export default {
     },
     getSupplierTypes() {
       return getDicts('supplier_type').then((res) => {
-        console.log(res.data)
         this.supplierTypes = res.data
       })
     },

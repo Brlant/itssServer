@@ -288,7 +288,6 @@ export default {
       handler(newVal, oldVal) {
         if (newVal && newVal.goodsId) {
           this.formData = JSON.parse(JSON.stringify(newVal))
-          console.log(this.formData,'参数')
           this.backData = newVal
           this.queryDetail ={...newVal};
 
@@ -707,7 +706,6 @@ export default {
       // 查询供应商下拉列表
       request.post('pms/supplier/getSupplierList',params).then((res) => {
         this.supplierList = res.data
-        console.log(this.supplierList,'供应商')
       })
     },
     submitForm() {
@@ -786,7 +784,6 @@ export default {
     getGoodsUnits(){
       return getDicts('goods_unit').then((res) => {
         this.unitList = res.data
-        console.log(this.unitList,'货品单位')
       })
     }
   },
