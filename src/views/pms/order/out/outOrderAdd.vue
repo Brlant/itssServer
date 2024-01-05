@@ -553,7 +553,7 @@ export default {
 
       params.goodsTypeName = this.goodsTypes.find(item => item.dictCode == params.goodsType)?.dictLabel;
       params.orderDetailList.forEach((detail, index) => {
-        let detailObj = this.orderDetail.orderDetailList.find(item => item.orderDetailId === detail.orderDetailId)
+        let detailObj = this.taxRateList.find(item => item.orderDetailId === detail.orderDetailId)
         if(detailObj){
           detail.sellingTaxRate = detailObj.dictLabel
         }

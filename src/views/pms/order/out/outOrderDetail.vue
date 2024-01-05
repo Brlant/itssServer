@@ -577,7 +577,7 @@ export default {
       this.formData.changeFlag = this.needAudit || this.formData.pmsOrderStatus === 2 || this.formData.pmsOrderStatus === 4
       let params = this.formData
       params.orderDetailList.forEach((detail, index) => {
-        let detailObj = this.orderDetail.orderDetailList.find(item => item.orderDetailId === detail.orderDetailId)
+        let detailObj = this.taxRateList.find(item => item.orderDetailId === detail.orderDetailId)
           if(detailObj){
             detail.sellingTaxRate = detailObj.dictLabel
           }
