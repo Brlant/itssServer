@@ -411,7 +411,7 @@ export default {
       rules: {
         applyName: [{required: true, message: '请选择申请人', trigger: 'change'}],
         applyDepartName: [{required: true, message: '请选择申请部门', trigger: 'change'}],
-        recipientId: [{required: true, message: '请选择领用人', trigger: 'blur'}],
+        recipientId: [{required: true, message: '请选择领用人', trigger: 'change'}],
         recipientDepartId: [{required: true, message: '请选择领用部门', trigger: 'change'}],
         applyDate: [{required: true, message: '请选择申请日期', trigger: 'blur'}],
         orderBizType: [{required: true, message: '请选择订单类型', trigger: 'change'}],
@@ -582,6 +582,19 @@ export default {
             detail.sellingTaxRate = detailObj.dictLabel
           }
       })
+
+
+      let recipientId = params.recipientId
+      let user = this.recipientUserList.find(one => one.userId === recipientId)
+      if (user) {
+        params.recipientName = user.nickName
+      }
+
+      let recipientDepartId = params.recipientDepartId
+      let dept = this.recipientDeptList.find(one => one.id === params.recipientDepartId)
+      if (dept) {
+        params.recipientDepartName = dept.label
+      }
 
       editOrderInfo(params).then(res => {
         if (res.code === 200) {

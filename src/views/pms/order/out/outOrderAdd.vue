@@ -545,8 +545,19 @@ export default {
         params.recipientName = user.nickName
       }
 
+      let recipientDepartId = params.recipientDepartId
+      let dept = this.recipientDeptList.find(one => one.id === params.recipientDepartId)
+      if (dept) {
+        params.recipientDepartName = dept.label
+      }
+
       params.goodsTypeName = this.goodsTypes.find(item => item.dictCode == params.goodsType)?.dictLabel;
-      params.sellingTaxRate = this.taxRateList.find(one => one.dictCode == params.sellingTaxRateId)?.dictLabel
+      params.orderDetailList.forEach((detail, index) => {
+        let detailObj = this.orderDetail.orderDetailList.find(item => item.orderDetailId === detail.orderDetailId)
+        if(detailObj){
+          detail.sellingTaxRate = detailObj.dictLabel
+        }
+      })
 
       addPmsOrder(params).then((res) => {
         this.$message({
