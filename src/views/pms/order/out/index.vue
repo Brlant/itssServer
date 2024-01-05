@@ -316,12 +316,11 @@ export default {
     closeOutDialog() {
       this.currOutOrderId = ''
       this.dialogOutDetailsProcessDialog = false;
-      this.getList()
     },
     // 关闭订单详情对话框并刷新订单列表
     closeOutOrderDetailHandler() {
       this.closeOutDialog()
-
+      this.getList()
     },
     /* 获取我的待办总数 */
     getDealtWithListCount() {
