@@ -13,6 +13,23 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
+
+          <!--      物品编号-->
+          <el-form-item prop="">
+            <el-input
+              placeholder="物品编号"
+              clearable
+            />
+          </el-form-item>
+
+          <!--      供应商编号-->
+          <el-form-item prop="">
+            <el-input
+              placeholder="供应商编号"
+              clearable
+            />
+          </el-form-item>
+
           <!--     时间搜索 -->
           <el-form-item prop="rangeDate">
             <el-date-picker
@@ -89,6 +106,8 @@
     <el-table v-loading="loading" :data="tableData" style="width: 100%">
       <el-table-column type="index" label="序号"></el-table-column>
       <el-table-column prop="pmsOrderNo" label="订单编号"></el-table-column>
+      <el-table-column prop="" label="物品编号"></el-table-column>
+      <el-table-column prop="" label="供应商编号"></el-table-column>
       <el-table-column prop="orderBizType" label="订单类型">
         <template v-slot="{ row }">
           <span v-if="row.orderBizType === '2-0'">销售出库</span>

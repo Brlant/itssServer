@@ -221,6 +221,7 @@
           <span>{{ scope.row.nonTotalTaxBid }}</span>
         </template>
       </el-table-column>
+<!--      开始实际收货品数量-->
       <el-table-column prop="actualReceiptAmount" label="实际收货数量" min-width="150px"
                        v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
         <template v-slot="scope">
@@ -231,23 +232,25 @@
                          {type: 'number',min:0,message: '请输入正整数', trigger: 'blur'},
                          {type: 'number',max:formData.orderDetailList[scope.$index].amount,  message: '不能大于订单数量', trigger: 'blur'},
                         ]">
-            <el-input v-model.number="scope.row.actualReceiptAmount" placeholder="请输入收货数量"
+            <el-input v-model.number="scope.row.actualReceiptAmount" placeholder="请输入收货数量" @input="calculateAmount(scope.row)"
                       :readonly="formData.pmsOrderStatus !== 3"></el-input>
           </el-form-item>
         </template>
       </el-table-column>
+<!--      结束实际收货数量-->
       <el-table-column prop="actualReceiptPrice" label="实际收货金额" min-width="150px"
                        v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
         <template v-slot="scope">
-          <el-form-item :prop="`orderDetailList.${scope.$index}.actualReceiptPrice`" label-width="0"
-                        style="margin: 0;padding: 0"
-                        :rules="[
-                        { required: true, message: '金额不能为空', trigger: 'blur'},
-                        { pattern: /^(([1-9]{1}\d{0,9})|(0{1}))(\.\d{1,3})?$/,message:'金额不合法，最多3位小数', trigger: 'blur' }
-                      ]">
-            <el-input v-model="scope.row.actualReceiptPrice" placeholder="请输入实际收货金额，最多三位小数"
-                      :readonly="formData.pmsOrderStatus !== 3"></el-input>
-          </el-form-item>
+          <span>{{ scope.row.actualReceiptPrice }}</span>
+<!--          <el-form-item :prop="`orderDetailList.${scope.$index}.actualReceiptPrice`" label-width="0"-->
+<!--                        style="margin: 0;padding: 0"-->
+<!--                        :rules="[-->
+<!--                        { required: true, message: '金额不能为空', trigger: 'blur'},-->
+<!--                        { pattern: /^(([1-9]{1}\d{0,9})|(0{1}))(\.\d{1,3})?$/,message:'金额不合法，最多3位小数', trigger: 'blur' }-->
+<!--                      ]">-->
+<!--            <el-input v-model="scope.row.actualReceiptPrice" placeholder="请输入实际收货金额，最多三位小数"-->
+<!--                      :readonly="formData.pmsOrderStatus !== 3"></el-input>-->
+<!--          </el-form-item>-->
         </template>
       </el-table-column>
       <el-table-column prop="receiptRemark" label="收货备注" min-width="150px"
@@ -648,7 +651,7 @@ export default {
           "nonTotalTaxBid": '0.00',
           "deleteFlag": '',
           "actualReceiptAmount": '',
-          "actualReceiptPrice": '',
+          "actualReceiptPrice": '0.00',
           "receiptRemark": "",
           "validityFlag": "",
           "validityDate": "",
@@ -954,7 +957,7 @@ export default {
         "nonTotalTaxBid": '0.00',
         "deleteFlag": '',
         "actualReceiptAmount": '',
-        "actualReceiptPrice": '',
+        "actualReceiptPrice": '0.00',
         "receiptRemark": "",
         "validityFlag": "",
         "validityDate": "",
@@ -976,6 +979,13 @@ export default {
       let taxRate = parseFloat(row.taxRate) / 100
       row.totalTaxBid = (row.taxBid * row.amount).toFixed(2)
       row.nonTotalTaxBid = (row.nonTaxBid * row.amount).toFixed(2)
+    },
+    //计算实际收货金额
+    calculateAmount(row){
+      //实际收货金额=含税进价*实际收货数量
+      if (row.taxBid) {
+        row.actualReceiptPrice = (row.taxBid * row.actualReceiptAmount).toFixed(2)
+      }
     },
     getSupplierList(keyword = '') {
       let params = {
@@ -1162,7 +1172,7 @@ export default {
       this.editOrderInvoice(true)
     },
     confirmReceipt() {
-      debugger
+      // debugger
       if (this.doing) return;
       this.doing = true;
       this.$refs.form.validate(valid => {
