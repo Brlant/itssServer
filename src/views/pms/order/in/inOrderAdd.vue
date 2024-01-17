@@ -46,9 +46,21 @@
       </el-row>
       <el-row :gutter="20">
         <el-col :span="6">
-          <el-form-item label="收货人" prop="consigneeName">
-            <el-input v-model="formData.consigneeName" :readonly="readonly"></el-input>
+<!--          开始收货人校验-->
+          <el-form-item label="收货人" prop="consigneeId" :rules="rules.consigneeId">
+            <el-select v-model="formData.consigneeId" placeholder="请选择收货人"
+                       :remote-method="getConsigneeName"
+                       @change="handleConsigneeName"
+                       clearable filterable remote>
+              <el-option
+                v-for="(item,index) in consigneeNameList"
+                :key="index"
+                :label="item.nickName"
+                :value="item.userId"
+              />
+            </el-select>
           </el-form-item>
+<!--          结束收货人校验-->
         </el-col>
         <el-col :span="6">
           <el-form-item label="收货人电话" prop="consigneePhone">
@@ -229,6 +241,7 @@
 import request from '@/utils/request'
 import {addPmsOrder} from '@/api/pms/order'
 import {getDicts} from '@/api/system/dict/data'
+import newDemand from '@/api/pms/newDemand'
 
 export default {
   name: "InOrderAdd",
@@ -264,7 +277,13 @@ export default {
         invoiceNum: '',
         invoiceName: '',
         invoiceUrl: '',
+
         consigneeName: '',
+        //收货人
+        consigneeId:'',          //收货人id
+        consigneeDepartId:'',    //收货部门id
+        consigneeDepartName:'',   //收货部门名称
+
         consigneePhone: '',
         consigneeAddress: '',
         orderDetailList: [{
@@ -302,6 +321,7 @@ export default {
         applyDepartName: [{required: true, message: '请选择发起人部门', trigger: 'blur'}],
         applyDate: [{required: true, message: '请选择发起日期', trigger: 'blur'}],
         orderBizType: [{required: true, message: '请选择订单类型', trigger: 'change'}],
+        consigneeId: [{required: true, message: '请选择收货人', trigger: 'change'}],
         budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'change'}],
         amount: [
           {validator: this.checkAmount, trigger: 'blur'}
@@ -331,10 +351,48 @@ export default {
       validityFlagOptions: [
         {label: '无需效期', value: '1'},
         {label: '有效期', value: '2'},
-      ]
+      ],
+      //收货人列表
+      consigneeNameList:[],
     }
   },
+  created() {
+
+  },
   methods: {
+    //收货人下拉选项
+    getConsigneeName(keyword){
+      let params = {
+        nickName: keyword,
+        // 用户状态（0正常 1停用）
+        status: 0
+      }
+      request.get('system/user/selectUserList', {
+        params
+      }).then(res => {
+        this.consigneeNameList = res.rows.map(item=>{
+          return{
+            userId:item.userId,
+            nickName:item.nickName,
+            deptId:item.deptId,
+            deptName: item.deptName
+          }
+        })
+        console.log(this.consigneeNameList)
+      })
+    },
+    /* 触发发起人事件 */
+    handleConsigneeName(val){
+      // consigneeId：收货人id
+      // consigneeDepartId：收货部门id
+      // consigneeDepartName：收货部门名称
+      if(val){
+        this.formData.consigneeName = this.consigneeNameList.find(one => one.userId === val)?.nickName
+        this.formData.consigneeId = this.consigneeNameList.find(one => one.userId === val)?.userId
+        this.formData.consigneeDepartId = this.consigneeNameList.find(one => one.userId === val)?.deptId
+        this.formData.consigneeDepartName = this.consigneeNameList.find(one => one.userId === val)?.deptName
+      }
+    },
     getGoodsTypes() {
       return getDicts('goods_types').then((res) => {
         this.goodsTypes = res.data
@@ -366,6 +424,10 @@ export default {
           invoiceName: '',
           invoiceUrl: '',
           consigneeName: '',
+          consigneeId:'',          //收货人id
+          consigneeDepartId:'',    //收货部门id
+          consigneeDepartName:'',   //收货部门名称
+
           consigneePhone: '',
           consigneeAddress: '',
           orderDetailList: [{

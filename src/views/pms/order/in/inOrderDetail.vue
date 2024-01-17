@@ -52,8 +52,23 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="6">
-        <el-form-item label="收货人" prop="consigneeName">
-          <el-input v-model="formData.consigneeName" :readonly="readonly"></el-input>
+        <el-form-item label="收货人" prop="consigneeId" :rules="rules.consigneeId">
+          <el-select v-model="formData.consigneeId" placeholder="请选择收货人"
+                     :remote-method="getConsigneeName"
+                     @change="handleConsigneeName"
+                     :disabled="readonly"
+                     clearable filterable remote>
+            <el-option
+              v-for="(item,index) in consigneeNameList"
+              :key="index"
+              :label="item.nickName"
+              :value="item.userId"
+            />
+            <el-option v-if="!consigneeNameList.some(list=> list.userId === formData.consigneeId)"
+                       :label="formData.consigneeName"
+                       :value="formData.consigneeId"
+            />
+          </el-select>
         </el-form-item>
       </el-col>
       <el-col :span="6">
@@ -253,6 +268,13 @@
 <!--          </el-form-item>-->
         </template>
       </el-table-column>
+      <el-table-column prop="actualReceiptPriceNonTotalTax" label="不含税实际收货总金额" min-width="150px"
+                       v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
+        <template v-slot="scope">
+          <span>{{ scope.row.actualReceiptPriceNonTotalTax }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="receiptRemark" label="收货备注" min-width="150px"
                        v-if="formData.pmsOrderStatus === 3 || formData.pmsOrderStatus === 7">
         <template v-slot="scope">
@@ -539,7 +561,7 @@ export default {
       let {
         orderBizType,
         budgetType,
-        consigneeName,
+        consigneeId,
         consigneePhone,
         consigneeAddress,
         applyReason,
@@ -548,13 +570,13 @@ export default {
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
       }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details + '__' + consigneeName + '__' + consigneePhone + '__' + consigneeAddress + '__' + applyReason
+      return orderBizType + '__' + budgetType + '__' + details + '__' + consigneeId + '__' + consigneePhone + '__' + consigneeAddress + '__' + applyReason
     },
     newFlagStr() {
       let {
         orderBizType,
         budgetType,
-        consigneeName,
+        consigneeId,
         consigneePhone,
         consigneeAddress,
         applyReason,
@@ -563,7 +585,7 @@ export default {
       let details = orderDetailList.map(item => {
         return item.supplierId + '__' + item.goodsType + '__' + item.goodsId + '__' + item.amount
       }).join(',')
-      return orderBizType + '__' + budgetType + '__' + details + '__' + consigneeName + '__' + consigneePhone + '__' + consigneeAddress + '__' + applyReason
+      return orderBizType + '__' + budgetType + '__' + details + '__' + consigneeId + '__' + consigneePhone + '__' + consigneeAddress + '__' + applyReason
     },
     needFlagAudit() {
       return this.oldFlagStr !== this.newFlagStr
@@ -593,7 +615,7 @@ export default {
           this.getBudgetTypeList()
 
           this.getOrderDetail(newVal)
-
+          this.getConsigneeName();
         }
       },
       immediate: true,
@@ -601,6 +623,9 @@ export default {
   },
   data() {
     return {
+      //收货人列表
+      consigneeNameList:[],
+
       doing: false,
       queryDetail: null,
       uploadUrl: uploadUrl,
@@ -630,6 +655,9 @@ export default {
         invoiceName: '',
         invoiceUrl: '',
         consigneeName: '',
+        consigneeId:'',          //收货人id
+        consigneeDepartId:'',    //收货部门id
+        consigneeDepartName:'',   //收货部门名称
         consigneePhone: '',
         consigneeAddress: '',
         orderDetailList: [{
@@ -652,6 +680,7 @@ export default {
           "deleteFlag": '',
           "actualReceiptAmount": '',
           "actualReceiptPrice": '0.00',
+          "actualReceiptPriceNonTotalTax":'0.00',
           "receiptRemark": "",
           "validityFlag": "",
           "validityDate": "",
@@ -669,6 +698,7 @@ export default {
         applyDepartName: [{required: true, message: '请选择发起人部门', trigger: 'blur'}],
         applyDate: [{required: true, message: '请选择发起日期', trigger: 'blur'}],
         orderBizType: [{required: true, message: '请选择订单类型', trigger: 'blur'}],
+        consigneeId: [{required: true, message: '请选择收货人', trigger: 'change'}],
         budgetTypes: [{required: true, message: '请输入预算类型', trigger: 'blur'}],
         amount: [
           {required: true, message: '请输入数量', trigger: 'blur'},
@@ -702,7 +732,46 @@ export default {
       invoiceAttachmentInfos: [],
     }
   },
+  created() {
+
+  },
   methods: {
+    //收货人下拉选项
+    getConsigneeName(keyword = ''){
+      let params = {
+        // deptId: this.formData.consigneeDepartId,
+        nickName: keyword,
+        // 用户状态（0正常 1停用）
+        status: 0,
+        pageNum: 1,
+        pageSize: 10
+      }
+      this.consigneeNameList = []
+      request.get('system/user/selectUserList', {
+        params
+      }).then(res => {
+        this.consigneeNameList = res.rows.map(item=>{
+          return{
+            userId:item.userId,
+            nickName:item.nickName,
+            deptId:item.deptId,
+            deptName: item.deptName
+          }
+        })
+      })
+    },
+    /* 触发发起人事件 */
+    handleConsigneeName(val){
+      // consigneeId：收货人id
+      // consigneeDepartId：收货部门id
+      // consigneeDepartName：收货部门名称
+      if(val){
+        this.formData.consigneeName = this.consigneeNameList.find(one => one.userId === val)?.nickName
+        this.formData.consigneeId = this.consigneeNameList.find(one => one.userId === val)?.userId
+        this.formData.consigneeDepartId = this.consigneeNameList.find(one => one.userId === val)?.deptId
+        this.formData.consigneeDepartName = this.consigneeNameList.find(one => one.userId === val)?.deptName
+      }
+    },
     getGoodsTypes() {
       return getDicts('goods_types').then((res) => {
         this.goodsTypes = res.data
@@ -958,6 +1027,7 @@ export default {
         "deleteFlag": '',
         "actualReceiptAmount": '',
         "actualReceiptPrice": '0.00',
+        "actualReceiptPriceNonTotalTax":'0.00',
         "receiptRemark": "",
         "validityFlag": "",
         "validityDate": "",
@@ -985,6 +1055,7 @@ export default {
       //实际收货金额=含税进价*实际收货数量
       if (row.taxBid) {
         row.actualReceiptPrice = (row.taxBid * row.actualReceiptAmount).toFixed(2)
+        row.actualReceiptPriceNonTotalTax = (row.nonTaxBid * row.actualReceiptAmount).toFixed(2)
       }
     },
     getSupplierList(keyword = '') {

@@ -14,21 +14,25 @@
             />
           </el-form-item>
 
-<!--          &lt;!&ndash;      物品编号&ndash;&gt;-->
-<!--          <el-form-item prop="">-->
-<!--            <el-input-->
-<!--              placeholder="物品编号"-->
-<!--              clearable-->
-<!--            />-->
-<!--          </el-form-item>-->
+          <!--      物品编号-->
+          <el-form-item prop="goodsCode">
+            <el-input
+              prefix-icon="el-icon-search"
+              v-model="queryParams.goodsCode"
+              placeholder="物品编号"
+              clearable
+            />
+          </el-form-item>
 
-<!--          &lt;!&ndash;      供应商编号&ndash;&gt;-->
-<!--          <el-form-item prop="">-->
-<!--            <el-input-->
-<!--              placeholder="供应商编号"-->
-<!--              clearable-->
-<!--            />-->
-<!--          </el-form-item>-->
+          <!--      供应商编号-->
+          <el-form-item prop="supplierCode">
+            <el-input
+              prefix-icon="el-icon-search"
+              v-model="queryParams.supplierCode"
+              placeholder="供应商编号"
+              clearable
+            />
+          </el-form-item>
 
           <!--     时间搜索 -->
           <el-form-item prop="rangeDate">
@@ -106,8 +110,16 @@
     <el-table v-loading="loading" :data="tableData" style="width: 100%">
       <el-table-column type="index" label="序号"></el-table-column>
       <el-table-column prop="pmsOrderNo" label="订单编号"></el-table-column>
-<!--      <el-table-column prop="" label="物品编号"></el-table-column>-->
-<!--      <el-table-column prop="" label="供应商编号"></el-table-column>-->
+      <el-table-column prop="goodsCodes" label="物品编号">
+        <template v-slot="{ row }">
+          {{row.goodsCodes.substring(0, row.goodsCodes.lastIndexOf('、'))}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="supplierCodes" label="供应商编号">
+        <template v-slot="{ row }">
+          {{row.supplierCodes.substring(0, row.supplierCodes.lastIndexOf('、'))}}
+        </template>
+      </el-table-column>
       <el-table-column prop="orderBizType" label="订单类型">
         <template v-slot="{ row }">
           <span v-if="row.orderBizType === '2-0'">销售出库</span>
@@ -255,6 +267,8 @@ export default {
       queryParams: {
         total: 0,
         pmsOrderNo: '',
+        goodsCode:'',
+        supplierCode:'',
         startDate: "",
         endDate: "",
         applyDepart: '',

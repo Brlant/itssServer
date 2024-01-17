@@ -13,6 +13,15 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
+<!--收货人-->
+          <el-form-item prop="consigneeName">
+            <el-input
+              v-model="queryParams.consigneeName"
+              placeholder="收货人"
+              clearable
+            />
+          </el-form-item>
+
         </el-col>
         <el-col :span="4">
           <!--     时间搜索 -->
@@ -41,27 +50,43 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="2">
-          <el-form-item prop="paymentFlag">
-            <el-select v-model="queryParams.paymentFlag" placeholder="是否已付款" clearable>
-              <el-option
-                v-for="item in paymentFlags"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
         <el-col :span="3">
-          <el-form-item prop="invoiceNum">
+          <el-form-item prop="goodsCode">
             <el-input
-              v-model="queryParams.invoiceNum"
-              placeholder="发票号"
+              prefix-icon="el-icon-search"
+              v-model="queryParams.goodsCode"
+              placeholder="物品编号"
               clearable
-              @keyup.enter.native="handleQuery"
             />
           </el-form-item>
+<!--          <el-form-item prop="paymentFlag">-->
+<!--            <el-select v-model="queryParams.paymentFlag" placeholder="是否已付款" clearable>-->
+<!--              <el-option-->
+<!--                v-for="item in paymentFlags"-->
+<!--                :key="item.value"-->
+<!--                :label="item.label"-->
+<!--                :value="item.value"-->
+<!--              />-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
+        </el-col>
+        <el-col :span="3">
+          <el-form-item prop="supplierCode">
+            <el-input
+              prefix-icon="el-icon-search"
+              v-model="queryParams.supplierCode"
+              placeholder="供应商编号"
+              clearable
+            />
+          </el-form-item>
+<!--          <el-form-item prop="invoiceNum">-->
+<!--            <el-input-->
+<!--              v-model="queryParams.invoiceNum"-->
+<!--              placeholder="发票号"-->
+<!--              clearable-->
+<!--              @keyup.enter.native="handleQuery"-->
+<!--            />-->
+<!--          </el-form-item>-->
         </el-col>
         <el-col :span="4">
           <el-form-item prop="applyDepart">
@@ -141,6 +166,17 @@
     <el-table v-loading="loading" :data="tableData" style="width: 100%">
       <el-table-column type="index" label="序号"></el-table-column>
       <el-table-column prop="pmsOrderNo" label="订单编号"></el-table-column>
+      <el-table-column prop="goodsCodes" label="物品编号">
+        <template v-slot="{ row }">
+          {{row.goodsCodes.substring(0, row.goodsCodes.lastIndexOf('、'))}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="supplierCodes" label="供应商编号">
+        <template v-slot="{ row }">
+          {{row.supplierCodes.substring(0, row.supplierCodes.lastIndexOf('、'))}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="consigneeName" label="收货人"></el-table-column>
       <el-table-column prop="orderBizType" label="订单类型">
         <template v-slot="{ row }">
           <span v-if="row.orderBizType === '1-0'">采购入库</span>
@@ -299,6 +335,7 @@ export default {
       queryParams: {
         total: 0,
         pmsOrderNo: '',
+        consigneeName:'',
         startDate: "",
         endDate: "",
         applyDepart: '',
@@ -436,6 +473,7 @@ export default {
     resetQuery() {
       this.queryParams = {
         pmsOrderNo: '',
+        consigneeName:'',
         startDate: "",
         endDate: "",
         applyDepart: '',
